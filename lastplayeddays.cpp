@@ -13,6 +13,10 @@
 // "last played date" between two constants, kLowerRndBound and
 // kUpperRndBound (currently 30, 120), representing # of days ago
 
+//sample code for main (2 lines)
+//    float x = 43230.657113f;
+//    x = getLastPlayedDays(x);
+
 double getLastPlayedDays (double x)
 {
 // This provides a variable (currDate) to store the current date in epoch time format
@@ -63,9 +67,6 @@ return x;    // Return the variable's value generated from either the "if" or th
 
 }
 
-//sample code for main
 
-//    float x = 43230.657113f;
-//    x = getLastPlayedDays(x);
 
 
