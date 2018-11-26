@@ -52,41 +52,32 @@ int main(int argc, char *argv[]){
                 "description. Output is a bool type \nvariable and its result is: "
              << myTestBool << ".\n\n";
 
-//Sample code to store the full local path where archsimian.conf is stored
-   QString myPath;
-   myPath = loadPathInfo();
-   std::string str = myPath.toStdString();
-   const char* myStringPath = str.c_str();
-   std::cout << "\nThis is a placeholder in main for some sample code to call the "
-                "loadPathInfo function, \nto check whether the local path "
-                "has been created by the user. Output is a QString type \nvariable and its result is: "
-             << myStringPath << ".\n\n";
+   // Sample code to check fo existence of user configuration file (archsimian.conf). If it does not exist, create
+   // bool to force user to set it up, then create the empty file. If it exists, continue.
 
-
-// Sample code for function convLocConfDirPath to convert QString to std::string
-
- std::string convertedString = convLocConfDirPath();
- std::cout << "\nThis is a placeholder in main for some sample code to call the "
-              "convLocConfDirPath function, \nto check whether the QString path "
-              "has been converted to a standard string. Output is a standard string type \nvariable and its result is: "
-           << convertedString << ".\n\n";
-
-// Sample code for combining the path and filename into one string
-
-std::string fullString =  convertedString + Constants::userFileName;
-std::cout << "\nThis is a placeholder in main for some sample code to combining the path and filename into one string. Output is a standard string type \nvariable and its result is: "
-          << fullString << ".\n\n";
-
-
+   std::ifstream cFile (Constants::userFileName);
+       if (cFile.is_open())
+       {
+               std::cout << "The config file exists!" << '\n';
+               cFile.close();
+       }
+       else {
+           std::cerr << "Couldn't open config file. Setting the bool and creating a new one.\n";
+           std::ofstream cFile;
+           cFile.open(Constants::userFileName);
+           //std::ostream cFile2 (Constants::userFileName);
+           cFile << "Now it has been created and here is some text.";
+           cFile.close();
+       }
 
 //std::ifstream my_output_file;
 //my_output_file.open(fullString);
 //std::ostream >> "Testing 123";
 //bool isopening;
-std::ofstream ifs(fullString);
-ifs.open(fullString);
-ifs << "writing this to a file.\n";
-ifs.close();
+//std::ofstream ifs(fullString);
+//ifs.open(fullString);
+//fs << "writing this to a file.\n";
+//ifs.close();
 
 // char* result; result = calloc(strlen(myStringPath)+strlen(two)+1, sizeof(char)); and THEN the strcpy+strcat?
  //  char result[75];
