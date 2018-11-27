@@ -52,23 +52,11 @@ int main(int argc, char *argv[]){
                 "description. Output is a bool type \nvariable and its result is: "
              << myTestBool << ".\n\n";
 
-   // Sample code to check fo existence of user configuration file (archsimian.conf). If it does not exist, create
-   // bool to force user to set it up, then create the empty file. If it exists, continue.
+    int result;
+    result = isConfigSetup();
+    std::cout << "\nThis is creates a bool result type variable and its result is: "
+           << result << ".\n\n";
 
-   std::ifstream cFile (Constants::userFileName);
-       if (cFile.is_open())
-       {
-               std::cout << "The config file exists!" << '\n';
-               cFile.close();
-       }
-       else {
-           std::cerr << "Couldn't open config file. Setting the bool and creating a new one.\n";
-           std::ofstream cFile;
-           cFile.open(Constants::userFileName);
-           //std::ostream cFile2 (Constants::userFileName);
-           cFile << "Now it has been created and here is some text.";
-           cFile.close();
-       }
 
 //std::ifstream my_output_file;
 //my_output_file.open(fullString);
