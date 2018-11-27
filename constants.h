@@ -16,10 +16,10 @@ const double kEpochConv2{86400.00};
 // artificial calendar days since a never-played-track was "last played".
 // This will cause the program to select the new track for the playlist
 // on a random basis
-
 const int kLowerRndBound{30};
 const int kUpperRndBound{120};
 
+// Constant used to standardize the user configuration file name for Arch
 const char userFileName[16]{"archsimian.conf"};
 }
 

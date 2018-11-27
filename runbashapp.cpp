@@ -6,7 +6,6 @@
 #include <array>
 
 // Function to execute a bash command and get result
-
 std::string exec(const char* cmd)
 {
     std::array<char, 128> buffer;

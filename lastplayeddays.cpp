@@ -26,7 +26,6 @@ double currDate = std::chrono::duration_cast<std::chrono::seconds>
 // Need to test whether the track has been played before. If it has not,
 // MM4 assigns a float of 0.0, so use a conditional to test whether the
 //  number is 0.0. See constants.h for info on constants used.
-
 if (x > 1.00)      // If track has been played before - get last played in days
 {
         // Two constants are used to convert the time format used by
@@ -58,13 +57,11 @@ else            // Else MM4 lastplayed value is less than 1, the track has not b
               // returns a random last played date in epoch time between
                                         // 30-120 days before the current date
 
-    //Later, add another nested if statement in this else section. It will set unplayed tracks to a lastplayed date
+    //Later, add another if statement in this else section. It will set unplayed tracks to a lastplayed date
     // of currDate (today), thereby excluding unplayed tracks from playlistincludsion.
     // User selection (create bool for include new tracks or not) will determine whether new tracks are included.
 }
-
 return x;    // Return the variable's value generated from either the "if" or the "else" statement
-
 }
 
 

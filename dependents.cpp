@@ -5,8 +5,7 @@
 #include <fstream>
 #include <iostream>
 
-//Obtain the pid number based on the pgrep name of the app (procName)
-
+//Obtain the pid number based on the pgrep name of the app (std::string x)
 int getProcIdByName(std::string x)
 {
     int pid = -1;
@@ -52,12 +51,10 @@ int getProcIdByName(std::string x)
 }
 
 // Return a bool indicating whether an application, expressed in the command as
-// 'string x', is or is not running. Use the PID descriptor for the application
+// std::string x, is or is not running. Use the PID descriptor for the application
 // string.
-
 bool isAppRunning(std::string x)
 {
-//std::string{x};
 int pid;
 pid = getProcIdByName(x);
 if (pid == -1)

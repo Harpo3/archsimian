@@ -10,22 +10,6 @@
 #include <fstream>
 #include <QDir>
 
-
-void printResult(int result)
-{
-    std::cout << "Your result is: " << result << std::endl;
-}
-
-bool fileExists(QString path) {
-    QFileInfo check_file(path);
-    // check if file exists and if yes: Is it really a file and no directory?
-    if (check_file.exists() && check_file.isFile()) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 int main(int argc, char *argv[]){
 
     //newbie info: argc (argument count) and argv (argument vector) are
@@ -43,69 +27,38 @@ int main(int argc, char *argv[]){
                  "Output is a double type variable and its result is: "
               << mm4LastPlayedDays << ".\n";
 
-   // Sample code to call the isAppRunning function to check whether an app is running
-   // using its pid description, in this example, audacious.
-   bool myTestBool;
-   myTestBool = isAppRunning("audacious");
-   std::cout << "\nThis is a placeholder in main for some sample code to call the "
+    // Sample code to call the isAppRunning function to check whether an app is running
+    // using its pid description, in this example, audacious.
+    bool myTestBool;
+    myTestBool = isAppRunning("audacious");
+    std::cout << "\nThis is a placeholder in main for some sample code to call the "
                 "isAppRunning function with Audacious, \nto check whether the app is running using its pid "
                 "description. Output is a bool type \nvariable and its result is: "
              << myTestBool << ".\n\n";
 
-    int result;
-    result = isConfigSetup();
+    // Sample code to call the isConfigSetup function to set a bool used for prompting user
+    // to setup the program settings before program operation.
+    int configSetupResult;
+    configSetupResult = isConfigSetup();
     std::cout << "\nThis is creates a bool result type variable and its result is: "
-           << result << ".\n\n";
+           << configSetupResult << ".\n\n";
 
-
-//std::ifstream my_output_file;
-//my_output_file.open(fullString);
-//std::ostream >> "Testing 123";
-//bool isopening;
-//std::ofstream ifs(fullString);
-//ifs.open(fullString);
-//fs << "writing this to a file.\n";
-//ifs.close();
-
-// char* result; result = calloc(strlen(myStringPath)+strlen(two)+1, sizeof(char)); and THEN the strcpy+strcat?
- //  char result[75];
-//   char* (strlen(char* myStringPath) + strlen(char* userFileName[17])+1, sizeof(char));
-
-//   strcpy(result, userFileName);
-  // std::cout << "\nThis is the first placeholder in main for some sample code to concatenate the file path,"
-//                "\n with the filename. Output is a string type \nvariable and its result is: "
-//             << result << ".\n\n";
-//  strcat(result, myStringPath);
- //  std::cout << "\nThis is the second placeholder in main for some sample code to concatenate the file path,"
-//                "\n with the filename. Output is a string type \nvariable and its result is: "
- //            << result << ".\n\n";
-
-
-   //newbie info: Identifies the main GUI app (QApplication) as mainapp
-
+    //newbie info: Identifies the main GUI app (QApplication) as mainapp
     QApplication mainapp(argc, argv);
-
- //   //int result{0};
-
-
-    //printResult(getProcIdByName);
-
-
-   //ofstream localConfigFilePath; // my_input_file is archsimian.conf
-    //std::cout << ofstream char localConfigFilePath << std::endl;
-   //localConfigFilePath.close();
 
     // This launches the user interface (UI)
     ArchSimian guiWindow;
     guiWindow.show();
 
-    // else cout << "Unable to open file";
-
     // This closes the files opened in the sample section above
-
     return mainapp.exec();
+}
 
-    }
+
+
+
+
+
 
 // moved (old):
 //QString appendPath(const QString& path1, const QString& path2)
@@ -135,3 +88,27 @@ int main(int argc, char *argv[]){
  //     }
 //   return myConfig;
 //   }
+
+//moved (old):
+//std::ifstream my_output_file;
+//my_output_file.open(fullString);
+//std::ostream >> "Testing 123";
+//bool isopening;
+//std::ofstream ifs(fullString);
+//ifs.open(fullString);
+//fs << "writing this to a file.\n";
+//ifs.close();
+
+// char* result; result = calloc(strlen(myStringPath)+strlen(two)+1, sizeof(char)); and THEN the strcpy+strcat?
+ //  char result[75];
+//   char* (strlen(char* myStringPath) + strlen(char* userFileName[17])+1, sizeof(char));
+
+//   strcpy(result, userFileName);
+  // std::cout << "\nThis is the first placeholder in main for some sample code to concatenate the file path,"
+//                "\n with the filename. Output is a string type \nvariable and its result is: "
+//             << result << ".\n\n";
+//  strcat(result, myStringPath);
+ //  std::cout << "\nThis is the second placeholder in main for some sample code to concatenate the file path,"
+//                "\n with the filename. Output is a string type \nvariable and its result is: "
+ //            << result << ".\n\n";
+
