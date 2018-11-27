@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-// define your own namespace to hold constants
+// Defines a namespace to hold program-level constants
 namespace Constants
 
 {
@@ -15,7 +15,8 @@ const double kEpochConv2{86400.00};
 // between the lower and upper bounds representing the number of
 // artificial calendar days since a never-played-track was "last played".
 // This will cause the program to select the new track for the playlist
-// on a random basis
+// on a random basis.
+// These types may be changed in a future update to allow for user-level adjustments (within a range).
 const int kLowerRndBound{30};
 const int kUpperRndBound{120};
 
