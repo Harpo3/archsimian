@@ -43,6 +43,26 @@ void ArchSimian::on_exportplaylistButton_clicked(){
 
 }
 
+void ArchSimian::on_setlibraryButton_clicked(){
+{
+    QFileDialog dialog;
+        dialog.setFileMode(QFileDialog::Directory);
+        dialog.setOption(QFileDialog::ShowDirsOnly);
+        QString musiclibrarydirname=QFileDialog::getExistingDirectory(
+                    this,
+                    tr("Select Shared Music Library Directory"),
+                    "/"
+                    );
+        {
+    ui->setlibrarylabel->setText(QString(musiclibrarydirname));
+    // Open ifstream archsimian.conf
+    //Write "# Location of music library" to line 1, archsimian.conf
+    // Write musiclibrarydirname to line 2
+    // Close file
+       }
+}
+}
+
 void ArchSimian::on_setmmplButton_clicked(){
     {
         QFileDialog setmmpldialog;
@@ -55,6 +75,10 @@ void ArchSimian::on_setmmplButton_clicked(){
                         );
             {
         ui->setmmpllabel->setText(QString(mmbackuppldirname));
+        // Open ifstream archsimian.conf
+        //Write "# Location of MediaMonkey Playlist Backup Directory" to line 3, archsimian.conf
+        // Write mmbackuppldirname to line 4
+        // Close file
             }
     }
 }
@@ -71,21 +95,9 @@ void ArchSimian::on_setmmdbButton_clicked(){
         {
 
     ui->setmmdblabel->setText(QString(mmbackupdbdirname));
+    // Open ifstream archsimian.conf
+    //Write "# Location of MediaMonkey Database Backup Directory" to line 5, archsimian.conf
+    // Write mmbackuppldirname to line 6
+    // Close file
         }
-}
-
-void ArchSimian::on_setlibraryButton_clicked(){
-{
-    QFileDialog dialog;
-        dialog.setFileMode(QFileDialog::Directory);
-        dialog.setOption(QFileDialog::ShowDirsOnly);
-        QString musiclibrarydirname=QFileDialog::getExistingDirectory(
-                    this,
-                    tr("Select Shared Music Library Directory"),
-                    "/"
-                    );
-        {
-    ui->setlibrarylabel->setText(QString(musiclibrarydirname));
-       }
-}
 }

@@ -14,7 +14,7 @@ const double kEpochConv2{86400.00};
 // for a random number selection. The selection will be from a range
 // between the lower and upper bounds representing the number of
 // artificial calendar days since a never-played-track was "last played".
-// This will cause the program to select the new track for the playlist
+// This will cause the program to select the recent unrated track for the playlist
 // on a random basis.
 // These types may be changed in a future update to allow for user-level adjustments (within a range).
 const int kLowerRndBound{30};

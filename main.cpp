@@ -8,11 +8,12 @@
 #include <QFileInfo>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <QDir>
 
 int main(int argc, char *argv[]){
 
-    //newbie info: argc (argument count) and argv (argument vector) are
+    //Basic info: argc (argument count) and argv (argument vector) are
     //how command line arguments are passed to main() in C++.
     //argc will be the number of strings pointed to by argv. This will
     //(in practice) be 1 plus the number of arguments, as virtually all
@@ -34,16 +35,44 @@ int main(int argc, char *argv[]){
     std::cout << "\nThis is a placeholder in main for some sample code to call the "
                 "isAppRunning function with Audacious, \nto check whether the app is running using its pid "
                 "description. Output is a bool type \nvariable and its result is: "
-             << myTestBool << ".\n\n";
+             << myTestBool << ".\n";
 
-    // Sample code to call the isConfigSetup function to set a bool used for prompting user
+
+
+
+    // Call the isConfigSetup function to set a bool used for prompting user
     // to setup the program settings before program operation.
     int configSetupResult;
     configSetupResult = isConfigSetup();
-    std::cout << "\nThis is creates a bool result type variable and its result is: "
-           << configSetupResult << ".\n\n";
+    std::cout << "\nThe bool configSetupResult tests whether the user configuration exists (1) or not (0)."
+                 " The current result is: " << configSetupResult << ".\n";
 
-    //newbie info: Identifies the main GUI app (QApplication) as mainapp
+    // Declare user configuration variables
+    QString musiclibrarydirname;
+    QString mmbackuppldirname;
+    QString mmbackupdbdirname;
+
+    // If user config has been executed, read the config file contes into the variables
+    // First the location of music library into QString musiclibrarydirname
+    if (configSetupResult == 1) {
+        std::string line;
+        std::ifstream myFile (Constants::userFileName);
+        for (int lineno = 0; getline (myFile,line) && lineno < 6; lineno++)
+              {if (lineno == 1)
+              {musiclibrarydirname= QString::fromStdString(line);
+              std::cout << "\nLocation of music library placed into QString variable "
+                           "musiclibrarydirname: " << musiclibrarydirname.toStdString() << "\n.";}
+              if (lineno == 3)
+              {mmbackuppldirname = QString::fromStdString(line);
+                  std::cout << "\nLocation of MediaMonkey Playlist Backup Directory placed into QString variable "
+                               "mmbackuppldirname: " << mmbackuppldirname.toStdString() << "\n.";}
+              if (lineno == 5)
+              {mmbackupdbdirname = QString::fromStdString(line);
+                  std::cout << "\nLocation of MediaMonkey Database Backup Directory placed into QString variable "
+                               "mmbackupdbdirname: " << mmbackupdbdirname.toStdString() << "\n.";}
+    }
+    }
+    //Basic info: Identifies the main GUI app (QApplication) as mainapp
     QApplication mainapp(argc, argv);
 
     // This launches the user interface (UI)
@@ -82,7 +111,7 @@ int main(int argc, char *argv[]){
 
 //   if (my_output_file.is_open())
 //      {
-//    my_output_file << "A new test.";
+//    my_output_file << "A test.";
 //    my_output_file.close();
 //
  //     }

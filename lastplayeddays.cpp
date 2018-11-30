@@ -52,14 +52,14 @@ else            // Else MM4 lastplayed value is less than 1, the track has not b
 
     auto random_integer = uni(rng);          // returns random num of calendar days currently between 30-120
     x = currDate - (random_integer * Constants::kEpochConv2);
-    std::cout << "New track. Epoch date random selected for " << random_integer << " days ago is: " << std::fixed
+    std::cout << "Recent unrated track. Epoch date random selected for " << random_integer << " days ago is: " << std::fixed
               << std::setprecision(0) << x << ".\n";
               // returns a random last played date in epoch time between
                                         // 30-120 days before the current date
 
     //Later, add another if statement in this else section. It will set unplayed tracks to a lastplayed date
     // of currDate (today), thereby excluding unplayed tracks from playlistincludsion.
-    // User selection (create bool for include new tracks or not) will determine whether new tracks are included.
+    // User selection (create bool for include recent unrated tracks or not) will determine whether recent unrated tracks are included.
 }
 return x;    // Return the variable's value generated from either the "if" or the "else" statement
 }

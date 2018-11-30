@@ -17,17 +17,14 @@ int is_file_exist(std::string fileName)
 int isConfigSetup()
 {
     std::ifstream x (Constants::userFileName);
-    if (x.is_open())
-    {
-            std::cout << "The config file exists!" << '\n';
+    if (x.is_open())   {
             x.close();
             return true;
     }
     else {
-            std::cerr << "Couldn't open config file. Setting the bool and creating a new one.\n";
+            std::cerr << "Couldn't open config file. Setting the bool and creating one.\n";
             std::ofstream x;
             x.open(Constants::userFileName);
-            //x << "Now it has been created and here is some text.";
             x.close();
             return false;
     }
