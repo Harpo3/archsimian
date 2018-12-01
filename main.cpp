@@ -40,38 +40,6 @@ int main(int argc, char *argv[]){
 
 
 
-    // Call the isConfigSetup function to set a bool used for prompting user
-    // to setup the program settings before program operation.
-    int configSetupResult;
-    configSetupResult = isConfigSetup();
-    std::cout << "\nThe bool configSetupResult tests whether the user configuration exists (1) or not (0)."
-                 " The current result is: " << configSetupResult << ".\n";
-
-    // Declare user configuration variables
-    QString musiclibrarydirname;
-    QString mmbackuppldirname;
-    QString mmbackupdbdirname;
-
-    // If user config has been executed, read the config file contes into the variables
-    // First the location of music library into QString musiclibrarydirname
-    if (configSetupResult == 1) {
-        std::string line;
-        std::ifstream myFile (Constants::userFileName);
-        for (int lineno = 0; getline (myFile,line) && lineno < 6; lineno++)
-              {if (lineno == 1)
-              {musiclibrarydirname= QString::fromStdString(line);
-              std::cout << "\nLocation of music library placed into QString variable "
-                           "musiclibrarydirname: " << musiclibrarydirname.toStdString() << "\n.";}
-              if (lineno == 3)
-              {mmbackuppldirname = QString::fromStdString(line);
-                  std::cout << "\nLocation of MediaMonkey Playlist Backup Directory placed into QString variable "
-                               "mmbackuppldirname: " << mmbackuppldirname.toStdString() << "\n.";}
-              if (lineno == 5)
-              {mmbackupdbdirname = QString::fromStdString(line);
-                  std::cout << "\nLocation of MediaMonkey Database Backup Directory placed into QString variable "
-                               "mmbackupdbdirname: " << mmbackupdbdirname.toStdString() << "\n.";}
-    }
-    }
     //Basic info: Identifies the main GUI app (QApplication) as mainapp
     QApplication mainapp(argc, argv);
 
