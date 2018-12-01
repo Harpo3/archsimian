@@ -101,12 +101,12 @@ void ArchSimian::on_exportplaylistButton_clicked(){
 
 void ArchSimian::on_setlibraryButton_clicked(){
     QFileDialog setlibraryButton;
-    if( !setlibraryButton.exec() )
-    {
+//    if( !setlibraryButton.exec() )
+//    {
         // The user pressed the cancel button so handle this accordingly
-        return;
-    }
-    else {
+//        return;
+//    }
+//    else {
         setlibraryButton.setFileMode(QFileDialog::Directory);
         setlibraryButton.setOption(QFileDialog::ShowDirsOnly);
         QString musiclibrarydirname=QFileDialog::getExistingDirectory(
@@ -125,17 +125,17 @@ void ArchSimian::on_setlibraryButton_clicked(){
         ui->setlibraryButtonReset->setVisible(true);
         // Activate the second of three config buttons
         ui->setmmplButton->setEnabled(true);
-       }
+ //      }
 }
 
 void ArchSimian::on_setmmplButton_clicked(){  
         QFileDialog setmmpldialog;
-        if( !setmmpldialog.exec() )
-        {
+ //       if( !setmmpldialog.exec() )
+//        {
             // The user pressed the cancel button so handle this accordingly
-            return;
-        }
-        else {
+ //           return;
+ //       }
+ //       else {
             setmmpldialog.setFileMode(QFileDialog::Directory);
             setmmpldialog.setOption(QFileDialog::ShowDirsOnly);
             QString mmbackuppldirname=QFileDialog::getExistingDirectory(
@@ -154,17 +154,17 @@ void ArchSimian::on_setmmplButton_clicked(){
             ui->setmmplButtonReset->setVisible(true);
             // Activate the last of three config buttons
             ui->setmmdbButton->setEnabled(true);
-        }
+ //       }
 }
 
 void ArchSimian::on_setmmdbButton_clicked(){
         QFileDialog setmmdbdialog;
-        if( !setmmdbdialog.exec() )
-        {
+ //       if( !setmmdbdialog.exec() )
+ //       {
             // The user pressed the cancel button so handle this accordingly
-            return;
-        }
-        else {
+ //           return;
+//        }
+ //       else {
         setmmdbdialog.setFileMode(QFileDialog::Directory);
         setmmdbdialog.setOption(QFileDialog::ShowDirsOnly);
         QString mmbackupdbdirname=QFileDialog::getExistingDirectory(
@@ -181,7 +181,7 @@ void ArchSimian::on_setmmdbButton_clicked(){
         ui->setmmdbButton->setEnabled(false);
         //enable the reset button
         ui->setmmdbButtonReset->setVisible(true);
-        }
+//        }
 }
 
 void ArchSimian::on_setlibraryButtonReset_clicked()
