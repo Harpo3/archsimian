@@ -151,6 +151,12 @@
           <height>31</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome to ArchSimian! The program was created to improve the &amp;quot;primary&amp;quot; playlist you use for daily listening so you can enjoy your large library. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;First you need to identify the location where your music library is stored, then set the locations where you strored backups for your M3U playlist and the MM.DB file. Once you set these locations, you can import the database and enable all of the program features!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="toolTipDuration">
+         <number>10</number>
+        </property>
         <property name="text">
          <string>Set Library Location</string>
         </property>
@@ -169,6 +175,9 @@
         </property>
         <property name="text">
          <string>Set the home directory (top level) of the music library and store in user settings.</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -211,6 +220,9 @@
         <property name="text">
          <string>Select the shared Windows directory where you stored the backup playlists from MediaMonkey</string>
         </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
+        </property>
         <property name="wordWrap">
          <bool>true</bool>
         </property>
@@ -239,6 +251,9 @@
         </property>
         <property name="text">
          <string>Select the shared Windows directory where you stored the MediaMonkey database backup file</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -292,8 +307,17 @@
           <height>121</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to ArchSimian!&lt;/span&gt; The program was created to improve the &amp;quot;primary&amp;quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;First, you need to identify the location where your music library is stored, then set the locations where you did backups for your M3U playlist and the MM.DB file. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Once you set these, you will be able to import the database and enable all the rest of the program's features!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="toolTipDuration">
+         <number>15</number>
+        </property>
         <property name="text">
          <string>Welcome to ArchSimian! The program was created to improve the &quot;primary&quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. First you need to identify the location where your music liabrary is stored, then set the locations where you did backups for your M3U playlist and the MM.DB file. Once you set these, you can select the M3U file and import the database and enable all of the program features!</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
