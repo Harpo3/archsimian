@@ -16,6 +16,7 @@ public:
 //    ~ArchSimian();
 
 public slots:
+
     void on_setlibraryButton_clicked();
 
     void on_setmmplButton_clicked();
@@ -27,6 +28,15 @@ public slots:
     void on_importplaylistButton_clicked();
 
     void on_exportplaylistButton_clicked();
+
+    void on_setlibraryButtonReset_clicked();
+
+    void on_setmmplButtonReset_clicked();
+
+    void on_setmmdbButtonReset_clicked();
+
+
+private slots:
 
 
 private:
