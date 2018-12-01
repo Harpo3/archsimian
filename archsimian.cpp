@@ -33,39 +33,43 @@ ArchSimian::ArchSimian(QWidget *parent) :
     QString mmbackuppldirname;
     QString mmbackupdbdirname;
 
-    // If user config has been executed, read the config file contes into the variables
-    // First the location of music library into QString musiclibrarydirname
+    // If user config has been executed, read the config file contents into the variables,
+    // then load the existing locations from archsimian.conf to populate the ui labels
+
     if (configSetupResult == 1) {
         std::string line;
         std::ifstream myFile (Constants::userFileName);
         for (int lineno = 0; getline (myFile,line) && lineno < 6; lineno++)
         {
-              if (lineno == 1)
+              if (lineno == 1) // "1" is the second line of the archsimian.conf file
+               // Get the location of music library from archsimian.conf, put into QString musiclibrarydirname
               {musiclibrarydirname = QString::fromStdString(line);
+              // Load the existing locations to the ui label
               ui->setlibrarylabel->setText(musiclibrarydirname);}
-              //std::cout << "\nLocation of music library placed into QString variable "
-             //              "musiclibrarydirname: " << musiclibrarydirname.toStdString() << ".\n";}
+              //dim the current button and enable the reset button here (TBD)
+
               if (lineno == 3)
               {mmbackuppldirname = QString::fromStdString(line);
               ui->setmmpllabel->setText(mmbackuppldirname);}
-                 // std::cout << "\nLocation of MediaMonkey Playlist Backup Directory placed into QString variable "
-                            //   "mmbackuppldirname: " << mmbackuppldirname.toStdString() << ".\n";}
+              //dim the current button and enable the reset button here (TBD)
+
               if (lineno == 5)
               {mmbackupdbdirname = QString::fromStdString(line);
-               //If userconfig was already set, load the existing locations to the ui labels:
               ui->setmmdblabel->setText(mmbackupdbdirname);}
-                 // std::cout << "\nLocation of MediaMonkey Database Backup Directory placed into QString variable "
-                              // "mmbackupdbdirname: " << mmbackupdbdirname.toStdString() << "\n.";}
+              //dim the current button and enable the reset button here (TBD)
         }
     }
     // Otherwise, user config has not been set. Load instructions to ui for user to locate and set config
     else {
         ui->setlibrarylabel->setText(tr("Select the base directory of "
                                         "your music library"));
+        //dim the reset button and enable the current button here (TBD)
         ui->setmmpllabel->setText(tr("Select the shared Windows directory"
                                      " where you stored the backup playlists from MediaMonkey"));
+        //dim the reset button and enable the current button here (TBD)
         ui->setmmdblabel->setText(tr("Select the shared Windows directory"
                                        " where you stored the MediaMonkey database backup file"));
+        //dim the reset button and enable the current button here (TBD)
         }
 }
 void ArchSimian::on_addsongsButton_clicked(){
