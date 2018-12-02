@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <QApplication>
 // Defines a namespace to hold program-level constants
 namespace Constants
 
@@ -22,6 +23,8 @@ const int kUpperRndBound{120};
 
 // Constant used to standardize the user configuration file name for Arch
 const char userFileName[16]{"archsimian.conf"};
+
+
 }
 
 #endif // CONSTANTS_H

@@ -37,9 +37,37 @@ int main(int argc, char *argv[]){
                 "description. Output is a bool type \nvariable and its result is: "
              << myTestBool << ".\n";
 
+    // Declare user configuration const variables
+    const QString musiclibrarydirname;
+    const QString mmbackuppldirname;
+    const QString mmbackupdbdirname;
 
+    // User configuration: call the isConfigSetup function to set a const bool used for prompting user
+    // to setup the program settings before program operation.
+    const int configSetupResult = isConfigSetup();
+    std::cout << "\nThe bool configSetupResult tests whether the user configuration exists (1) or not (0)."
+                 " The current result is: " << configSetupResult << ".\n";
 
-
+    // If user config has already been set, read the config file into the variables,
+    // then load the existing locations from archsimian.conf
+    if (const int configSetupResult = 1) {
+        std::string line;
+        std::ifstream myFile (Constants::userFileName);  // Open the config file: archsimian.conf
+        for (int lineno = 0; getline (myFile,line) && lineno < 6; lineno++)
+        {
+            if (lineno == 1) // "1" is the second line of the archsimian.conf file
+                // Get the location of music library from archsimian.conf to set QString musiclibrarydirname
+                {const QString musiclibrarydirname = QString::fromStdString(line);
+                std::cout << line;
+     }
+            else if (lineno == 3)
+                {const QString mmbackuppldirname = QString::fromStdString(line);
+                    }
+            else if (lineno == 5)
+                {const QString mmbackupdbdirname = QString::fromStdString(line);
+                }
+        }
+    }
     //Basic info: Identifies the main GUI app (QApplication) as mainapp
     QApplication mainapp(argc, argv);
 

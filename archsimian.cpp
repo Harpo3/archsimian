@@ -14,63 +14,40 @@
 #include "ui_archsimian.h"
 #include "userconfig.h"
 
-ArchSimian::ArchSimian(QWidget *parent) :
+
+
+ArchSimian::ArchSimian(QWidget *parent) :    
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
+    //QString musiclibrarydirname;
     ui->setupUi(this);
 
-    // Declare user configuration variables
-    QString musiclibrarydirname;
-    QString mmbackuppldirname;
-    QString mmbackupdbdirname;
 
     // User configuration: set default state to "false" for user config reset buttons
     ui->setlibraryButtonReset->setVisible(false);
     ui->setmmplButtonReset->setVisible(false);
     ui->setmmdbButtonReset->setVisible(false);
 
-    // User configuration: call the isConfigSetup function to set a bool used for prompting user
-    // to setup the program settings before program operation.
-    int configSetupResult;
-    configSetupResult = isConfigSetup();
-    std::cout << "\nThe bool configSetupResult tests whether the user configuration exists (1) or not (0)."
-                 " The current result is: " << configSetupResult << ".\n";
-
-    // If user config has already been set, read the config file into the variables,
-    // then load the existing locations from archsimian.conf to populate the ui labels
-    if (configSetupResult == 1) {
-        std::string line;
-        std::ifstream myFile (Constants::userFileName);  // Open the config file: archsimian.conf
-        for (int lineno = 0; getline (myFile,line) && lineno < 6; lineno++)
-        {
-            if (lineno == 1) // "1" is the second line of the archsimian.conf file
-                // Get the location of music library from archsimian.conf to set QString musiclibrarydirname
-                {musiclibrarydirname = QString::fromStdString(line);
-                // Load the existing locations to the ui label
-                ui->setlibrarylabel->setText(musiclibrarydirname);
+    //If user config has already been set, populate the ui labels accordingly
+    if (const int configSetupResult = 1)
+    {
+                //ui->setlibrarylabel->setText(musiclibrarydirname) ; // cannot bring in variable value set from main
                 //dim the setlibraryButton button
                 ui->setlibraryButton->setEnabled(false);
                 //enable the reset button
-                ui->setlibraryButtonReset->setVisible(true);}
-
-            if (lineno == 3)
-                {mmbackuppldirname = QString::fromStdString(line);
-                    ui->setmmpllabel->setText(mmbackuppldirname);
+                ui->setlibraryButtonReset->setVisible(true);
+                //ui->setmmpllabel->setText(mmbackuppldirname); // cannot bring in variable value set from main
                 //dim the setmmplButton button
                 ui->setmmplButton->setEnabled(false);
                 //enable the reset button
-                ui->setmmplButtonReset->setVisible(true);}
-
-            if (lineno == 5)
-                {mmbackupdbdirname = QString::fromStdString(line);
-                ui->setmmdblabel->setText(mmbackupdbdirname);
+                ui->setmmplButtonReset->setVisible(true);
+                //ui->setmmdblabel->setText(mmbackupdbdirname); // cannot bring in variable value set from main
                 //dim the setmmdbButton button
                 ui->setmmdbButton->setEnabled(false);
                 //enable the reset button
                 ui->setmmdbButtonReset->setVisible(true);}
-        }
-    }
+
     else {      // Otherwise, user config has not been set. Load instructions to ui for user to locate and set config
                 // Initially, only the first of three config buttons is activated. Build the file in sequence.
         ui->setlibrarylabel->setText(tr("Select the base directory of "
@@ -109,7 +86,7 @@ void ArchSimian::on_setlibraryButton_clicked(){
 //    else {
         setlibraryButton.setFileMode(QFileDialog::Directory);
         setlibraryButton.setOption(QFileDialog::ShowDirsOnly);
-        QString musiclibrarydirname=QFileDialog::getExistingDirectory(
+        const QString musiclibrarydirname=QFileDialog::getExistingDirectory(
                     this,
                     tr("Select Shared Music Library Directory"),
                     "/"
@@ -138,7 +115,7 @@ void ArchSimian::on_setmmplButton_clicked(){
  //       else {
             setmmpldialog.setFileMode(QFileDialog::Directory);
             setmmpldialog.setOption(QFileDialog::ShowDirsOnly);
-            QString mmbackuppldirname=QFileDialog::getExistingDirectory(
+            const QString mmbackuppldirname=QFileDialog::getExistingDirectory(
                         this,
                         tr("Select MediaMonkey Playlist Backup Directory"),
                         "/"
@@ -167,7 +144,7 @@ void ArchSimian::on_setmmdbButton_clicked(){
  //       else {
         setmmdbdialog.setFileMode(QFileDialog::Directory);
         setmmdbdialog.setOption(QFileDialog::ShowDirsOnly);
-        QString mmbackupdbdirname=QFileDialog::getExistingDirectory(
+        const QString mmbackupdbdirname=QFileDialog::getExistingDirectory(
             this,
             tr("Select MediaMonkey Database (MM.DB) Backup Directory"),
             "/"
