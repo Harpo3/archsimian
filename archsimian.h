@@ -39,8 +39,17 @@ public slots:
 private slots:
 
 
+
 private:
     Ui::ArchSimian *ui;
+
+
+
+private:
+
+
+
+
 };
 
 #endif // ARCHSIMIAN_H

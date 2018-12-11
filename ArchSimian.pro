@@ -30,7 +30,8 @@ SOURCES += \
     userconfig.cpp \
     dependents.cpp \
     lastplayeddays.cpp \
-    runbashapp.cpp
+    runbashapp.cpp \
+    database.cpp
 
 HEADERS += \
     archsimian.h \
@@ -38,7 +39,8 @@ HEADERS += \
     dependents.h \
     lastplayeddays.h \
     constants.h \
-    runbashapp.h
+    runbashapp.h \
+    database.h
 
 FORMS += \
     archsimian.ui
@@ -49,4 +51,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    systray.qrc
+    systray.qrc \
+    config.qrc \
+
+DISTFILES +=
