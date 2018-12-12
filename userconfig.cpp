@@ -16,7 +16,7 @@ namespace userconfig
         // Check for existence of user configuration file (archsimian.conf).
                 std::string configEntryName;
                 std::ifstream x;
-                x.open("/home/lpc123/archsimian.conf");
+                x.open(Constants::userFileName);
                 if (!x){   // check to ensure the file opened
                     std::cerr << "Uh oh, archsimian.conf could not be opened for reading!" << std::endl;
                     exit(1);
@@ -36,7 +36,7 @@ namespace userconfig
    {        
         if (const int configSetupResult = 1) {
         std::string line;
-        std::ifstream myFile ("archsimian.conf");  // Open the config file: archsimian.conf
+        std::ifstream myFile (Constants::userFileName);  // Open the config file: archsimian.conf
         for (int lineno = 0; getline (myFile,line) && lineno < 6; lineno++)
         {
             if (lineno == 1) // "1" is the second line of the archsimian.conf file
@@ -74,15 +74,15 @@ int is_file_exist(std::string fileName)
 // bool used to prompt the user to set it up, then create the empty file. If it exists, continue.
 int isConfigSetup()
 {
-    std::ifstream x ("archsimian.conf");
+    std::ifstream x (Constants::userFileName);
     if (x.is_open())   {
             x.close();
-            return true;
+            return 1;
     }
     else {
             std::cerr << "Couldn't open config file. Setting the bool and creating one.\n";
             std::ofstream x;
-            x.open("archsimian.conf");
+            x.open(Constants::userFileName);
             x.close();
             return false;
     }

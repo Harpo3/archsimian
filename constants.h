@@ -2,9 +2,8 @@
 #define CONSTANTS_H
 
 #include <QApplication>
-// Defines a namespace to hold program-level constants
-namespace Constants
 
+namespace Constants   // Defines a namespace to hold program-level constants
 {
 // Two constants are used to convert the time format used by
 // MediaMonkey (SQL time) to epoch time
@@ -23,8 +22,5 @@ const int kUpperRndBound{120};
 
 // Constant used to standardize the user configuration file name for Arch
 const char userFileName[16]{"archsimian.conf"};
-
-
 }
-
 #endif // CONSTANTS_H

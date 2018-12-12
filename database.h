@@ -4,6 +4,6 @@
 #include <fstream>
 #include <string>
 
- int getTotalRows(std::string x);
+int getTotalRows(std::string x);
 
 #endif // DATABASE_H

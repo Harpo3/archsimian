@@ -25,7 +25,7 @@
 #include "database.h"
 #include "constants.h"
 
-using namespace userconfig;
+// Call out functions
 void load_config_file(int x);
 int isConfigSetup(int x);
 
@@ -36,9 +36,8 @@ int execvp(const char* file, const char* const (&argv)[N]) {
   return execvp(file, const_cast<char* const*>(argv));
 }
 
-int main()
+int main(int argc,char* argv[])
 {
-
     //Basic info: argc (argument count) and argv (argument vector) are
     //how command line arguments are passed to main() in C++.
     //argc will be the number of strings pointed to by argv. This will
@@ -46,7 +45,7 @@ int main()
     //implementations will prepend the name of the program to the array.
 
     // User configuration: call the isConfigSetup function to set a const bool used for prompting user
-    // to setup the program settings before program operation.
+    // to setup the program settings before program operation.    
 
     pid_t c_pid;
     c_pid = fork(); //duplicate
@@ -55,9 +54,9 @@ int main()
     // This fork is to write libtable.dsv first before further processing
     if( c_pid == 0 ){
         std::cout << "Child pid # (fork to write libtable.dsv): " << c_pid << std::endl;
-        std::string mmbackupdbdirname = getConfigEntry(5); // 1=music lib, 3=playlist, 5=mm.db dir
-        const std::string sqlpathdirname = "/home/lpc123"; // revise for QStandardPaths class if this does
-                                                       //not set with makefile for this location
+        std::string mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=music lib, 3=playlist, 5=mm.db dir
+        // revise for QStandardPaths class if this does not set with makefile for this location
+        const std::string sqlpathdirname = "/home/lpc123";
         std::string path1 = mmbackupdbdirname + "/MM.DB";
          std::cout << "path1 is: " << path1 << ".\n";
         std::string path2 = ".read " + sqlpathdirname + "/exportMMTable.sql";
@@ -120,7 +119,7 @@ int main()
        double SQL60TotTimeListened{0};
        int SQL60DayTracksTot{0};
 
-       std::string musiclibrarydirname = getConfigEntry(1); // 1=music lib, 3=playlist, 5=mm.db dir
+       std::string musiclibrarydirname = userconfig::getConfigEntry(1); // 1=music lib, 3=playlist, 5=mm.db dir
 
        double currDate = std::chrono::duration_cast<std::chrono::seconds>
                (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
@@ -299,23 +298,23 @@ int main()
      perror("fork failed");
      _exit(2); //exit failure, hard
    }
-     return 0;
 
     //Basic info: Identifies the main GUI app (QApplication) as mainapp
-    //QApplication mainapp(argc, argv);
+    QApplication mainapp(argc, argv);
 
     // This launches the user interface (UI)
-    //ArchSimian guiWindow;
-    //guiWindow.show();
+    ArchSimian guiWindow;
+    guiWindow.show();
 
     // This closes the files opened in the sample section above
 
-            //mainapp.exec();
+            mainapp.exec();
+
+
+
+  return 0;
+
 }
-
-
-
-
 
 
 
