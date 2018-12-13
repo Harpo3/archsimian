@@ -21,18 +21,32 @@ ArchSimian::ArchSimian(QWidget *parent) :
 {
     //QString musiclibrarydirnamegui;
     ui->setupUi(this);
-
-
     // User configuration: set default state to "false" for user config reset buttons
     ui->setlibraryButtonReset->setVisible(false);
     ui->setmmplButtonReset->setVisible(false);
     ui->setmmdbButtonReset->setVisible(false);
 
-    //If user config has already been set, populate the ui labels accordingly
-    if (const int configSetupResult = 1)
+    //Check whether the configuration file has any data in it
+    std::streampos size;
+    char * memblock;
+    std:: ifstream file ("archsimian.conf", std::ios::in|std::ios::binary|std::ios::ate);
+    if (file.is_open())
+    {
+      size = file.tellg();
+      memblock = new char [size];
+      file.seekg (0, std::ios::beg);
+      file.read (memblock, size);
+      file.close();
+      delete[] memblock;
+    }
+    else std::cout << "Unable to open configuration file";
+
+    //If user config has already been set, populate the ui labels accordingly 
+
+    if (size != 0)
     {
                 std::string musiclibrarydirname = userconfig::getConfigEntry(1); // archsimian.conf: 1=music lib, 3=playlist dir, 5=mm.db dir
-                ui->setlibrarylabel->setText(QString::fromStdString(musiclibrarydirname)) ;
+                ui->setlibrarylabel->setText(QString::fromStdString(musiclibrarydirname));
                 //dim the setlibraryButton button
                 ui->setlibraryButton->setEnabled(false);
                 //enable the reset button
@@ -94,10 +108,15 @@ void ArchSimian::on_setlibraryButton_clicked(){
                     "/"
                     );        
         ui->setlibrarylabel->setText(QString(musiclibrarydirname));
-        // Open ifstream archsimian.conf
-        // Write "# Location of music library" to line 1, archsimian.conf
-        // Write musiclibrarydirnamegui to line 2
-        // Close file
+
+        // Write description note and directory configuration to archsimian.conf
+        std::ofstream userconfig(Constants::userFileName);
+        std::string str("# Location of music library");
+        userconfig << str << std::endl;  // Write to line 1, archsimian.conf
+        str = musiclibrarydirname.toStdString();
+        userconfig << str << std::endl;  // Write to line 2, archsimian.conf
+        userconfig.close();
+
         // dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(false);
         //enable the reset button
@@ -123,10 +142,15 @@ void ArchSimian::on_setmmplButton_clicked(){
                         "/"
                         );            
             ui->setmmpllabel->setText(QString(mmbackuppldirname));
-            // Open ifstream archsimian.conf
-            //Write "# Location of MediaMonkey Playlist Backup Directory" to line 3, archsimian.conf
-            // Write mmbackuppldirnamegui to line 4
-            // Close file
+
+            // Write description note and directory configuration to archsimian.conf
+            std::ofstream userconfig(Constants::userFileName, std::ios::app);
+            std::string str("# Location of MediaMonkey Playlist Backup Directory");
+            userconfig << str << std::endl;  // Write to line 3, archsimian.conf
+            str = mmbackuppldirname.toStdString();
+            userconfig << str << std::endl; // Write to line 4, archsimian.conf
+            userconfig.close();
+
             //dim the setmmplButton button
             ui->setmmplButton->setEnabled(false);
             //enable the reset button
@@ -152,10 +176,15 @@ void ArchSimian::on_setmmdbButton_clicked(){
             "/"
             );
         ui->setmmdblabel->setText(QString(mmbackupdbdirname));
-        // Open ifstream archsimian.conf
-        //Write "# Location of MediaMonkey Database Backup Directory" to line 5, archsimian.conf
-        // Write mmbackuppldirnamegui to line 6
-        // Close file
+
+        // Write description note and directory configuration to archsimian.conf
+        std::ofstream userconfig(Constants::userFileName, std::ios::app);
+        std::string str("# Location of MediaMonkey Database Backup Directory");
+        userconfig << str << std::endl;  // Write to line 5, archsimian.conf
+        str = mmbackupdbdirname.toStdString();
+        userconfig << str << std::endl; // Write to line 6, archsimian.conf
+        userconfig.close();
+
         //dim the setmmdbButton button
         ui->setmmdbButton->setEnabled(false);
         //enable the reset button

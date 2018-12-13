@@ -56,7 +56,6 @@ int main(int argc,char* argv[])
     if (isConfigSetResult == 0) {
         std::cout << "Not set up: " << isConfigSetResult << ". Starting configuration setup in gui." << std::endl;
         QApplication mainapp(argc, argv);
-
         // This launches the user interface (UI)
         ArchSimian guiWindow;
         guiWindow.show();
@@ -326,8 +325,10 @@ int main(int argc,char* argv[])
      perror("fork failed");
      _exit(2); //exit failure, hard
    }
+//If config already set up launch the main GUI app (QApplication) as mainapp now
+    // which after the sts and file data have been loaded
+    if (isConfigSetResult == 1) {
 
-    //Basic info: Identifies the main GUI app (QApplication) as mainapp
     QApplication mainapp(argc, argv);
 
     // This launches the user interface (UI)
@@ -337,70 +338,6 @@ int main(int argc,char* argv[])
     // This closes the files opened in the sample section above
 
             mainapp.exec();
-
-
-
-  return 0;
-
 }
-
-
-
-// moved (old):
-//        std::cout << "\nNow let's test whether the variable values persist outside the function.\n";
-//        std::cout << "musiclibrarydirname: " << musiclibrarydirname.toStdString() << ".\n";
-//        std::cout << "mmbackuppldirname: " << mmbackuppldirname.toStdString() << ".\n";
-//        std::cout << "mmbackupdbdirname: " << mmbackupdbdirname.toStdString() << ".\n";
-
-// moved (old):
-//QString appendPath(const QString& path1, const QString& path2)
-//{
-//    return QDir::cleanPath(path1 + QDir::separator() + path2);
-//}
-// This function determines the user's HOME path, which will be used to
-// create and access configuration files
-
-//moved old:
-//   ofstream my_output_file;
-//   localConfigFilePath.open(localConfigFilePath);
- //  my_output_file.open(localConfigFilePath);
-//   if (my_input_file.fail() )
-//     {
-   //       // I need to recreate the file
-//       std::cout << "The file is not there. Need to create one.";
- //     }
-//      my_input_file.close();
-//      my_output_file.close();
-
-//   if (my_output_file.is_open())
-//      {
-//    my_output_file << "A test.";
-//    my_output_file.close();
-//
- //     }
-//   return myConfig;
-//   }
-
-//moved (old):
-//std::ifstream my_output_file;
-//my_output_file.open(fullString);
-//std::ostream >> "Testing 123";
-//bool isopening;
-//std::ofstream ifs(fullString);
-//ifs.open(fullString);
-//fs << "writing this to a file.\n";
-//ifs.close();
-
-// char* result; result = calloc(strlen(myStringPath)+strlen(two)+1, sizeof(char)); and THEN the strcpy+strcat?
- //  char result[75];
-//   char* (strlen(char* myStringPath) + strlen(char* userFileName[17])+1, sizeof(char));
-
-//   strcpy(result, userFileName);
-  // std::cout << "\nThis is the first placeholder in main for some sample code to concatenate the file path,"
-//                "\n with the filename. Output is a string type \nvariable and its result is: "
-//             << result << ".\n\n";
-//  strcat(result, myStringPath);
- //  std::cout << "\nThis is the second placeholder in main for some sample code to concatenate the file path,"
-//                "\n with the filename. Output is a string type \nvariable and its result is: "
- //            << result << ".\n\n";
-
+  return 0;
+}

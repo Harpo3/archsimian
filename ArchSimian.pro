@@ -52,6 +52,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     systray.qrc \
-    config.qrc \
 
 DISTFILES +=

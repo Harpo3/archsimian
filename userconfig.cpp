@@ -71,7 +71,7 @@ int is_file_exist(std::string fileName)
 }
 
 // Function setConfig to check for existence of user configuration file (archsimian.conf). If it does not exist, create
-// bool used to prompt the user to set it up, then create the empty file. If it exists, continue.
+// bool used to prompt the user to set it up, then create an empty archsimian.conf file. If it exists, continue.
 int isConfigSetup()
 {
     std::ifstream x (Constants::userFileName);
