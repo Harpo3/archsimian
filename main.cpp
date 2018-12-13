@@ -25,11 +25,6 @@
 #include "database.h"
 #include "constants.h"
 
-//extern const std::string musiclibrarydirname; // global for user config
-//extern const std::string mmbackuppldirname;
-//extern const std::string mmbackupdbdirname;
-
-
 // Call out functions
 void load_config_file(int x);
 int isConfigSetup(int x);
@@ -49,37 +44,18 @@ int main(int argc,char* argv[])
     //(in practice) be 1 plus the number of arguments, as virtually all
     //implementations will prepend the name of the program to the array.
 
-    // User configuration: call the isConfigSetup function to set a const bool used for prompting user
-    // to setup the program settings before program operation.
-    int isConfigSetResult(userconfig::isConfigSetup());
+    int isConfigSetResult(userconfig::isConfigSetup());// Call the isConfigSetup function to check if config has been set up
     std::cout << "The configuration is ";
-    if (isConfigSetResult == 0) {
+    if (isConfigSetResult == 0) { // Evaluate the result of isConfigSetup function
         std::cout << "Not set up: " << isConfigSetResult << ". Starting configuration setup in gui." << std::endl;
         QApplication mainapp(argc, argv);
-        // This launches the user interface (UI)
         ArchSimian guiWindow;
         guiWindow.show();
-         mainapp.exec();
-        // launch gui
-    }
-//    else {std::cout << "set up: " << isConfigSetResult << ". Loading configuration variables..." << std::endl;
-//        std::string musiclibrarydirname{userconfig::getConfigEntry(1)};// 1=music lib, 3=playlist, 5=mm.db dir
-        //std::cout << "musiclibrarydirname: " << musiclibrarydirname << std::endl;
-//        std::string mmbackuppldirname{userconfig::getConfigEntry(3)};
-        //std::cout << "mmbackuppldirname: " << mmbackuppldirname << std::endl;
-//        std::string mmbackupdbdirname{userconfig::getConfigEntry(5)};
-        //std::cout << "mmbackupdbdirname: " << mmbackupdbdirname << std::endl;
-//    }
-//    std::cout << "musiclibrarydirname: " << musiclibrarydirname << std::endl;
-//    std::cout << "mmbackuppldirname: " << mmbackuppldirname << std::endl;
-//    std::cout << "mmbackupdbdirname: " << mmbackupdbdirname << std::endl;
-
-    pid_t c_pid;
+        mainapp.exec();// launch gui
+        }
+    pid_t c_pid;// Set up fork; parent to get database table, child to use table to clean it up
     c_pid = fork(); //duplicate
-
-    // Get songs table from MM4 database, and save as libtable.dsv;
-    // This fork is to write libtable.dsv first before further processing
-    if( c_pid == 0 ){
+    if( c_pid == 0 ){ // Parent process: Get songs table from MM4 database, and save as libtable.dsv;
         std::cout << "Child pid # (fork to write libtable.dsv): " << c_pid << std::endl;
         std::string mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=music lib, 3=playlist, 5=mm.db dir
         // revise for QStandardPaths class if this does not set with makefile for this location
@@ -94,13 +70,12 @@ int main(int argc,char* argv[])
         perror("execvp");
         if (execvp("sqlite3", argv) == -1)
             exit(EXIT_FAILURE);        
-    }
-    else if (c_pid > 0){
-       // Gather stats;
-       // First, output library with cleaned track paths to cleanlib.dsv
-       sleep(1);  // delay to provide time for child process to write libtable.dsv
-       std::string databaseFile = "libtable.dsv"; // now use it as input file
-       std::ofstream outf("cleanlib.dsv"); // and write to this after cleaned up
+        }
+    else if (c_pid > 0){  // Child process starts here. Write libtable.dsv and gather stats
+       // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
+       sleep(1);  // needs delay for child process to finish writing libtable.dsv
+       std::string databaseFile = "libtable.dsv"; // now we can use it as input file
+       std::ofstream outf("cleanlib.dsv"); // output file for writing clean track paths
        std::ifstream data(databaseFile);
        std::fstream filestr1;
        filestr1.open ("libtable.dsv");
@@ -147,7 +122,6 @@ int main(int argc,char* argv[])
        int SQL60DayTracksTot{0};
 
        std::string musiclibrarydirname = userconfig::getConfigEntry(1); // 1=music lib, 3=playlist, 5=mm.db dir
-
        double currDate = std::chrono::duration_cast<std::chrono::seconds>
                (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
        // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569  43441.4712847 43440.4712847
@@ -169,7 +143,6 @@ int main(int argc,char* argv[])
                int tokenCount{0};
 
                while (std::getline(iss, token, '^')) {
-
                    // TOKEN PROCESSING - COL 8
                    // Col 8 is the song path, which needs to be corrected for linux and library user path specified
                    if (tokenCount == 8) { // Fix the dir string: remove colon, insert library user path,
@@ -271,7 +244,6 @@ int main(int argc,char* argv[])
                    outf << str << std::endl; // The string is valid, write to clean file
                    ++ stringCount;
                }
-
            // Close files opened for reading and writing
            data.close();
            outf.close();
@@ -317,27 +289,17 @@ int main(int argc,char* argv[])
          {
            std::cout << "Error opening file" << std::endl;
          }
-
-   printf("Parent process (to write cleanlib.dsv) pid #: %d\n", c_pid);
-   }
-    else {
-     //error: The return of fork() is negative
-     perror("fork failed");
-     _exit(2); //exit failure, hard
-   }
-//If config already set up launch the main GUI app (QApplication) as mainapp now
-    // which after the sts and file data have been loaded
-    if (isConfigSetResult == 1) {
-
+         }
+    else if (c_pid < 0){  //error: The return of fork() is negative
+        perror("fork failed");
+        _exit(2); //exit failure, hard
+        }
+    if (isConfigSetResult == 1) {    //If config already set up launch the main GUI app (QApplication) as mainapp now
+                                    // which after the sts and file data have been loaded
     QApplication mainapp(argc, argv);
-
-    // This launches the user interface (UI)
     ArchSimian guiWindow;
-    guiWindow.show();
-
-    // This closes the files opened in the sample section above
-
-            mainapp.exec();
+    guiWindow.show();// This launches the user interface (UI)
+    mainapp.exec();
 }
   return 0;
 }
