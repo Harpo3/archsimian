@@ -63,7 +63,7 @@ namespace userconfig
     }
 }
 
-//Function to determine whether a user configuration file exists
+//Function to determine whether a file exists
 int is_file_exist(std::string fileName)
 {
     std::ifstream infile(fileName);
@@ -84,7 +84,8 @@ int isConfigSetup()
             std::ofstream x;
             x.open(Constants::userFileName);
             x.close();
-            return false;
+            return 0;
+
     }
 }
 }

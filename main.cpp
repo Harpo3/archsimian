@@ -25,6 +25,11 @@
 #include "database.h"
 #include "constants.h"
 
+//extern const std::string musiclibrarydirname; // global for user config
+//extern const std::string mmbackuppldirname;
+//extern const std::string mmbackupdbdirname;
+
+
 // Call out functions
 void load_config_file(int x);
 int isConfigSetup(int x);
@@ -45,7 +50,30 @@ int main(int argc,char* argv[])
     //implementations will prepend the name of the program to the array.
 
     // User configuration: call the isConfigSetup function to set a const bool used for prompting user
-    // to setup the program settings before program operation.    
+    // to setup the program settings before program operation.
+    int isConfigSetResult(userconfig::isConfigSetup());
+    std::cout << "The configuration is ";
+    if (isConfigSetResult == 0) {
+        std::cout << "Not set up: " << isConfigSetResult << ". Starting configuration setup in gui." << std::endl;
+        QApplication mainapp(argc, argv);
+
+        // This launches the user interface (UI)
+        ArchSimian guiWindow;
+        guiWindow.show();
+         mainapp.exec();
+        // launch gui
+    }
+//    else {std::cout << "set up: " << isConfigSetResult << ". Loading configuration variables..." << std::endl;
+//        std::string musiclibrarydirname{userconfig::getConfigEntry(1)};// 1=music lib, 3=playlist, 5=mm.db dir
+        //std::cout << "musiclibrarydirname: " << musiclibrarydirname << std::endl;
+//        std::string mmbackuppldirname{userconfig::getConfigEntry(3)};
+        //std::cout << "mmbackuppldirname: " << mmbackuppldirname << std::endl;
+//        std::string mmbackupdbdirname{userconfig::getConfigEntry(5)};
+        //std::cout << "mmbackupdbdirname: " << mmbackupdbdirname << std::endl;
+//    }
+//    std::cout << "musiclibrarydirname: " << musiclibrarydirname << std::endl;
+//    std::cout << "mmbackuppldirname: " << mmbackuppldirname << std::endl;
+//    std::cout << "mmbackupdbdirname: " << mmbackupdbdirname << std::endl;
 
     pid_t c_pid;
     c_pid = fork(); //duplicate

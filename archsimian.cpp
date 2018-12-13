@@ -15,12 +15,11 @@
 #include "userconfig.h"
 
 
-
 ArchSimian::ArchSimian(QWidget *parent) :    
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
-    //QString musiclibrarydirname;
+    //QString musiclibrarydirnamegui;
     ui->setupUi(this);
 
 
@@ -32,17 +31,20 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //If user config has already been set, populate the ui labels accordingly
     if (const int configSetupResult = 1)
     {
-                //ui->setlibrarylabel->setText(musiclibrarydirname) ; // cannot bring in variable value set from main
+                std::string musiclibrarydirname = userconfig::getConfigEntry(1); // archsimian.conf: 1=music lib, 3=playlist dir, 5=mm.db dir
+                ui->setlibrarylabel->setText(QString::fromStdString(musiclibrarydirname)) ;
                 //dim the setlibraryButton button
                 ui->setlibraryButton->setEnabled(false);
                 //enable the reset button
                 ui->setlibraryButtonReset->setVisible(true);
-                //ui->setmmpllabel->setText(mmbackuppldirname); // cannot bring in variable value set from main
+                std::string mmbackuppldirname = userconfig::getConfigEntry(3); // archsimian.conf: 1=music lib, 3=playlist dir, 5=mm.db dir
+                ui->setmmpllabel->setText(QString::fromStdString(mmbackuppldirname));
                 //dim the setmmplButton button
                 ui->setmmplButton->setEnabled(false);
                 //enable the reset button
                 ui->setmmplButtonReset->setVisible(true);
-                //ui->setmmdblabel->setText(mmbackupdbdirname); // cannot bring in variable value set from main
+                std::string mmbackupdbdirname = userconfig::getConfigEntry(5); // archsimian.conf: 1=music lib, 3=playlist dir, 5=mm.db dir
+                ui->setmmdblabel->setText(QString::fromStdString(mmbackupdbdirname));
                 //dim the setmmdbButton button
                 ui->setmmdbButton->setEnabled(false);
                 //enable the reset button
@@ -94,7 +96,7 @@ void ArchSimian::on_setlibraryButton_clicked(){
         ui->setlibrarylabel->setText(QString(musiclibrarydirname));
         // Open ifstream archsimian.conf
         // Write "# Location of music library" to line 1, archsimian.conf
-        // Write musiclibrarydirname to line 2
+        // Write musiclibrarydirnamegui to line 2
         // Close file
         // dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(false);
@@ -123,7 +125,7 @@ void ArchSimian::on_setmmplButton_clicked(){
             ui->setmmpllabel->setText(QString(mmbackuppldirname));
             // Open ifstream archsimian.conf
             //Write "# Location of MediaMonkey Playlist Backup Directory" to line 3, archsimian.conf
-            // Write mmbackuppldirname to line 4
+            // Write mmbackuppldirnamegui to line 4
             // Close file
             //dim the setmmplButton button
             ui->setmmplButton->setEnabled(false);
@@ -152,7 +154,7 @@ void ArchSimian::on_setmmdbButton_clicked(){
         ui->setmmdblabel->setText(QString(mmbackupdbdirname));
         // Open ifstream archsimian.conf
         //Write "# Location of MediaMonkey Database Backup Directory" to line 5, archsimian.conf
-        // Write mmbackuppldirname to line 6
+        // Write mmbackuppldirnamegui to line 6
         // Close file
         //dim the setmmdbButton button
         ui->setmmdbButton->setEnabled(false);
