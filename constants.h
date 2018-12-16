@@ -18,7 +18,7 @@ const double kEpochConv2{86400.00};
 // on a random basis.
 // These types may be changed in a future update to allow for user-level adjustments (within a range).
 const int kLowerRndBound{30};
-const int kUpperRndBound{120};
+const int kUpperRndBound{500};
 
 // Constant used to standardize the user configuration file name for Arch
 const char userFileName[16]{"archsimian.conf"};

@@ -1,22 +1,22 @@
-#include <QApplication>
-#include <QFileInfo>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <QDir>
+//#include <QApplication>
+//#include <QFileInfo>
+//#include <QDir>
+//#include <cassert>
+//#include <stdio.h>
+//#include <sys/types.h>
+//#include <unistd.h>
+//#include <sys/wait.h>
+//#include <sqlite3.h>
+//#include <stdlib.h>
+//#include <iostream>
+//#include <fstream>
+//#include <string>
+//#include <ctime>
+//#include <chrono>
+//#include <errno.h>
+//#include <stdio.h>
 #include <sstream>
-#include <ctime>
-#include <chrono>
-#include <cassert>
-#include <stdio.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <sys/wait.h>
-#include <sqlite3.h>
-#include <unistd.h>
-#include <stdio.h>
 #include "archsimian.h"
 #include "dependents.h"
 #include "userconfig.h"
@@ -25,36 +25,25 @@
 #include "database.h"
 #include "constants.h"
 
-// Call out functions
-void load_config_file(int x);
-int isConfigSetup(int x);
-
-//Function to execute command line with parameters
 template <std::size_t N>
-int execvp(const char* file, const char* const (&argv)[N]) {
+int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
   assert((N > 0) && (argv[N - 1] == nullptr));
   return execvp(file, const_cast<char* const*>(argv));
 }
 
 int main(int argc,char* argv[])
 {
-    //Basic info: argc (argument count) and argv (argument vector) are
-    //how command line arguments are passed to main() in C++.
-    //argc will be the number of strings pointed to by argv. This will
-    //(in practice) be 1 plus the number of arguments, as virtually all
-    //implementations will prepend the name of the program to the array.
-
     int isConfigSetResult(userconfig::isConfigSetup());// Call the isConfigSetup function to check if config has been set up
     std::cout << "The configuration is ";
-    if (isConfigSetResult == 0) { // Evaluate the result of isConfigSetup function
+    if (isConfigSetResult == 0) { // Evaluate and run gui for user config setup, if result is 0, otherwise continue
         std::cout << "Not set up: " << isConfigSetResult << ". Starting configuration setup in gui." << std::endl;
         QApplication mainapp(argc, argv);
         ArchSimian guiWindow;
         guiWindow.show();
         mainapp.exec();// launch gui
-        }
-    pid_t c_pid;// Set up fork; parent to get database table, child to use table to clean it up
-    c_pid = fork(); //duplicate
+        }    
+    pid_t c_pid;// Create fork object; parent to get database table, child to use table to clean it up
+    c_pid = fork(); // Run fork function
     if( c_pid == 0 ){ // Parent process: Get songs table from MM4 database, and save as libtable.dsv;
         std::cout << "Child pid # (fork to write libtable.dsv): " << c_pid << std::endl;
         std::string mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=music lib, 3=playlist, 5=mm.db dir
@@ -74,13 +63,14 @@ int main(int argc,char* argv[])
     else if (c_pid > 0){  // Child process starts here. Write libtable.dsv and gather stats
        // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
        sleep(1);  // needs delay for child process to finish writing libtable.dsv
-       std::string databaseFile = "libtable.dsv"; // now we can use it as input file
-       std::ofstream outf("cleanlib.dsv"); // output file for writing clean track paths
-       std::ifstream data(databaseFile);
        std::fstream filestr1;
        filestr1.open ("libtable.dsv");
          if (filestr1.is_open()) {filestr1.close();}
          else {std::cout << "Error opening libtable.dsv file after it was created in child process." << std::endl;}
+       std::string databaseFile = "libtable.dsv"; // now we can use it as input file
+       std::ofstream outf("cleanlib.dsv"); // output file for writing clean track paths
+       std::ifstream primarySongsTable(databaseFile);
+
 
        // Declare statistical variables to be collected
 
@@ -127,26 +117,27 @@ int main(int argc,char* argv[])
        // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569  43441.4712847 43440.4712847
        double currSQLDate = (currDate / 86400) + 25569;        // This will go to lastplayed .cpp and .h
 
-       if (!data.is_open())
+       if (!primarySongsTable.is_open())
            {
                std::exit(EXIT_FAILURE);
            }
        std::string str;
        int stringCount{0};
-       while (std::getline(data, str))
-           {
+       while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
+               // Declare variables applicable to all rows
                std::istringstream iss(str);
                std::string strnew;
                std::string token;
                std::string tempTokenTrackTime;
-               std::string str2 ("\\");               
+               std::string tempTokenLastPlayedTime{"0.0"};
                int tokenCount{0};
 
-               while (std::getline(iss, token, '^')) {
+               while (std::getline(iss, token, '^')) { // Inner loop: iterate through each column (token) of row
                    // TOKEN PROCESSING - COL 8
                    // Col 8 is the song path, which needs to be corrected for linux and library user path specified
                    if (tokenCount == 8) { // Fix the dir string: remove colon, insert library user path,
                        // and correct the dir symbol from \ to /
+                       std::string str2 ("\\");
                        std::size_t found = str.find(str2);
                        if (found!=std::string::npos)
                        {// colon is one char before the first dir symbol
@@ -156,16 +147,19 @@ int main(int argc,char* argv[])
                            found=str.find("third dir symbol",found+1,1);
                            str.replace(str.find(str2),str2.length(),"/");
                        }
-                       token = str;
+                       token = str; // set token to revised string with corrected path
                    }
-                   // Store the time in milliseconds (col 12) in tempTokenTrackTime variable
+                   // Store the time in milliseconds (col 12) in tempTokenTrackTime text variable
                    if (tokenCount == 12) {tempTokenTrackTime = token;}
+                   // Store the lastplayed date string tempTokenLastPlayedTime text variable
+                   if (tokenCount == 17) {tempTokenLastPlayedTime = token;}
 
                    // TOKEN PROCESSING - COL 17
-                   // Col 17 is used to collect lastplayed stats to compute avg listening time
+                   // Collect lastplayed stats to compute avg listening time
                    double tempLastPlayedDate{0};
+                   std::string strrandom;
                    if (tokenCount == 17) {
-                       tempLastPlayedDate = ::atof(token.c_str());//valid C++ syntax to convert a token string to a double.
+                       tempLastPlayedDate = ::atof(token.c_str()); //valid C++ syntax to convert a token string to a double.
                        if (tempLastPlayedDate > (currSQLDate - 60.9999))
                        {
                            if (tempLastPlayedDate > (currSQLDate - 10.9999))
@@ -191,15 +185,15 @@ int main(int argc,char* argv[])
                            if (tempLastPlayedDate <= (currSQLDate - 51) && (tempLastPlayedDate > (currSQLDate - 60.9999)))
                                {int timeint = stoi(tempTokenTrackTime);
                                SQL60TotTimeListened = SQL60TotTimeListened + timeint;
-                               ++SQL60DayTracksTot;}
+                               ++SQL60DayTracksTot;}                           
                            }
-                       }
+                   }
                    // TOKEN PROCESSING - COLS 12, 29
                    // Then, check the current line for the GroupDesc (rating code, col 29), which is
                    // then used to increment the song quantity and song time accordingly
                    // Cols 12 and 29 are for song time and GroupDesc (rating code)
                    // Collect statistical data for times and qtys of each rating category
-                       if (tokenCount == 29 && token == "0") {
+                   if (tokenCount == 29 && token == "0") {
                            int timeint = stoi(tempTokenTrackTime);
                            rCode0MsTotTime = rCode0MsTotTime + timeint;
                            ++rCode0TotTrackQty;
@@ -245,10 +239,10 @@ int main(int argc,char* argv[])
                    ++ stringCount;
                }
            // Close files opened for reading and writing
-           data.close();
+           primarySongsTable.close();
            outf.close();
 
-       // Compile statistics and print results to console for program integration tasks later
+       // Compile statistics and print results to console for program integration tasks (TBD)
        int totalLibQty = rCode0TotTrackQty + rCode1TotTrackQty + rCode3TotTrackQty + rCode4TotTrackQty +
                rCode5TotTrackQty + rCode6TotTrackQty + rCode7TotTrackQty + rCode8TotTrackQty;
        int totalRatedQty = totalLibQty - rCode0TotTrackQty;
@@ -281,8 +275,8 @@ int main(int argc,char* argv[])
          filestr.open ("cleanlib.dsv");
          if (filestr.is_open())
          {
-           std::cout << "File cleanlib.dsv successfully created. Deleting libtable.dsv." << std::endl;
-           remove("libtable.dsv");
+           //std::cout << "File cleanlib.dsv successfully created. Deleting libtable.dsv." << std::endl;
+           //remove("libtable.dsv");
            filestr.close();
          }
          else
@@ -290,11 +284,103 @@ int main(int argc,char* argv[])
            std::cout << "Error opening file" << std::endl;
          }
          }
-    else if (c_pid < 0){  //error: The return of fork() is negative
+    else { // if (c_pid < 0) error check: The return of fork() is negative
         perror("fork failed");
         _exit(2); //exit failure, hard
         }
-    if (isConfigSetResult == 1) {    //If config already set up launch the main GUI app (QApplication) as mainapp now
+
+    //////////////////////
+
+    std::fstream filestr2;
+    filestr2.open ("cleanlib.dsv");
+    if (filestr2.is_open()) {filestr2.close();}
+    else {std::cout << "Error opening cleanlib.dsv file after it was created in child process." << std::endl;}
+    std::string cleanlibrary = "cleanlib.dsv"; // now we can use it as input file
+    std::ofstream outfrated("rated.dsv"); // output file for writing clean track paths
+    std::ifstream cleanedSongsTable(cleanlibrary);
+    bool skiprow{false};
+
+    // Check rating (stars) code (col 13), then lastplayed (col 17), then GroupDesc (col 29)
+    // Evaluate if col 17 is "0.0" if so, replace string with random lastplayed date. Then compare
+    // col 13 data to col 29 val, and if 29 is not one of the ratings codes, use 13 to assign the
+    // correct code. Later version: when user opts to write to tags, write changed TIT1 value to tag
+
+    if (!cleanedSongsTable.is_open())
+    {
+        std::cout << "Error opening cleanedSongsTable." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    std::string str;
+    int stringCount{0};
+    while (std::getline(cleanedSongsTable, str)) {   // Outer loop: iterate through rows of cleanedSongsTable
+        // Declare variables applicable to all rows
+        std::istringstream iss(str);
+        std::string strnew;
+        std::string token;
+        std::string tempTokenStarRating; //used to filter rows where star rating is zero;
+        int tokenCount{0}; //token count is the number of delimiter characters within the string
+        std::string strrandom; // store random number generated in a text variable
+        skiprow=false;
+
+        while (std::getline(iss, token, '^'))
+        {
+            // Inner loop: iterate through each column (token) of row
+            // TOKEN PROCESSING - COL 13 (delimiter # 12)
+            // Store the star rating (col 13) in the tempTokenStarRating text variable
+            if (tokenCount == 13) {tempTokenStarRating = token;}
+
+            // TOKEN PROCESSING - COL 17 (delimiter #15 -text- delimiter #16)
+            // Evaluates whether a lastplayed date (col 17) is zero, if so, replace with a random date
+            //if (tokenCount == 17) std::cout << token << std::endl;
+            if (tempTokenStarRating != "0" && tokenCount == 17 && token == ("0.0"))
+                //&& tempTokenStarRating != "0")// generate a random lastplayed date if its current
+                //  value is "0" unless track has a zero star rating
+            {
+                //std::cout << "Col 17 DateLastPlayed not found for: " << str << std::endl;
+                // Process a function to generate a random date 30-500 days ago then save to a string
+                double rndresult{0.0};
+                int intconvert;
+                rndresult = getNewRandomLPDate(rndresult);
+                if (rndresult == 0.0)
+                {std::cout << "Error obtaining random number at row: " << token << std::endl;}
+                intconvert = int (rndresult); // convert the random number to an integer
+                strrandom = std::to_string(intconvert); // convert the integer to string
+
+                signed int poscount = 0;
+                signed int myspot = 0;
+                std::size_t found = str.find_first_of("^");
+                while (found!=std::string::npos)
+                {
+                    if (poscount == 16) {myspot = found+1;}
+                    found=str.find_first_of("^",++found);
+                    ++poscount;
+                }
+                str.replace(myspot,3,strrandom);
+            }
+            // TOKEN PROCESSING - COLS 13, 29
+            // Then, check the current line for the GroupDesc (rating code, col 29), which is
+            // then compared with the col 13 star rating temp variable
+            // If there is no rating and a "0" is assigned as a rating code,
+            // do not write the row to new file
+            if (tokenCount == 29 && token == "0") {
+                // do not write row - set skip variable skiprow
+                skiprow = true;
+            }
+            ++ tokenCount;
+        }
+        if (skiprow == false) { // If the track is rated
+            outfrated << str << std::endl; // The string is valid, write to clean file
+        }
+    }
+    ++ stringCount;
+
+    // Close files opened for reading and writing
+    cleanedSongsTable.close();
+    outfrated.close();
+
+    ///////////////////////////////
+
+    if (isConfigSetResult == 1) { //If user config setup was already run (result is 1) run GUI app here
                                     // which after the sts and file data have been loaded
     QApplication mainapp(argc, argv);
     ArchSimian guiWindow;

@@ -9,4 +9,9 @@
 
 double getLastPlayedDays (double mm4LastPlayedDays);
 
+
+// Function used to generate a random lastplayed date if a rated track has not
+// yet been played. The date is excluded from collection of played statistics
+double getNewRandomLPDate (double x);
+
 #endif // LASTPLAYEDDAYS_H
