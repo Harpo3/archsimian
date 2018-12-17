@@ -73,7 +73,7 @@
           <item>
            <widget class="QLabel" name="setgetplaylistLabel">
             <property name="text">
-             <string>Select playlist for appending with more tracks</string>
+             <string>Select playlist for adding tracks</string>
             </property>
            </widget>
           </item>

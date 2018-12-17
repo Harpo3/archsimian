@@ -26,7 +26,7 @@ int isConfigSetup()
 
 // Retrieves a specific entry in the user configuration file (archsimian.conf).
 // for assignment to a local variable
-std::string getConfigEntry(int z) // z: 1=music lib, 3=playlist, 5=mm.db dir
+std::string getConfigEntry(int z) // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
 {
     std::string configEntryName;
     std::ifstream x;
@@ -37,7 +37,7 @@ std::string getConfigEntry(int z) // z: 1=music lib, 3=playlist, 5=mm.db dir
     }
     std::string y;
     // Get the location of the archsimian.conf entry
-    for (int lineno = 0; getline (x,y) && lineno < 6; lineno++) {
+    for (int lineno = 0; getline (x,y) && lineno < 8; lineno++) {
         if (lineno == z) {configEntryName = y;}
     }
     return configEntryName;
