@@ -9,22 +9,14 @@
 
 namespace userconfig
 {
-//    extern QString musiclibrarydirname;
-//    extern QString mmbackuppldirname;
- //   extern QString mmbackupdbdirname;
 
-void load_config_file();
-
-//Function to determine whether a user configuration file exists
-bool is_file_exist(std::string fileName);
-
-// Function setConfig to check fo existence of user configuration file (archsimian.conf). If it does not exist, create
-// bool used to prompt the user to set it up, then create the empty file. If it exists, continue.
+// Function to check for existence of user configuration file (archsimian.conf). If it does not exist, create
+// bool used to prompt the user to set it up, then create an empty archsimian.conf file. If it exists, continue.
 int isConfigSetup();
 
-
-std::string getConfigEntry(int z);
-
+// Retrieves a specific entry in the user configuration file (archsimian.conf).
+// for assignment to a local variable
+std::string getConfigEntry(int z); // z: 1=music lib, 3=playlist, 5=mm.db dir
 
 }
 #endif // USERCONFIG_H

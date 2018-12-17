@@ -22,7 +22,6 @@
 #include "userconfig.h"
 #include "runbashapp.h"
 #include "lastplayeddays.h"
-#include "database.h"
 #include "constants.h"
 
 template <std::size_t N>
@@ -55,7 +54,7 @@ int main(int argc,char* argv[])
         std::cout << "path2 is: " << path2 << ".\n";
         const char* const argv[] = {" ", path1.c_str(), path2.c_str(), nullptr};
         //std::cout << "Setting up path1: " << path1 << " and path 2: " << path2 << std::endl;
-        execvp("sqlite3", argv);        
+        execvp("sqlite3", argv);
         perror("execvp");
         if (execvp("sqlite3", argv) == -1)
             exit(EXIT_FAILURE);        

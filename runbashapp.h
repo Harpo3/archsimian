@@ -6,4 +6,7 @@
 
 std::string exec(const char* cmd);
 
+template <std::size_t N>
+int execvp(const char* file, const char* const (&argv)[N]);
+
 #endif // RUNBASHAPP_H

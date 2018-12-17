@@ -25,7 +25,7 @@ public slots:
 
     void on_addsongsButton_clicked();
 
-    void on_importplaylistButton_clicked();
+    void on_getplaylistButton_clicked();
 
     void on_exportplaylistButton_clicked();
 
@@ -37,6 +37,8 @@ public slots:
 
 
 private slots:
+
+
 
 
 

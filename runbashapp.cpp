@@ -4,6 +4,10 @@
 #include <stdexcept>
 #include <string>
 #include <array>
+#include <sstream>
+#include <unistd.h>
+
+
 
 // Function to execute a bash command and get result
 std::string exec(const char* cmd)
@@ -18,3 +22,4 @@ std::string exec(const char* cmd)
     }
     return result;
 }
+

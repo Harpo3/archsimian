@@ -14,6 +14,9 @@
 #include "ui_archsimian.h"
 #include "userconfig.h"
 
+//std::string musiclibrarydirname;
+//std::string mmbackuppldirname;
+//std::string mmbackupdbdirname;
 
 ArchSimian::ArchSimian(QWidget *parent) :    
     QMainWindow(parent),
@@ -84,9 +87,8 @@ void ArchSimian::on_addsongsButton_clicked(){
 
 }
 
-void ArchSimian::on_importplaylistButton_clicked(){
 
-}
+
 
 void ArchSimian::on_exportplaylistButton_clicked(){
 
@@ -211,4 +213,20 @@ void ArchSimian::on_setmmdbButtonReset_clicked()
     //dim the reset button
 
     //enable the current button
+}
+
+// User selects playlist from configured directory for 'backup playlists'
+void ArchSimian::on_getplaylistButton_clicked()
+{
+    QFileDialog setgetplaylistdialog;
+    QString selectedplaylist = QFileDialog::getOpenFileName (
+                this,
+                "Select playlist for which you will add tracks",
+                QString::fromStdString(userconfig::getConfigEntry(3)),
+                "Playlists (*.m3u)");
+    ui->setgetplaylistLabel->setText(QString(selectedplaylist));
+
+
+
+    //setgetplaylistdialog.Directory(mmbackuppldirname);
 }

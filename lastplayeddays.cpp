@@ -64,7 +64,6 @@ else            // Else MM4 lastplayed value is less than 1, the track has not b
 return x;    // Return the variable's value generated from either the "if" or the "else" statement
 }
 
-
 // Function used to generate a random lastplayed date if a rated track has not
 // yet been played. The date is excluded from collection of played statistics.
 // This provides a variable to store the random date in SQL time format
