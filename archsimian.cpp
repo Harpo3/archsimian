@@ -45,7 +45,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     //If configuration has already been set, populate the ui labels accordingly
     if (size != 0)
-    {   // archsimian.conf: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+    {   // getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
         std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
         ui->setlibrarylabel->setText(QString::fromStdString(s_musiclibrarydirname));
         //dim the setlibraryButton button
@@ -84,6 +84,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
     }
 }
+
 void ArchSimian::on_addsongsButton_clicked(){
 
 }
@@ -117,7 +118,7 @@ void ArchSimian::on_setlibraryButton_clicked(){
     userconfig.close();
     // dim the setlibraryButton button
     ui->setlibraryButton->setEnabled(false);
-    //enable the reset button
+    // Enable the reset button
     ui->setlibraryButtonReset->setVisible(true);
     // Activate the second of three config buttons
     ui->setmmplButton->setEnabled(true);

@@ -30,7 +30,9 @@ SOURCES += \
     userconfig.cpp \
     dependents.cpp \
     lastplayeddays.cpp \
-    runbashapp.cpp
+    runbashapp.cpp \
+    getrated.cpp \
+    getcleanlib.cpp
 
 HEADERS += \
     archsimian.h \
@@ -38,7 +40,9 @@ HEADERS += \
     dependents.h \
     lastplayeddays.h \
     constants.h \
-    runbashapp.h
+    runbashapp.h \
+    getrated.h \
+    getcleanlib.h
 
 FORMS += \
     archsimian.ui
