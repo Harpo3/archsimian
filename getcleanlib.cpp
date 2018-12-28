@@ -1,49 +1,20 @@
 #include <sstream>
 #include <unistd.h>
-#include "archsimian.h"
-#include "dependents.h"
 #include "userconfig.h"
-#include "runbashapp.h"
-#include "lastplayeddays.h"
 #include "constants.h"
-#include "getrated.h"
 
-
-void getCleanLib(int *_srCode0TotTrackQty,
-                 int *_srCode0MsTotTime,
-                 int *_srCode1TotTrackQty,
-                 int *_srCode1MsTotTime,
-                 int *_srCode3TotTrackQty,
-                 int *_srCode3MsTotTime,
-                 int *_srCode4TotTrackQty,
-                 int *_srCode4MsTotTime,
-                 int *_srCode5TotTrackQty,
-                 int *_srCode5MsTotTime,
-                 int *_srCode6TotTrackQty,
-                 int *_srCode6MsTotTime,
-                 int *_srCode7TotTrackQty,
-                 int *_srCode7MsTotTime,
-                 int *_srCode8TotTrackQty,
-                 int *_srCode8MsTotTime,
-                 int *_sSQL10TotTimeListened,
-                 int *_sSQL10DayTracksTot,
-                 double *_sSQL20TotTimeListened,
-                 int *_sSQL20DayTracksTot,
-                 double *_sSQL30TotTimeListened,
-                 int *_sSQL30DayTracksTot,
-                 double *_sSQL40TotTimeListened,
-                 int *_sSQL40DayTracksTot,
-                 double *_sSQL50TotTimeListened,
-                 int *_sSQL50DayTracksTot,
-                 double *_sSQL60TotTimeListened,
-                 int *_sSQL60DayTracksTot) {
-
-//*************************************************************************
-
+void getCleanLib(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1TotTrackQty,int *_srCode1MsTotTime,
+int *_srCode3TotTrackQty,int *_srCode3MsTotTime,int *_srCode4TotTrackQty,int *_srCode4MsTotTime,
+int *_srCode5TotTrackQty,int *_srCode5MsTotTime,int *_srCode6TotTrackQty,int *_srCode6MsTotTime,
+int *_srCode7TotTrackQty,int *_srCode7MsTotTime,int *_srCode8TotTrackQty,int *_srCode8MsTotTime,
+int *_sSQL10TotTimeListened,int *_sSQL10DayTracksTot,double *_sSQL20TotTimeListened,
+int *_sSQL20DayTracksTot,double *_sSQL30TotTimeListened,int *_sSQL30DayTracksTot,double *_sSQL40TotTimeListened,
+int *_sSQL40DayTracksTot,double *_sSQL50TotTimeListened,int *_sSQL50DayTracksTot,double *_sSQL60TotTimeListened,
+int *_sSQL60DayTracksTot) {
     std::string databaseFile = "libtable.dsv"; // now we can use it as input file
     std::ofstream outf("cleanlib.dsv"); // output file for writing clean track paths
     std::ifstream primarySongsTable(databaseFile);
-std::string s_musiclibrarydirname = userconfig::getConfigEntry(1); // 1=music lib, 3=playlist, 5=mm.db dir
+std::string s_musiclibrarydirname = userconfig::getConfigEntry(1); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
 double currDate = std::chrono::duration_cast<std::chrono::seconds>
         (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
 // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569  43441.4712847 43440.4712847
@@ -173,7 +144,4 @@ while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through 
     // Close files opened for reading and writing
     primarySongsTable.close();
     outf.close();
-
-
-    //*************************************************************************
 }

@@ -32,7 +32,9 @@ SOURCES += \
     lastplayeddays.cpp \
     runbashapp.cpp \
     getrated.cpp \
-    getcleanlib.cpp
+    getcleanlib.cpp \
+    getplaylist.cpp \
+    reformatlib.cpp
 
 HEADERS += \
     archsimian.h \
@@ -42,7 +44,9 @@ HEADERS += \
     constants.h \
     runbashapp.h \
     getrated.h \
-    getcleanlib.h
+    getcleanlib.h \
+    getplaylist.h \
+    reformatlib.h
 
 FORMS += \
     archsimian.ui
