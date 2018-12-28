@@ -27,31 +27,43 @@ void getRatedTable()
     }
     std::string str;
     int stringCount{0};
+
+    // Run function getPlaylistVector to read playlist into a vector, and then to populate the Custom1 field
     std::vector<std::string> plStrings;
     getPlaylistVect("cleanedplaylist.txt", plStrings);
-    if(plStrings.size() != static_cast<std::vector<int>::size_type>(plStrings.size())) {
+
+    // Make sure the playlist vector size is accurate
+    if(plStrings.size() != static_cast<std::vector<int>::size_type>(plStrings.size()))
+    {
         std::cerr << "Error in plStrings vector size!" << std::endl;
     }
-    size_t playlistSize = plStrings.size();
+    size_t playlistSize = plStrings.size(); // total number of tracks in playlist minus one (index starts with 0)
+    //
+    //
+    //  Outer loop: iterate through rows of cleanedSongsTable
+    //
+    //
     while (std::getline(cleanedSongsTable, str))
-    {   // Outer loop: iterate through rows of cleanedSongsTable
-        // Declare variables applicable to all rows
+    {   // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
         std::string token; // token is the contents of each column of data
         std::string tempTokenStarRating; //used to filter rows where star rating is zero;
-        std::string tempinPlaylist{"false"}; //used to track whether a row is in the current playlist
+        std::string tempinPlaylist{"0"}; //used to identify whether a track is in the playlist; if so add position #, else 0.
         int tokenCount{0}; //token count is the number of delimiter characters within str
         std::string strrandom; // stores a random number as a string variable
         skiprow=false; //sets whether a given str is output to the rated.dsv file
 
+        // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^'))
-        {
-            // Inner loop: iterate through each column (token) of row
+        {            
             // TOKEN PROCESSING - COL 8 (delimiter # 7)
-            // Check the playlist paths against each token path, if a match tempinPlaylist = true, else false
+            // Compare the file path stored in vector plStrings to each token path; if match,
+            //  set tempinPlaylist = index number in vector + 1 (which is the playlist position)
+            //, if no match set tempinPlaylist to 0. All values set in text.
             if (tokenCount == 8)
             {
                 unsigned long plcount{0};
+                long plindex{0}; // variable for vector index number (starts with 0)
                 for(size_t count=0;count<playlistSize; ++count)
                     if (token != plStrings[plcount])
                         plcount++;
@@ -59,11 +71,20 @@ void getRatedTable()
                     {
                         //Starting with C++11 you can use std::distance in place of subtraction for both iterators and pointers:
                         //ptrdiff_t pos = distance(Names.begin(), find(Names.begin(), Names.end(), old_name_));
-                        tempinPlaylist = "true";
+                        //std::string::iterator it{};
+                        std::vector<std::string>::iterator it = std::find(plStrings.begin(), plStrings.end(), token);
+                        //if (it != plStrings.end())
+                        //    std::cout << "Element Found" << std::endl;
+                        //else
+                        //    std::cout << "Element Not Found" << std::endl;
+                        // Get index of element from iterator
+                        long plindex = std::distance(plStrings.begin(), it);
+                        //std::cout << "Index: " << plindex << " Track: " << token << std::endl;
+                        tempinPlaylist = std::to_string(plindex+1);
                         continue;
                     }
-                    else {tempinPlaylist = "false";}
-                if (tempinPlaylist == "true"){token = tempinPlaylist;}
+                    else {tempinPlaylist = "0";}
+                if (tempinPlaylist == std::to_string(plindex+1)){token = tempinPlaylist;}
             }
 
             // TOKEN PROCESSING - COL 13 (delimiter # 12)
