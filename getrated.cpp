@@ -29,13 +29,17 @@ void getRatedTable()
     int stringCount{0};
     std::vector<std::string> plStrings;
     getPlaylistVect("cleanedplaylist.txt", plStrings);
+    if(plStrings.size() != static_cast<std::vector<int>::size_type>(plStrings.size())) {
+        std::cerr << "Error in plStrings vector size!" << std::endl;
+    }
+    size_t playlistSize = plStrings.size();
     while (std::getline(cleanedSongsTable, str))
     {   // Outer loop: iterate through rows of cleanedSongsTable
         // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
         std::string token; // token is the contents of each column of data
         std::string tempTokenStarRating; //used to filter rows where star rating is zero;
-        bool tempinPlaylist{0}; //used to track whether a row is in the current playlist
+        std::string tempinPlaylist{"false"}; //used to track whether a row is in the current playlist
         int tokenCount{0}; //token count is the number of delimiter characters within str
         std::string strrandom; // stores a random number as a string variable
         skiprow=false; //sets whether a given str is output to the rated.dsv file
@@ -48,24 +52,19 @@ void getRatedTable()
             if (tokenCount == 8)
             {
                 unsigned long plcount{0};
-                for(int count=0;count<460; ++count)
+                for(size_t count=0;count<playlistSize; ++count)
                     if (token != plStrings[plcount])
                         plcount++;
                     else if (token == plStrings[plcount])
                     {
-                        tempinPlaylist = true;
+                        //Starting with C++11 you can use std::distance in place of subtraction for both iterators and pointers:
+                        //ptrdiff_t pos = distance(Names.begin(), find(Names.begin(), Names.end(), old_name_));
+                        tempinPlaylist = "true";
                         continue;
                     }
-                    else {tempinPlaylist = false;}
-
-                if (tempinPlaylist == true)
-                {//std::cout << "Playlist status for " << token << " is true: " << tempinPlaylist << std::endl;
-                token = tempinPlaylist;}
-                //if (tempinPlaylist == false)
-                //{std::cout << "Playlist status for " << token << " is false, even though plStrings has " << plStrings[plcount] << std::endl;}
-
+                    else {tempinPlaylist = "false";}
+                if (tempinPlaylist == "true"){token = tempinPlaylist;}
             }
-
 
             // TOKEN PROCESSING - COL 13 (delimiter # 12)
             // Store the star rating (col 13) in the tempTokenStarRating text variable
@@ -73,12 +72,10 @@ void getRatedTable()
 
             // TOKEN PROCESSING - COL 17 (delimiter #15 -text- delimiter #16)
             // Evaluates whether a lastplayed date (col 17) is zero, if so, replace with a random date
-            //if (tokenCount == 17) std::cout << token << std::endl;
             if (tempTokenStarRating != "0" && tokenCount == 17 && token == ("0.0"))
                 //&& tempTokenStarRating != "0")// generate a random lastplayed date if its current
                 //  value is "0" unless track has a zero star rating
             {
-                //std::cout << "Col 17 DateLastPlayed not found for: " << str << std::endl;
                 // Process a function to generate a random date 30-500 days ago then save to a string
                 double rndresult{0.0};
                 int intconvert;
@@ -87,7 +84,6 @@ void getRatedTable()
                 {std::cout << "Error obtaining random number at row: " << token << std::endl;}
                 intconvert = int (rndresult); // convert the random number to an integer
                 strrandom = std::to_string(intconvert); // convert the integer to string
-
                 signed int poscount = 0;
                 unsigned long myspot = 0;
                 std::size_t found = str.find_first_of("^");
@@ -100,8 +96,8 @@ void getRatedTable()
                 str.replace(myspot,3,strrandom);
             }
 
-                 // Add code to output playlist status of token path of col 8 and place in col 18
-
+            // TOKEN PROCESSING - COL 18 - Output 'in playlist' status from tempinPlaylist
+            // calculated in col 8 and write it to col 18 (Custom1)
             if (tokenCount == 18)
             {
                 signed int poscount1 = 0;
@@ -113,16 +109,11 @@ void getRatedTable()
                     found1=str.find_first_of("^",++found1);
                     ++poscount1;
                 }
-                //std::cout << "myspot1 captured: " << myspot1 << std::endl;
-                //std::cout << "plfound captured: " << found1 << std::endl;
-                std::string textBool("false");
-                if (tempinPlaylist == false) {textBool = "false";}
-                else {textBool = "true";}
-                str.insert(myspot1,textBool);
-                //if (textBool == "true") {std::cout << "tempinPlaylist is true, setting for : " << str << std::endl;}
+                // Unless it is the row header, insert the tempinPlaylist bool value (as text) to Custom1
+                if (token != "Custom1") {str.insert(myspot1,tempinPlaylist);}
             }
 
-            // Add code to output artist data from Custom 2 (Col 19) if it is a rated track [if (tempTokenStarRating != "0"]
+            // TOKEN PROCESSING - COL 19 (TBD) Add code to output artist data from Custom2 (Col 19) if it is a rated track [if (tempTokenStarRating != "0"]
  //           if (tokenCount == 19 && tempTokenStarRating != "0") {
                 //
                 //std::cout << "Artist value captured: " << token << std::endl;
