@@ -2,10 +2,8 @@
 #include <fstream>
 //#include <sys/stat.h>
 #include "constants.h"
-
 namespace userconfig
 {
-
 // Function setConfig to check for existence of user configuration file (archsimian.conf). If it does not exist, create
 // bool used to prompt the user to set it up, then create an empty archsimian.conf file. If it exists, continue.
 int isConfigSetup()
@@ -23,7 +21,6 @@ int isConfigSetup()
         return 0;
     }
 }
-
 // Retrieves a specific entry in the user configuration file (archsimian.conf).
 // for assignment to a local variable
 std::string getConfigEntry(int z) // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath

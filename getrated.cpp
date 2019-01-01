@@ -37,12 +37,10 @@ void getRatedTable()
     {
         std::cerr << "Error in plStrings vector size!" << std::endl;
     }
-    size_t playlistSize = plStrings.size(); // total number of tracks in playlist minus one (index starts with 0)
-    //
+    unsigned long playlistSize = plStrings.size(); // total number of tracks in playlist minus one (index starts with 0)
     //
     //  Outer loop: iterate through rows of cleanedSongsTable
-    //
-    //
+    //    
     while (std::getline(cleanedSongsTable, str))
     {   // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
@@ -59,32 +57,27 @@ void getRatedTable()
             // TOKEN PROCESSING - COL 8 (delimiter # 7)
             // Compare the file path stored in vector plStrings to each token path; if match,
             //  set tempinPlaylist = index number in vector + 1 (which is the playlist position)
-            //, if no match set tempinPlaylist to 0. All values set in text.
+            //, if no match set tempinPlaylist to 0. All values set in text. Using the index number,
+            // it will be subtracted from playlistSize to express 'tracks since added' to the playlist.
+            // So, track number 470 on the playlist will be recorded as 1 (playlistSize + 1 - tempinPlaylist)
             if (tokenCount == 8)
             {
                 unsigned long plcount{0};
-                long plindex{0}; // variable for vector index number (starts with 0)
+                unsigned long plindex{0}; // variable for vector index number (starts with 0)
                 for(size_t count=0;count<playlistSize; ++count)
                     if (token != plStrings[plcount])
                         plcount++;
                     else if (token == plStrings[plcount])
                     {
-                        //Starting with C++11 you can use std::distance in place of subtraction for both iterators and pointers:
-                        //ptrdiff_t pos = distance(Names.begin(), find(Names.begin(), Names.end(), old_name_));
-                        //std::string::iterator it{};
                         std::vector<std::string>::iterator it = std::find(plStrings.begin(), plStrings.end(), token);
-                        //if (it != plStrings.end())
-                        //    std::cout << "Element Found" << std::endl;
-                        //else
-                        //    std::cout << "Element Not Found" << std::endl;
                         // Get index of element from iterator
                         long plindex = std::distance(plStrings.begin(), it);
                         //std::cout << "Index: " << plindex << " Track: " << token << std::endl;
-                        tempinPlaylist = std::to_string(plindex+1);
-                        continue;
+                        tempinPlaylist = std::to_string(playlistSize-plindex); // Sets playlist position as
+                        continue;                                              // 'tracks ago' from last track added.
                     }
                     else {tempinPlaylist = "0";}
-                if (tempinPlaylist == std::to_string(plindex+1)){token = tempinPlaylist;}
+                if (tempinPlaylist == std::to_string(playlistSize-plindex)){token = tempinPlaylist;}
             }
 
             // TOKEN PROCESSING - COL 13 (delimiter # 12)
@@ -131,7 +124,8 @@ void getRatedTable()
                     ++poscount1;
                 }
                 // Unless it is the row header, insert the tempinPlaylist bool value (as text) to Custom1
-                if (token != "Custom1") {str.insert(myspot1,tempinPlaylist);}
+                if (token != "Custom1") {
+                    str.insert(myspot1,tempinPlaylist);}
             }
 
             // TOKEN PROCESSING - COL 19 (TBD) Add code to output artist data from Custom2 (Col 19) if it is a rated track [if (tempTokenStarRating != "0"]

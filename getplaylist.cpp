@@ -8,13 +8,9 @@
 #include <cassert>
 #include <locale>
 
-//  Purpose is to remove the m3u headers lines, leaving just
-// the file path
-
-void getPlaylist(){
+void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     static std::string s_selectedplaylist = userconfig::getConfigEntry(7);//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
     static std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
-
     std::string playlistFile = s_selectedplaylist;
     std::ifstream readFile(playlistFile);
     std::ofstream outf("cleanedplaylist.txt");
@@ -28,11 +24,7 @@ void getPlaylist(){
     while (std::getline(readFile, line))
     {
         std::istringstream iss(line); //start with first line
-        //std::getline(readFile, line); //skip every other line to remove #INF markers from m3u
-
-        // Fix the dir string: remove colon, insert library user path,
-        // and correct the dir symbol from \ to /
-        // instead of using: line.erase (0,2);
+        // Fix the dir string: remove colon, insert library user path, and correct the dir symbol from \ to /
         std::string str = line;
         str.replace(str.begin(),str.begin()+2,"");
         line = str;
@@ -51,11 +43,11 @@ void getPlaylist(){
     readFile.close();
     outf.close();
 }
+
 bool getPlaylistVect(std::string fileName, std::vector<std::string> & plStrings)
 {
     // Open the File
     std::ifstream in(fileName.c_str());
-
     // Check if object is valid
     if(!in)
     {
@@ -70,13 +62,6 @@ bool getPlaylistVect(std::string fileName, std::vector<std::string> & plStrings)
         if(str.size() > 0)
             plStrings.push_back(str);
     }
-    //Close The File
-    in.close();
+    in.close();     //Close The File
     return true;
 }
-
-
-
-
-
-
