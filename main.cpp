@@ -11,11 +11,14 @@
 #include "getplaylist.h"
 #include "getartistadjustedount.h"
 #include "addintervalvalues.h"
+#include "getartistexcludes.h"
+#include "getartistexcludes2.h"
+
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
-  assert((N > 0) && (argv[N - 1] == nullptr));
-  return execvp(file, const_cast<char* const*>(argv));
+    assert((N > 0) && (argv[N - 1] == nullptr));
+    return execvp(file, const_cast<char* const*>(argv));
 }
 
 int main(int argc,char* argv[])
@@ -65,7 +68,7 @@ int main(int argc,char* argv[])
             +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
     // Set variable for customArtistID, either dir tree (0) or custom groupings (1)
-//    bool customArtistID{1};
+    //    bool customArtistID{1};
 
     static int s_isConfigSetResult(userconfig::isConfigSetup());// Call the isConfigSetup function to check if config has been set up
 
@@ -75,7 +78,7 @@ int main(int argc,char* argv[])
         ArchSimian guiWindow;
         guiWindow.show(); // This launches the user interface (UI) for configuration
         mainapp.exec();
-        }
+    }
 
     // Need to write function to execute from here to create and write a sql file to user's home directory
 
@@ -83,7 +86,7 @@ int main(int argc,char* argv[])
     c_pid = fork(); // Run fork function
 
     if( c_pid == 0 ){ // Parent process: Get songs table from MM4 database, and create libtable.dsv with table;
-        std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath        
+        std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
         // revise for QStandardPaths class if this does not set with makefile for this location
         const std::string sqlpathdirname = getenv("HOME");
         std::string path1 = s_mmbackupdbdirname + "/MM.DB";
@@ -237,13 +240,16 @@ int main(int argc,char* argv[])
     //getReformattedTable();
 
     getPlaylist(); // Using the function getPlaylist, correct paths from windows to linux, then save to cleanedplaylist.txt
+    std::cout << "getPlaylist completed." << std::endl;
     std::vector<std::string> plStrings;
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
     getPlaylistVect("cleanedplaylist.txt", plStrings);
+    std::cout << "getPlaylistVect completed." << std::endl;
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect
     getRatedTable();
+    std::cout << "getRatedTable completed." << std::endl;
     // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
     //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
 
@@ -254,19 +260,30 @@ int main(int argc,char* argv[])
                            &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                            &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
 
-    // Not yet written: Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to rated.dsv
+    std::cout << "getArtistAdjustedCount completed." << std::endl;
+
+    // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to rated2.dsv
     addIntervalValues();
+    std::cout << "addIntervalValues completed." << std::endl;
+    // Run function getArtistExcludes to populate a list of artists currently unavailable
+    getArtistExcludes();
+    std::cout << "getArtistExcludes completed." << std::endl;
+    // Run function getArtistExcludes to populate a list of artists currently unavailable
+    getArtistExcludes2();
+    std::cout << "getArtistExcludes2 completed." << std::endl;
+
+    std::cout << "done!" << std::endl;
 
     // Not yet written: Using the cleaned playlist, create a subset (available.dsv) of rated.dsv with playlist tracks removed
 
     // Section to launch GUI; uncomment last four lines below to enable
     if (s_isConfigSetResult == 1) { //If user config setup was already run (result is 1) run GUI app here
-                                    // which after the sts and file data have been loaded
-// GUI currently disabled
-//    QApplication mainapp(argc, argv);
-//    ArchSimian guiWindow;
-   // guiWindow.show();   // This launches the user interface (UI)
-    //mainapp.exec();
-}
-  return 0;
+        // which after the sts and file data have been loaded
+        // GUI currently disabled
+        //    QApplication mainapp(argc, argv);
+        //    ArchSimian guiWindow;
+        // guiWindow.show();   // This launches the user interface (UI)
+        //mainapp.exec();
+    }
+    return 0;
 }

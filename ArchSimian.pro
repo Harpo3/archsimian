@@ -36,7 +36,9 @@ SOURCES += \
     getplaylist.cpp \
     reformatlib.cpp \
     getartistadjustedcount.cpp \
-    addintervalvalues.cpp
+    addintervalvalues.cpp \
+    getartistexcludes.cpp \
+    getartistexcludes2.cpp
 
 HEADERS += \
     archsimian.h \
@@ -50,7 +52,9 @@ HEADERS += \
     getplaylist.h \
     reformatlib.h \
     getartistadjustedount.h \
-    addintervalvalues.h
+    addintervalvalues.h \
+    getartistexcludes.h \
+    getartistexcludes2.h
 
 FORMS += \
     archsimian.ui

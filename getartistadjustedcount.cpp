@@ -207,5 +207,4 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     outartists2.close();
     if( remove( "artists.txt" ) != 0 )
         perror( "Error deleting file" );
-    std::cout << "done!" << std::endl;
 }
