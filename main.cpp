@@ -10,6 +10,7 @@
 #include "getcleanlib.h"
 #include "getplaylist.h"
 #include "getartistadjustedount.h"
+#include "addintervalvalues.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -64,7 +65,7 @@ int main(int argc,char* argv[])
             +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
     // Set variable for customArtistID, either dir tree (0) or custom groupings (1)
-    bool customArtistID{true};
+//    bool customArtistID{1};
 
     static int s_isConfigSetResult(userconfig::isConfigSetup());// Call the isConfigSetup function to check if config has been set up
 
@@ -217,6 +218,7 @@ int main(int argc,char* argv[])
         std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
         std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl;
         std::cout << "Sequential Track Limit Factor - s_STLF : "<< s_STLF << std::endl;
+        std::cout << "Now processing statistics. This will take a few seconds..."<< std::endl;
 
         std::fstream filestr;
         filestr.open ("cleanlib.dsv");
@@ -243,7 +245,7 @@ int main(int argc,char* argv[])
     // from the function getPlaylistVect
     getRatedTable();
     // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
-    customArtistID = 1; // manually set to true (means use Custom 2 for artist)
+    //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
 
     // Using the function getArtistAdjustedCount, use rated.dsv to generate unique artist list, count tracks, calculate adjusted tracks,
     // calculate factors, calculate repeat intervals, then write the artist values to artistsadj.txt
@@ -252,7 +254,8 @@ int main(int argc,char* argv[])
                            &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                            &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
 
-    // Not yet written: Run function getartisttracksago to baseline the variable for tracking artist availabilty, write to rated.dsv
+    // Not yet written: Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to rated.dsv
+    addIntervalValues();
 
     // Not yet written: Using the cleaned playlist, create a subset (available.dsv) of rated.dsv with playlist tracks removed
 

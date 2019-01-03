@@ -40,7 +40,7 @@ void getRatedTable()
     unsigned long playlistSize = plStrings.size(); // total number of tracks in playlist minus one (index starts with 0)
     //
     //  Outer loop: iterate through rows of cleanedSongsTable
-    //    
+    //
     while (std::getline(cleanedSongsTable, str))
     {   // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
@@ -53,7 +53,7 @@ void getRatedTable()
 
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^'))
-        {            
+        {
             // TOKEN PROCESSING - COL 8 (delimiter # 7)
             // Compare the file path stored in vector plStrings to each token path; if match,
             //  set tempinPlaylist = index number in vector + 1 (which is the playlist position)

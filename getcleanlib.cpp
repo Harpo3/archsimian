@@ -1,5 +1,4 @@
 #include <sstream>
-#include <unistd.h>
 #include "userconfig.h"
 #include "constants.h"
 
@@ -19,7 +18,6 @@ double currDate = std::chrono::duration_cast<std::chrono::seconds>
         (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
 // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569  43441.4712847 43440.4712847
 double currSQLDate = (currDate / 86400) + 25569;        // This will go to lastplayed .cpp and .h
-
 if (!primarySongsTable.is_open())
     {
         std::exit(EXIT_FAILURE);
@@ -34,7 +32,6 @@ while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through 
         std::string tempTokenTrackTime;
         std::string tempTokenLastPlayedTime{"0.0"};
         int tokenCount{0};
-
         while (std::getline(iss, token, '^')) { // Inner loop: iterate through each column (token) of row
             // TOKEN PROCESSING - COL 8
             // Col 8 is the song path, which needs to be corrected for linux and library user path specified
@@ -56,7 +53,6 @@ while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through 
             if (tokenCount == 12) {tempTokenTrackTime = token;}
             // Store the lastplayed date string tempTokenLastPlayedTime text variable
             if (tokenCount == 17) {tempTokenLastPlayedTime = token;}
-
             // TOKEN PROCESSING - COL 17
             // Collect lastplayed stats to compute avg listening time
             double tempLastPlayedDate{0};
@@ -140,8 +136,7 @@ while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through 
             }
             outf << str << std::endl; // The string is valid, write to clean file
             ++ stringCount;
-        }
-    // Close files opened for reading and writing
-    primarySongsTable.close();
+        } 
+    primarySongsTable.close();   // Close files opened for reading and writing
     outf.close();
 }

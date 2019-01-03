@@ -3,40 +3,28 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <string>
-#include <algorithm>
 #include <map>
-#include <stdio.h>
 
 void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTillRepeatCode4factor,double *_syrsTillRepeatCode5factor,
                             double *_syrsTillRepeatCode6factor,double *_syrsTillRepeatCode7factor,double *_syrsTillRepeatCode8factor,
                             int *_srCode3TotTrackQty,int *_srCode4TotTrackQty,int *_srCode5TotTrackQty,
                             int *_srCode6TotTrackQty,int *_srCode7TotTrackQty,int *_srCode8TotTrackQty)
 {
-
-    std::cout << "Working on artist counts and factors. This will take a few seconds...";
-    bool customArtistID{true};
-
-    //********************************************************
-    // First ensure rated.dsv is ready to open
-    std::ifstream rated;
+    //std::cout << "Working on artist counts and factors. This will take a few seconds...";
+    bool customArtistID{true};    
+    std::ifstream rated;  // First ensure rated.dsv is ready to open
     rated.open ("rated.dsv");
     if (rated.is_open()) {rated.close();}
     else {std::cout << "Error opening rated.dsv file after starting the process for artist adjusted tracks." << std::endl;}
-    std::string ratedSongsTable = "rated.dsv"; // now we can use it as input file
-    // Open rated.dsv as ifstream
-    std::ifstream SongsTable(ratedSongsTable);
-
+    std::string ratedSongsTable = "rated.dsv";    // Now we can use it as input file
+    std::ifstream SongsTable(ratedSongsTable);    // Open rated.dsv as ifstream
     if (!SongsTable.is_open())
     {
         std::cout << "Error opening SongsTable." << std::endl;
-        std::exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE); // Otherwise, quit
     }
-    std::string str;
-
-    // Create ostream file to colllect artists and duplicate values; dups will be used to create a vector with number of tracks per artist
-    std::ofstream outartists("artists2.txt"); // output file for writing artists list
-
+    std::string str; // Create ostream file to log artists and duplicates; dups will be used to create a vector with # tracks per artist
+    std::ofstream outartists("artists2.txt"); // output file for writing artists list with dups
     //  Outer loop: iterate through rows of SongsTable
     while (std::getline(SongsTable, str))
     {   // Declare variables applicable to all rows
@@ -44,7 +32,6 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         std::string token; // token is the contents of each column of data
         std::string selectedArtistToken; //used to filter rows where track has a playlist position;
         int tokenCount{0}; //token count is the number of delimiter characters within str
-
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^'))
         {
@@ -52,33 +39,28 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
             if ((tokenCount == 1) && (customArtistID == false)) {selectedArtistToken = token;}// if 'non-custom' artist is selected use this code
             // TOKEN PROCESSING - COL 19
             if ((tokenCount == 19) && (customArtistID == true)) {selectedArtistToken = token;}// if custom artist grouping is selected use this code
-            //outartists << selectedArtistToken << std::endl; // Write artist to clean file
+            //outartists << selectedArtistToken << std::endl;
             ++ tokenCount;
         }
-        outartists << selectedArtistToken << std::endl; // The string is valid, write to clean file
+        outartists << selectedArtistToken << std::endl; // Write artist to clean file
     }
-    // Close files opened for reading and writing
-    SongsTable.close();
+    SongsTable.close();    // Close files opened for reading and writing. SongsTable will be reopened shortly as ratedSongsTable2
     outartists.close();
-    std::map<std::string, int> countMap;
-    std::vector<std::string> artists;
-    std::ifstream myfile("artists2.txt");
-    std::ofstream artistList("artists.txt"); // output file for writing artists list
+    std::map<std::string, int> countMap; // Create a map for two types, string and int
+    std::vector<std::string> artists; // Now create vector
+    std::ifstream myfile("artists2.txt"); // Input file for vector
+    std::ofstream artistList("artists.txt"); // output file for writing artists list without dups using vector
     std::string line;
-    while ( std::getline(myfile, line) ) {
+    while ( std::getline(myfile, line) ) { //std::cout << "Vector Size is now " << artists.size() << " lines." << std::endl;
         if ( !line.empty() )
             artists.push_back(line);
     }
-    //std::cout << "Vector Size is now " << artists.size() << " lines." << std::endl;
-
-    // Iterate over the vector and store the frequency of each element in map
-    for (auto & elem : artists)
+    for (auto & elem : artists)  // Iterate over the vector and store the frequency of each element in map
     {
         auto result = countMap.insert(std::pair<std::string, int>(elem, 1));
         if (result.second == false)
             result.first->second++;
     }
-
     // Iterate over the map
     for (auto & elem : countMap)
     {
@@ -92,44 +74,31 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     myfile.close();
     artistList.close();
     if( remove( "artists2.txt" ) != 0 )
-        perror( "Error deleting file" );
-    //*******************************************************
-    // Ensure rated.dsv is ready to open
-    std::ifstream rated2;
+        perror( "Error deleting file" );    
+    std::ifstream rated2;  // Ensure rated.dsv is ready to open
     rated2.open ("rated.dsv");
     if (rated2.is_open()) {rated2.close();}
     else {std::cout << "Error rated2 opening rated.dsv file." << std::endl;}
-    std::string ratedSongsTable2 = "rated.dsv"; // now we can use it as input file
-
-    // Next ensure artists.txt is ready to open
-    std::ifstream artists2;
+    std::string ratedSongsTable2 = "rated.dsv"; // now we can use it as input file    
+    std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open ("artists.txt");
     if (artists2.is_open()) {artists2.close();}
     else {std::cout << "Error opening artists.txt file after it was created in child process." << std::endl;}
-    std::string artistsTable2 = "artists.txt"; // now we can use it as input file
-
-    // Open artists.txt as ifstream
-    std::ifstream artistcsv(artistsTable2);
-
+    std::string artistsTable2 = "artists.txt"; // now we can use it as input file    
+    std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
     {
         std::cout << "Error opening artistcsv." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
     std::string str1; // store the string for artists.txt
-    std::string str2; // store the string for rated.dsv
-
-    // Create ostream file to collect artists and adjusted values;
-    std::ofstream outartists2("artistsadj.txt"); // output file for writing artists list with adj counts
-
+    std::string str2; // store the string for rated.dsv    
+    std::ofstream outartists2("artistsadj.txt"); // Create ostream file to collect artists and adjusted counts
     std::string currentArtist;
     int currentArtistCount{0};
-
     // Outer loop: iterate through artist, track count in the file "artists.txt"
     // For each artist i with a track count more than 1, store a temp variable vSelArtist for iterating
     // If artist count is 1, set adjusted count to 1 and store adjCount of 1 in Custom 3
-
     while ( std::getline(artistcsv, str1) )
     {
         double interimAdjCount{0.0};
@@ -137,8 +106,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         std::istringstream issArtists(str1); // str is the string of each row
         std::string tokenArtist; // token is the content of each column of data in artists.txt
         int countdown{0};
-
-        // First Inner loop: iterate through each column (token) of current row of artists.txt
+        // First loop: iterate through each column (token) of current row of artists.txt
         // to get the artist name and number of tracks to find in rated.dsv
         while (std::getline(issArtists, tokenArtist, ','))
         {
@@ -148,17 +116,13 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
             //std::cout << "Current artist from artists.txt is " << currentArtist << std::endl;
             // TOKEN PROCESSING - COL 1
             if (tokenArtistsCount == 1) {currentArtistCount = std::stoi(tokenArtist);}
-
             ++tokenArtistsCount;
         }
         countdown = currentArtistCount;
-
-        // Second Inner loop uses rated.dsv when the number of tracks for current artist is more than one
+        // Second loop uses rated.dsv
         // open rated.dsv and vector for artist track count and calculate adjusted track count, and write to Custom3
-
         // Open rated.dsv as ifstream
         std::ifstream SongsTable2(ratedSongsTable2);
-
         if (!SongsTable2.is_open())
         {
             std::cout << "Error opening SongsTable." << std::endl;
@@ -172,7 +136,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
             std::string selectedRating; //used to store rating for current row;
             int tokenCount{0}; //token count is the number of delimiter characters within str
             bool artistMatch = false;
-            // Third Inner loop: iterate through each column (token) of row to find and match artist
+            // Inner loop within second loop: iterate through each column (token) of row to find and match artist
             while (std::getline(iss, token, '^'))
             {
                 //artistMatch = false;
@@ -213,7 +177,6 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                         if (selectedRating == "6") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode6factor;}
                         if (selectedRating == "7") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode7factor;}
                         if (selectedRating == "8") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode8factor;}
-
                         //std::cout << " and interimAdjCount is now " << interimAdjCount << std::endl;
                     }
                 }
@@ -226,22 +189,21 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         double s_totalAdjRatedQty = (*_syrsTillRepeatCode3factor * *_srCode3TotTrackQty)+(*_syrsTillRepeatCode4factor * *_srCode4TotTrackQty)
                     + (*_syrsTillRepeatCode5factor * *_srCode5TotTrackQty) +(*_syrsTillRepeatCode6factor * *_srCode6TotTrackQty)
                     +(*_syrsTillRepeatCode7factor * *_srCode7TotTrackQty) + (*_syrsTillRepeatCode8factor * *_srCode8TotTrackQty);
-        SongsTable.close(); // Must close rated.dsv here so it can reopen for the next artist on the artists.txt file
+        SongsTable2.close(); // Must close rated.dsv here so it can reopen for the next artist on the artists.txt file
         if (interimAdjCount < currentArtistCount) {interimAdjCount = currentArtistCount;} // Adjusted count must be at least one if there is one track or more
         double currentArtistFactor = (interimAdjCount / s_totalAdjRatedQty); //percentage of total adjusted tracks
         int availInterval = int(1 / currentArtistFactor);
-
         // Write artist, count, adjusted count, artist factor, and repeat interval to the output file if not the header row
+
         if ((currentArtist != "Custom2") && (currentArtist != "Artist")){
             outartists2 << currentArtist << "," << int(currentArtistCount) << "," << int(interimAdjCount) <<
-                           "," << std::setprecision(6) << std::fixed << currentArtistFactor << "," << availInterval << std::endl;
+                           "," << currentArtistFactor << "," << availInterval << std::endl;
         }
-        // std::cout << currentArtist << "," << int(currentArtistCount) << "," << int(interimAdjCount) <<
-         //              "," << std::setprecision(6) << std::fixed << currentArtistFactor << "," << availInterval << std::endl;
+
         // Resume with next artist on the artists.txt file
     }
     // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
-    artistcsv.close();
+    artistcsv.close();    
     outartists2.close();
     if( remove( "artists.txt" ) != 0 )
         perror( "Error deleting file" );
