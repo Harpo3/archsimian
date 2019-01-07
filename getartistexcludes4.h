@@ -1,0 +1,4 @@
+#ifndef GETARTISTEXCLUDES4_H
+#define GETARTISTEXCLUDES4_H
+void appendExcludes();
+#endif // GETARTISTEXCLUDES4_H

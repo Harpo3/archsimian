@@ -9,9 +9,8 @@
 
 void getArtistExcludes2()
 {
-    //***************************************
-
     std::vector<std::string>pexclvec;
+    pexclvec.reserve(50000);
     std::ofstream outfratedint("artistexcludes.txt"); // output file for writing rated.dsv with added artist intervals
     int artStd{0}; // token is the contents of each column of data
     std::string currentArtist2; // Artist variable from artistsadj.txt
@@ -57,7 +56,7 @@ void getArtistExcludes2()
         // While on row of artistadj.txt, iterate through playlistposlist.txt and save each Col 4 to int variable plIntervalVal
 
         // First loop: iterate through each column (token) of current row of playlistposlist.txt
-        // to get the artist name and interval to write interval to rated2.dsv
+        // to get the artist name and interval to write interval to ratedlib.dsv
         std::fstream artistPLIntervals;  // Next ensure artistsadj.txt is ready to open
         artistPLIntervals.open ("playlistposlist.txt");
         if (artistPLIntervals.is_open()) {artistPLIntervals.close();}
@@ -95,21 +94,18 @@ void getArtistExcludes2()
             }
             continue; // Resume artistadj.txt next row, beginning with Col 0
         }
-
         plPosList.close();
     }
     std::vector<std::string>::iterator ip;
     std::sort (pexclvec.begin(), pexclvec.end());
-    ip = std::unique(pexclvec.begin(), pexclvec.begin() + 100);
+    size_t myvecsz = pexclvec.size();
+    ip = std::unique(pexclvec.begin(), pexclvec.begin() + myvecsz);
     pexclvec.resize(std::distance(pexclvec.begin(), ip));
 
     for (ip = pexclvec.begin(); ip != pexclvec.end(); ++ip) {
-        outfratedint << *ip << std::endl;
+        outfratedint << *ip << "\n";
     }
-    //for(unsigned long i = 0; i < pexclvec.size() ; i++)
-    //{
-    //    outfratedint << pexclvec.at(i) << std::endl;
-    // }
+    pexclvec.shrink_to_fit();
     artistIntStds.close();
     outfratedint.close();
 }

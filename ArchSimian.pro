@@ -38,7 +38,11 @@ SOURCES += \
     getartistadjustedcount.cpp \
     addintervalvalues.cpp \
     getartistexcludes.cpp \
-    getartistexcludes2.cpp
+    getartistexcludes2.cpp \
+    getartistexcludes3.cpp \
+    getartistexcludes4.cpp \
+    getartistexcludes5.cpp \
+    writesqlfile.cpp
 
 HEADERS += \
     archsimian.h \
@@ -54,7 +58,11 @@ HEADERS += \
     getartistadjustedount.h \
     addintervalvalues.h \
     getartistexcludes.h \
-    getartistexcludes2.h
+    getartistexcludes2.h \
+    getartistexcludes3.h \
+    getartistexcludes4.h \
+    getartistexcludes5.h \
+    writesqlfile.h
 
 FORMS += \
     archsimian.ui

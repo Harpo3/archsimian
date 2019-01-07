@@ -39,10 +39,9 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
             if ((tokenCount == 1) && (customArtistID == false)) {selectedArtistToken = token;}// if 'non-custom' artist is selected use this code
             // TOKEN PROCESSING - COL 19
             if ((tokenCount == 19) && (customArtistID == true)) {selectedArtistToken = token;}// if custom artist grouping is selected use this code
-            //outartists << selectedArtistToken << std::endl;
             ++ tokenCount;
         }
-        outartists << selectedArtistToken << std::endl; // Write artist to clean file
+        outartists << selectedArtistToken << "\n"; // Write artist to clean file
     }
     SongsTable.close();    // Close files opened for reading and writing. SongsTable will be reopened shortly as ratedSongsTable2
     outartists.close();
@@ -67,7 +66,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         // If frequency count is greater than 0 then its element count is captured
         if (elem.second > 0)
         {
-            artistList << elem.first << "," << elem.second << std::endl;
+            artistList << elem.first << "," << elem.second << "\n";
         }
     }
     //std::cout << "Number of unique artists is " << countMap.size() << "." << std::endl;
@@ -205,6 +204,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
     artistcsv.close();    
     outartists2.close();
+    artists.shrink_to_fit();
     if( remove( "artists.txt" ) != 0 )
         perror( "Error deleting file" );
 }

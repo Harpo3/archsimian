@@ -22,5 +22,7 @@ const int kUpperRndBound{500};
 
 // Constant used to standardize the user configuration file name for Arch
 const char userFileName[16]{"archsimian.conf"};
+const char sqlFileName[19]{"/exportMMTable.sql"};
+
 }
 #endif // CONSTANTS_H

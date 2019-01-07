@@ -12,7 +12,7 @@ void getReformattedTable()
     std::ofstream outfilereformat("cleanlibrfmt.dsv"); // output file for writing lastplayed for rated tracks
                                                                                     // without a lastplayed date, & delims/types reformatted
     std::ifstream cleanedSongsTable(cleanlibrary);
-    bool skiprow{false}; //filter for rated only, false means to include all rows
+    //bool skiprow{false}; //filter for rated only, false means to include all rows
 
     // Check rating (stars) code (col 13), then lastplayed (col 17), then GroupDesc (col 29)
     // Evaluate if col 17 is "0.0" if so, replace string with random lastplayed date. Then compare
@@ -35,7 +35,7 @@ void getReformattedTable()
         std::string tempTokenStarRating; //used to filter rows where star rating is zero;
         int tokenCount{0}; //token count is the number of delimiter characters within the string
         std::string strrandom; // store random number generated in a text variable
-        skiprow=false;
+        //bool skiprow=false;
 
         while (std::getline(iss, token, '^'))
         {
@@ -208,7 +208,7 @@ void getReformattedTable()
         }
     std::cout << "Here is the revised string: " << str << std::endl;
         //if (skiprow == false) { // If the track is rated
-            outfilereformat << str << std::endl; // The string is valid, write to clean file
+            outfilereformat << str << "\n"; // The string is valid, write to clean file
        // }
     }
     ++ stringCount;

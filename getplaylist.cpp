@@ -9,7 +9,7 @@ void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving ju
     std::ofstream outf("cleanedplaylist.txt");
     if (!readFile.is_open())
         {
-            std::cout << "The file did not open";
+            std::cout << "getPlaylist: The readFile did not open. Did you manually export the MediaMonkey playlist?";
             std::exit(EXIT_FAILURE);
         }
     std::string line;
@@ -44,7 +44,7 @@ bool getPlaylistVect(std::string fileName, std::vector<std::string> & plStrings)
     // Check if object is valid
     if(!in)
     {
-        std::cerr << "Cannot open the File : "<<fileName<<std::endl;
+        std::cerr << "getPlaylistVect: Cannot open the File : "<<fileName<<std::endl;
         return false;
     }
     std::string str;

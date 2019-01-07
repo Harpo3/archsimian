@@ -112,9 +112,9 @@ void ArchSimian::on_setlibraryButton_clicked(){
     // Write description note and directory configuration to archsimian.conf
     std::ofstream userconfig(Constants::userFileName);
     std::string str("# Location of music library");
-    userconfig << str << std::endl;  // Write to line 1, archsimian.conf
+    userconfig << str << "\n";  // Write to line 1, archsimian.conf
     str = s_musiclibrarydirname.toStdString();
-    userconfig << str << std::endl;  // Write to line 2, archsimian.conf
+    userconfig << str << "\n";  // Write to line 2, archsimian.conf
     userconfig.close();
     // dim the setlibraryButton button
     ui->setlibraryButton->setEnabled(false);
@@ -144,9 +144,9 @@ void ArchSimian::on_setmmplButton_clicked(){
     // Write description note and directory configuration to archsimian.conf
     std::ofstream userconfig(Constants::userFileName, std::ios::app);
     std::string str("# Location of MediaMonkey Playlist Backup Directory");
-    userconfig << str << std::endl;  // Write to line 3, archsimian.conf
+    userconfig << str << "\n";  // Write to line 3, archsimian.conf
     str = s_mmbackuppldirname.toStdString();
-    userconfig << str << std::endl; // Write to line 4, archsimian.conf
+    userconfig << str << "\n"; // Write to line 4, archsimian.conf
     userconfig.close();
     //dim the setmmplButton button
     ui->setmmplButton->setEnabled(false);
@@ -175,9 +175,9 @@ void ArchSimian::on_setmmdbButton_clicked(){
     // Write description note and directory configuration to archsimian.conf
     std::ofstream userconfig(Constants::userFileName, std::ios::app);
     std::string str("# Location of MediaMonkey Database Backup Directory");
-    userconfig << str << std::endl;  // Write to line 5, archsimian.conf
+    userconfig << str << "\n";  // Write to line 5, archsimian.conf
     str = s_mmbackupdbdirname.toStdString();
-    userconfig << str << std::endl; // Write to line 6, archsimian.conf
+    userconfig << str << "\n"; // Write to line 6, archsimian.conf
     userconfig.close();
     //dim the setmmdbButton button
     ui->setmmdbButton->setEnabled(false);
@@ -216,8 +216,8 @@ void ArchSimian::on_getplaylistButton_clicked()
     // Write description note and playlist name to archsimian.conf
     std::ofstream userconfig(Constants::userFileName, std::ios::app);
     std::string str("# Name of default playlist");
-    userconfig << str << std::endl;  // Write to line 7, archsimian.conf
+    userconfig << str << "\n";  // Write to line 7, archsimian.conf
     str = selectedplaylist.toStdString();
-    userconfig << str << std::endl; // Write to line 8, archsimian.conf
+    userconfig << str << "\n"; // Write to line 8, archsimian.conf
     userconfig.close();
 }

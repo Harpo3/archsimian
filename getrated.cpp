@@ -171,12 +171,13 @@ void getRatedTable()
             ++ tokenCount;
         }
         if (skiprow == false) { // If the track is rated
-            outfrated << str << std::endl; // The string is valid, write to clean file
+            outfrated << str << "\n"; // The string is valid, write to clean file
         }
     }
     ++ stringCount;
     // Close files opened for reading and writing
     cleanedSongsTable.close();
     outfrated.close();
+    plStrings.shrink_to_fit();
     //artistlist.close();
 }

@@ -11,10 +11,10 @@ void getArtistExcludes()
 {
     bool customArtistID{true};
     std::fstream filestrinterval;
-    filestrinterval.open ("rated2.dsv");
+    filestrinterval.open ("ratedlib.dsv");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "Error opening rated.dsv file after it was created in child process." << std::endl;}
-    std::string ratedlibrary = "rated2.dsv"; // now we can use it as input file
+    std::string ratedlibrary = "ratedlib.dsv"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())
     {
@@ -23,18 +23,15 @@ void getArtistExcludes()
     }
     std::ofstream playlistPosList("playlistposlist.txt"); // output file for writing rated.dsv with added artist intervals
 
-    std::string str1; // store the string for rated2.dsv
-    std::string playlistPosition; // Custom1 variable from rated2.dsv
-    std::string selectedArtistToken; // Artist variable from rated2.dsv
-
-    std::string currentArtistInterval; // token is the contents of each column of data
-    std::string currentArtist; // Artist variable from artistsadj.txt
-    std::string delim{"^"};
+    std::string str1; // store the string for ratedlib.dsv
+    std::string playlistPosition; // Custom1 variable from ratedlib.dsv
+    std::string selectedArtistToken; // Artist variable from ratedlib.dsv
 
     std::map<std::string,int> countMap; // Create a map for two types, string and int
     std::vector<std::string>plvect;
+    plvect.reserve(5000);
 
-    // Outer loop: iterate through ratedSongsTable in the file "rated2.dsv" then use str1 to add Col 36 to rated2.dsv
+    // Outer loop: iterate through ratedSongsTable in the file "ratedlib.dsv" then use str1 to add Col 36 to ratedlib.dsv
     while (std::getline(ratedSongsTable, str1))
     {  // Declare variables applicable to all rows
         std::istringstream iss(str1); // str is the string of each row
@@ -65,8 +62,9 @@ void getArtistExcludes()
     std::sort (plvect.begin(), plvect.end());
     for(unsigned long i = 0; i < plvect.size() ; i++)
     {
-        playlistPosList << plvect.at(i) << std::endl;
+        playlistPosList << plvect.at(i) << "\n";
     }
+    plvect.shrink_to_fit();
     ratedSongsTable.close(); // Close rated.dsv and output file
     playlistPosList.close(); 
 }

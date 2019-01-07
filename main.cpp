@@ -13,7 +13,10 @@
 #include "addintervalvalues.h"
 #include "getartistexcludes.h"
 #include "getartistexcludes2.h"
-
+#include "getartistexcludes3.h"
+#include "getartistexcludes4.h"
+#include "getartistexcludes5.h"
+#include "writesqlfile.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -28,6 +31,7 @@ int main(int argc,char* argv[])
     static std::string s_mmbackuppldirname;
     static std::string s_selectedplaylist;
     // Repeat factor codes used to calculate repeat rate in years
+    static double s_SequentialTrackLimit = 0;
     static double s_daysTillRepeatCode3 = 65.0;
     static double s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
     static double s_repeatFactorCode4 = 2.7;
@@ -63,14 +67,18 @@ int main(int argc,char* argv[])
     s_SQL30DayTracksTot{0},s_SQL40DayTracksTot{0},s_SQL50DayTracksTot{0},s_SQL60DayTracksTot{0};
     static double s_SQL20TotTimeListened{0},s_SQL30TotTimeListened{0},s_SQL40TotTimeListened{0},
     s_SQL50TotTimeListened{0},s_SQL60TotTimeListened{0};
-    static double s_totalAdjRatedQty = (s_yrsTillRepeatCode3factor * s_rCode3TotTrackQty)+(s_yrsTillRepeatCode4factor * s_rCode4TotTrackQty)
-            + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
-            +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
     // Set variable for customArtistID, either dir tree (0) or custom groupings (1)
     //    bool customArtistID{1};
 
+    //*************************
+    // USER CONFIGURATION
+    //************************
+    // Check the condition of user configuration using the isConfigSetup function
+
     static int s_isConfigSetResult(userconfig::isConfigSetup());// Call the isConfigSetup function to check if config has been set up
+
+    // If user config not yet set up, launch GUI for user setup
 
     if (s_isConfigSetResult == 0) { // Evaluate and run gui for user config setup, if result is 0, otherwise continue
         std::cout << "The configuration is not set up: " << s_isConfigSetResult << ". Starting configuration setup in gui." << std::endl;
@@ -79,8 +87,14 @@ int main(int argc,char* argv[])
         guiWindow.show(); // This launches the user interface (UI) for configuration
         mainapp.exec();
     }
+    //*************************
+    // GET SONGS TABLE FROM MM.DB
+    //*************************
+    // Uses an SQL script and SQLite to export the Songs table from the MM.DB file in a data-separated-value (DSV) format
 
-    // Need to write function to execute from here to create and write a sql file to user's home directory
+    // Run function to create and write a sql file to user's home directory
+    writeSQLFile();
+    //sleep(2);
 
     pid_t c_pid;// Create fork object; parent to get database table, child to use table to clean it up
     c_pid = fork(); // Run fork function
@@ -95,10 +109,8 @@ int main(int argc,char* argv[])
         execvp("sqlite3", argv);
         perror("execvp");
         if (execvp("sqlite3", argv) == -1)
-            exit(EXIT_FAILURE);        }
-
-    // Need to add function here to delete sql file from user's home directory after completion
-
+            exit(EXIT_FAILURE);
+    }
     else if (c_pid > 0){  // Child process starts here. Write libtable.dsv and gather stats
         // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
         sleep(2);  // needs delay for child process to finish writing libtable.dsv
@@ -163,8 +175,11 @@ int main(int argc,char* argv[])
                 s_rCode7TotTime + s_rCode8TotTime;
         static double s_AvgMinsPerSong = (s_TotalRatedTime / s_totalRatedQty) * 60;
         static double s_avgListeningRateInMins = s_listeningRate * 60;
-        static double s_SequentialTrackLimit = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * s_DaysBeforeRepeatCode3);
+        s_SequentialTrackLimit = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * s_DaysBeforeRepeatCode3);
         static double s_STLF = 1 / s_SequentialTrackLimit;
+        static double s_totalAdjRatedQty = (s_yrsTillRepeatCode3factor * s_rCode3TotTrackQty)+(s_yrsTillRepeatCode4factor * s_rCode4TotTrackQty)
+                + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
+                +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
         //Print results to console (for later program integration tasks (TBD)
         std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
@@ -225,16 +240,16 @@ int main(int argc,char* argv[])
 
         std::fstream filestr;
         filestr.open ("cleanlib.dsv");
-        if (filestr.is_open()) {filestr.close();}
-        //std::cout << "File cleanlib.dsv successfully created. Deleting libtable.dsv." << std::endl;
-        //remove("libtable.dsv");
+        if (filestr.is_open()) {filestr.close();
+        std::cout << "File cleanlib.dsv successfully created. Deleting libtable.dsv." << std::endl;
+        remove("libtable.dsv");}
         else {std::cout << "Error opening file" << std::endl;}
     }
-
     else { // if (c_pid < 0) error check: The return of fork() is negative
         perror("fork failed");
         _exit(2); //exit failure, hard
     }
+    removeSQLFile(); // Run function to delete sql file from user's home directory after completion
 
     // Currently disabled, getReformattedTable is used to change the table to a comma-separated file for using in a class object.
     //getReformattedTable();
@@ -242,19 +257,30 @@ int main(int argc,char* argv[])
     getPlaylist(); // Using the function getPlaylist, correct paths from windows to linux, then save to cleanedplaylist.txt
     std::cout << "getPlaylist completed." << std::endl;
     std::vector<std::string> plStrings;
+
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
     getPlaylistVect("cleanedplaylist.txt", plStrings);
+    static unsigned long s_playlistSize = plStrings.size();
     std::cout << "getPlaylistVect completed." << std::endl;
+    plStrings.shrink_to_fit();
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect
     getRatedTable();
     std::cout << "getRatedTable completed." << std::endl;
+    std::fstream filestr2;
+    filestr2.open ("rated.dsv");
+    if (filestr2.is_open()) {
+        filestr2.close();
+        std::cout << "File rated.dsv successfully created. Deleting cleanlib.dsv." << std::endl;
+        remove("cleanlib.dsv");}
+    else {std::cout << "Error opening rated.dsv file before deleting cleanlib.dsv" << std::endl;}
+
     // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
     //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
 
     // Using the function getArtistAdjustedCount, use rated.dsv to generate unique artist list, count tracks, calculate adjusted tracks,
-    // calculate factors, calculate repeat intervals, then write the artist values to artistsadj.txt
+    // calculate factors, calculate repeat intervals, then write the artist values to
     getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                            &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                            &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
@@ -262,16 +288,32 @@ int main(int argc,char* argv[])
 
     std::cout << "getArtistAdjustedCount completed." << std::endl;
 
-    // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to rated2.dsv
-    addIntervalValues();
+    // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to ratedlib.dsv
+    addIntervalValues();    
     std::cout << "addIntervalValues completed." << std::endl;
+    std::fstream filestr3;
+    filestr3.open ("ratedlib.dsv");
+    if (filestr3.is_open()) {
+        filestr3.close();
+        std::cout << "File ratedlib.dsv successfully created. Deleting rated.dsv." << std::endl;
+        remove("rated.dsv");}
+    else {std::cout << "Error opening ratedlib.dsv.dsv file before deleting rated.dsv" << std::endl;}
+
     // Run function getArtistExcludes to populate a list of artists currently unavailable
     getArtistExcludes();
     std::cout << "getArtistExcludes completed." << std::endl;
-    // Run function getArtistExcludes to populate a list of artists currently unavailable
+    // Run function getArtistExcludes2 to populate a list of artists currently unavailable
     getArtistExcludes2();
     std::cout << "getArtistExcludes2 completed." << std::endl;
-
+    std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
+    //unsigned long histCount = s_SequentialTrackLimit - s_playlistSize;
+    static long s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
+    std::cout << "History count for calculating additional artist excludes: "<< s_histCount << std::endl;
+    getExtendedExcludes(&s_histCount,&s_playlistSize);
+    std::cout << "getExtendedExcludes completed." << std::endl;
+    appendExcludes();
+    std::cout << "appendExcludes completed." << std::endl;
+    fixsort();
     std::cout << "done!" << std::endl;
 
     // Not yet written: Using the cleaned playlist, create a subset (available.dsv) of rated.dsv with playlist tracks removed
