@@ -42,7 +42,8 @@ SOURCES += \
     getartistexcludes3.cpp \
     getartistexcludes4.cpp \
     getartistexcludes5.cpp \
-    writesqlfile.cpp
+    writesqlfile.cpp \
+    ratingvariance.cpp
 
 HEADERS += \
     archsimian.h \
@@ -62,7 +63,8 @@ HEADERS += \
     getartistexcludes3.h \
     getartistexcludes4.h \
     getartistexcludes5.h \
-    writesqlfile.h
+    writesqlfile.h \
+    ratingvariance.h
 
 FORMS += \
     archsimian.ui

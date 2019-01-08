@@ -17,6 +17,7 @@
 #include "getartistexcludes4.h"
 #include "getartistexcludes5.h"
 #include "writesqlfile.h"
+#include "ratingvariance.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -51,6 +52,14 @@ int main(int argc,char* argv[])
     static double s_yrsTillRepeatCode6factor = 1 / s_yrsTillRepeatCode6;
     static double s_yrsTillRepeatCode7factor = 1 / s_yrsTillRepeatCode7;
     static double s_yrsTillRepeatCode8factor = 1 / s_yrsTillRepeatCode8;
+
+    static double s_ratingRatio3;
+    static double s_ratingRatio4;
+    static double s_ratingRatio5;
+    static double s_ratingRatio6;
+    static double s_ratingRatio7;
+    static double s_ratingRatio8;
+
     // Declare statistical variables to be collected
     // First group is declared to get times and track quantities by rating group
     static int s_rCode0TotTrackQty{0}, s_rCode0MsTotTime{0},
@@ -98,7 +107,7 @@ int main(int argc,char* argv[])
 
     pid_t c_pid;// Create fork object; parent to get database table, child to use table to clean it up
     c_pid = fork(); // Run fork function
-
+//1
     if( c_pid == 0 ){ // Parent process: Get songs table from MM4 database, and create libtable.dsv with table;
         std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
         // revise for QStandardPaths class if this does not set with makefile for this location
@@ -111,9 +120,10 @@ int main(int argc,char* argv[])
         if (execvp("sqlite3", argv) == -1)
             exit(EXIT_FAILURE);
     }
+//2
     else if (c_pid > 0){  // Child process starts here. Write libtable.dsv and gather stats
         // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
-        sleep(2);  // needs delay for child process to finish writing libtable.dsv
+        sleep(1);  // needs delay for child process to finish writing libtable.dsv
         std::fstream filestr1;
         filestr1.open ("libtable.dsv");
         if (filestr1.is_open()) {filestr1.close();}
@@ -126,7 +136,12 @@ int main(int argc,char* argv[])
                     &s_SQL10TotTimeListened, &s_SQL10DayTracksTot, &s_SQL20TotTimeListened,&s_SQL20DayTracksTot, &s_SQL30TotTimeListened,
                     &s_SQL30DayTracksTot,&s_SQL40TotTimeListened, &s_SQL40DayTracksTot, &s_SQL50TotTimeListened,
                     &s_SQL50DayTracksTot, &s_SQL60TotTimeListened, &s_SQL60DayTracksTot);
-
+    }
+    else { // if (c_pid < 0) error check: The return of fork() is negative
+        perror("fork failed");
+        _exit(2); //exit failure, hard
+    }
+//3
         // Convert variables from milliseconds to hours
         //  Total time in hours per rating code
         static int s_rCode0TotTime = (s_rCode0MsTotTime/60000)/60;
@@ -163,12 +178,12 @@ int main(int argc,char* argv[])
         static double s_adjHoursCode7 = (1 / s_yrsTillRepeatCode7) * s_rCode7TotTime;
         static double s_adjHoursCode8 = (1 / s_yrsTillRepeatCode8) * s_rCode8TotTime;
         static double s_totAdjHours = s_adjHoursCode3 + s_adjHoursCode4 + s_adjHoursCode5 + s_adjHoursCode6 +s_adjHoursCode7 + s_adjHoursCode8;
-        static double s_ratingRatio3 = s_adjHoursCode3 / s_totAdjHours;
-        static double s_ratingRatio4 = s_adjHoursCode4 / s_totAdjHours;
-        static double s_ratingRatio5 = s_adjHoursCode5 / s_totAdjHours;
-        static double s_ratingRatio6 = s_adjHoursCode6 / s_totAdjHours;
-        static double s_ratingRatio7 = s_adjHoursCode7 / s_totAdjHours;
-        static double s_ratingRatio8 = s_adjHoursCode8 / s_totAdjHours;
+        s_ratingRatio3 = s_adjHoursCode3 / s_totAdjHours;
+        s_ratingRatio4 = s_adjHoursCode4 / s_totAdjHours;
+        s_ratingRatio5 = s_adjHoursCode5 / s_totAdjHours;
+        s_ratingRatio6 = s_adjHoursCode6 / s_totAdjHours;
+        s_ratingRatio7 = s_adjHoursCode7 / s_totAdjHours;
+        s_ratingRatio8 = s_adjHoursCode8 / s_totAdjHours;
 
         static double s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / 0.002739762; // fraction for one day (1/365)
         static double s_TotalRatedTime = s_rCode1TotTime + s_rCode3TotTime + s_rCode4TotTime + s_rCode5TotTime + s_rCode6TotTime +
@@ -237,27 +252,23 @@ int main(int argc,char* argv[])
         std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl;
         std::cout << "Sequential Track Limit Factor - s_STLF : "<< s_STLF << std::endl;
         std::cout << "Now processing statistics. This will take a few seconds..."<< std::endl;
-
+//4
         std::fstream filestr;
         filestr.open ("cleanlib.dsv");
         if (filestr.is_open()) {filestr.close();
         std::cout << "File cleanlib.dsv successfully created. Deleting libtable.dsv." << std::endl;
         remove("libtable.dsv");}
         else {std::cout << "Error opening file" << std::endl;}
-    }
-    else { // if (c_pid < 0) error check: The return of fork() is negative
-        perror("fork failed");
-        _exit(2); //exit failure, hard
-    }
+
     removeSQLFile(); // Run function to delete sql file from user's home directory after completion
 
     // Currently disabled, getReformattedTable is used to change the table to a comma-separated file for using in a class object.
     //getReformattedTable();
-
+//5
     getPlaylist(); // Using the function getPlaylist, correct paths from windows to linux, then save to cleanedplaylist.txt
     std::cout << "getPlaylist completed." << std::endl;
     std::vector<std::string> plStrings;
-
+//6
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
     getPlaylistVect("cleanedplaylist.txt", plStrings);
     static unsigned long s_playlistSize = plStrings.size();
@@ -266,6 +277,7 @@ int main(int argc,char* argv[])
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect
+//7
     getRatedTable();
     std::cout << "getRatedTable completed." << std::endl;
     std::fstream filestr2;
@@ -278,7 +290,7 @@ int main(int argc,char* argv[])
 
     // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
     //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
-
+//8
     // Using the function getArtistAdjustedCount, use rated.dsv to generate unique artist list, count tracks, calculate adjusted tracks,
     // calculate factors, calculate repeat intervals, then write the artist values to
     getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
@@ -287,7 +299,7 @@ int main(int argc,char* argv[])
                            &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
 
     std::cout << "getArtistAdjustedCount completed." << std::endl;
-
+//9
     // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to ratedlib.dsv
     addIntervalValues();    
     std::cout << "addIntervalValues completed." << std::endl;
@@ -298,6 +310,9 @@ int main(int argc,char* argv[])
         std::cout << "File ratedlib.dsv successfully created. Deleting rated.dsv." << std::endl;
         remove("rated.dsv");}
     else {std::cout << "Error opening ratedlib.dsv.dsv file before deleting rated.dsv" << std::endl;}
+
+
+    //Start section beyond initial program setup
 
     // Run function getArtistExcludes to populate a list of artists currently unavailable
     getArtistExcludes();
@@ -314,6 +329,9 @@ int main(int argc,char* argv[])
     appendExcludes();
     std::cout << "appendExcludes completed." << std::endl;
     fixsort();
+    int ratingNextTrack;
+    ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+    std::cout << "Rating for the next track is " << ratingNextTrack << std::endl;
     std::cout << "done!" << std::endl;
 
     // Not yet written: Using the cleaned playlist, create a subset (available.dsv) of rated.dsv with playlist tracks removed
