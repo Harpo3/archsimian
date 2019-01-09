@@ -20,9 +20,7 @@ void addIntervalValues() {
         std::cout << "addIntervalValues: Error opening ratedSongsTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
     std::ofstream outfratedint("ratedlib.dsv"); // output file for writing rated.dsv with added artist intervals
-
     std::string str1; // store the string for artistsadj.txt
     std::string str2; // store the string for ratedlib.dsv
     std::string selectedArtistToken; // Artist variable from rated.dsv
@@ -52,18 +50,17 @@ void addIntervalValues() {
         std::fstream artistintervals;  // Next ensure artistsadj.txt is ready to open
         artistintervals.open ("artistsadj.txt");
         if (artistintervals.is_open()) {artistintervals.close();}
-        else {std::cout << "Error opening artistsadj.txt file after it was created in child process." << std::endl;}
+        else {std::cout << "addIntervalValues: Error opening artistsadj.txt file." << std::endl;}
         std::string artistIntTable = "artistsadj.txt"; // now we can use it as input file
         std::ifstream artistadjcsv(artistIntTable); // Open artistsadj.txt as ifstream
         if (!artistadjcsv.is_open())
         {
-            std::cout << "Error opening artistadjcsv." << std::endl;
+            std::cout << "addIntervalValues: Error opening artistadjcsv." << std::endl;
             std::exit(EXIT_FAILURE);
         }
         while (std::getline(artistadjcsv, str1))
         {
             std::istringstream iss(str1); // str is the string of each row
-            //std::cout << "Current string from artistsadj.txt is " << str1 << std::endl;
             int tokenArtistsCount{0}; //token count is the number of delimiter characters within str
             std::string token; // token is the contents of each column of data
             while (std::getline(iss, token, ','))
@@ -78,7 +75,6 @@ void addIntervalValues() {
             }
             if (selectedArtistToken == currentArtist){
                 outfratedint << str2 << delim << currentArtistInterval << "\n"; // Write artist to clean file
-                //std::cout << "currentArtist:" << currentArtist << " selectedArtistToken:" << selectedArtistToken << ", interval:" << currentArtistInterval<< std::endl;
             }
             continue; // Resume rated.dsv next row, beginning with Col 0
         }

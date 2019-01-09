@@ -13,12 +13,12 @@ void getArtistExcludes()
     std::fstream filestrinterval;
     filestrinterval.open ("ratedlib.dsv");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "Error opening rated.dsv file after it was created in child process." << std::endl;}
+    else {std::cout << "getArtistExcludes: Error opening rated.dsv file after it was created in child process." << std::endl;}
     std::string ratedlibrary = "ratedlib.dsv"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())
     {
-        std::cout << "Error opening ratedSongsTable." << std::endl;
+        std::cout << "getArtistExcludes: Error opening ratedSongsTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     std::ofstream playlistPosList("playlistposlist.txt"); // output file for writing rated.dsv with added artist intervals
@@ -54,7 +54,6 @@ void getArtistExcludes()
 
             ++ tokenCount;
         }
-        //if (playlistPosition != "0")std::cout <<playlistPosition<< "," <<selectedArtistToken<< std::endl;
         if ((playlistPosition != "0") && (playlistPosition != "Custom1")){plvect.push_back(selectedArtistToken+','+playlistPosition);}
 
         playlistPosition = "0";

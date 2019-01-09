@@ -15,12 +15,12 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     std::ifstream rated;  // First ensure rated.dsv is ready to open
     rated.open ("rated.dsv");
     if (rated.is_open()) {rated.close();}
-    else {std::cout << "Error opening rated.dsv file after starting the process for artist adjusted tracks." << std::endl;}
+    else {std::cout << "getArtistAdjustedCount: Error opening rated.dsv file." << std::endl;}
     std::string ratedSongsTable = "rated.dsv";    // Now we can use it as input file
     std::ifstream SongsTable(ratedSongsTable);    // Open rated.dsv as ifstream
     if (!SongsTable.is_open())
     {
-        std::cout << "Error opening SongsTable." << std::endl;
+        std::cout << "getArtistAdjustedCount: Error opening SongsTable." << std::endl;
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
     std::string str; // Create ostream file to log artists and duplicates; dups will be used to create a vector with # tracks per artist
@@ -69,20 +69,19 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
             artistList << elem.first << "," << elem.second << "\n";
         }
     }
-    //std::cout << "Number of unique artists is " << countMap.size() << "." << std::endl;
     myfile.close();
     artistList.close();
     if( remove( "artists2.txt" ) != 0 )
-        perror( "Error deleting file" );    
+        perror( "getArtistAdjustedCount: Error deleting file" );
     std::ifstream rated2;  // Ensure rated.dsv is ready to open
     rated2.open ("rated.dsv");
     if (rated2.is_open()) {rated2.close();}
-    else {std::cout << "Error rated2 opening rated.dsv file." << std::endl;}
+    else {std::cout << "getArtistAdjustedCount: Error rated2 opening rated.dsv file." << std::endl;}
     std::string ratedSongsTable2 = "rated.dsv"; // now we can use it as input file    
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open ("artists.txt");
     if (artists2.is_open()) {artists2.close();}
-    else {std::cout << "Error opening artists.txt file after it was created in child process." << std::endl;}
+    else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file ." << std::endl;}
     std::string artistsTable2 = "artists.txt"; // now we can use it as input file    
     std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
@@ -124,7 +123,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         std::ifstream SongsTable2(ratedSongsTable2);
         if (!SongsTable2.is_open())
         {
-            std::cout << "Error opening SongsTable." << std::endl;
+            std::cout << "getArtistAdjustedCount: Error opening SongsTable2." << std::endl;
             std::exit(EXIT_FAILURE);
         }
         while (std::getline(SongsTable2, str2) && countdown != 0) //Check every row until all artist's tracks found
@@ -143,7 +142,6 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                 if ((tokenCount == 1) && (customArtistID == false)) {
                     selectedArtistToken = token;
                     if (currentArtist == selectedArtistToken)   {
-                        //std::cout << "Found the artist " << selectedArtistToken << " in rated.dsv." << std::endl;
                         //set temp variable to check when the rating token is checked next
                         artistMatch = true;
                         -- countdown;
@@ -153,10 +151,8 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                 if ((tokenCount == 19) && (customArtistID == true)) {
                     selectedArtistToken = token;
                     if (currentArtist == selectedArtistToken) {
-                        //                        std::cout << "Artist " << selectedArtistToken;
                         //set temp variable to check when the rating token is checked next
                         artistMatch = true;
-                        //std::cout << " ArtistMatch is: " << std::to_string(artistMatch) << std::endl;
                         -- countdown;
                         //                       std::cout << " countdown is now " << std::to_string(countdown) << std::endl;
                     }
@@ -164,9 +160,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                 // TOKEN PROCESSING - COL 29 get rating and store for current row
                 if (tokenCount == 29) {
                     if (artistMatch == 1) {
-                        //std::cout << " Col 29 countdown is: " << std::to_string(countdown) << std::endl;
                         selectedRating = token;
-                        //std::cout << "Track rating is " << selectedRating;
                         // Now evaluate the rating using factors and calculate adjusted track value
                         // Increment adjusted values as each track is found using the rating factor stats collected
                         if (selectedRating == "1") {interimAdjCount = interimAdjCount + 1;}
@@ -176,7 +170,6 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                         if (selectedRating == "6") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode6factor;}
                         if (selectedRating == "7") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode7factor;}
                         if (selectedRating == "8") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode8factor;}
-                        //std::cout << " and interimAdjCount is now " << interimAdjCount << std::endl;
                     }
                 }
                 // Increment to the next column of row in rated.dsv
@@ -192,13 +185,12 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         if (interimAdjCount < currentArtistCount) {interimAdjCount = currentArtistCount;} // Adjusted count must be at least one if there is one track or more
         double currentArtistFactor = (interimAdjCount / s_totalAdjRatedQty); //percentage of total adjusted tracks
         int availInterval = int(1 / currentArtistFactor);
-        // Write artist, count, adjusted count, artist factor, and repeat interval to the output file if not the header row
 
+        // Write artist, count, adjusted count, artist factor, and repeat interval to the output file if not the header row
         if ((currentArtist != "Custom2") && (currentArtist != "Artist")){
             outartists2 << currentArtist << "," << int(currentArtistCount) << "," << int(interimAdjCount) <<
                            "," << currentArtistFactor << "," << availInterval << std::endl;
         }
-
         // Resume with next artist on the artists.txt file
     }
     // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
@@ -206,5 +198,5 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     outartists2.close();
     artists.shrink_to_fit();
     if( remove( "artists.txt" ) != 0 )
-        perror( "Error deleting file" );
+        perror( "getArtistAdjustedCount: Error deleting artists.txt file" );
 }

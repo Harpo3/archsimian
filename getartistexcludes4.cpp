@@ -17,18 +17,17 @@ void appendExcludes()
     std::ifstream exthistoryTable(exthistory);
     if (!exthistoryTable.is_open())
     {
-        std::cout << "Error opening exthistoryTable." << std::endl;
+        std::cout << "appendExcludes: Error opening exthistoryTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     // Append write to excludes list, then remove duplicates from it
 
     std::ofstream artistExcList("artistexcludes.txt",std::ios::app); // output file for writing history not in playlist for longer artist intervals
-    //artistExcList.open("artistexcludes.txt",std::ios::app);
     // If we couldn't open the output file stream for writing
     if (!artistExcList)
     {
         // Print an error and exit
-        std::cerr << "Uh oh, artistexcludes.txt could not be opened for writing!" << std::endl;
+        std::cerr << "appendExcludes: Uh oh, artistexcludes.txt could not be opened for writing!" << std::endl;
         exit(1);
     }
     std::string str; // store the string for histposlist.txt
@@ -49,11 +48,9 @@ void appendExcludes()
         {
             // TOKEN PROCESSING - COL 1 Artist Name
             if (tokenCount == 1)  {selectedArtistToken = token;}
-
             // TOKEN PROCESSING - COL 4 Artist Interval
             if (tokenCount == 4)
             {currentArtistInterval = token;}
-
             // TOKEN PROCESSING - COL 5 Playlist position in extended list
             if (tokenCount == 5)
             {posExtList = token;}

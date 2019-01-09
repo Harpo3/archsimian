@@ -8,10 +8,9 @@ void getRatedTable()
     std::fstream filestr2;
     filestr2.open ("cleanlib.dsv");
     if (filestr2.is_open()) {filestr2.close();}
-    else {std::cout << "Error opening cleanlib.dsv file after it was created in child process." << std::endl;}
+    else {std::cout << "getRatedTable: Error opening cleanlib.dsv file after it was created in child process." << std::endl;}
     std::string cleanlibrary = "cleanlib.dsv"; // now we can use it as input file
     std::ofstream outfrated("rated.dsv"); // output file for writing clean track paths
-    //std::ofstream artistlist("artistlist.txt");
     std::ifstream cleanedSongsTable(cleanlibrary);
     bool skiprow{false};
 
@@ -35,7 +34,7 @@ void getRatedTable()
     // Make sure the playlist vector size is accurate
     if(plStrings.size() != static_cast<std::vector<int>::size_type>(plStrings.size()))
     {
-        std::cerr << "Error in plStrings vector size!" << std::endl;
+        std::cerr << "getRatedTable: Error in plStrings vector size!" << std::endl;
     }
     unsigned long playlistSize = plStrings.size(); // total number of tracks in playlist minus one (index starts with 0)
     //
@@ -72,7 +71,6 @@ void getRatedTable()
                         std::vector<std::string>::iterator it = std::find(plStrings.begin(), plStrings.end(), token);
                         // Get index of element from iterator
                         long plindex = std::distance(plStrings.begin(), it);
-                        //std::cout << "Index: " << plindex << " Track: " << token << std::endl;
                         tempinPlaylist = std::to_string(playlistSize-plindex); // Sets playlist position as
                         continue;                                              // 'tracks ago' from last track added.
                     }
@@ -95,7 +93,7 @@ void getRatedTable()
                 int intconvert;
                 rndresult = getNewRandomLPDate(rndresult);
                 if (rndresult == 0.0)
-                {std::cout << "Error obtaining random number at row: " << token << std::endl;}
+                {std::cout << "getRatedTable: Error obtaining random number at row: " << token << std::endl;}
                 intconvert = int (rndresult); // convert the random number to an integer
                 strrandom = std::to_string(intconvert); // convert the integer to string
                 signed int poscount = 0;
@@ -179,5 +177,4 @@ void getRatedTable()
     cleanedSongsTable.close();
     outfrated.close();
     plStrings.shrink_to_fit();
-    //artistlist.close();
 }

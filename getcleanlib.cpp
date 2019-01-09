@@ -1,4 +1,5 @@
 #include <sstream>
+#include <unistd.h>
 #include "userconfig.h"
 #include "constants.h"
 
@@ -10,6 +11,11 @@ void getCleanLib(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1To
                  int *_sSQL20DayTracksTot,double *_sSQL30TotTimeListened,int *_sSQL30DayTracksTot,double *_sSQL40TotTimeListened,
                  int *_sSQL40DayTracksTot,double *_sSQL50TotTimeListened,int *_sSQL50DayTracksTot,double *_sSQL60TotTimeListened,
                  int *_sSQL60DayTracksTot) {
+    //sleep(1);  // needs delay for child process to finish writing libtable.dsv
+    std::ifstream filestr1;
+    filestr1.open ("libtable.dsv");
+    if (filestr1.is_open()) {filestr1.close();}
+    else {std::cout << "getCleanLib: Error opening libtable.dsv file just after it was created in parent process." << std::endl;}
     std::string databaseFile = "libtable.dsv"; // now we can use it as input file
     std::ofstream outf("cleanlib.dsv"); // output file for writing clean track paths
     std::ifstream primarySongsTable(databaseFile);

@@ -17,12 +17,12 @@ void fixsort()
 
     finalexclist.open ("artistexcludes.txt");
     if (finalexclist.is_open()) {finalexclist.close();}
-    else {std::cout << "Error opening artistexcludes2.txt file." << std::endl;}
+    else {std::cout << "fixsort: Error opening artistexcludes2.txt file." << std::endl;}
     std::string finallist = "artistexcludes.txt"; // now we can use it as input file
     std::ifstream finalTable(finallist);
     if (!finalTable.is_open())
     {
-        std::cout << "Error opening finalTable." << std::endl;
+        std::cout << "fixsort: Error opening finalTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
@@ -39,6 +39,5 @@ void fixsort()
         artistExcList2 << *ip << "\n";
     }
     artistExcList2.close();
-    //std::cout << "Got to the end..." << std::endl;
     fsexclvec.shrink_to_fit();
 }

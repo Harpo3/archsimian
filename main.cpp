@@ -1,5 +1,7 @@
 #include <sstream>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 #include "archsimian.h"
 #include "dependents.h"
 #include "userconfig.h"
@@ -96,19 +98,29 @@ int main(int argc,char* argv[])
         guiWindow.show(); // This launches the user interface (UI) for configuration
         mainapp.exec();
     }
-    //*************************
-    // GET SONGS TABLE FROM MM.DB
-    //*************************
-    // Uses an SQL script and SQLite to export the Songs table from the MM.DB file in a data-separated-value (DSV) format
+    //
+    //*********************************
+    // CHECK DATE OF LAST MM.DB BACKUP
+    //*********************************
+
+    std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+    std::string mmpath = mmdbdir + "/MM.DB";
+    struct stat t_stat;
+    stat(mmpath.c_str(), &t_stat);
+    struct tm * timeinfo = localtime(&t_stat.st_ctime); // or gmtime() depending on what you want
+    printf("File time and date: %s", asctime(timeinfo));
 
     // Run function to create and write a sql file to user's home directory
     writeSQLFile();
-    //sleep(2);
+    sleep(1);
 
-    pid_t c_pid;// Create fork object; parent to get database table, child to use table to clean it up
+    pid_t c_pid;// Create fork object; child to get database table into a dsv file, then child to open that table only
+    // after it finishes getting written, not before.
     c_pid = fork(); // Run fork function
+    int status; // For status of pid process
 //1
-    if( c_pid == 0 ){ // Parent process: Get songs table from MM4 database, and create libtable.dsv with table;
+    if( c_pid == 0 ){ // Child process: Get songs table from MM4 database, and create libtable.dsv with table;
+
         std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
         // revise for QStandardPaths class if this does not set with makefile for this location
         const std::string sqlpathdirname = getenv("HOME");
@@ -121,13 +133,14 @@ int main(int argc,char* argv[])
             exit(EXIT_FAILURE);
     }
 //2
-    else if (c_pid > 0){  // Child process starts here. Write libtable.dsv and gather stats
+    else if (c_pid > 0){  // Parent process starts here. Write from libtable.dsv and gather stats
         // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
-        sleep(1);  // needs delay for child process to finish writing libtable.dsv
-        std::fstream filestr1;
-        filestr1.open ("libtable.dsv");
-        if (filestr1.is_open()) {filestr1.close();}
-        else {std::cout << "Error opening libtable.dsv file just after it was created in child process." << std::endl;}
+        //Check to ensure the file has finshed being written
+
+        if( (c_pid = wait(&status)) < 0){
+          perror("wait");
+          _exit(1);
+        }
 
         // Launch function to fix dir path for linux and obtain the values for statistical variables, creates cleanlib.dsv
         getCleanLib(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,&s_rCode3TotTrackQty,&s_rCode3MsTotTime,

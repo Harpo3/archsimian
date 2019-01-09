@@ -41,7 +41,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
       file.close();
       delete[] memblock;
     }
-    else std::cout << "Unable to open configuration file";
+    else std::cout << "archsimian.cpp: Unable to open configuration file";
 
     //If configuration has already been set, populate the ui labels accordingly
     if (size != 0)

@@ -23,12 +23,12 @@ void getArtistExcludes2()
     std::fstream artistadj;
     artistadj.open ("artistsadj.txt");
     if (artistadj.is_open()) {artistadj.close();}
-    else {std::cout << "Error opening artistadj.txt file line 89." << std::endl;}
+    else {std::cout << "getArtistExcludes2: Error opening artistadj.txt file." << std::endl;}
     std::string intervalStd = "artistsadj.txt"; // now we can use it as input file
     std::ifstream artistIntStds(intervalStd);
     if (!artistIntStds.is_open())
     {
-        std::cout << "Error opening artistIntStds line 94." << std::endl;
+        std::cout << "getArtistExcludes2: Error opening artistIntStds." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     // Iterate through artistadj.txt and store int value of col 4 to variable artStd
@@ -51,7 +51,6 @@ void getArtistExcludes2()
             if (tokenCount == 4) {plIntervalVal = std::stoi(token);}
             ++ tokenCount;
         }
-        //std::cout << "Current string from artistadj.txt is " << str3 << std::endl;
 
         // While on row of artistadj.txt, iterate through playlistposlist.txt and save each Col 4 to int variable plIntervalVal
 
@@ -60,18 +59,17 @@ void getArtistExcludes2()
         std::fstream artistPLIntervals;  // Next ensure artistsadj.txt is ready to open
         artistPLIntervals.open ("playlistposlist.txt");
         if (artistPLIntervals.is_open()) {artistPLIntervals.close();}
-        else {std::cout << "Error opening artistsadj.txt file line 124." << std::endl;}
+        else {std::cout << "getArtistExcludes2: Error opening artistsadj.txt file." << std::endl;}
         std::string artistIntPL = "playlistposlist.txt"; // now we can use it as input file
         std::ifstream plPosList(artistIntPL); // Open playlistposlist.txt as ifstream
         if (!plPosList.is_open())
         {
-            std::cout << "Error opening playlistposlist.txt." << std::endl;
+            std::cout << "getArtistExcludes2: Error opening playlistposlist.txt." << std::endl;
             std::exit(EXIT_FAILURE);
         }
         while (std::getline(plPosList, str4))
         {
             std::istringstream iss(str4); // str is the string of each row
-            //std::cout << "Current string from playlistposlist.txt is " << str4 << std::endl;
             int tokenPLCount{0}; //token count is the number of delimiter characters within str
             std::string token; // token is the contents of each column of data
             while (std::getline(iss, token, ','))
@@ -88,9 +86,7 @@ void getArtistExcludes2()
             if ((selectedArtistToken2 == currentArtist2) && (plIntervalVal < artStd)){
                 // push unique values into vector pexclvec
                 pexclvec.push_back(currentArtist2);
-                //outfratedint << currentArtist2 << std::endl; // Write artist to clean file
                 continue; // Resume artistadj.txt next row, beginning with Col 0
-                //std::cout << "currentArtist:" << currentArtist << " selectedArtistToken:" << selectedArtistToken << ", interval:" << currentArtistInterval<< std::endl;
             }
             continue; // Resume artistadj.txt next row, beginning with Col 0
         }
