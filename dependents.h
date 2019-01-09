@@ -6,5 +6,5 @@
 
 int getProcIdByName(std::string x);
 bool isAppRunning(std::string x);
-
+bool isLibRefreshNeeded();
 #endif // DEPENDENTS_H

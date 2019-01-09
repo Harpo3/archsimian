@@ -2,8 +2,18 @@
 // third party app (Whether it is running).
 
 #include <dirent.h>
+#include <sys/stat.h>
+#include <string>
 #include <fstream>
 #include <iostream>
+#include <unistd.h>
+#include "userconfig.h"
+
+
+inline bool doesFileExist (const std::string& name) {
+  struct stat buffer;
+  return (stat (name.c_str(), &buffer) == 0);
+}
 
 //Obtain the pid number based on the pgrep name of the app (std::string x)
 int getProcIdByName(std::string x)
@@ -60,4 +70,39 @@ pid = getProcIdByName(x);
 if (pid == -1)
 {return false;}
 else {return true;}
+}
+
+bool isLibRefreshNeeded()
+{
+    const std::string existlibname = "ratedlib.dsv";
+    bool existResult;
+    bool refreshNeededResult{0};
+    existResult = doesFileExist(existlibname);// See inline function at top
+    //std::cout << "File exist result is " << existResult << std::endl;
+    // If the lib file exists, Get the epoch date for the MM.DB file
+    // and see which file is older
+    if (existResult == 1){
+
+        std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+        std::string mmpath = mmdbdir + "/MM.DB";
+        struct stat stbuf1;
+        stat(mmpath.c_str(), &stbuf1);
+        localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want
+        printf("Modification time for MM.DB is %ld\n",stbuf1.st_mtime);
+        //std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
+        // Now get the date for the ratedlib.csv file
+        struct stat stbuf2;
+        stat(existlibname.c_str(), &stbuf2);
+        localtime(&stbuf2.st_mtime);
+        //printf("Modification time for ratedlib.csv is %ld\n",stbuf2.st_mtime);
+        //std::cout << "ratedlib.csv is " << stbuf2.st_mtime << std::endl;
+        double dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
+        if (dateResult > 0) {
+            refreshNeededResult = 1;
+            std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
+        }
+        // If the result is negative, then MM4 has not been updated since the program library was last refreshed. No update is necessary.
+        // If positive, need to refresh all library data.
+    }
+    return refreshNeededResult;
 }
