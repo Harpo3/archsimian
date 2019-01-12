@@ -33,7 +33,7 @@ public slots:
 
     void on_setmmplButtonReset_clicked();
 
-    void on_setmmdbButtonReset_clicked();
+    void on_setmmdbButtonReset_clicked();    
 
 
 private slots:
@@ -44,6 +44,10 @@ private slots:
 
 
     void on_mainQTabWidget_tabBarClicked(int index);
+
+//    void on_pushButton_clicked();
+
+    void on_refreshdbButton_clicked();
 
 private:
     Ui::ArchSimian *ui;

@@ -2,6 +2,9 @@
 #include "dependents.h"
 #include "userconfig.h"
 #include "constants.h"
+#include "runbashapp.h"
+
+//std::string execvp();
 
 int main(int argc,char* argv[])
 {
@@ -19,13 +22,11 @@ int main(int argc,char* argv[])
         guiWindow.show(); // This launches the user interface (UI) for configuration
         mainapp.exec();
     }
-    // Section to launch GUI; uncomment last four lines below to enable
-    if (s_isConfigSetResult == 1) { //If user config setup was already run (result is 1) run GUI app here
-        // which after the sts and file data have been loaded
-        // GUI currently not disabled
-            QApplication mainapp(argc, argv);
-            ArchSimian guiWindow;
-         guiWindow.show();   // This launches the user interface (UI)
+    // Section to launch GUI with data
+    if (s_isConfigSetResult == 1) { //If user config setup was already run (s_isConfigSetResult is 1) run GUI app
+        QApplication mainapp(argc, argv);
+        ArchSimian guiWindow;
+        guiWindow.show();   // This launches the user interface (UI)
         mainapp.exec();
     }
     return 0;
