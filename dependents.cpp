@@ -1,5 +1,5 @@
 ﻿// This cpp is used to provide functions used to identify the state of any
-// third party app (Whether it is running).
+// third party app (Whether it is running) and update status of MM.DB.
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -88,7 +88,7 @@ bool isLibRefreshNeeded()
         struct stat stbuf1;
         stat(mmpath.c_str(), &stbuf1);
         localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want
-        printf("Modification time for MM.DB is %ld\n",stbuf1.st_mtime);
+        //printf("Modification time for MM.DB is %ld\n",stbuf1.st_mtime);
         //std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
         // Now get the date for the ratedlib.csv file
         struct stat stbuf2;

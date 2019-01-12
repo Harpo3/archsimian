@@ -42,6 +42,9 @@ private slots:
 
 
 
+
+    void on_mainQTabWidget_tabBarClicked(int index);
+
 private:
     Ui::ArchSimian *ui;
 
