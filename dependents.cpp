@@ -106,3 +106,34 @@ bool isLibRefreshNeeded()
     }
     return refreshNeededResult;
 }
+
+std::string getMMdbDate()
+{
+    std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+    std::string mmpath = mmdbdir + "/MM.DB";
+    struct stat stbuf1;
+    struct tm *foo;
+    stat(mmpath.c_str(), &stbuf1);
+    foo = gmtime(&(stbuf1.st_mtime));
+    localtime(&stbuf1.st_mtime);
+    printf("Year: %d\n", foo->tm_year + 1900);
+    printf("Month: %d\n", foo->tm_mon + 1);
+    printf("Day: %d\n", foo->tm_mday);
+    std::string a = (std::to_string(foo->tm_mon + 1)) + "/" + (std::to_string(foo->tm_mday)) + "/" + (std::to_string(foo->tm_year + 1900));
+    return a;
+}
+
+std::string getLastTableDate()
+{
+    const std::string existlibname = "libtable.dsv";
+    struct stat stbuf2;
+    struct tm *foo;
+    stat(existlibname.c_str(), &stbuf2);
+    foo = gmtime(&(stbuf2.st_mtime));
+    localtime(&stbuf2.st_mtime);
+    printf("Year: %d\n", foo->tm_year + 1900);
+    printf("Month: %d\n", foo->tm_mon + 1);
+    printf("Day: %d\n", foo->tm_mday);
+    std::string a = (std::to_string(foo->tm_mon + 1)) + "/" + (std::to_string(foo->tm_mday)) + "/" + (std::to_string(foo->tm_year + 1900));
+    return a;
+}

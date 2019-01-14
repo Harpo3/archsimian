@@ -69,12 +69,8 @@ static double s_yrsTillRepeatCode6factor = 1 / s_yrsTillRepeatCode6;
 static double s_yrsTillRepeatCode7factor = 1 / s_yrsTillRepeatCode7;
 static double s_yrsTillRepeatCode8factor = 1 / s_yrsTillRepeatCode8;
 // Variables declared to calculate rating ratios
-static double s_ratingRatio3;
-static double s_ratingRatio4;
-static double s_ratingRatio5;
-static double s_ratingRatio6;
-static double s_ratingRatio7;
-static double s_ratingRatio8;
+static double s_ratingRatio3{0.0},s_ratingRatio4{0.0},s_ratingRatio5{0.0},
+s_ratingRatio6{0.0},s_ratingRatio7{0.0},s_ratingRatio8{0.0};
 // Declare statistical variables to be collected
 // First group is declared to get times and track quantities by rating group
 static int s_rCode0TotTrackQty{0}, s_rCode0MsTotTime{0},
@@ -92,20 +88,27 @@ s_SQL30DayTracksTot{0},s_SQL40DayTracksTot{0},s_SQL50DayTracksTot{0},s_SQL60DayT
 static double s_SQL20TotTimeListened{0},s_SQL30TotTimeListened{0},s_SQL40TotTimeListened{0},
 s_SQL50TotTimeListened{0},s_SQL60TotTimeListened{0};
 
-static double s_listeningRate;
-static int s_totalRatedQty;
-static double s_totalRatedTime;
-static int s_totalLibQty;
-static double s_DaysBeforeRepeatCode3;
-static double s_totHrsLast60Days;
-static double s_totalAdjRatedQty;
-
-static unsigned long s_playlistSize;
+static double s_listeningRate{0.0};
+static int s_totalRatedQty{0};
+static double s_totalRatedTime{0.0};
+static int s_totalLibQty{0};
+static double s_DaysBeforeRepeatCode3{0.0};
+static double s_totHrsLast60Days{0.0};
+static double s_totalAdjRatedQty{0.0};
+static unsigned long s_playlistSize{0};
+static int ratingNextTrack{0};
+static std::string s_MMdbDate;
+static std::string s_LastTableDate;
 
 ArchSimian::ArchSimian(QWidget *parent) :    
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
+    //
+    //*********************************************************************
+    // CHECK WHETHER USER CONFIGURATION EXISTS, IF NOT, USE NEW SETUP OPTIONS
+    //*********************************************************************
+    //
     // User configuration: set default state to "false" for user config reset buttons
     ui->setupUi(this);
     ui->setlibraryButtonReset->setVisible(false);
@@ -155,7 +158,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
         if (needUpdate == 0)
         {
-            ui->updatestatusLabel->setText(tr("MM.DB was last updated: "));
+            s_MMdbDate = getMMdbDate();
+            s_LastTableDate = getLastTableDate();
+            ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+
+                                           tr(", Library date: ")+ QString::fromStdString(s_LastTableDate) + "\n No update is needed.");
             // dim update library button
             ui->refreshdbButton->setEnabled(false);
         }
@@ -168,11 +174,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setlibraryButton->setEnabled(true);
         ui->setlibraryButtonReset->setVisible(false);
         ui->setmmpllabel->setText(tr("Select the shared Windows directory"
-                                     " where you stored the backup playlists from MediaMonkey"));
+                                     " where you manually exported your playlist(s) from MediaMonkey"));
         ui->setmmplButton->setEnabled(false);
         ui->setmmplButtonReset->setVisible(false);
         ui->setmmdblabel->setText(tr("Select the shared Windows directory"
-                                     " where you stored the MediaMonkey database backup file"));
+                                     " where you stored the MediaMonkey database backup file (MM.DB)"));
         ui->setmmdbButton->setEnabled(false);
         ui->setmmdbButtonReset->setVisible(false);
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
@@ -184,8 +190,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //*********************************************************************
     // CHECK DATE OF LAST MM.DB BACKUP AGAINST THE RATEDLIB.DSV (IF EXISTS)
     //*********************************************************************
+    //
     // Check to see if the ratedlib.dsv file already exists
-    bool needUpdate = 1;//isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
+    bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
 
     if (needUpdate == 1) // bool needUpdate: 1 means refresh DB, 0 means skip unessential
     {
@@ -329,7 +336,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
     std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl;
     //std::cout << "Sequential Track Limit Factor - s_STLF : "<< s_STLF << std::endl;
-    std::cout << "Now processing statistics. This will take a few seconds..."<< std::endl;
 
     //4
     std::fstream filestr;
@@ -367,7 +373,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     appendExcludes();
     std::cout << "appendExcludes completed." << std::endl;
     fixsort();
-    int ratingNextTrack;
     ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
     std::cout << "Rating for the next track is " << ratingNextTrack << std::endl;
     std::cout << "done!" << std::endl;
@@ -531,6 +536,7 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
         ui->totratedtracksLabel->setText("Total rated tracks in the library is: " + QString::fromStdString(std::to_string(s_totalRatedQty)));
         ui->totratedtimeLabel->setText("Total rated time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
         ui->dailylistenLabel->setText("Calculated daily listening rate (in hours) is: " + QString::fromStdString(std::to_string(s_listeningRate)));
+
     }
 }
 
@@ -657,9 +663,9 @@ void ArchSimian::on_refreshdbButton_clicked()
     else {
         std::cout << "Error opening cleanlib.dsv file" << std::endl;}
 
-        removeSQLFile(); // Run function to delete sql file from user's home directory after completion
-        getPlaylist(); // Using the function getPlaylist, correct paths from windows to linux, then save to cleanedplaylist.txt
-        std::cout << "getPlaylist completed." << std::endl;
+    removeSQLFile(); // Run function to delete sql file from user's home directory after completion
+    getPlaylist(); // Using the function getPlaylist, correct paths from windows to linux, then save to cleanedplaylist.txt
+    std::cout << "getPlaylist completed." << std::endl;
 
     std::vector<std::string> plStrings;
     //6
@@ -672,39 +678,39 @@ void ArchSimian::on_refreshdbButton_clicked()
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect
     //7
-      // bool needUpdate: 1 means refresh DB, 0 means skip unessential
-        getRatedTable();
-        std::cout << "getRatedTable completed." << std::endl;
-        std::fstream filestr2;
-        filestr2.open ("rated.dsv");
-        if (filestr2.is_open()) {
-            filestr2.close();
-            std::cout << "File rated.dsv successfully created. Deleting cleanlib.dsv." << std::endl;
-            remove("cleanlib.dsv");}
-        else {std::cout << "Error opening rated.dsv file before deleting cleanlib.dsv" << std::endl;}
+    // bool needUpdate: 1 means refresh DB, 0 means skip unessential
+    getRatedTable();
+    std::cout << "getRatedTable completed." << std::endl;
+    std::fstream filestr2;
+    filestr2.open ("rated.dsv");
+    if (filestr2.is_open()) {
+        filestr2.close();
+        std::cout << "File rated.dsv successfully created. Deleting cleanlib.dsv." << std::endl;
+        remove("cleanlib.dsv");}
+    else {std::cout << "Error opening rated.dsv file before deleting cleanlib.dsv" << std::endl;}
 
-        // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
-        //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
-        //8
-        // Using the function getArtistAdjustedCount, use rated.dsv to generate unique artist list, count tracks, calculate adjusted tracks,
-        // calculate factors, calculate repeat intervals, then write the artist values to
-        getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
-                               &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
-                               &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
-                               &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
+    // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
+    //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
+    //8
+    // Using the function getArtistAdjustedCount, use rated.dsv to generate unique artist list, count tracks, calculate adjusted tracks,
+    // calculate factors, calculate repeat intervals, then write the artist values to
+    getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
+                           &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
+                           &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
+                           &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
 
-        std::cout << "getArtistAdjustedCount completed." << std::endl;
-        //9
-        // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to ratedlib.dsv
-        addIntervalValues();
-        std::cout << "addIntervalValues completed." << std::endl;
-        std::fstream filestr3;
-        filestr3.open ("ratedlib.dsv");
-        if (filestr3.is_open()) {
-            filestr3.close();
-            std::cout << "File ratedlib.dsv successfully created. Deleting rated.dsv." << std::endl;
-            remove("rated.dsv");}
-        else {std::cout << "Error opening ratedlib.dsv.dsv file before deleting rated.dsv" << std::endl;}
+    std::cout << "getArtistAdjustedCount completed." << std::endl;
+    //9
+    // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to ratedlib.dsv
+    addIntervalValues();
+    std::cout << "addIntervalValues completed." << std::endl;
+    std::fstream filestr3;
+    filestr3.open ("ratedlib.dsv");
+    if (filestr3.is_open()) {
+        filestr3.close();
+        std::cout << "File ratedlib.dsv successfully created. Deleting rated.dsv." << std::endl;
+        remove("rated.dsv");}
+    else {std::cout << "Error opening ratedlib.dsv.dsv file before deleting rated.dsv" << std::endl;}
 
     //Section beyond initial program setup
     // Run function getArtistExcludes to populate a list of artists currently unavailable
@@ -725,5 +731,8 @@ void ArchSimian::on_refreshdbButton_clicked()
     int ratingNextTrack;
     ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
     std::cout << "Rating for the next track is " << ratingNextTrack << std::endl;
-    std::cout << "done!" << std::endl;
+    std::cout << "done!" << std::endl;   s_MMdbDate = getMMdbDate();
+    s_LastTableDate = getLastTableDate();
+    ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
+    //ui->updatestatusLabel->setText("Library update completed.");
 }
