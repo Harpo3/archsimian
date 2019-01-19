@@ -3,5 +3,6 @@
 #include <iostream>
 #include <vector>
 void getPlaylist();
-bool getPlaylistVect(std::string fileName, std::vector<std::string> & plStrings);
+std::vector<std::string> getPlaylistVect(std::string fileName);
+int playlistSize(std::string filename);
 #endif // GETPLAYLIST_H

@@ -29,7 +29,7 @@ void getRatedTable()
 
     // Run function getPlaylistVector to read playlist into a vector, and then to populate the Custom1 field
     std::vector<std::string> plStrings;
-    getPlaylistVect("cleanedplaylist.txt", plStrings);
+    plStrings = getPlaylistVect("cleanedplaylist.txt");
 
     // Make sure the playlist vector size is accurate
     if(plStrings.size() != static_cast<std::vector<int>::size_type>(plStrings.size()))

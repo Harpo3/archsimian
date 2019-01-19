@@ -11,7 +11,7 @@ void getArtistExcludes2()
 {
     std::vector<std::string>pexclvec;
     pexclvec.reserve(50000);
-    std::ofstream outfratedint("artistexcludes.txt"); // output file for writing rated.dsv with added artist intervals
+    std::ofstream outfratedint("artistexcludes.txt"); // output file for writing
     int artStd{0}; // token is the contents of each column of data
     std::string currentArtist2; // Artist variable from artistsadj.txt
 
@@ -48,7 +48,7 @@ void getArtistExcludes2()
             // TOKEN PROCESSING - COL 0
             if (tokenCount == 0) {selectedArtistToken2 = token;}
             // TOKEN PROCESSING - COL 4
-            if (tokenCount == 4) {plIntervalVal = std::stoi(token);}
+            if (tokenCount == 4) {artStd = std::stoi(token);}
             ++ tokenCount;
         }
 
@@ -58,6 +58,7 @@ void getArtistExcludes2()
         // to get the artist name and interval to write interval to ratedlib.dsv
         std::fstream artistPLIntervals;  // Next ensure artistsadj.txt is ready to open
         artistPLIntervals.open ("playlistposlist.txt");
+        int playlistPosNum{0};
         if (artistPLIntervals.is_open()) {artistPLIntervals.close();}
         else {std::cout << "getArtistExcludes2: Error opening artistsadj.txt file." << std::endl;}
         std::string artistIntPL = "playlistposlist.txt"; // now we can use it as input file
@@ -78,14 +79,15 @@ void getArtistExcludes2()
                 if (tokenPLCount == 0) {currentArtist2 = token;}
 
                 // TOKEN PROCESSING - COL 1
-                if (tokenPLCount == 1) {artStd = std::stoi(token);}
+                if (tokenPLCount == 1) {playlistPosNum = std::stoi(token);}
                 //  }
                 ++tokenPLCount;
             }
             // If plIntervalVal < artStd  write artist to artistexcludes.txt
-            if ((selectedArtistToken2 == currentArtist2) && (plIntervalVal < artStd)){
+            if ((selectedArtistToken2 == currentArtist2) && (playlistPosNum < artStd)){
                 // push unique values into vector pexclvec
                 pexclvec.push_back(currentArtist2);
+                //std::cout << "getArtistExcludes2: Found artist to exclude: " <<selectedArtistToken2<<". Playlist pos: " <<std::to_string(playlistPosNum)<< " and std: " <<artStd << std::endl;
                 continue; // Resume artistadj.txt next row, beginning with Col 0
             }
             continue; // Resume artistadj.txt next row, beginning with Col 0
@@ -100,8 +102,8 @@ void getArtistExcludes2()
 
     for (ip = pexclvec.begin(); ip != pexclvec.end(); ++ip) {
         outfratedint << *ip << "\n";
-    }
-    pexclvec.shrink_to_fit();
+    }    
     artistIntStds.close();
     outfratedint.close();
+    pexclvec.shrink_to_fit();
 }

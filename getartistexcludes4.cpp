@@ -36,7 +36,7 @@ void appendExcludes()
     std::string currentArtist; // Artist variable from artistsadj.txt
     std::string posExtList; // Playlist position in extended list
 
-    // Outer loop: iterate through ratedSongsTable in the file "rated.dsv" t
+    // Outer loop: iterate through the file "histposlist.txt"
     while (std::getline(exthistoryTable, str))
     {  // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
@@ -54,7 +54,6 @@ void appendExcludes()
             // TOKEN PROCESSING - COL 5 Playlist position in extended list
             if (tokenCount == 5)
             {posExtList = token;}
-
             ++ tokenCount;
         }
         int selectedInterval = std::stoi(currentArtistInterval);

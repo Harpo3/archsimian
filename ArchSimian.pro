@@ -44,7 +44,9 @@ SOURCES += \
     getartistexcludes5.cpp \
     writesqlfile.cpp \
     ratingvariance.cpp \
-    getlibvariables.cpp
+    getlibvariables.cpp \
+    getsubset.cpp \
+    selecttrack.cpp
 
 HEADERS += \
     archsimian.h \
@@ -66,7 +68,9 @@ HEADERS += \
     getartistexcludes5.h \
     writesqlfile.h \
     ratingvariance.h \
-    getlibvariables.h
+    getlibvariables.h \
+    getsubset.h \
+    selecttrack.h
 
 FORMS += \
     archsimian.ui

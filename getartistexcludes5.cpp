@@ -9,7 +9,7 @@
 
 void fixsort()
 {
-    // Now reopen, then use a vector to remove duplcates again and resort
+    // Now reopen, then use a vector to remove duplicates again and resort
     std::vector<std::string>fsexclvec;
     fsexclvec.reserve(10000);
     std::ifstream finalexclist;

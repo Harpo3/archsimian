@@ -35,6 +35,8 @@
 #include "getartistexcludes5.h"
 #include "writesqlfile.h"
 #include "ratingvariance.h"
+#include "getsubset.h"
+#include "selecttrack.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -95,10 +97,11 @@ static int s_totalLibQty{0};
 static double s_DaysBeforeRepeatCode3{0.0};
 static double s_totHrsLast60Days{0.0};
 static double s_totalAdjRatedQty{0.0};
-static unsigned long s_playlistSize{0};
-static int ratingNextTrack{0};
+static int s_playlistSize{0};
+static int s_ratingNextTrack{0};
 static std::string s_MMdbDate;
 static std::string s_LastTableDate;
+
 
 ArchSimian::ArchSimian(QWidget *parent) :    
     QMainWindow(parent),
@@ -185,7 +188,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
 
     // Set variable for customArtistID, either dir tree (0) or custom groupings (1)
-    //    bool customArtistID{1};
+    //    bool customArtistID{1}; // fix when user selection function is created
     //
     //*********************************************************************
     // CHECK DATE OF LAST MM.DB BACKUP AGAINST THE RATEDLIB.DSV (IF EXISTS)
@@ -349,15 +352,17 @@ ArchSimian::ArchSimian(QWidget *parent) :
     std::vector<std::string> plStrings;
     //6
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
-    getPlaylistVect("cleanedplaylist.txt", plStrings);
-    s_playlistSize = plStrings.size();
+    plStrings = getPlaylistVect("cleanedplaylist.txt");
+    s_playlistSize = playlistSize("cleanedplaylist.txt");
     std::cout << "getPlaylistVect completed." << std::endl;
+    std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
     plStrings.shrink_to_fit();
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect
     //7
     //Section beyond initial program setup
+    //
     // Run function getArtistExcludes to populate a list of artists currently unavailable
     getArtistExcludes();
     std::cout << "getArtistExcludes completed." << std::endl;
@@ -373,14 +378,40 @@ ArchSimian::ArchSimian(QWidget *parent) :
     appendExcludes();
     std::cout << "appendExcludes completed." << std::endl;
     fixsort();
-    ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
-    std::cout << "Rating for the next track is " << ratingNextTrack << std::endl;
+    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+    std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
     std::cout << "done!" << std::endl;
     }
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
 
+    selectTrack(&s_ratingNextTrack);
+    //std::cout << "selectTrack completed. " << std::endl;
+    //remove("playlistposlist.txt");
+    //remove("histposlist.txt");
+    //remove("artistexcludes.txt");
+    //remove("finalartistexcludes.txt");
+    //std::vector<std::string> plStrings;
+    //plStrings = getPlaylistVect("cleanedplaylist.txt");
+    s_playlistSize = playlistSize("cleanedplaylist.txt");
+    std::cout << "getPlaylistVect completed. Playlist length is: " << s_playlistSize << " tracks." << std::endl;
+    getArtistExcludes();
+    //std::cout << "getArtistExcludes completed." << std::endl;
+    // Run function getArtistExcludes2 to populate a list of artists currently unavailable
+    getArtistExcludes2();
+    //std::cout << "getArtistExcludes2 completed." << std::endl;
+    //std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
+    //unsigned long histCount = s_SequentialTrackLimit - s_playlistSize;
+    static long s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
+    //std::cout << "History count for calculating additional artist excludes: "<< s_histCount << std::endl;
+    getExtendedExcludes(&s_histCount,&s_playlistSize);
+    //std::cout << "getExtendedExcludes completed." << std::endl;
+    appendExcludes();
+    //std::cout << "appendExcludes completed." << std::endl;
+    fixsort();
+    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+    std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
@@ -670,8 +701,8 @@ void ArchSimian::on_refreshdbButton_clicked()
     std::vector<std::string> plStrings;
     //6
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
-    getPlaylistVect("cleanedplaylist.txt", plStrings);
-    s_playlistSize = plStrings.size();
+    plStrings = getPlaylistVect("cleanedplaylist.txt");
+    s_playlistSize = playlistSize("cleanedplaylist.txt");
     std::cout << "getPlaylistVect completed." << std::endl;
     plStrings.shrink_to_fit();
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
@@ -713,6 +744,9 @@ void ArchSimian::on_refreshdbButton_clicked()
     else {std::cout << "Error opening ratedlib.dsv.dsv file before deleting rated.dsv" << std::endl;}
 
     //Section beyond initial program setup
+    // Run function to generate subset file for iterative file addition code if needUpdate == 1
+    bool needUpdate = isLibRefreshNeeded();
+    if (needUpdate == 1) getSubset();
     // Run function getArtistExcludes to populate a list of artists currently unavailable
     getArtistExcludes();
     std::cout << "getArtistExcludes completed." << std::endl;
@@ -728,11 +762,10 @@ void ArchSimian::on_refreshdbButton_clicked()
     appendExcludes();
     std::cout << "appendExcludes completed." << std::endl;
     fixsort();
-    int ratingNextTrack;
-    ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
-    std::cout << "Rating for the next track is " << ratingNextTrack << std::endl;
-    std::cout << "done!" << std::endl;   s_MMdbDate = getMMdbDate();
-    s_LastTableDate = getLastTableDate();
+    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+    std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
+    std::cout << "done!" << std::endl;   s_MMdbDate = getMMdbDate();// function is in dependents.cpp
+    s_LastTableDate = getLastTableDate(); // function is in dependents.cpp
     ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
     //ui->updatestatusLabel->setText("Library update completed.");
 }

@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 void addIntervalValues() {
-    bool customArtistID{true};
+    bool customArtistID{true}; // fix when user selection function is created
     std::fstream filestrinterval;
     filestrinterval.open ("rated.dsv");
     if (filestrinterval.is_open()) {filestrinterval.close();}

@@ -37,24 +37,36 @@ void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving ju
     outf.close();
 }
 
-bool getPlaylistVect(std::string fileName, std::vector<std::string> & plStrings)
+std::vector<std::string> getPlaylistVect(std::string fileName)
 {
+    std::vector<std::string> getPlaylistVect1;
     // Open the File
     std::ifstream in(fileName.c_str());
     // Check if object is valid
     if(!in)
     {
         std::cerr << "getPlaylistVect: Cannot open the File : "<<fileName<<std::endl;
-        return false;
+        exit(1);
     }
     std::string str;
-    // Read the next line from File untill it reaches the end.
+    // Read the next line from File until it reaches the end.
     while (std::getline(in, str, '\r'))
     {
-        // Line contains string of length > 0 then save it in vector
+        // If line contains string of length > 0 then save it in vector
         if(str.size() > 0)
-            plStrings.push_back(str);
+            getPlaylistVect1.push_back(str);
     }
     in.close();     //Close The File
-    return true;
+    return getPlaylistVect1;
 }
+
+int playlistSize(std::string filename)
+{int count = 0;
+std::string line;
+/* Creating input filestream */
+
+std::ifstream file(filename);
+while (getline(file, line))
+    count++;
+//cout << "Numbers of lines in the file : " << count << endl;
+return count;}

@@ -11,7 +11,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                             int *_srCode6TotTrackQty,int *_srCode7TotTrackQty,int *_srCode8TotTrackQty)
 {
     //std::cout << "Working on artist counts and factors. This will take a few seconds...";
-    bool customArtistID{true};    
+    bool customArtistID{true};    // fix when user selection function is created
     std::ifstream rated;  // First ensure rated.dsv is ready to open
     rated.open ("rated.dsv");
     if (rated.is_open()) {rated.close();}

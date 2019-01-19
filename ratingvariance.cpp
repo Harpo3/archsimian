@@ -49,10 +49,10 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     std::string selectedRatingCode;
 
     std::fstream filestrinterval;
-    filestrinterval.open ("ratedlib.dsv");
+    filestrinterval.open ("ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "Error opening ratedlib.dsv file." << std::endl;}
-    std::string ratedlibrary = "ratedlib.dsv"; // now we can use it as input file
+    else {std::cout << "Error opening ratedabbr.txt file." << std::endl;}
+    std::string ratedlibrary = "ratedabbr.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())
     {
@@ -66,19 +66,21 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         int tokenCount{0}; //token count is the number of delimiter characters within str
 
         // Inner loop: iterate through each column (token) of row
-        while (std::getline(iss, token, '^'))
+        while (std::getline(iss, token, ','))
         {
-            // TOKEN PROCESSING - COL 12
-            if (tokenCount == 12)  {selectedSongLength = std::atof(token.c_str());
-            }
-            // TOKEN PROCESSING - COL 18
-            if (tokenCount == 18)  {
+
+            // TOKEN PROCESSING - COL 1
+            if (tokenCount == 1)  {
                 selectedPlaylistPosition = token;
             }
-            // TOKEN PROCESSING - COL 29
-            if (tokenCount == 29)  {selectedRatingCode = token;
+            // TOKEN PROCESSING - COL 2
+            if (tokenCount == 2)  {
+                selectedRatingCode = token;
                 if (selectedPlaylistPosition == "1") {codeForPos1 = selectedRatingCode;}
                 if (selectedPlaylistPosition == "2") {codeForPos2 = selectedRatingCode;}
+            }
+            // TOKEN PROCESSING - COL 5
+            if (tokenCount == 5)  {selectedSongLength = std::atof(token.c_str());
             }
             ++ tokenCount;
         }
@@ -94,13 +96,13 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
             if (selectedRatingCode == "8") {totalPLTime8 = totalPLTime8 + selectedSongLength;}
         }
     }
-    std::cout << "totalPLTime3 is: " <<totalPLTime3/1000 << std::endl;
-    std::cout << "totalPLTime4 is: " <<totalPLTime4/1000 << std::endl;
-    std::cout << "totalPLTime5 is: " <<totalPLTime5/1000 << std::endl;
-    std::cout << "totalPLTime6 is: " <<totalPLTime6/1000 << std::endl;
-    std::cout << "totalPLTime7 is: " <<totalPLTime7/1000 << std::endl;
-    std::cout << "totalPLTime8 is: " <<totalPLTime8/1000 << std::endl;
-    std::cout << "totalPlaylistTime is: " <<totalPlaylistTime/1000 << std::endl;
+    //std::cout << "totalPLTime3 is: " <<totalPLTime3/1000 << std::endl;
+    //std::cout << "totalPLTime4 is: " <<totalPLTime4/1000 << std::endl;
+    //std::cout << "totalPLTime5 is: " <<totalPLTime5/1000 << std::endl;
+    //std::cout << "totalPLTime6 is: " <<totalPLTime6/1000 << std::endl;
+    //std::cout << "totalPLTime7 is: " <<totalPLTime7/1000 << std::endl;
+    //std::cout << "totalPLTime8 is: " <<totalPLTime8/1000 << std::endl;
+    //std::cout << "totalPlaylistTime is: " <<totalPlaylistTime/1000 << std::endl;
 
     //Calculate time ratio for each rating code by dividing each by the total playlist time.
     //variables:
@@ -111,12 +113,12 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
 
-    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << *_sratingRatio3 << std::endl;
-    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << *_sratingRatio4<< std::endl;
-    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << *_sratingRatio5<< std::endl;
-    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << *_sratingRatio6<< std::endl;
-    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << *_sratingRatio7<< std::endl;
-    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << *_sratingRatio8<< std::endl;
+    //std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << *_sratingRatio3 << std::endl;
+    //std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << *_sratingRatio4<< std::endl;
+    //std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << *_sratingRatio5<< std::endl;
+    //std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << *_sratingRatio6<< std::endl;
+    //std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << *_sratingRatio7<< std::endl;
+    //std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << *_sratingRatio8<< std::endl;
 
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
