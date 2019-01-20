@@ -2,7 +2,7 @@
 #define GETPLAYLIST_H
 #include <iostream>
 #include <vector>
-void getPlaylist();
 std::vector<std::string> getPlaylistVect(std::string fileName);
-int playlistSize(std::string filename);
+void getPlaylist();
+int cstyleStringCount(std::string path);
 #endif // GETPLAYLIST_H

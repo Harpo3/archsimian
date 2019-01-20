@@ -3,6 +3,29 @@
 #include "lastplayeddays.h"
 #include "getplaylist.h"
 
+std::vector<std::string> getPlaylistVect(std::string fileName)
+{
+    std::vector<std::string> getPlaylistVect1;
+    // Open the File
+    std::ifstream in(fileName.c_str());
+    // Check if object is valid
+    if(!in)
+    {
+        std::cerr << "getPlaylistVect: Cannot open the File : "<<fileName<<std::endl;
+        exit(1);
+    }
+    std::string str;
+    // Read the next line from File until it reaches the end.
+    while (std::getline(in, str, '\r'))
+    {
+        // If line contains string of length > 0 then save it in vector
+        if(str.size() > 0)
+            getPlaylistVect1.push_back(str);
+    }
+    in.close();     //Close The File
+    return getPlaylistVect1;
+}
+
 void getRatedTable()
 {
     std::fstream filestr2;

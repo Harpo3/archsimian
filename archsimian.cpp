@@ -353,9 +353,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //6
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
     //plStrings = getPlaylistVect("cleanedplaylist.txt");
-    s_playlistSize = playlistSize("cleanedplaylist.txt");
-    std::cout << "getPlaylistVect completed." << std::endl;
-    std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
+    //s_playlistSize = playlistSize("cleanedplaylist.txt");
+    //std::cout << "getPlaylistVect completed." << std::endl;
+    //std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
     //plStrings.shrink_to_fit();
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
@@ -369,6 +369,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // Run function getArtistExcludes2 to populate a list of artists currently unavailable
     getArtistExcludes2();
     std::cout << "getArtistExcludes2 completed." << std::endl;
+    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
     std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
     //unsigned long histCount = s_SequentialTrackLimit - s_playlistSize;
     static long s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
@@ -392,9 +393,7 @@ void ArchSimian::on_addsongsButton_clicked(){
     //remove("histposlist.txt");
     //remove("artistexcludes.txt");
     //remove("finalartistexcludes.txt");
-    //std::vector<std::string> plStrings;
-    //plStrings = getPlaylistVect("cleanedplaylist.txt");
-    s_playlistSize = playlistSize("cleanedplaylist.txt");
+    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");//getPlaylistVect("cleanedplaylist.txt");
     std::cout << "getPlaylistVect completed. Playlist length is: " << s_playlistSize << " tracks." << std::endl;
     getArtistExcludes();
     //std::cout << "getArtistExcludes completed." << std::endl;
@@ -701,10 +700,8 @@ void ArchSimian::on_refreshdbButton_clicked()
     std::vector<std::string> plStrings;
     //6
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
-    plStrings = getPlaylistVect("cleanedplaylist.txt");
-    s_playlistSize = playlistSize("cleanedplaylist.txt");
+    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
     std::cout << "getPlaylistVect completed." << std::endl;
-    plStrings.shrink_to_fit();
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect

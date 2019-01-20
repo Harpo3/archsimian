@@ -39,7 +39,7 @@ void getArtistExcludes2()
         std::istringstream iss(str3); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-        int plIntervalVal{0};
+        //int plIntervalVal{0};
         std::string selectedArtistToken2;
 
         // Inner loop: iterate through each column (token) of row

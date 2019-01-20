@@ -4,6 +4,56 @@
 #include <fstream>
 #include <vector>
 
+std::istream& safeGetline(std::istream& is, std::string& t)
+{
+    t.clear();
+
+    // The characters in the stream are read one-by-one using a std::streambuf.
+    // That is faster than reading them one-by-one using the std::istream.
+    // Code that uses streambuf this way must be guarded by a sentry object.
+    // The sentry object performs various tasks,
+    // such as thread synchronization and updating the stream state.
+
+    std::istream::sentry se(is, true);
+    std::streambuf* sb = is.rdbuf();
+
+    for(;;) {
+        int c = sb->sbumpc();
+        switch (c) {
+        case '\n':
+            return is;
+        case '\r':
+            if(sb->sgetc() == '\n')
+                sb->sbumpc();
+            return is;
+        case std::streambuf::traits_type::eof():
+            // Also handle the case when the last line has no line ending
+            if(t.empty())
+                is.setstate(std::ios::eofbit);
+            return is;
+        default:
+            t += (char)c;
+        }
+    }
+}
+
+int cstyleStringCount(std::string path)
+{
+    std::ifstream ifs(path.c_str());
+     if(!ifs) {
+         std::cout << "Failed to open the file." << std::endl;
+         return EXIT_FAILURE;
+     }
+
+     int n = 0;
+     std::string t;
+     while(!safeGetline(ifs, t).eof())
+         ++n;
+     std::cout << "The file contains " << n << " lines." << std::endl;
+     return n;
+}
+
+
 void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     static std::string s_selectedplaylist = userconfig::getConfigEntry(7);//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
     static std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
@@ -34,42 +84,8 @@ void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving ju
             found=line.find("third dir symbol",found+1,1);
             line.replace(line.find(str2),str2.length(),"/");
         }
-        outf << line; // DO NOT ADD endl here
+        outf << line << '\n'; // DO NOT ADD endl here
     }
     readFile.close();
     outf.close();
 }
-
-std::vector<std::string> getPlaylistVect(std::string fileName)
-{
-    std::vector<std::string> getPlaylistVect1;
-    // Open the File
-    std::ifstream in(fileName.c_str());
-    // Check if object is valid
-    if(!in)
-    {
-        std::cerr << "getPlaylistVect: Cannot open the File : "<<fileName<<std::endl;
-        exit(1);
-    }
-    std::string str;
-    // Read the next line from File until it reaches the end.
-    while (std::getline(in, str, '\r'))
-    {
-        // If line contains string of length > 0 then save it in vector
-        if(str.size() > 0)
-            getPlaylistVect1.push_back(str);
-    }
-    in.close();     //Close The File
-    return getPlaylistVect1;
-}
-
-int playlistSize(std::string filename)
-{int count = 0;
-std::string line;
-/* Creating input filestream */
-
-std::ifstream file(filename);
-while (getline(file, line))
-    count++;
-//cout << "Numbers of lines in the file : " << count << endl;
-return count;}
