@@ -1,5 +1,8 @@
 #include <sstream>
 #include "userconfig.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
 
 void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     static std::string s_selectedplaylist = userconfig::getConfigEntry(7);//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath

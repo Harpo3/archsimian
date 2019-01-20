@@ -349,14 +349,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     else {
         std::cout << "Error opening cleanlib.dsv file" << std::endl;}
-    std::vector<std::string> plStrings;
+    //std::vector<std::string> plStrings;
     //6
     // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
-    plStrings = getPlaylistVect("cleanedplaylist.txt");
+    //plStrings = getPlaylistVect("cleanedplaylist.txt");
     s_playlistSize = playlistSize("cleanedplaylist.txt");
     std::cout << "getPlaylistVect completed." << std::endl;
     std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
-    plStrings.shrink_to_fit();
+    //plStrings.shrink_to_fit();
     // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
     // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
     // from the function getPlaylistVect

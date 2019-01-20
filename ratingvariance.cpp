@@ -169,6 +169,18 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
     }
+    // Condition 1a
+    // If the last track was either a code 7 or 8, exclude 7 and 8 from consideration
+    if ((codeForPos1=="7") || (codeForPos1=="8")) {
+        double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
+        double* maxVariance;
+        maxVariance = std::max_element(a_variances, a_variances + 4);
+        std::cout << "Condition 1a: ";
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
+    }
     // Condition 2
     // If the second to last track was a code 7 or 8, and last track was a 3, exclude from consideration
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="3")) {
