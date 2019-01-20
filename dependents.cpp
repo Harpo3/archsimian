@@ -9,10 +9,9 @@
 #include <unistd.h>
 #include "userconfig.h"
 
-
 inline bool doesFileExist (const std::string& name) {
-  struct stat buffer;
-  return (stat (name.c_str(), &buffer) == 0);
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
 }
 
 //Obtain the pid number based on the pgrep name of the app (std::string x)
@@ -56,7 +55,6 @@ int getProcIdByName(std::string x)
     }
 
     closedir(dp);
-
     return pid;
 }
 
@@ -65,11 +63,11 @@ int getProcIdByName(std::string x)
 // string.
 bool isAppRunning(std::string x)
 {
-int pid;
-pid = getProcIdByName(x);
-if (pid == -1)
-{return false;}
-else {return true;}
+    int pid;
+    pid = getProcIdByName(x);
+    if (pid == -1)
+    {return false;}
+    else {return true;}
 }
 
 bool isLibRefreshNeeded()
@@ -82,7 +80,6 @@ bool isLibRefreshNeeded()
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
     if (existResult == 1){
-
         std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
         std::string mmpath = mmdbdir + "/MM.DB";
         struct stat stbuf1;

@@ -29,14 +29,12 @@ void getArtistExcludes()
     std::map<std::string,int> countMap; // Create a map for two types, string and int
     std::vector<std::string>plvect;
     plvect.reserve(5000);
-
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr.txt" then use str1 to add Col 36 to ratedabbr.txt
     while (std::getline(ratedSongsTable, str1))
     {  // Declare variables applicable to all rows
         std::istringstream iss(str1); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ','))
         {

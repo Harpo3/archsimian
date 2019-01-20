@@ -14,10 +14,8 @@ void getArtistExcludes2()
     std::ofstream outfratedint("artistexcludes.txt"); // output file for writing
     int artStd{0}; // token is the contents of each column of data
     std::string currentArtist2; // Artist variable from artistsadj.txt
-
     std::string str3; // store the string for artistadj.txt
     std::string str4; // store the string for playlistposlist.txt
-
     // Open artistadj.txt and compare interval of each artist to playlist positions shown in playlistposlist.txt.
     //If interval value in artistadj.txt is less than playlist position(s) in playlistposlist.txt, add artist to excluded list.
     std::fstream artistadj;
@@ -41,7 +39,6 @@ void getArtistExcludes2()
         int tokenCount{0}; //token count is the number of delimiter characters within str
         //int plIntervalVal{0};
         std::string selectedArtistToken2;
-
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ','))
         {
@@ -51,9 +48,7 @@ void getArtistExcludes2()
             if (tokenCount == 4) {artStd = std::stoi(token);}
             ++ tokenCount;
         }
-
         // While on row of artistadj.txt, iterate through playlistposlist.txt and save each Col 4 to int variable plIntervalVal
-
         // First loop: iterate through each column (token) of current row of playlistposlist.txt
         // to get the artist name and interval to write interval to ratedlib.dsv
         std::fstream artistPLIntervals;  // Next ensure artistsadj.txt is ready to open
@@ -77,10 +72,8 @@ void getArtistExcludes2()
             {
                 // TOKEN PROCESSING - COL 0
                 if (tokenPLCount == 0) {currentArtist2 = token;}
-
                 // TOKEN PROCESSING - COL 1
-                if (tokenPLCount == 1) {playlistPosNum = std::stoi(token);}
-                //  }
+                if (tokenPLCount == 1) {playlistPosNum = std::stoi(token);}                
                 ++tokenPLCount;
             }
             // If plIntervalVal < artStd  write artist to artistexcludes.txt

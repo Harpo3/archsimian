@@ -4,8 +4,6 @@
 #include "constants.h"
 #include "runbashapp.h"
 
-//std::string execvp();
-
 int main(int argc,char* argv[])
 {
     //*************************

@@ -1,11 +1,4 @@
-//#include <cstdio>
-//#include <iostream>
 #include <memory>
-//#include <stdexcept>
-//#include <string>
-//#include <array>
-//#include <sstream>
-//#include <unistd.h>
 
 // Function to execute a bash command and get result
 
@@ -21,4 +14,3 @@ std::string execvp(const char* cmd)
     }
     return result;
 }
-

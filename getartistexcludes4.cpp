@@ -21,7 +21,6 @@ void appendExcludes()
         std::exit(EXIT_FAILURE);
     }
     // Append write to excludes list, then remove duplicates from it
-
     std::ofstream artistExcList("artistexcludes.txt",std::ios::app); // output file for writing history not in playlist for longer artist intervals
     // If we couldn't open the output file stream for writing
     if (!artistExcList)
@@ -35,14 +34,12 @@ void appendExcludes()
     std::string currentArtistInterval; // token is the contents of each column of data
     std::string currentArtist; // Artist variable from artistsadj.txt
     std::string posExtList; // Playlist position in extended list
-
     // Outer loop: iterate through the file "histposlist.txt"
     while (std::getline(exthistoryTable, str))
     {  // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ','))
         {

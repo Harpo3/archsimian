@@ -35,7 +35,6 @@ void addIntervalValues() {
         std::istringstream iss(str2); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^'))
         {

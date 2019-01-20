@@ -25,9 +25,7 @@ void fixsort()
         std::cout << "fixsort: Error opening finalTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
     std::ofstream artistExcList2("finalartistexcludes.txt"); // output file for writing final exclude list
-
     while (std::getline(finalTable, str2)) {fsexclvec.push_back(str2);}
     finalTable.close();
     std::vector<std::string>::iterator ip;

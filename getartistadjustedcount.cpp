@@ -77,12 +77,12 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     rated2.open ("rated.dsv");
     if (rated2.is_open()) {rated2.close();}
     else {std::cout << "getArtistAdjustedCount: Error rated2 opening rated.dsv file." << std::endl;}
-    std::string ratedSongsTable2 = "rated.dsv"; // now we can use it as input file    
+    std::string ratedSongsTable2 = "rated.dsv"; // now we can use it as input file
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open ("artists.txt");
     if (artists2.is_open()) {artists2.close();}
     else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file ." << std::endl;}
-    std::string artistsTable2 = "artists.txt"; // now we can use it as input file    
+    std::string artistsTable2 = "artists.txt"; // now we can use it as input file
     std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
     {
@@ -90,7 +90,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // store the string for artists.txt
-    std::string str2; // store the string for rated.dsv    
+    std::string str2; // store the string for rated.dsv
     std::ofstream outartists2("artistsadj.txt"); // Create ostream file to collect artists and adjusted counts
     std::string currentArtist;
     int currentArtistCount{0};
@@ -179,13 +179,12 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         }
         // Completed all rows of rated.dsv
         double s_totalAdjRatedQty = (*_syrsTillRepeatCode3factor * *_srCode3TotTrackQty)+(*_syrsTillRepeatCode4factor * *_srCode4TotTrackQty)
-                    + (*_syrsTillRepeatCode5factor * *_srCode5TotTrackQty) +(*_syrsTillRepeatCode6factor * *_srCode6TotTrackQty)
-                    +(*_syrsTillRepeatCode7factor * *_srCode7TotTrackQty) + (*_syrsTillRepeatCode8factor * *_srCode8TotTrackQty);
+                + (*_syrsTillRepeatCode5factor * *_srCode5TotTrackQty) +(*_syrsTillRepeatCode6factor * *_srCode6TotTrackQty)
+                +(*_syrsTillRepeatCode7factor * *_srCode7TotTrackQty) + (*_syrsTillRepeatCode8factor * *_srCode8TotTrackQty);
         SongsTable2.close(); // Must close rated.dsv here so it can reopen for the next artist on the artists.txt file
         if (interimAdjCount < currentArtistCount) {interimAdjCount = currentArtistCount;} // Adjusted count must be at least one if there is one track or more
         double currentArtistFactor = (interimAdjCount / s_totalAdjRatedQty); //percentage of total adjusted tracks
         int availInterval = int(1 / currentArtistFactor);
-
         // Write artist, count, adjusted count, artist factor, and repeat interval to the output file if not the header row
         if ((currentArtist != "Custom2") && (currentArtist != "Artist")){
             outartists2 << currentArtist << "," << int(currentArtistCount) << "," << int(interimAdjCount) <<
@@ -194,7 +193,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         // Resume with next artist on the artists.txt file
     }
     // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
-    artistcsv.close();    
+    artistcsv.close();
     outartists2.close();
     artists.shrink_to_fit();
     if( remove( "artists.txt" ) != 0 )

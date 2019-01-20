@@ -3,9 +3,7 @@
 #include <constants.h>
 #include <stdio.h>
 
-
-void writeSQLFile()
-{
+void writeSQLFile(){
     std::string str1{".separator \"^\""};
     std::string str2{".header on"};
     std::string str3{".once libtable.dsv"};
@@ -31,8 +29,7 @@ void writeSQLFile()
     else {std::cout << "Error opening SQL file after it was created by writeSQL()." << std::endl;}
 }
 
-void removeSQLFile()
-{
+void removeSQLFile(){
     const std::string sqlpathdirname = getenv("HOME");
     std::string sqlfile(sqlpathdirname + Constants::sqlFileName);
     remove (sqlfile.c_str());// remove exportMMTable.sql from home directory

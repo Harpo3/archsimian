@@ -9,24 +9,20 @@
 
 // One must be very careful when comparing floating point numbers for equality
 // so instead, use this function to get 'close enough' to a match:
-
-inline bool isEqual(double x, double y)
-{
-  const double epsilon =  1e-5;
-  return std::abs(x - y) <= epsilon * std::abs(x);
-  // see http://www.cs.technion.ac.il/users/yechiel/c++-faq/floating-point-arith.html
+inline bool isEqual(double x, double y){
+    const double epsilon =  1e-5;
+    return std::abs(x - y) <= epsilon * std::abs(x);
+    // see http://www.cs.technion.ac.il/users/yechiel/c++-faq/floating-point-arith.html
 }
 
-int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_sratingRatio5, double *_sratingRatio6, double *_sratingRatio7, double *_sratingRatio8)
-{
+int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_sratingRatio5,
+                       double *_sratingRatio6, double *_sratingRatio7, double *_sratingRatio8){
     //Lookup the rating codes for last two tracks on the playlist;
-    //variables:
     int x = 0; // variable to return the rating code to be used for the next track selection
     std::string codeForPos1;
     std::string codeForPos2;
     bool exclude7and8 = false;
     std::string codeForPos;
-
     //Collect the time on the current playlist for each rating category and for the playlist as a whole;
     //variables:
     double totalPlaylistTime{0};
@@ -37,7 +33,6 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double totalPLTime6{0};
     double totalPLTime7{0};
     double totalPLTime8{0};
-
     // Iterate through ratedlib.dsv and increment the time for each rating code and total for playlist
     // COL 12 - SongLength
     // COL 18 - PlaylistPosition
@@ -47,28 +42,22 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double selectedSongLength{0.0};
     std::string selectedPlaylistPosition;
     std::string selectedRatingCode;
-
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "Error opening ratedabbr.txt file." << std::endl;}
     std::string ratedlibrary = "ratedabbr.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
-    if (!ratedSongsTable.is_open())
-    {
+    if (!ratedSongsTable.is_open()) {
         std::cout << "Error opening ratedSongsTable." << std::endl;
-        std::exit(EXIT_FAILURE);    }
-
-    while (std::getline(ratedSongsTable, str))
-    {   // Declare variables applicable to all rows
+        std::exit(EXIT_FAILURE);
+    }
+    while (std::getline(ratedSongsTable, str)) { // Declare variables applicable to all rows
         std::istringstream iss(str); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-
         // Inner loop: iterate through each column (token) of row
-        while (std::getline(iss, token, ','))
-        {
-
+        while (std::getline(iss, token, ',')) {
             // TOKEN PROCESSING - COL 1
             if (tokenCount == 1)  {
                 selectedPlaylistPosition = token;
@@ -84,8 +73,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
             }
             ++ tokenCount;
         }
-        if (selectedPlaylistPosition != "0")
-        {
+        if (selectedPlaylistPosition != "0") {
             totalPlaylistTime = totalPlaylistTime + selectedSongLength;
             if (selectedRatingCode == "1") {totalPLTime1 = totalPLTime1 + selectedSongLength;}
             if (selectedRatingCode == "3") {totalPLTime3 = totalPLTime3 + selectedSongLength;}
@@ -112,14 +100,12 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double ratioTime6 = totalPLTime6 / totalPlaylistTime;
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
-
     //std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << *_sratingRatio3 << std::endl;
     //std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << *_sratingRatio4<< std::endl;
     //std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << *_sratingRatio5<< std::endl;
     //std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << *_sratingRatio6<< std::endl;
     //std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << *_sratingRatio7<< std::endl;
     //std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << *_sratingRatio8<< std::endl;
-
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
     double varianceRatioTime3 = (*_sratingRatio3 - ratioTime3) / *_sratingRatio3;
@@ -128,20 +114,16 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double varianceRatioTime6 = (*_sratingRatio6 - ratioTime6) / *_sratingRatio6;
     double varianceRatioTime7 = (*_sratingRatio7 - ratioTime7) / *_sratingRatio7;
     double varianceRatioTime8 = (*_sratingRatio8 - ratioTime8) / *_sratingRatio8;
-
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
     std::cout << "varianceRatioTime5 is: " << varianceRatioTime5 << std::endl;
     std::cout << "varianceRatioTime6 is: " << varianceRatioTime6 << std::endl;
     std::cout << "varianceRatioTime7 is: " << varianceRatioTime7 << std::endl;
     std::cout << "varianceRatioTime8 is: " << varianceRatioTime8 << std::endl;
-
     std::cout << "Rating for last track added was: " <<codeForPos1;
     std::cout << ", and second-to-last was: " <<codeForPos2 << std::endl;
-
     //If the playlist ratio is less than the program ratio, then that code is underrepresented on the playlist.
     // The largest positive number is the most underrepresented rating code of the current playlist.
-
     // Create constants with the variances just calculated for each rating code variance to place them in an array
     // Array a_variances can now contain the const variance values
     const double vrt3 = varianceRatioTime3;
@@ -149,14 +131,13 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     const double vrt5 = varianceRatioTime5;
     const double vrt6 = varianceRatioTime6;
     const double vrt7 = varianceRatioTime7;
-    const double vrt8 = varianceRatioTime8;   
-
+    const double vrt8 = varianceRatioTime8;
     // Determine whether a code of 7 or 8 was added in either of the last two tracks
     if ((codeForPos1 == "7") || (codeForPos1 == "8") || (codeForPos2 == "7") || (codeForPos2 == "8")) {
         exclude7and8 = true;
     }
-    else exclude7and8 = false;
-
+    else {exclude7and8 = false;}
+    //
     // Condition 1
     // If both of the last two tracks was a code 7 or 8 (should not occur), exclude from consideration
     if (((codeForPos1=="7") || (codeForPos1=="8")) && ((codeForPos2 == "7") || (codeForPos2 =="8"))) {
@@ -194,7 +175,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     }
     // Condition 3
     // If the second to last track was a code 7 or 8, and last track was a 4, exclude from consideration
-    if (((codeForPos2 == "7") || (codeForPos2 =="8"))  &&  (codeForPos1=="4"))  {
+    if (((codeForPos2 == "7") || (codeForPos2 =="8"))  &&  (codeForPos1=="4")) {
         double a_variances[] = {vrt3, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
@@ -205,7 +186,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     }
     // Condition 4
     // If the second to last track was a code 7 or 8, and last track was a 5, exclude from consideration
-    if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="5"))  {
+    if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="5")) {
         double a_variances[] = {vrt3, vrt4, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);

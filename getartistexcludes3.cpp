@@ -22,27 +22,22 @@ void getExtendedExcludes(long *_shistCount, int *_splaylistSize)
         std::exit(EXIT_FAILURE);
     }
     std::ofstream playlistPosList("histposlist.txt"); // output file for writing history not in playlist for longer artist intervals
-
     std::string str1; // store the string for ratedabbr.txt
     bool notInPlaylist{0}; // Artist variable from ratedabbr.txt
     std::string currentArtistInterval; // token is the contents of each column of data
-//  std::string currentArtist; // Artist variable from artistsadj.txt
     std::string tokenLTP;
     std::string selectedArtistToken; // Artist variable from ratedabbr.txt
     std::string songpath;
     std::string ratingCode;
     std::string songLength;
     std::string artistInterval;
-
     std::vector<std::string>histvect;
-
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr.txt"
     while (std::getline(ratedSongsTable, str1))
     {  // Declare variables applicable to all rows
         std::istringstream iss(str1); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ','))
         {
@@ -54,7 +49,7 @@ void getExtendedExcludes(long *_shistCount, int *_splaylistSize)
             {notInPlaylist = true;}// store temp variable to check that item is not in playlist
             // TOKEN PROCESSING - COL 2
             if (tokenCount == 2) {ratingCode = token;}// store rating variable
-           // TOKEN PROCESSING - COL 3
+            // TOKEN PROCESSING - COL 3
             if (tokenCount == 3) {selectedArtistToken = token;}// artist is selected
             // TOKEN PROCESSING - COL 5
             if (tokenCount == 5) {songLength = token;}// store song length variable
@@ -67,17 +62,13 @@ void getExtendedExcludes(long *_shistCount, int *_splaylistSize)
     }
     std::sort (histvect.begin(), histvect.end());
     std::reverse (histvect.begin(), histvect.end());
-
     std::vector<std::string>::const_iterator begin = histvect.begin();
     std::vector<std::string>::const_iterator last = histvect.begin() + *_shistCount;
     std::vector<std::string> new_histvect(begin, last);
-
     // Add a column to histposlist.txt to list the position number beyond the playlist count
     //std::cout << "getExtendedExcludes (getartistexcludes3): Playlist size is now:" << *_splaylistSize << std::endl;
-
     for (std::size_t i = 0 ;  i < new_histvect.size(); i++){
         playlistPosList << new_histvect[i] << "," << i + 1 + *_splaylistSize << "\n";}
-
     histvect.shrink_to_fit();
     new_histvect.shrink_to_fit();
     ratedSongsTable.close();
