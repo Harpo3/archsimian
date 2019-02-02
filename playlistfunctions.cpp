@@ -65,6 +65,11 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file after it was created in child process." << std::endl;}
     std::string playlist = "cleanedplaylist.txt"; // now we can use it as input file
     //*_splaylistSize = cstyleStringCount("cleanedplaylist.txt");
+
+
+    std::cout << "getExcludedArtists: *_splaylistSize is: "<<*_splaylistSize << std::endl;
+
+
     std::ifstream playlistTable(playlist);
     if (!playlistTable.is_open())
     {
@@ -108,7 +113,7 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
             }
             if (song == pathinlib){
                 //compare playlist position to size of playlist and interval
-                 if ((*_splaylistSize - s_playlistPosition) < std::stoi(artistInterval)){ //add artist to exclude list
+                 if (s_playlistPosition < std::stoi(artistInterval)){ //add artist to exclude list
                     artistExcludesVec.push_back(selectedArtistToken);}
                 }
             ++songCount;
@@ -172,7 +177,7 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     ratedSongsTable.close(); // Close ratedabbr.txt and output file
     ratedabbr2.close();
     artistExcList.close();
-    remove("playlistposlist.txt");
+    //remove("playlistposlist.txt");
 }
 
 int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_sratingRatio5,
