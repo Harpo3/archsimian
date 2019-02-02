@@ -477,7 +477,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // need to add function getArtistAdjustedCount2()
     //******************************************************************
 
-    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool5 == true)) {
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool4 == true) && (s_bool5 == true)) {
         getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                                &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                                &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
@@ -498,7 +498,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //******************************************************************
     // need to add function buildDB()  see test56excludes for test version
     //******************************************************************
-    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool5 == true) && (s_bool10 == true)) {
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true)  && (s_bool4 == true) && (s_bool5 == true) && (s_bool10 == true)) {
         buildDB();
         s_bool11 = doesFileExist ("ratedabbr.txt");
         if (s_bool10 == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
