@@ -44,7 +44,7 @@ void getCleanLib(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1To
                 // and correct the dir symbol from \ to /
                 std::string str2 ("\\");
                 std::size_t found = str.find(str2);
-                if (found!=std::string::npos)
+                if (found!=std::string::npos) //&& (std::string::npos < str.length()))
                 {// colon is one char before the first dir symbol
                     str.replace(str.find(str2)-1,str2.length()+1,s_musiclibrarydirname + "/");
                     found=str.find("second dir symbol",found+1,1);
@@ -140,8 +140,14 @@ void getCleanLib(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1To
             ++ tokenCount;
         }
         outf << str << "\n"; // The string is valid, write to clean file
+        //str.clear();
         ++ stringCount;
+        //std::cout << "getcleanlib: ran to 144. string count is: "<< stringCount<< std::endl;
+
     }
+    //str.clear();
+    //str.str(std::string());
+
     primarySongsTable.close();   // Close files opened for reading and writing
     outf.close();
 }

@@ -21,33 +21,52 @@
 #include "ui_archsimian.h"
 #include "userconfig.h"
 #include "dependents.h"
-#include "getcleanlib.h"
-#include "getlibvariables.h"
-#include "getrated.h"
-#include "getcleanlib.h"
+//#include "getcleanlib.h"
+//#include "getlibvariables.h"
+//#include "getrated.h"
+//#include "getcleanlib.h"
 #include "getplaylist.h"
-#include "getartistadjustedount.h"
-#include "addintervalvalues.h"
-#include "getartistexcludes.h"
-#include "getartistexcludes2.h"
-#include "getartistexcludes3.h"
-#include "getartistexcludes4.h"
-#include "getartistexcludes5.h"
+//#include "getartistadjustedount.h"
+//#include "addintervalvalues.h"
 #include "writesqlfile.h"
-#include "ratingvariance.h"
-#include "getsubset.h"
-#include "selecttrack.h"
+//#include "ratingvariance.h"
+//#include "getsubset.h"
+//#include "selecttrack.h"
+
+#include "basiclibfunctions.h"
+#include "playlistfunctions.h"
+
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
     assert((N > 0) && (argv[N - 1] == nullptr));
     return execvp(file, const_cast<char* const*>(argv));
 }
-// VARIABLE DECLARATIONS
-static std::string s_mmbackupdbdirname;
-static std::string s_musiclibrarydirname;
-static std::string s_mmbackuppldirname;
-static std::string s_selectedplaylist;
+
+inline bool doesFileExist (const std::string& name) {
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
+}
+
+// VARIABLE DECLARATIONS & INITIALIZATIONS
+static bool s_bool1{false};
+static bool s_bool2{false};
+static bool s_bool3{false};
+static bool s_bool4{false};
+static bool s_bool5{false};
+static bool s_bool6{false};
+static bool s_bool7{false};
+static bool s_bool8{false};
+static bool s_bool9{false};
+static bool s_bool10{false};
+static bool s_bool11{false};
+
+const std::string cleanLibFile("cleanlib.dsv");
+const std::string cleanedPlaylist("cleanedplaylist.txt");
+static std::string s_mmbackupdbdirname{""};
+static std::string s_musiclibrarydirname{""};
+static std::string s_mmbackuppldirname{""};
+static std::string s_selectedplaylist{""};
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
 static double s_daysTillRepeatCode3 = 65.0;
@@ -97,16 +116,21 @@ static double s_totHrsLast60Days{0.0};
 static double s_totalAdjRatedQty{0.0};
 static int s_playlistSize{0};
 static int s_ratingNextTrack{0};
-static std::string s_MMdbDate;
-static std::string s_LastTableDate;
+static std::string s_MMdbDate{""};
+static std::string s_LastTableDate{""};
+static long s_histCount{0};
 
-ArchSimian::ArchSimian(QWidget *parent) :    
+ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
     //
     //*********************************************************************
     // CHECK WHETHER USER CONFIGURATION EXISTS, IF NOT, USE NEW SETUP OPTIONS
+
+    // 1. Determine if user configuration exists:  Run isConfigSetup() function (bool1) - function ran in main window
+    //     if configuration file has no data in it, set bool1 to false. File is archsimian.conf
+
     //*********************************************************************
     //
     // User configuration: set default state to "false" for user config reset buttons
@@ -116,23 +140,25 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->setmmdbButtonReset->setVisible(false);
 
     //Check whether the configuration file currently has any data in it
-    std::streampos size;
+    std::streampos archsimianconfsize;
     char * memblock;
     std:: ifstream file ("archsimian.conf", std::ios::in|std::ios::binary|std::ios::ate);
     if (file.is_open())
     {
-        size = file.tellg();
-        memblock = new char [size];
+        archsimianconfsize = file.tellg();
+        memblock = new char [archsimianconfsize];
         file.seekg (0, std::ios::beg);
-        file.read (memblock, size);
+        file.read (memblock, archsimianconfsize);
         file.close();
         delete[] memblock;
     }
-    else std::cout << "archsimian.cpp: Unable to open configuration file";
+    else std::cout << "Step 1. Unable to open archsimian.conf configuration file";
 
     //If configuration has already been set, populate the ui labels accordingly
-    if (size != 0)
+    if (archsimianconfsize != 0)
     {
+        std::cout << "Step 1. Configuration has already been set. s_bool1 = true."<<std::endl;
+        s_bool1 = true;
         //ui->setCurrentIndex(0);
         // getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
         std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
@@ -155,7 +181,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmdbButton->setEnabled(false);
         //enable the reset button
         ui->setmmdbButtonReset->setVisible(true);
-        bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
+
+        bool needUpdate = recentlyUpdated();
+
+        //bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
+        std::cout << "Step 1. Checking isLibRefreshNeeded(): "<<needUpdate<<std::endl;
         if (needUpdate == 0)
         {
             s_MMdbDate = getMMdbDate();
@@ -169,6 +199,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     else {  // Otherwise, configuration has not been set. Load instructions for user to locate and set config
         // Initially, only the first of three config buttons is activated. Build the file in sequence.
+        s_bool1 = false;
         ui->setlibrarylabel->setText(tr("Select the base directory of "
                                         "your music library"));
         ui->setlibraryButton->setEnabled(true);
@@ -184,47 +215,136 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
     }
 
-    // Set variable for customArtistID, either dir tree (0) or custom groupings (1)
-    //    bool customArtistID{1}; // fix when user selection function is created
-    //
-    //*********************************************************************
-    // CHECK DATE OF LAST MM.DB BACKUP AGAINST THE RATEDLIB.DSV (IF EXISTS)
-    //*********************************************************************
-    //
-    // Check to see if the ratedlib.dsv file already exists
-    bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
+    //2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets bool2).
+    //    a. If bool1 is true, but bool2 is false, report to user that MM.DB was not found at the location specified and set bool1 to false
+    //    b. If bool1 is false, set bool2 to false
 
-    if (needUpdate == 1) // bool needUpdate: 1 means refresh DB, 0 means skip unessential
+    std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+    const std::string mmpath = mmdbdir + "/MM.DB";
+    s_bool2 = doesFileExist(mmpath);
+    std::cout << "Step 2. MM.DB file exist check. s_bool2: "<< s_bool2 << std::endl;
+    if (s_bool1 == false) {
+        s_bool2 = false;
+        s_bool4 = false;
+        s_bool6 = false;
+    }
+    if ((s_bool1 == true) && (s_bool2 == false)) {
+        std::cout << "Step 2. MM.DB was not found at the location specified. Setting s_bool1 to false." << std::endl;
+        s_bool1 = false;
+    }
+
+    //3. Determine if Archsimian songs table exists: If user configuration exists and MM4 data exists (bool1 and bool2 are true),
+    //determine if cleanlib.dsv songs table exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
+    // imported from MM.DB) (sets bool3)
+
+    if ((s_bool1 == true) && (s_bool2 == true)) {
+        bool tmpbool;
+        tmpbool = doesFileExist(cleanLibFile);
+        if (tmpbool == true){ // check that file is not empty
+            //Check whether the configuration file currently has any data in it
+            std::streampos cleanLibFilesize;
+            char * memblock;
+            std:: ifstream file (cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
+            if (file.is_open())
+            {
+                cleanLibFilesize = file.tellg();
+                memblock = new char [cleanLibFilesize];
+                file.seekg (0, std::ios::beg);
+                file.read (memblock, cleanLibFilesize);
+                file.close();
+                delete[] memblock;
+            }
+
+            if (cleanLibFilesize != 0) {s_bool3 = true;}//doesFileExist(cleanLibFile);
+        }
+    }
+    std::cout << "Step 3. if ((s_bool1 == true) && (s_bool2 == true)). s_bool3: "<< s_bool3 << std::endl;
+
+
+
+    // 4. Determine if MM.DB was recently updated: If user configuration exists, MM4 data exists, and songs table cleanlib.dsv
+    // exists (bool1, bool2, bool3 are all true), determine if MM4 data was recently updated by comparing MM.DB file date
+    // (function getMMdbDate(), s_MmdbDate) to imported songs table file date (function getLastTableDate(), s_LastTableDate)(sets bool4)
+
+    //*************************************
+    //update using  dependents_revised file for changes to function recentlyUpdated() for dependents.cpp
+    //***************************************
+    std::cout << "Step 4. if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true)). s_bool4: "<< s_bool4 << std::endl;
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true)) {s_bool4 = recentlyUpdated();}
+
+    // set ui labels if MM.DB was recently updated
+    if (s_bool4 == true) // bool s_bool4: 1 means refresh DB, 0 means skip
     {
         ui->refreshdbButton->setEnabled(true);
-        ui->updatestatusLabel->setText(tr("MM.DB has been backed up. Refresh data."));
+        ui->updatestatusLabel->setText(tr("MM.DB has been recently backed up. Need to refresh data."));}
 
-        // add
+    // 5. If user configuration and MM4 data exist, but the songs table does not, import songs table into Archsimian: If user configuration
+    // and MM4 data exist, but the songs table does not (bool1, bool2 are true, bool3 is false), import songs table into AS, by running
+    // writeSQLFile() function, which creates the temporary basic table file libtable.dsv; then run the getLibrary() function, which creates
+    // the refined table file cleanlib.dsv [NEED TO SPLIT FUNCTION getCleanLib(). ] The getLibrary() function completes the
+    // following refinements: (a) corrects the directory paths to Linux, (b) adds random lastplayed dates for rated or "new-need-to-be-rated"
+    // tracks that have no play history, (c) creates rating codes for any blank values found in GroupDesc col, using POPM values,
+    // and (d) creates Artist codes (using col 1) and places the code in Custom2 if Custom2 is blank. Then set bool3 to true,  rechecking,
+    // run doesFileExist (const std::string& name) function. After verifying  cleanlib.dsv exists, remove temporary basic table file
+    // libtable.dsv Evaluates bool3 for existence of cleanlib.dsv (cleanLibFile)
 
-        // const QString title("New backup identified");
-        // const QString message("Getting MM.DB table and compiling stats");
-        // int millisecondsTimeoutHint = 10000;
-        //if (trayIcon->isVisible()) {
-        //QSystemTrayIcon ret2;
-        //ret2.setVisible(1);
-        //ret2.show("Getting MM.DB table and compiling stats");
-        //ret2.showMessage("Getting MM.DB table and compiling stats");
-        //QMessageBox ret;
-        //ret.information(this,tr("New backup identified"),tr("Getting MM.DB table and compiling stats"));
-        //ret.show();
+    std::cout << "If bool3 = false (songs table exists), skipping step 5. Bool3:"<<s_bool3 << std::endl;
+
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == false)) {
+        std::cout << "Step 5. if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == false)). s_bool1:"<< s_bool1 <<", s_bool2:"<< s_bool2 <<", s_bool3:"<< s_bool3 << std::endl;
+        writeSQLFile();
+        pid_t c_pid;// Create fork object; child to get database table into a dsv file, then child to open that table only
+        // after it finishes getting written, not before.
+        c_pid = fork(); // Run fork function
+        int status; // For status of pid process
+        if( c_pid == 0 ){ // Child process: Get songs table from MM4 database, and create libtable.dsv with table;
+            std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+            // revise for QStandardPaths class if this does not set with makefile for this location
+            const std::string sqlpathdirname = getenv("HOME");
+            std::string path1 = s_mmbackupdbdirname + "/MM.DB";
+            std::string path2 = ".read " + sqlpathdirname + "/exportMMTable.sql";
+            const char* const argv[] = {" ", path1.c_str(), path2.c_str(), nullptr};
+            execvp("sqlite3", argv);
+            perror("execvp");
+            if (execvp("sqlite3", argv) == -1)
+                exit(EXIT_FAILURE);
+        }
+        else if (c_pid > 0){  // Parent process starts here. Write from libtable.dsv and gather stats
+            // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
+            //Check to ensure the file has finshed being written
+            if( (c_pid = wait(&status)) < 0){
+                perror("wait");
+                _exit(1);
+            }
+            //******************************************************************
+            getLibrary(); // update (add) using function from test55 project file
+            //******************************************************************
+        }
+        s_bool3 = doesFileExist (cleanLibFile);
+        if (s_bool3 == true) {remove ("libtable.dsv");}
+        else {
+            std::cout << "Step 5. Unable to create cleanlib.dsv." << std::endl;
+            s_bool3 = false;
+        }
     }
-    //else {
-    //     ui->refreshdbButton->setEnabled(false);
-    // }
-    if (needUpdate == 0) { // bool needUpdate: 1 means refresh DB, 0 means skip unessential - still need getCleanLib for stats
-        //ui->refreshdbButton->setEnabled(false);
-        // Launch function to fix dir path for linux and obtain the values for statistical variables, creates cleanlib.dsv
-        getCleanLib(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,&s_rCode3TotTrackQty,&s_rCode3MsTotTime,
-                    &s_rCode4TotTrackQty,&s_rCode4MsTotTime, &s_rCode5TotTrackQty,&s_rCode5MsTotTime,&s_rCode6TotTrackQty,
-                    &s_rCode6MsTotTime, &s_rCode7TotTrackQty, &s_rCode7MsTotTime,&s_rCode8TotTrackQty, &s_rCode8MsTotTime,
-                    &s_SQL10TotTimeListened, &s_SQL10DayTracksTot, &s_SQL20TotTimeListened,&s_SQL20DayTracksTot, &s_SQL30TotTimeListened,
-                    &s_SQL30DayTracksTot,&s_SQL40TotTimeListened, &s_SQL40DayTracksTot, &s_SQL50TotTimeListened,
-                    &s_SQL50DayTracksTot, &s_SQL60TotTimeListened, &s_SQL60DayTracksTot);
+
+    // 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
+    // songs table exists (bool1, bool2, bool3 are all true), run function to process/update statistics getDBStats()[NEED TO SPLIT FUNCTION
+    // getCleanLib()]  (sets bool5)
+    std::cout << "Step 6. if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true)), get stats:"<< s_bool1 <<", s_bool2:"<< s_bool2 <<", s_bool3:"<< s_bool3 << std::endl;
+
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true)) {
+        //******************************************************************
+        //getDBStats(); // need to add function getDBStats()
+        //******************************************************************
+        getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
+                   &s_rCode3TotTrackQty,&s_rCode3MsTotTime,&s_rCode4TotTrackQty,&s_rCode4MsTotTime,
+                   &s_rCode5TotTrackQty,&s_rCode5MsTotTime,&s_rCode6TotTrackQty,&s_rCode6MsTotTime,
+                   &s_rCode7TotTrackQty,&s_rCode7MsTotTime,&s_rCode8TotTrackQty,&s_rCode8MsTotTime,
+                   &s_SQL10TotTimeListened,&s_SQL10DayTracksTot,&s_SQL20TotTimeListened,
+                   &s_SQL20DayTracksTot,&s_SQL30TotTimeListened,&s_SQL30DayTracksTot,&s_SQL40TotTimeListened,
+                   &s_SQL40DayTracksTot,&s_SQL50TotTimeListened,&s_SQL50DayTracksTot,&s_SQL60TotTimeListened,
+                   &s_SQL60DayTracksTot);
 
         // Need stat calculations for both needUpdate states
         // Convert variables from milliseconds to hours
@@ -281,7 +401,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
                 +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
-        //Print results to console (for later program integration tasks (TBD)
+        //Print results to console (for later program integration tasks)
         std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
         std::cout << "Total tracks Rating 1 - s_rCode1TotTrackQty : " << s_rCode1TotTrackQty << ". Total Time (hrs) - s_rCode1TotTime : " <<  s_rCode1TotTime << std::endl;
         std::cout << "Total tracks Rating 3 - s_rCode3TotTrackQty : " << s_rCode3TotTrackQty << ". Total Time (hrs) - s_rCode3TotTime : " <<  s_rCode3TotTime << std::endl;
@@ -332,67 +452,127 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::cout << "Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
         std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
         std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl;
-        //std::cout << "Sequential Track Limit Factor - s_STLF : "<< s_STLF << std::endl;
 
-        std::fstream filestr;
-        filestr.open ("cleanlib.dsv");
-        if (filestr.is_open()) {filestr.close();
-            std::cout << "File cleanlib.dsv successfully created." << std::endl;
-            //remove("libtable.dsv");
-        }
-        else {
-            std::cout << "Error opening cleanlib.dsv file" << std::endl;}
-        //
-        //  Section beyond initial program setup
-        //
-        // Run function getArtistExcludes to populate a list of artists currently unavailable
-        getArtistExcludes();
-        std::cout << "getArtistExcludes completed." << std::endl;
-        // Run function getArtistExcludes2 to populate a list of artists currently unavailable
-        getArtistExcludes2();
-        std::cout << "getArtistExcludes2 completed." << std::endl;
-        s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
-        std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
-        //unsigned long histCount = s_SequentialTrackLimit - s_playlistSize;
-        static long s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-        std::cout << "History count for calculating additional artist excludes: "<< s_histCount << std::endl;
-        getExtendedExcludes(&s_histCount,&s_playlistSize);
-        std::cout << "getExtendedExcludes completed." << std::endl;
-        appendExcludes();
-        std::cout << "appendExcludes completed." << std::endl;
-        fixsort();
-        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
-        std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-        std::cout << "done!" << std::endl;
+        s_bool5 = true;
+    }
+    else {
+        std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
+        s_bool5 = false;
+    }
+
+
+    std::cout << "If bool3 = false (songs table exists), skipping step 7. Bool3:"<<s_bool3 << std::endl;
+
+
+    // 7. If user configuration exists, MM.DB exists, songs table exists, and statistics are processed, generate artist statistics:
+    // If user configuration exists, MM4 data exists, songs table exists, and database statistics exists (bool1, bool2, bool3, bool5
+    // are all true), run function getArtistAdjustedCount() to generate artist statistics (it creates the file artistsadj.txt, with adjusted
+    // counts by rating and artist intervals for each track) [ need to revise getArtistAdjustedCount() function to change the read
+    // file from rated.dsv to cleanlib.dsv ] then set bool8 to true, rechecking, run doesFileExist (const std::string& name)
+    // (artistsadj.txt) function (bool10)
+    std::cout << "Step 7. if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool5 == true)), get artist stats:"<< s_bool1 <<", s_bool2:"<< s_bool2 <<", s_bool3:"<< s_bool3 << std::endl;
+
+
+    //******************************************************************
+    // need to add function getArtistAdjustedCount2()
+    //******************************************************************
+
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool5 == true)) {
+        getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
+                               &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
+                               &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
+                               &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
+        s_bool10 = doesFileExist ("artistsadj.txt");
+        if (s_bool10 == false)  {std::cout << "Step 7. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+    }
+
+
+    // 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
+    // a modified database with only rated tracks and which include artist intervals calculated for each: If user configuration exists,
+    // MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool1, bool2, bool3, bool5, bool10
+    // are all true), run function buildDB()  [  see test56excludes for test version ] to create a modified database file with rated tracks
+    // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (bool11)
+    std::cout << "Step 8. if s_bool1 s_bool2 s_bool3 s_bool5 and s_bool10 are true, buidl AS db" << std::endl;
+
+
+    //******************************************************************
+    // need to add function buildDB()  see test56excludes for test version
+    //******************************************************************
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool5 == true) && (s_bool10 == true)) {
+        buildDB();
+        s_bool11 = doesFileExist ("ratedabbr.txt");
+        if (s_bool10 == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
+    }
+
+    // 9. Determine if a playlist was selected, and if it was not, determine if it was identified as being selected in the user's config:
+    // Determine if cleaned (path-corrected) playlist selected (bool6) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
+    // sets bool6 and bool7
+
+    s_bool6 = doesFileExist (cleanedPlaylist);
+    if (s_bool6 == true) {s_bool7 = true;}
+    //a. If bool6 is false, determine if playlist was identified as selected in user config (sets bool7)
+    if (s_bool6 == false){
+        //getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+        std::string s_selectedplaylist = userconfig::getConfigEntry(7);
+        if (s_selectedplaylist != "") {s_bool7 = true;}
+    }
+
+    // 10. If a playlist was identified in the user config, but the playlist file is not found, obtain the playlist file: If user configuration
+    // exists, MM4 data exists, songs table exists (bool1, bool2, bool3 are all true), and playlist from user config exists (bool7 is true),
+    // but cleaned playlist does not (bool6 is false), run function to obtain cleaned playlist file getPlaylist() then set bool6 to true,
+    // rechecking, run doesFileExist (const std::string& name) function. Evaluates bool6 and sets to true (after running getPlaylist) if
+    // initially false
+
+    if ((s_bool1 == true) && (s_bool2 == true) && (s_bool3 == true) && (s_bool7 == true) && (s_bool6 == false))
+    {
+        getPlaylist();
+        s_bool6 = doesFileExist (cleanedPlaylist);
+        if (s_bool6 == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
+    }
+
+    // NOTE: functions used in the next  three steps (11-13) will later be reused when adding tracks to
+    // playlist - here, this is to get the initial values if a playlist exists
+
+    //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (bool6 is true), obtain playlist size
+    // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
+
+    if (s_bool6 == true) {s_playlistSize = cstyleStringCount(cleanedPlaylist);}
+
+    // 12. If playlist exists, obtain the historical count (in addition to the playlist count) up to the sequential track limit:
+    // If cleaned playlist exists (bool6 is true), obtain the historical count (in addition to the playlist count) up to the
+    // sequential track limit. A variable is needed (which later will be used to obtain additional play history outside of
+    // playlist, as part of a later function to make a new track selection), using the variable s_histCount. The value is
+    // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
+    // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
+    // and SequentialTrackLimit obtained with data from function getDBStats()]
+    if (s_bool6 == true) {s_playlistSize = cstyleStringCount(cleanedPlaylist);
+        s_histCount = s_SequentialTrackLimit - s_playlistSize;}
+
+    //13. If playlist exists, artist statistics are processed, and modified database exists, create/update excluded artists
+    // list: If cleaned playlist exists (bool6 is true), and artistsadj.txt exists (bool8 is true) and modified database exists
+    // (bool11), run [need to write new] function getExcludedArtists()  to create/update excluded artists list using vectors
+    // read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt. Also,
+    // creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
+    //ratingCodeSelected and selectTrack
+
+    if ((s_bool6 == true) && (s_bool8 == true) && (s_bool11 == true))  {
+        getExcludedArtists(&s_histCount, &s_playlistSize);
+
     }
 }
 
-void ArchSimian::on_addsongsButton_clicked(){
 
-    selectTrack(&s_ratingNextTrack);
-    //std::cout << "selectTrack completed. " << std::endl;
-    //remove("playlistposlist.txt");
-    //remove("histposlist.txt");
-    //remove("artistexcludes.txt");
-    //remove("finalartistexcludes.txt");
-    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");//getPlaylistVect("cleanedplaylist.txt");
-    std::cout << "getPlaylistVect completed. Playlist length is: " << s_playlistSize << " tracks." << std::endl;
-    getArtistExcludes();
-    //std::cout << "getArtistExcludes completed." << std::endl;
-    // Run function getArtistExcludes2 to populate a list of artists currently unavailable
-    getArtistExcludes2();
-    //std::cout << "getArtistExcludes2 completed." << std::endl;
-    //std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
-    //unsigned long histCount = s_SequentialTrackLimit - s_playlistSize;
-    static long s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-    //std::cout << "History count for calculating additional artist excludes: "<< s_histCount << std::endl;
-    getExtendedExcludes(&s_histCount,&s_playlistSize);
-    //std::cout << "getExtendedExcludes completed." << std::endl;
-    appendExcludes();
-    //std::cout << "appendExcludes completed." << std::endl;
-    fixsort();
+
+void ArchSimian::on_addsongsButton_clicked(){
+    // Add loop here:  For each number of songs selected, run...
     s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
     std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
+    selectTrack(&s_ratingNextTrack);
+    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
+    std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
+    s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
+    getExcludedArtists(&s_histCount, &s_playlistSize);
+    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
@@ -431,7 +611,7 @@ void ArchSimian::on_setlibraryButton_clicked(){
     //      }
 }
 
-void ArchSimian::on_setmmplButton_clicked(){  
+void ArchSimian::on_setmmplButton_clicked(){
     QFileDialog setmmpldialog;
     //       if( !setmmpldialog.exec() )
     //        {
@@ -558,176 +738,13 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 
 void ArchSimian::on_refreshdbButton_clicked()
 {
-    // First reset variables
-    s_totalLibQty = 0;
-    s_totalRatedQty = 0;
-    s_totalRatedTime = 0;
-    s_listeningRate = 0;
-    //
-    // Update label with updating status and dim button
-    ui->refreshdbButton->setEnabled(false);
 
-    // Run function to create and write a sql file to user's home directory
-    writeSQLFile();
-    sleep(1);
+    // Add code to 'goto' beginning of this cpp, then delete the rest of the below code except last few lines?
 
-    pid_t c_pid;// Create fork object; child to get database table into a dsv file, then child to open that table only
-    // after it finishes getting written, not before.
-    c_pid = fork(); // Run fork function
-    int status; // For status of pid process
-    if( c_pid == 0 ){ // Child process: Get songs table from MM4 database, and create libtable.dsv with table;
 
-        std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
-        // revise for QStandardPaths class if this does not set with makefile for this location
-        const std::string sqlpathdirname = getenv("HOME");
-        std::string path1 = s_mmbackupdbdirname + "/MM.DB";
-        std::string path2 = ".read " + sqlpathdirname + "/exportMMTable.sql";
-        const char* const argv[] = {" ", path1.c_str(), path2.c_str(), nullptr};
-        execvp("sqlite3", argv);
-        perror("execvp");
-        if (execvp("sqlite3", argv) == -1)
-            exit(EXIT_FAILURE);
-    }
-    else if (c_pid > 0){  // Parent process starts here. Write from libtable.dsv and gather stats
-        // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
-        //Check to ensure the file has finshed being written
 
-        if( (c_pid = wait(&status)) < 0){
-            perror("wait");
-            _exit(1);
-        }
-        // Launch function to fix dir path for linux and obtain the values for statistical variables, creates cleanlib.dsv
-        getCleanLib(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,&s_rCode3TotTrackQty,&s_rCode3MsTotTime,
-                    &s_rCode4TotTrackQty,&s_rCode4MsTotTime, &s_rCode5TotTrackQty,&s_rCode5MsTotTime,&s_rCode6TotTrackQty,
-                    &s_rCode6MsTotTime, &s_rCode7TotTrackQty, &s_rCode7MsTotTime,&s_rCode8TotTrackQty, &s_rCode8MsTotTime,
-                    &s_SQL10TotTimeListened, &s_SQL10DayTracksTot, &s_SQL20TotTimeListened,&s_SQL20DayTracksTot, &s_SQL30TotTimeListened,
-                    &s_SQL30DayTracksTot,&s_SQL40TotTimeListened, &s_SQL40DayTracksTot, &s_SQL50TotTimeListened,
-                    &s_SQL50DayTracksTot, &s_SQL60TotTimeListened, &s_SQL60DayTracksTot);
-    }
-    else { // if (c_pid < 0) error check: The return of fork() is negative
-        perror("fork failed");
-        _exit(2); //exit failure, hard
-    }
-    // Need stat calculations for both needUpdate states
-    // Convert variables from milliseconds to hours
-    //  Total time in hours per rating code
-    //static int s_rCode0TotTime = (s_rCode0MsTotTime/60000)/60;
-    static int s_rCode1TotTime = (s_rCode1MsTotTime/60000)/60;
-    static int s_rCode3TotTime = (s_rCode3MsTotTime/60000)/60;
-    static int s_rCode4TotTime = (s_rCode4MsTotTime/60000)/60;
-    static int s_rCode5TotTime = (s_rCode5MsTotTime/60000)/60;
-    static int s_rCode6TotTime = (s_rCode6MsTotTime/60000)/60;
-    static int s_rCode7TotTime = (s_rCode7MsTotTime/60000)/60;
-    static int s_rCode8TotTime = (s_rCode8MsTotTime/60000)/60;
-    //  Total time listened in hours per rating code for each of six 10-day periods
-    s_SQL10TotTimeListened = (s_SQL10TotTimeListened/60000)/60;
-    s_SQL20TotTimeListened  = (s_SQL20TotTimeListened/60000)/60;
-    s_SQL30TotTimeListened  = (s_SQL30TotTimeListened/60000)/60;
-    s_SQL40TotTimeListened = (s_SQL40TotTimeListened/60000)/60;
-    s_SQL50TotTimeListened = (s_SQL50TotTimeListened/60000)/60;
-    s_SQL60TotTimeListened = (s_SQL60TotTimeListened/60000)/60;
-    // Compile statistics and declare additional statistical variables
-    //Total number of tracks in the library
-    s_totalLibQty = s_rCode0TotTrackQty + s_rCode1TotTrackQty + s_rCode3TotTrackQty + s_rCode4TotTrackQty +
-            s_rCode5TotTrackQty + s_rCode6TotTrackQty + s_rCode7TotTrackQty + s_rCode8TotTrackQty;
-    s_totalRatedQty = s_totalLibQty - s_rCode0TotTrackQty; //Total number of rated tracks in the library
-    //static double s_totHrsLast60Days = s_SQL10TotTimeListened + s_SQL20TotTimeListened + s_SQL30TotTimeListened + s_SQL40TotTimeListened
-    //        + s_SQL50TotTimeListened + s_SQL60TotTimeListened; //Total listened hours in the last 60 days
-    // User listening rate weighted avg calculated using the six 10-day periods, and applying sum-of-the-digits for weighting
-    s_listeningRate = ((s_SQL10TotTimeListened/10)*0.3) + ((s_SQL20TotTimeListened/10)*0.25)  + ((s_SQL30TotTimeListened/10)*0.2) +
-            ((s_SQL40TotTimeListened/10)*0.15) + ((s_SQL50TotTimeListened/10)*0.1) + ((s_SQL60TotTimeListened/10)*0.05);
-    static double s_adjHoursCode3 = (1 / s_yrsTillRepeatCode3) * s_rCode3TotTime;
-    static double s_adjHoursCode4 = (1 / s_yrsTillRepeatCode4) * s_rCode4TotTime;
-    static double s_adjHoursCode5 = (1 / s_yrsTillRepeatCode5) * s_rCode5TotTime;
-    static double s_adjHoursCode6 = (1 / s_yrsTillRepeatCode6) * s_rCode6TotTime;
-    static double s_adjHoursCode7 = (1 / s_yrsTillRepeatCode7) * s_rCode7TotTime;
-    static double s_adjHoursCode8 = (1 / s_yrsTillRepeatCode8) * s_rCode8TotTime;
-    static double s_totAdjHours = s_adjHoursCode3 + s_adjHoursCode4 + s_adjHoursCode5 + s_adjHoursCode6 +s_adjHoursCode7 + s_adjHoursCode8;
-    s_ratingRatio3 = s_adjHoursCode3 / s_totAdjHours;
-    s_ratingRatio4 = s_adjHoursCode4 / s_totAdjHours;
-    s_ratingRatio5 = s_adjHoursCode5 / s_totAdjHours;
-    s_ratingRatio6 = s_adjHoursCode6 / s_totAdjHours;
-    s_ratingRatio7 = s_adjHoursCode7 / s_totAdjHours;
-    s_ratingRatio8 = s_adjHoursCode8 / s_totAdjHours;
-    s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / 0.002739762; // fraction for one day (1/365)
-    s_totalRatedTime = s_rCode1TotTime + s_rCode3TotTime + s_rCode4TotTime + s_rCode5TotTime + s_rCode6TotTime +
-            s_rCode7TotTime + s_rCode8TotTime;
-    static double s_AvgMinsPerSong = (s_totalRatedTime / s_totalRatedQty) * 60;
-    static double s_avgListeningRateInMins = s_listeningRate * 60;
-    s_SequentialTrackLimit = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * s_DaysBeforeRepeatCode3);
-    //static double s_STLF = 1 / s_SequentialTrackLimit;
-    //static double s_totalAdjRatedQty = (s_yrsTillRepeatCode3factor * s_rCode3TotTrackQty)+(s_yrsTillRepeatCode4factor * s_rCode4TotTrackQty)
-    //        + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
-    //        +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
-    std::fstream filestr;
-    filestr.open ("cleanlib.dsv");
-    if (filestr.is_open()) {filestr.close();
-        std::cout << "File cleanlib.dsv successfully created." << std::endl;
-        //remove("libtable.dsv");
-    }
-    else {
-        std::cout << "Error opening cleanlib.dsv file" << std::endl;}
-    removeSQLFile(); // Run function to delete sql file from user's home directory after completion
-    getPlaylist(); // Using the function getPlaylist, correct paths from windows to linux, then save to cleanedplaylist.txt
-    std::cout << "getPlaylist completed." << std::endl;
-    std::vector<std::string> plStrings;
-    // Using the function getPlaylistVect (also from getplaylist.cpp), load cleanedplaylist.txt into a vector plStrings
-    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
-    std::cout << "getPlaylistVect completed." << std::endl;
-    // Using libtable.dsv from parent process create rated.dsv with random lastplayed dates created for
-    // unplayed (but rated or new need-to-be-rated tracks with no play history); also adds playlist position number to Custom1 field
-    // from the function getPlaylistVect
-    getRatedTable();
-    std::cout << "getRatedTable completed." << std::endl;
-    std::fstream filestr2;
-    filestr2.open ("rated.dsv");
-    if (filestr2.is_open()) {
-        filestr2.close();
-        std::cout << "File rated.dsv successfully created. Deleting cleanlib.dsv." << std::endl;
-        remove("cleanlib.dsv");}
-    else {std::cout << "Error opening rated.dsv file before deleting cleanlib.dsv" << std::endl;}
-    // To set up artist-related data, determine the identifier for artists (add selector to GUI configuration)
-    //bool customArtistID = 1; // manually set to true (means use Custom 2 for artist)
-    // Using the function getArtistAdjustedCount, use rated.dsv to generate unique artist list, count tracks, calculate adjusted tracks,
-    // calculate factors, calculate repeat intervals, then write the artist values to
-    getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
-                           &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
-                           &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
-                           &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
-    std::cout << "getArtistAdjustedCount completed." << std::endl;
-    // Run function addIntervalValues to baseline the variable for tracking artist availabilty, write to ratedlib.dsv
-    addIntervalValues();
-    std::cout << "addIntervalValues completed." << std::endl;
-    std::fstream filestr3;
-    filestr3.open ("ratedlib.dsv");
-    if (filestr3.is_open()) {
-        filestr3.close();
-        std::cout << "File ratedlib.dsv successfully created. Deleting rated.dsv." << std::endl;
-        remove("rated.dsv");}
-    else {std::cout << "Error opening ratedlib.dsv.dsv file before deleting rated.dsv" << std::endl;}
-    //
-    //  Section beyond initial program setup
-    // Run function to generate subset file for iterative file addition code if needUpdate == 1
-    bool needUpdate = isLibRefreshNeeded();
-    if (needUpdate == 1) getSubset();
-    // Run function getArtistExcludes to populate a list of artists currently unavailable
-    getArtistExcludes();
-    std::cout << "getArtistExcludes completed." << std::endl;
-    // Run function getArtistExcludes2 to populate a list of artists currently unavailable
-    getArtistExcludes2();
-    std::cout << "getArtistExcludes2 completed." << std::endl;
-    std::cout << "Current playlist size is: "<< s_playlistSize << std::endl;
-    //unsigned long histCount = s_SequentialTrackLimit - s_playlistSize;
-    static long s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-    std::cout << "History count for calculating additional artist excludes: "<< s_histCount << std::endl;
-    getExtendedExcludes(&s_histCount,&s_playlistSize);
-    std::cout << "getExtendedExcludes completed." << std::endl;
-    appendExcludes();
-    std::cout << "appendExcludes completed." << std::endl;
-    fixsort();
-    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
-    std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-    std::cout << "done!" << std::endl;   s_MMdbDate = getMMdbDate();// function is in dependents.cpp
+
+
     s_LastTableDate = getLastTableDate(); // function is in dependents.cpp
     ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
     //ui->updatestatusLabel->setText("Library update completed.");

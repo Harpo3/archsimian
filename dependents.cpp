@@ -76,7 +76,8 @@ bool isLibRefreshNeeded()
     bool existResult;
     bool refreshNeededResult{0};
     existResult = doesFileExist(existlibname);// See inline function at top
-    //std::cout << "File exist result is " << existResult << std::endl;
+    std::cout << "File exist result is " << existResult << std::endl;
+    refreshNeededResult = 1;
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
     if (existResult == 1){

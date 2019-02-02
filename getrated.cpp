@@ -1,4 +1,6 @@
 #include <sstream>
+#include <iterator>
+#include <algorithm>
 #include "userconfig.h"
 #include "lastplayeddays.h"
 #include "getplaylist.h"
@@ -152,7 +154,8 @@ void getRatedTable(){
                 signed int poscount2 = 0;
                 unsigned long myspot2 = 0;
                 std::size_t found2 = str.find_first_of("^");
-                while (found2!=std::string::npos){
+                while (found2!=std::string::npos)
+                {
                     if (poscount2 == 28) {myspot2 = found2+1;}
                     found2=str.find_first_of("^",++found2);
                     ++poscount2;
@@ -164,6 +167,7 @@ void getRatedTable(){
         if (skiprow == false) { // If the track is rated
             outfrated << str << "\n"; // The string is valid, write to clean file
         }
+        //plcount = 0;
     }
     ++ stringCount;
     // Close files opened for reading and writing

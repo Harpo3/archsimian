@@ -12,7 +12,7 @@ void getArtistExcludes()
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "getArtistExcludes: Error opening rated.dsv file after it was created in child process." << std::endl;}
+    else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file after it was created in child process." << std::endl;}
     std::string ratedlibrary = "ratedabbr.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())

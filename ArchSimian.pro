@@ -35,18 +35,11 @@ SOURCES += \
     getcleanlib.cpp \
     getplaylist.cpp \
     reformatlib.cpp \
-    getartistadjustedcount.cpp \
     addintervalvalues.cpp \
-    getartistexcludes.cpp \
-    getartistexcludes2.cpp \
-    getartistexcludes3.cpp \
-    getartistexcludes4.cpp \
-    getartistexcludes5.cpp \
     writesqlfile.cpp \
-    ratingvariance.cpp \
     getlibvariables.cpp \
-    getsubset.cpp \
-    selecttrack.cpp
+    basiclibfunctions.cpp \
+    playlistfunctions.cpp
 
 HEADERS += \
     archsimian.h \
@@ -59,18 +52,11 @@ HEADERS += \
     getcleanlib.h \
     getplaylist.h \
     reformatlib.h \
-    getartistadjustedount.h \
     addintervalvalues.h \
-    getartistexcludes.h \
-    getartistexcludes2.h \
-    getartistexcludes3.h \
-    getartistexcludes4.h \
-    getartistexcludes5.h \
     writesqlfile.h \
-    ratingvariance.h \
     getlibvariables.h \
-    getsubset.h \
-    selecttrack.h
+    playlistfunctions.h \
+    basiclibfunctions.h
 
 FORMS += \
     archsimian.ui
