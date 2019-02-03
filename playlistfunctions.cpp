@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "basiclibfunctions.h"
 #include "getplaylist.h"
+#include "constants.h"
 
 //using namespace std;
 
@@ -62,12 +63,12 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     std::fstream playList;
     playList.open ("cleanedplaylist.txt");
     if (playList.is_open()) {playList.close();}
-    else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file after it was created in child process." << std::endl;}
+    else {std::cout << "getArtistExcludes: Error opening cleanedplaylist.txt file." << std::endl;}
     std::string playlist = "cleanedplaylist.txt"; // now we can use it as input file
     //*_splaylistSize = cstyleStringCount("cleanedplaylist.txt");
 
 
-    std::cout << "getExcludedArtists: *_splaylistSize is: "<<*_splaylistSize << std::endl;
+    //std::cout << "getExcludedArtists: *_splaylistSize is: "<<*_splaylistSize << std::endl;
 
 
     std::ifstream playlistTable(playlist);
@@ -183,7 +184,7 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
 int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_sratingRatio5,
                        double *_sratingRatio6, double *_sratingRatio7, double *_sratingRatio8){
     //Lookup the rating codes for last two tracks on the playlist;
-    std::cout << "ratingCodeSelected started." << std::endl;
+    //std::cout << "ratingCodeSelected started." << std::endl;
     int x = 0; // variable to return the rating code to be used for the next track selection
     std::string codeForPos1;
     std::string codeForPos2;
@@ -211,11 +212,11 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "Error opening ratedabbr2.txt file." << std::endl;}
+    else {std::cout << "ratingCodeSelected: Error opening ratedabbr2.txt file." << std::endl;}
     std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
-        std::cout << "Error opening ratedSongsTable." << std::endl;
+        std::cout << "ratingCodeSelected: Error opening ratedSongsTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     while (std::getline(ratedSongsTable, str)) { // Declare variables applicable to all rows
@@ -242,11 +243,11 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
                 selectedPlaylistPosition = token;
                 if (token == "1") {
                     codeForPos1 = selectedRatingCode;
-                    std::cout << "selectedPlaylistPosition 1 is: "<< str << std::endl;
+                    if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 1 is: "<< str << std::endl;
                 }
                 if (token == "2") {
                     codeForPos2 = selectedRatingCode;
-                    std::cout << "selectedPlaylistPosition 2 is: "<< str << std::endl;
+                    if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 2 is: "<< str << std::endl;
                 }
             }
             ++ tokenCount;
@@ -262,6 +263,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
             if (selectedRatingCode == "8") {totalPLTime8 = totalPLTime8 + selectedSongLength;}
         }
     }
+    if (Constants::verbose == true) {
     std::cout << "totalPLTime3 is: " <<totalPLTime3/1000 << std::endl;
     std::cout << "totalPLTime4 is: " <<totalPLTime4/1000 << std::endl;
     std::cout << "totalPLTime5 is: " <<totalPLTime5/1000 << std::endl;
@@ -269,6 +271,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     std::cout << "totalPLTime7 is: " <<totalPLTime7/1000 << std::endl;
     std::cout << "totalPLTime8 is: " <<totalPLTime8/1000 << std::endl;
     std::cout << "totalPlaylistTime is: " <<totalPlaylistTime/1000 << std::endl;
+    }
 
     //Calculate time ratio for each rating code by dividing each by the total playlist time.
     //variables:
@@ -278,12 +281,14 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double ratioTime6 = totalPLTime6 / totalPlaylistTime;
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
+    if (Constants::verbose == true) {
     std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << *_sratingRatio3 << std::endl;
     std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << *_sratingRatio4<< std::endl;
     std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << *_sratingRatio5<< std::endl;
     std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << *_sratingRatio6<< std::endl;
     std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << *_sratingRatio7<< std::endl;
     std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << *_sratingRatio8<< std::endl;
+    }
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
     double varianceRatioTime3 = (*_sratingRatio3 - ratioTime3) / *_sratingRatio3;
@@ -292,6 +297,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double varianceRatioTime6 = (*_sratingRatio6 - ratioTime6) / *_sratingRatio6;
     double varianceRatioTime7 = (*_sratingRatio7 - ratioTime7) / *_sratingRatio7;
     double varianceRatioTime8 = (*_sratingRatio8 - ratioTime8) / *_sratingRatio8;
+    if (Constants::verbose == true) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
     std::cout << "varianceRatioTime5 is: " << varianceRatioTime5 << std::endl;
@@ -300,6 +306,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     std::cout << "varianceRatioTime8 is: " << varianceRatioTime8 << std::endl;
     std::cout << "Rating for last track added was: " <<codeForPos1;
     std::cout << ", and second-to-last was: " <<codeForPos2 << std::endl;
+    }
     //If the playlist ratio is less than the program ratio, then that code is underrepresented on the playlist.
     // The largest positive number is the most underrepresented rating code of the current playlist.
     // Create constants with the variances just calculated for each rating code variance to place them in an array
@@ -322,7 +329,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 4);
-        std::cout << "Condition 1: ";
+        if (Constants::verbose == true) std::cout << "Condition 1. Evaluating codes 3, 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -334,7 +341,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 4);
-        std::cout << "Condition 1a: ";
+        if (Constants::verbose == true) std::cout << "Condition 1a. Evaluating codes 3, 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -346,7 +353,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt4, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        std::cout << "Condition 2: ";
+        if (Constants::verbose == true) std::cout << "Condition 2. Evaluating codes 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -357,7 +364,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        std::cout << "Condition 3: ";
+        if (Constants::verbose == true) std::cout << "Condition 3. Evaluating codes 3, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -368,7 +375,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt4, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        std::cout << "Condition 4: ";
+        if (Constants::verbose == true) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -379,7 +386,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt4, vrt5};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        std::cout << "Condition 5: ";
+        if (Constants::verbose == true) std::cout << "Condition 5. Evaluating codes 3, 4, 5." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -390,7 +397,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt4, vrt5, vrt6, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        std::cout << "Condition 6: ";
+        if (Constants::verbose == true) std::cout << "Condition 6. Evaluating codes 4, 5, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -403,7 +410,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt5, vrt6, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        std::cout << "Condition 7: ";
+        if (Constants::verbose == true) std::cout << "Condition 7. Evaluating codes 3, 5, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -416,7 +423,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt4, vrt6, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        std::cout << "Condition 8: ";
+        if (Constants::verbose == true) std::cout << "Condition 8. Evaluating codes 3, 4, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -429,7 +436,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         double a_variances[] = {vrt3, vrt4, vrt5, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        std::cout << "Condition 9: ";
+        if (Constants::verbose == true) std::cout << "Condition 9. Evaluating codes 3, 4, 5, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -458,7 +465,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
 //std::ofstream outfratedint2("extendexcludes.txt"); // output file for writing ratedabbr2.txt with added artist intervals
 
 void selectTrack(int *_sratingNextTrack){
-    //std::cout << "Starting selectTrack function. Rating for next track is " << *_sratingNextTrack << std::endl;
+    if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << *_sratingNextTrack << std::endl;
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
@@ -466,7 +473,7 @@ void selectTrack(int *_sratingNextTrack){
     std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
-        std::cout << "Error opening ratedabbr2.txt." << std::endl;
+        std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // store the string for ratedabbr2.txt
@@ -486,7 +493,7 @@ void selectTrack(int *_sratingNextTrack){
     std::string selectedTrackPath;
     static bool s_excludeMatch{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
-    //std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
+    if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"
     // Need to store col values for Artist (1 or 19), song path (8), LastPlayedDate (17), playlist position (18), rating (29),
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
@@ -518,9 +525,9 @@ void selectTrack(int *_sratingNextTrack){
         // playlist, notInPlaylist == false
         if (notInPlaylist == 0) {continue;}
         //std::cout << "notInPlaylist = false:" << notInPlaylist << ". Going to next line..." << std::endl;
-        else if (std::stoi(ratingCode) != *_sratingNextTrack) {continue;}
+        else if (ratingCode != std::to_string(*_sratingNextTrack)) {continue;}
         //std::cout << ". RatingCode is: " << ratingCode << " and *_sratingNextTrack is " << *_sratingNextTrack << ". Going to next line..." << std::endl;
-        else if ((std::stoi(ratingCode) == *_sratingNextTrack) && (notInPlaylist == 1)){
+        else if ((ratingCode == std::to_string(*_sratingNextTrack)) && (notInPlaylist == 1)){
             //std::cout << "Track found with current rating (not yet excluded): " << selectedArtistToken << ", " << songPath << std::endl;
         }
         // If not yet skipped, open an inner loop and iterate through artistexcludes.txt and compare each entry against the artist token.
@@ -555,13 +562,14 @@ void selectTrack(int *_sratingNextTrack){
     std::string fullstring = finaltracksvect.front();
     std::vector<std::string> splittedStrings = split(fullstring, ',');
     selectedTrackPath = splittedStrings[1];
-    std::cout <<"Selection is : " << selectedTrackPath << std::endl;
-    //std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
+    std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     std::ofstream playlist("cleanedplaylist.txt",std::ios::app);
     playlist << selectedTrackPath << "\n";
     playlist.close();
     ratedSongsTable.close();
+    if (Constants::verbose == true) std::cout <<'\n';
+    std::cout << "Added "<< selectedTrackPath;
     //remove("ratedabbr2.txt");
     //ratedabbrvec.shrink_to_fit();
     finaltracksvect.shrink_to_fit();

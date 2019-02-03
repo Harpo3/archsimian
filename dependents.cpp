@@ -97,7 +97,7 @@ bool isLibRefreshNeeded()
         double dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
         if (dateResult > 0) {
             refreshNeededResult = 1;
-            std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
+            if (Constants::verbose == true) std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
         }
         // If the result is negative, then MM4 has not been updated since the program library was last refreshed. No update is necessary.
         // If positive, need to refresh all library data.

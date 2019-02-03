@@ -31,13 +31,9 @@ SOURCES += \
     dependents.cpp \
     lastplayeddays.cpp \
     runbashapp.cpp \
-    getrated.cpp \
-    getcleanlib.cpp \
     getplaylist.cpp \
     reformatlib.cpp \
-    addintervalvalues.cpp \
     writesqlfile.cpp \
-    getlibvariables.cpp \
     basiclibfunctions.cpp \
     playlistfunctions.cpp
 
@@ -48,13 +44,9 @@ HEADERS += \
     lastplayeddays.h \
     constants.h \
     runbashapp.h \
-    getrated.h \
-    getcleanlib.h \
     getplaylist.h \
     reformatlib.h \
-    addintervalvalues.h \
     writesqlfile.h \
-    getlibvariables.h \
     playlistfunctions.h \
     basiclibfunctions.h
 

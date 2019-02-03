@@ -57,7 +57,7 @@ bool recentlyUpdated()
     bool existResult;
     bool refreshNeededResult{0};
     existResult = doesFileExist(existlibname);// See inline function at top
-    std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
+    if (Constants::verbose == true) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
     if (existResult == 0) {refreshNeededResult = 1;}
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
@@ -68,17 +68,17 @@ bool recentlyUpdated()
         stat(mmpath.c_str(), &stbuf1);
         localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want
         //printf("Modification time for MM.DB is %ld\n",stbuf1.st_mtime);
-        //std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
-        // Now get the date for the ratedlib.csv file
+        if (Constants::verbose == true) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
+        // Now get the date for the cleanlib.csv file
         struct stat stbuf2;
         stat(existlibname.c_str(), &stbuf2);
         localtime(&stbuf2.st_mtime);
-        //printf("Modification time for ratedlib.csv is %ld\n",stbuf2.st_mtime);
-        //std::cout << "ratedlib.csv is " << stbuf2.st_mtime << std::endl;
+        //printf("Modification time for cleanlib.csv is %ld\n",stbuf2.st_mtime);
+        if (Constants::verbose == true) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;
         double dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
         if (dateResult > 0) {
             refreshNeededResult = 1;
-            std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
+            if (Constants::verbose == true) std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
         }
         // If the result is negative, then MM4 has not been updated since the program library was last refreshed. No update is necessary.
         // If positive, need to refresh all library data.
@@ -526,7 +526,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
 }
 void buildDB()
 {
-    std::cout << "Building the Archsimian database with artist intervals calculated....";
+    if (Constants::verbose == true) std::cout << "Building the Archsimian database with artist intervals calculated....";
 
     const std::string cleanLibFile("cleanlib.dsv"); // remove when adding to main*****************
 
@@ -564,7 +564,7 @@ void buildDB()
     //std::cout << "Starting getline to read artistsadj.txt file into artistsadjVec." << std::endl;
     std::vector<std::string>ratedabbrvect;
     //ratedabbrvect.reserve(20000);
-    std::cout << "................" << std::endl;
+    if (Constants::verbose == true) std::cout << "................" << std::endl;
 
     // Outer loop: iterate through ratedSongsTable in the file "ratedlib.dsv"
     // Need to store col values for song path (8), LastPlayedDate (17), playlist position (will be obtained from cleanedplaylist), artist (19),
@@ -612,12 +612,12 @@ void buildDB()
         }
     }
     ratedabbrvect.shrink_to_fit();
-    //std::cout << "Do final sort of ratedabbrvect and write to file." << std::endl;
+    if (Constants::verbose == true) std::cout << "Do final sort of ratedabbrvect and write to file." << std::endl;
     std::sort (ratedabbrvect.begin(), ratedabbrvect.end());
     for (std::size_t i = 0 ;  i < ratedabbrvect.size(); i++){
         ratedabbr << ratedabbrvect[i] << "\n";}
     primarySongsTable.close(); // Close cleanlib and vectors
     ratedabbr.close();
     ratedabbrvect.shrink_to_fit();
-    std::cout << "...finished!" << std::endl;
+    if (Constants::verbose == true) std::cout << "...finished!" << std::endl;
 }

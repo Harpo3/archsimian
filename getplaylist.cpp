@@ -43,7 +43,7 @@ int cstyleStringCount(std::string path){
     std::string t;
     while(!safeGetline(ifs, t).eof())
         ++n;
-    std::cout << "The file contains " << n << " lines." << std::endl;
+    //std::cout << "The file contains " << n << " lines." << std::endl;
     return n;
 }
 
