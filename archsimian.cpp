@@ -278,6 +278,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         remove("playlistposlist.txt");
         remove("artistexcludes.txt");
         s_bool_ExcludedArtistsProcessed = false;
+        remove("cleanedplaylist.txt");
+        s_bool_PlaylistExist = false;
         //ui->refreshdbButton->setEnabled(true);
         ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));}
 
@@ -585,7 +587,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_PlaylistSelected == true) && (s_bool_PlaylistExist == false))
     {
-        if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config." << std::endl;}
+        if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
         getPlaylist();
         s_bool_PlaylistExist = doesFileExist (cleanedPlaylist);
         if (s_bool_PlaylistExist == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
@@ -595,7 +597,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // NOTE: functions used in the next  three steps (11-13) will later be reused when adding tracks to
     // playlist - here, this is to get the initial values if a playlist exists
 
-    //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (bool6 is true), obtain playlist size
+    //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
 
     if (s_bool_PlaylistExist == true) {
@@ -604,7 +606,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
 
     // 12. If playlist exists, obtain the historical count (in addition to the playlist count) up to the sequential track limit:
-    // If cleaned playlist exists (bool6 is true), obtain the historical count (in addition to the playlist count) up to the
+    // If cleaned playlist exists (s_bool_PlaylistExist is true), obtain the historical count (in addition to the playlist count) up to the
     // sequential track limit. A variable is needed (which later will be used to obtain additional play history outside of
     // playlist, as part of a later function to make a new track selection), using the variable s_histCount. The value is
     // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
