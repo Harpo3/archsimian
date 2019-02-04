@@ -335,7 +335,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-    // 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
+// Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
     // songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), run function to process/update statistics getDBStats()
 
     if (Constants::verbose == true) std::cout << "Step 6. User configuration exists, MM.DB exists and songs table exists. Processing database statistics:" << std::endl;
@@ -405,7 +405,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
                 +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
-        //Print results to console (for later program integration tasks)
+        //Print verbose results to console
         if (Constants::verbose == true) {
         std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
         std::cout << "Total tracks Rating 1 - s_rCode1TotTrackQty : " << s_rCode1TotTrackQty << ". Total Time (hrs) - s_rCode1TotTime : " <<  s_rCode1TotTime << std::endl;
@@ -456,19 +456,22 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::cout << "Average length of rated songs in fractional minutes - s_AvgMinsPerSong : "<< s_AvgMinsPerSong << std::endl;
         std::cout << "Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
         std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
-        std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl;
+        std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
         }
-
-        s_bool_dbStatsCalculated = true;
+        s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
     }
     else {
-        std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
         s_bool_dbStatsCalculated = false;
+        std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
     }
 
-    //6a. Determine if artistsadj.txt exists:  (sets s_bool_artistsadjExist)
+// Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
+    //MM.DB was not recently updated, check for existence of s_bool_artistsadjExist (artistsadj.txt).
+    //If file is missing or empty, create file with artist statistics
 
-    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)) {
+    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)&& (s_bool_CleanLibExist == true)&&
+            (s_bool_dbStatsCalculated == true)&&(s_bool_MMdbUpdated == false)) {
+        s_bool_artistsadjExist = false;
         bool tmpbool;
         tmpbool = doesFileExist("artistsadj.txt");
         if (tmpbool == true){ // check that file is not empty
@@ -485,39 +488,41 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 file.close();
                 delete[] memblock;
             }
-            if (artsistAdjsize == 0) {s_bool_artistsadjExist = true;}//doesFileExist(cleanLibFile);
+            if (artsistAdjsize != 0) {s_bool_artistsadjExist = true;}// file exists and is greater in size than zero, set to true
+            if (artsistAdjsize == 0) {s_bool_artistsadjExist = false;}// file exists but size is zero, set to false
         }
-        if (tmpbool == false){s_bool_artistsadjExist = true;}
+        if (tmpbool == false){s_bool_artistsadjExist = false;} // file does not exist, set bool to false
+
+        if (Constants::verbose == true) std::cout << "Step 7. MM.DB not recently updated. Verifying artistsadj.txt exists and is not zero. "
+                                                     "s_bool_artistsadjExist result: "<< s_bool_artistsadjExist << std::endl;
+        if (s_bool_artistsadjExist == false){
+            getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
+                                   &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
+                                   &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
+                                   &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
+            s_bool_artistsadjExist = doesFileExist ("artistsadj.txt");
+            if (s_bool_artistsadjExist == false)  {std::cout << "Step 7(a) Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+        }
     }
-    if (Constants::verbose == true) std::cout << "Step 6a. artistsadj.txt does not exist or is empty. s_bool_artistsadjExist: "<< s_bool_artistsadjExist << std::endl;
 
-    if (Constants::verbose == true) std::cout << "If s_bool_CleanLibExist = false (songs table exists), skipping step 7. s_bool_CleanLibExist:"<<s_bool_CleanLibExist << std::endl;
+// Step 7b. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
+   // MM.DB was recently updated, create file with artist statistics
 
-    // 7. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and artist stats file does not exist,
-    // or file exists but MM.DB was recently updated, generate artist statistics:
-    // If user configuration exists, MM4 data exists, songs table exists, and database statistics exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist,
-    //s_bool_dbStatsCalculated are all true), run function getArtistAdjustedCount() to generate artist statistics (it creates the file artistsadj.txt, with adjusted
-    // counts by rating and artist intervals for each track) then set bool8 to true, rechecking, run doesFileExist (const std::string& name)
-    // (artistsadj.txt) function (bool10)
-    if (Constants::verbose == true) std::cout << "Step 7. if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)"
-                                                 " && (s_bool_MMdbUpdated == true) && (s_bool_dbStatsCalculated == true) && (s_bool_artistsadjExist == true)),"
-                                                 " get artist stats:"<< s_bool_IsUserConfigSet <<", s_bool_MMdbExist:"<< s_bool_MMdbExist <<", s_bool_CleanLibExist:"
-                                              << s_bool_CleanLibExist << std::endl;
-//(s_bool_MMdbUpdated == true)) || (s_bool_CleanLibExist == false)
-    if (((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_dbStatsCalculated == true)&&
-         (s_bool_artistsadjExist == true)) || (s_bool_MMdbUpdated == true)) {
+    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)&& (s_bool_CleanLibExist == true)&&
+            (s_bool_dbStatsCalculated == true)&&(s_bool_MMdbUpdated == true)) {
+        if (Constants::verbose == true) std::cout << "Step 7. MM.DB was recently updated. Processing artist statistics..." << std::endl;
         getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                                &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                                &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                                &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
         s_bool_artistsadjExist = doesFileExist ("artistsadj.txt");
-        if (s_bool_artistsadjExist == false)  {std::cout << "Step 7. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+        if (s_bool_artistsadjExist == false)  {std::cout << "Step 7(b). Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
     }
 
     // 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
     // a modified database with only rated tracks and which include artist intervals calculated for each: If user configuration exists,
     // MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist, s_bool_dbStatsCalculated, bool10
-    // are all true), run function buildDB()  [  see test56excludes for test version ] to create a modified database file with rated tracks
+    // are all true), run function buildDB() to create a modified database file with rated tracks
     // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist)
     if (Constants::verbose == true) std::cout << "Step 8. if s_bool_IsUserConfigSet s_bool_MMdbExist s_bool_CleanLibExist s_bool_dbStatsCalculated and s_bool_artistsadjExist are true, buidl AS db" << std::endl;
      if (Constants::verbose == true) std::cout << "Results are: bool1"<< s_bool_IsUserConfigSet <<", s_bool_MMdbExist:"<< s_bool_MMdbExist <<", s_bool_CleanLibExist:"<< s_bool_CleanLibExist <<"s_bool_dbStatsCalculated"<< s_bool_dbStatsCalculated <<", s_bool_artistsadjExist:"<< s_bool_artistsadjExist<< std::endl;
