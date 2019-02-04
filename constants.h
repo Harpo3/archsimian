@@ -25,7 +25,7 @@ const char userFileName[16]{"archsimian.conf"};
 const char sqlFileName[19]{"/exportMMTable.sql"};
 
 // Constant to turn on or off troubleshooting feedback in console
-const bool verbose{true};
+const bool verbose{false};
 
 }
 #endif // CONSTANTS_H

@@ -562,7 +562,7 @@ void selectTrack(int *_sratingNextTrack){
     std::string fullstring = finaltracksvect.front();
     std::vector<std::string> splittedStrings = split(fullstring, ',');
     selectedTrackPath = splittedStrings[1];
-    std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
+    if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     std::ofstream playlist("cleanedplaylist.txt",std::ios::app);
     playlist << selectedTrackPath << "\n";

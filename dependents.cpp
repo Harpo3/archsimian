@@ -114,9 +114,11 @@ std::string getMMdbDate()
     stat(mmpath.c_str(), &stbuf1);
     foo = gmtime(&(stbuf1.st_mtime));
     localtime(&stbuf1.st_mtime);
-    printf("Year: %d\n", foo->tm_year + 1900);
-    printf("Month: %d\n", foo->tm_mon + 1);
-    printf("Day: %d\n", foo->tm_mday);
+    if (Constants::verbose == true) {
+        printf("Year: %d\n", foo->tm_year + 1900);
+        printf("Month: %d\n", foo->tm_mon + 1);
+        printf("Day: %d\n", foo->tm_mday);
+    }
     std::string a = (std::to_string(foo->tm_mon + 1)) + "/" + (std::to_string(foo->tm_mday)) + "/" + (std::to_string(foo->tm_year + 1900));
     return a;
 }
@@ -129,9 +131,11 @@ std::string getLastTableDate()
     stat(existlibname.c_str(), &stbuf2);
     foo = gmtime(&(stbuf2.st_mtime));
     localtime(&stbuf2.st_mtime);
+    if (Constants::verbose == true) {
     printf("Year: %d\n", foo->tm_year + 1900);
     printf("Month: %d\n", foo->tm_mon + 1);
     printf("Day: %d\n", foo->tm_mday);
+    }
     std::string a = (std::to_string(foo->tm_mon + 1)) + "/" + (std::to_string(foo->tm_mday)) + "/" + (std::to_string(foo->tm_year + 1900));
     return a;
 }

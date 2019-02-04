@@ -107,6 +107,8 @@ static int s_ratingNextTrack{0};
 static std::string s_MMdbDate{""};
 static std::string s_LastTableDate{""};
 static long s_histCount{0};
+static double s_AvgMinsPerSong{0.0};
+static double s_avgListeningRateInMins{0.0};
 
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
@@ -395,8 +397,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / 0.002739762; // fraction for one day (1/365)
         s_totalRatedTime = s_rCode1TotTime + s_rCode3TotTime + s_rCode4TotTime + s_rCode5TotTime + s_rCode6TotTime +
                 s_rCode7TotTime + s_rCode8TotTime;
-        static double s_AvgMinsPerSong = (s_totalRatedTime / s_totalRatedQty) * 60;
-        static double s_avgListeningRateInMins = s_listeningRate * 60;
+        s_AvgMinsPerSong = (s_totalRatedTime / s_totalRatedQty) * 60;
+        s_avgListeningRateInMins = s_listeningRate * 60;
         s_SequentialTrackLimit = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * s_DaysBeforeRepeatCode3);
         //static double s_STLF = 1 / s_SequentialTrackLimit;
         s_totalAdjRatedQty = (s_yrsTillRepeatCode3factor * s_rCode3TotTrackQty)+(s_yrsTillRepeatCode4factor * s_rCode4TotTrackQty)
@@ -627,13 +629,15 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if (s_bool_PlaylistExist == true)   {
         getExcludedArtists(&s_histCount, &s_playlistSize);
-
     }
 }
 
 
 void ArchSimian::on_addsongsButton_clicked(){
     // Add loop here:  For each number of songs selected, run...
+    int numTracks = ui->addtrksspinBox->value();
+    int n;
+    for (n=0; n < numTracks; n++){
     s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
     if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
     selectTrack(&s_ratingNextTrack);
@@ -644,6 +648,8 @@ void ArchSimian::on_addsongsButton_clicked(){
     s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
     getExcludedArtists(&s_histCount, &s_playlistSize);
     s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+}
+
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
@@ -813,10 +819,13 @@ void ArchSimian::on_refreshdbButton_clicked()
     // Add code to 'goto' beginning of this cpp, then delete the rest of the below code except last few lines?
 
 
-
-
-
     s_LastTableDate = getLastTableDate(); // function is in dependents.cpp
     ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
     //ui->updatestatusLabel->setText("Library update completed.");
 }
+
+void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
+{
+        ui->daystracksLabel->setText(QString::number((s_numTracks * s_AvgMinsPerSong)/s_avgListeningRateInMins));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+}
+//s_AvgMinsPerSong
