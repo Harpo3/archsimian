@@ -45,16 +45,9 @@ static bool s_bool_MMdbUpdated{false};
 static bool s_bool_dbStatsCalculated{false};
 static bool s_bool_artistsadjExist{false};
 static bool s_bool_RatedAbbrExist{false};
-
 static bool s_bool_PlaylistExist{false};
 static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
-
-
-//static bool s_bool8{false};
-//static bool s_bool10{false};
-
-
 
 const std::string cleanLibFile("cleanlib.dsv");
 const std::string cleanedPlaylist("cleanedplaylist.txt");
@@ -278,10 +271,13 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // If result is 1, remove ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
     {
         remove("ratedabbr.txt");
+        s_bool_RatedAbbrExist = false;
         remove("ratedabbr2.txt");
         remove("artistsadj.txt");
+        s_bool_artistsadjExist = false;
         remove("playlistposlist.txt");
         remove("artistexcludes.txt");
+        s_bool_ExcludedArtistsProcessed = false;
         //ui->refreshdbButton->setEnabled(true);
         ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));}
 
@@ -473,6 +469,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             (s_bool_dbStatsCalculated == true)&&(s_bool_MMdbUpdated == false)) {
         s_bool_artistsadjExist = false;
         bool tmpbool;
+        bool tmpbool2;
         tmpbool = doesFileExist("artistsadj.txt");
         if (tmpbool == true){ // check that file is not empty
             //Check whether the songs table currently has any data in it
@@ -488,7 +485,31 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 file.close();
                 delete[] memblock;
             }
-            if (artsistAdjsize != 0) {s_bool_artistsadjExist = true;}// file exists and is greater in size than zero, set to true
+            if (artsistAdjsize != 0) {s_bool_artistsadjExist = true;// file artistsadj.txt exists and is greater in size than zero, set to true
+                // If MM.DB not recently updated and artistsadj.txt does not need to be updated, check if ratedabbr.txt exists
+                // If it does set s_bool_RatedAbbrExist to true.
+                if (Constants::verbose == true) {std::cout << "Step 7. MM.DB not recently updated and artistsadj.txt does not need to be updated. Now checking s_bool_RatedAbbrExist." << std::endl;}
+                tmpbool2 = doesFileExist("ratedabbr.txt");
+                if (tmpbool2 == true){ // check that file is not empty
+                    //Check whether the songs table currently has any data in it
+                    std::streampos ratedabbrsize;
+                    char * memblock;
+                    std:: ifstream file ("ratedabbr.txt", std::ios::in|std::ios::binary|std::ios::ate);
+                    if (file.is_open())
+                    {
+                        ratedabbrsize = file.tellg();
+                        memblock = new char [ratedabbrsize];
+                        file.seekg (0, std::ios::beg);
+                        file.read (memblock, ratedabbrsize);
+                        file.close();
+                        delete[] memblock;
+                    }
+                    if (ratedabbrsize != 0) {
+                        s_bool_RatedAbbrExist = true;
+                        if (Constants::verbose == true) {std::cout << "Step 7. Set s_bool_RatedAbbrExist = true." << std::endl;}
+                    }
+                }
+            }
             if (artsistAdjsize == 0) {s_bool_artistsadjExist = false;}// file exists but size is zero, set to false
         }
         if (tmpbool == false){s_bool_artistsadjExist = false;} // file does not exist, set bool to false
@@ -501,6 +522,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                    &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                                    &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
             s_bool_artistsadjExist = doesFileExist ("artistsadj.txt");
+            s_bool_RatedAbbrExist = false;
             if (s_bool_artistsadjExist == false)  {std::cout << "Step 7(a) Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
         }
     }
@@ -510,42 +532,51 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)&& (s_bool_CleanLibExist == true)&&
             (s_bool_dbStatsCalculated == true)&&(s_bool_MMdbUpdated == true)) {
-        if (Constants::verbose == true) std::cout << "Step 7. MM.DB was recently updated. Processing artist statistics..." << std::endl;
+        if (Constants::verbose == true) {std::cout << "Step 7. MM.DB was recently updated. Processing artist statistics..." << std::endl;}
         getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                                &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                                &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                                &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
+        s_bool_RatedAbbrExist = false;
         s_bool_artistsadjExist = doesFileExist ("artistsadj.txt");
         if (s_bool_artistsadjExist == false)  {std::cout << "Step 7(b). Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
     }
 
     // 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
     // a modified database with only rated tracks and which include artist intervals calculated for each: If user configuration exists,
-    // MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist, s_bool_dbStatsCalculated, bool10
-    // are all true), run function buildDB() to create a modified database file with rated tracks
+    // MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist,
+    // s_bool_dbStatsCalculated, bool10 are all true), run function buildDB() to create a modified database file with rated tracks
     // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist)
-    if (Constants::verbose == true) std::cout << "Step 8. if s_bool_IsUserConfigSet s_bool_MMdbExist s_bool_CleanLibExist s_bool_dbStatsCalculated and s_bool_artistsadjExist are true, buidl AS db" << std::endl;
-     if (Constants::verbose == true) std::cout << "Results are: bool1"<< s_bool_IsUserConfigSet <<", s_bool_MMdbExist:"<< s_bool_MMdbExist <<", s_bool_CleanLibExist:"<< s_bool_CleanLibExist <<"s_bool_dbStatsCalculated"<< s_bool_dbStatsCalculated <<", s_bool_artistsadjExist:"<< s_bool_artistsadjExist<< std::endl;
 
-    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)  && (s_bool_MMdbUpdated == true) && (s_bool_dbStatsCalculated == true) && (s_bool_artistsadjExist == true)) {
+
+    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)  && (s_bool_dbStatsCalculated == true)
+            && (s_bool_artistsadjExist == true) && (s_bool_RatedAbbrExist == false)) {
         buildDB();
         s_bool_RatedAbbrExist = doesFileExist ("ratedabbr.txt");
-        if (s_bool_artistsadjExist == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
+        if (s_bool_RatedAbbrExist == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
+        if ((s_bool_RatedAbbrExist == true)&&(Constants::verbose == true)){std::cout << "Step 8. ratedabbr.txt was created." << std::endl;}
     }
+    if ((Constants::verbose == true)&& (s_bool_RatedAbbrExist == true)){std::cout << "Step 8. MM.DB and artist.adj not recently updated. ratedabbr.txt not updated." << std::endl;}
 
     // 9. Determine if a playlist exists, and if not, determine if it was identified as being selected in the user's config:
     // Determine if cleaned (path-corrected) playlist selected (s_bool_PlaylistExist) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
     // sets bool6 and bool7
 
     s_bool_PlaylistExist = doesFileExist (cleanedPlaylist);
-    if (s_bool_PlaylistExist == true) {s_bool_PlaylistSelected = true;}
-    //a. If bool6 is false, determine if playlist was identified as selected in user config (sets s_bool_PlaylistSelected)
+    if (s_bool_PlaylistExist == true) {
+        s_bool_PlaylistSelected = true;
+        if (Constants::verbose == true){std::cout << "Step 9. Playlist exists and was not updated." << std::endl;}
+    }
+    //a. If s_bool_PlaylistExist is false, determine if playlist was identified as selected in user config (sets s_bool_PlaylistSelected)
     if (s_bool_PlaylistExist == false){
+        if (Constants::verbose == true){std::cout << "Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
         //getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
         std::string s_selectedplaylist = userconfig::getConfigEntry(7);
-        if (s_selectedplaylist != "") {s_bool_PlaylistSelected = true;}
+        if (s_selectedplaylist != "") {
+            s_bool_PlaylistSelected = true;
+            if (Constants::verbose == true){std::cout << "Step 9. Playlist found in user config." << std::endl;}
+        }
     }
-
     // 10. If a playlist was identified in the user config, but the playlist file is not found, obtain the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists (s_bool_PlaylistSelected is true),
     // but cleaned playlist does not (s_bool_PlaylistExist is false), run function to obtain cleaned playlist file getPlaylist() then set s_bool_PlaylistExist to true,
@@ -554,10 +585,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_PlaylistSelected == true) && (s_bool_PlaylistExist == false))
     {
+        if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config." << std::endl;}
         getPlaylist();
         s_bool_PlaylistExist = doesFileExist (cleanedPlaylist);
         if (s_bool_PlaylistExist == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }
+    if ((Constants::verbose == true)&& (s_bool_PlaylistExist == true)){std::cout << "Step 10. Playlist exists and was not updated." << std::endl;}
 
     // NOTE: functions used in the next  three steps (11-13) will later be reused when adding tracks to
     // playlist - here, this is to get the initial values if a playlist exists
@@ -565,7 +598,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (bool6 is true), obtain playlist size
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
 
-    if (s_bool_PlaylistExist == true) {s_playlistSize = cstyleStringCount(cleanedPlaylist);}
+    if (s_bool_PlaylistExist == true) {
+        s_playlistSize = cstyleStringCount(cleanedPlaylist);
+        if (Constants::verbose == true){std::cout << "Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
+    }
 
     // 12. If playlist exists, obtain the historical count (in addition to the playlist count) up to the sequential track limit:
     // If cleaned playlist exists (bool6 is true), obtain the historical count (in addition to the playlist count) up to the
@@ -574,12 +610,15 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
     // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
     // and SequentialTrackLimit obtained with data from function getDBStats()]
-    if (s_bool_PlaylistExist == true) {s_playlistSize = cstyleStringCount(cleanedPlaylist);
-        s_histCount = s_SequentialTrackLimit - s_playlistSize;}
+    if (s_bool_PlaylistExist == true) {
+        s_playlistSize = cstyleStringCount(cleanedPlaylist);
+        s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+        if (Constants::verbose == true){std::cout << "Step 12. s_histCount is: "<< s_histCount << std::endl;}
+    }
 
     //13. If playlist exists, artist statistics are processed, and modified database exists, create/update excluded artists
-    // list: If cleaned playlist exists (bool6 is true), and artistsadj.txt exists (bool8 is true) and modified database exists
-    // (bool11), run [need to write new] function getExcludedArtists()  to create/update excluded artists list using vectors
+    // list: If cleaned playlist exists (s_bool_PlaylistExist is true), and artistsadj.txt exists (s_bool_artistsadjExist is true) and modified database exists
+    // (s_bool_RatedAbbrExist), run function getExcludedArtists() to create/update excluded artists list using vectors
     // read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt. Also,
     // creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
     //ratingCodeSelected and selectTrack
