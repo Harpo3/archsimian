@@ -26,6 +26,20 @@ For example, this program lets you set the repeat frequency for your highest rat
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
+
+    • Obtains music tag data and other data stored within the MM.DB file to create a new database for this application
+    • Using the database created, and statistics compiled from it, uses the data as constraints to determine ‘optimum availability’ then iteratively select each single track added to the chosen playlist
+    • Saves user preferences, such as file locations for MM4 backup database, MM4 backup playlists and Archsimian program/playlist preferences
+    • Obtains or calculates variables for calculating the track selected to add to the playlist: 
+            ▪     user’s listening rate (for total tracks needed to be added to the current playlist)
+            ▪     song rating (to determine frequency played)  
+            ▪     days since last played (to use with rating)
+            ▪     how many tracks ago was the last appearance of an artist (to avoid repeat artists)
+            ▪     total number of rated tracks of an artist (statistic)
+            ▪     total number of each rating category in the library (statistic)    
+            ▪     total number of each rating category by artist (statistic)
+            ▪     last album played for a given artist
+
 For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you cannot easily adjust when that artist next appears, so you end up with a song from the same artist after only 10-20 tracks. 
 
 **To be added in later version: Also, when that artist is repeated you hear another track from the same album. ArchSimian can increase variety at the album level. 
