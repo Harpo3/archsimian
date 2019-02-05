@@ -14,7 +14,7 @@ For example, what if you have a large music library and want to build a more com
 
 While MM4 has many great smart playlist features built in (and far better than any other retail package out there), it does not provide the complexity or speed with which you can build them in C++, and a big benefit of using Arch and KDE is having some added programs/scripts to tag elements the way I want them, and have them integrated right onto my desktop (using KDE and Conky). I can update tag elements or add art work using convenient shortcuts, and update them in real time.
 
-**What does ArchSimian do?
+<b>What does ArchSimian do?</b>
 
 It creates refined playlists using existing data from your MediaMonkey database file.
 
@@ -33,7 +33,7 @@ For artists with only three songs, a problem is that you might hear all three wi
 Replay intervals – if you set 30 days for the repeat rate of your highest-rated tracks, it sets the default rate for the lower rated tracks. However, you can override the next lower rating interval. It will then reset the remaining intervals accordingly. The “duration” of time between repeats for the lowest rating category is automatic, but the higher categories can be manually set. This is because the program calculates the user’s average listening rate. Since higher rated songs are repeated multiple times during the year, the “number of hours per-year” for that rating are higher than the actual total hours of the tracks themselves. Conversely, if a low rated song is only played once every five years, total hours in one year of that category is only a fraction of the actual total  hours. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist.
 
 
-**Minimum Computer Requirements:
+<b>Minimum Computer Requirements:</b>
 
 8GB of RAM (You will need this much to run KDE and the Windows VM smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE. 
 
@@ -50,13 +50,13 @@ Update Location of Files in Database;
 RegEx Find and Replace; and, 
 ImportM3U
 
-**Arch Linux applications you will need (from the AUR):
+<b>Arch Linux applications you will need (from the AUR):</b>
 
 id3ted for tag scripting requirements
 
 SQLite 3 for database commands
 
-**Arch Linux applications you will likely want to use with this program:
+<b>Arch Linux applications you will likely want to use with this program:</b>
 
 audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
 
@@ -64,7 +64,7 @@ conky (if you wish to display cover art and most other tag elements right on a p
 
 Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
 
-**Preparation
+<b>Preparation</b>
 
 1) Operating Systems - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons).
 
@@ -75,7 +75,7 @@ Your music library must contain at least 1,000 rated tracks and be located on a 
 When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
 
 
-**2) MM4 installation/configuration
+<b>2) MM4 installation/configuration</b>
 
 This program requires prior preparation in MM4. Backup your MM4.DB and .ini files before you start. 
 
@@ -126,7 +126,7 @@ Below are the Archsimian rating codes and associated MM4 star ratings:
 
 Important – ArchSimian stores the above rating codes in the “Grouping” tag field” for all tracks in your library based on the star ratings you have. It is better to configure these rating codes yourself (although not required). This is important because the codes can be both stored and changed on the tag. You can then change a track rating from within Linux directly to the tag. This is easy to set up in MM4. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.  The “star-rating” field is not used because it has been problematic for writing tag info into it, so the “Grouping” field is used here. You can reconcile rating changes made in Linux by creating smart playlists in MM4 to track mismatches between codes and star ratings (and update the star ratings in MM4 to match your rating code changes) if you change your tags in Linux using the rating codes.
 
-**Exporting and Importing between MediaMonkey and ArchSimian
+<b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 
 To use ArchSimian, (unfortunately) you have to manually export the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
 
