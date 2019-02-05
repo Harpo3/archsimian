@@ -22,7 +22,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 For example, this program lets you set the repeat frequency for your highest rated tracks, second highest rated tracks, and so on to better control over when the track can be played again (that is, when it can be added to the playlist). For example, you might like 60 days for 5 stars, 180 days for four stars, etc. MM4 smart playlists already can do this, but it does not consider the specific order of play beyond the basic screening without layering smart playlists. ArchSimian allows you, based on the total number of total rated tracks you have and your average listening rate, to set a ratio for each rating category with more specific preferences. 
 
-The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date. 
+<b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
 For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you cannot easily adjust when that artist next appears, so you end up with a song from the same artist after only 10-20 tracks. 
 
@@ -113,16 +113,16 @@ Tracks with no rating are excluded from playlist computation in Archsimian, so f
 
 Below are the Archsimian rating codes and associated MM4 star ratings:
  
-1 – new song not yet rated (one star)
+<br>1 – new song not yet rated (one star)</br>
 
-(2 is reserved)
+<br>(2 is reserved)</br>
 
-3 – five stars
-4 – four stars
-5 – three and one half stars
-6 – three stars
-7 – two and one half stars
-8 – two stars
+<br>3 – five stars</br>
+<br>4 – four stars</br>
+<br>5 – three and one half stars</br>
+<br>6 – three stars</br>
+<br>7 – two and one half stars</br>
+<br>8 – two stars</br>
 
 Important – ArchSimian stores the above rating codes in the “Grouping” tag field” for all tracks in your library based on the star ratings you have. It is better to configure these rating codes yourself (although not required). This is important because the codes can be both stored and changed on the tag. You can then change a track rating from within Linux directly to the tag. This is easy to set up in MM4. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.  The “star-rating” field is not used because it has been problematic for writing tag info into it, so the “Grouping” field is used here. You can reconcile rating changes made in Linux by creating smart playlists in MM4 to track mismatches between codes and star ratings (and update the star ratings in MM4 to match your rating code changes) if you change your tags in Linux using the rating codes.
 
