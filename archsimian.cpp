@@ -459,6 +459,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
         }
         s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
+        ui->daystracksLabel->setText(QString::number((50 * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+
     }
     else {
         s_bool_dbStatsCalculated = false;
@@ -630,6 +632,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_PlaylistExist == true)   {
         getExcludedArtists(&s_histCount, &s_playlistSize);
     }
+    ui->currentplsizeLabel->setText(tr("Current playlist size is: ") + QString::number(s_playlistSize));
+
 }
 
 
@@ -791,19 +795,19 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
     if (index == 2) // if the Statistics tab is selected, refresh stats
     {
         ;
-        ui->ybrLabel3->setText("Years between repeats, rating code 3: " + QString::fromStdString(std::to_string(s_yrsTillRepeatCode3)) +
+        ui->ybrLabel3->setText("Years between repeats for rating code 3 (5 stars): " + QString::number(s_yrsTillRepeatCode3,'g', 3) +
                                " (in days: " + QString::fromStdString(std::to_string(int(s_daysTillRepeatCode3))) + ")");
-        ui->ybrLabel4->setText("Years between repeats, rating code 4: " + QString::fromStdString(std::to_string(s_yrsTillRepeatCode4)));
-        ui->ybrLabel5->setText("Years between repeats, rating code 5: " + QString::fromStdString(std::to_string(s_yrsTillRepeatCode5)));
-        ui->ybrLabel6->setText("Years between repeats, rating code 6: " + QString::fromStdString(std::to_string(s_yrsTillRepeatCode6)));
-        ui->ybrLabel7->setText("Years between repeats, rating code 7: " + QString::fromStdString(std::to_string(s_yrsTillRepeatCode7)));
-        ui->ybrLabel8->setText("Years between repeats, rating code 8: " + QString::fromStdString(std::to_string(s_yrsTillRepeatCode8)));
+        ui->ybrLabel4->setText("Years between repeats for rating code 4 (4 stars): " + QString::number(s_yrsTillRepeatCode4,'g', 3));
+        ui->ybrLabel5->setText("Years between repeats for rating code 5 (3 1/2 stars): " + QString::number(s_yrsTillRepeatCode5,'g', 3));
+        ui->ybrLabel6->setText("Years between repeats for rating code 6 (3 stars): " + QString::number(s_yrsTillRepeatCode6,'g', 3));
+        ui->ybrLabel7->setText("Years between repeats for rating code 7 (2 1/2 stars): " + QString::number(s_yrsTillRepeatCode7,'g', 3));
+        ui->ybrLabel8->setText("Years between repeats for rating code 8 (2 stars): " + QString::number(s_yrsTillRepeatCode8,'g', 3));
 
         ui->totadjtracksLabel->setText(tr("Current playlist size is: ") + QString::fromStdString(std::to_string(s_playlistSize)));
         ui->tottracksLabel->setText("Total tracks in the library is: " + QString::fromStdString(std::to_string(s_totalLibQty)));
         ui->totratedtracksLabel->setText("Total rated tracks in the library is: " + QString::fromStdString(std::to_string(s_totalRatedQty)));
         ui->totratedtimeLabel->setText("Total rated time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-        ui->dailylistenLabel->setText("Calculated daily listening rate (in hours) is: " + QString::fromStdString(std::to_string(s_listeningRate)));
+        ui->dailylistenLabel->setText("Calculated daily listening rate (in hours) is: " + QString::number(s_listeningRate,'g', 3));
 
     }
 }
@@ -826,6 +830,7 @@ void ArchSimian::on_refreshdbButton_clicked()
 
 void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
 {
-        ui->daystracksLabel->setText(QString::number((s_numTracks * s_AvgMinsPerSong)/s_avgListeningRateInMins));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+        ui->daystracksLabel->setText(QString::number((s_numTracks * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
 }
-//s_AvgMinsPerSong
+
+

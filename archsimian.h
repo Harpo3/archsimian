@@ -51,6 +51,7 @@ private slots:
 
     void on_addtrksspinBox_valueChanged(int s_numTracks);
 
+
 private:
     Ui::ArchSimian *ui;
 
