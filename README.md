@@ -66,7 +66,7 @@ Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
 
 <b>Preparation</b>
 
-1) Operating Systems - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons).
+<b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons).
 
 Whether you do this or not, you will need to use a VM in Arch to update music tags and the MM4 database between the two operating systems. 
 
@@ -113,16 +113,14 @@ Tracks with no rating are excluded from playlist computation in Archsimian, so f
 
 Below are the Archsimian rating codes and associated MM4 star ratings:
  
-<br>1 – new song not yet rated (one star)</br>
-
-<br>(2 is reserved)</br>
-
-<br>3 – five stars</br>
-<br>4 – four stars</br>
-<br>5 – three and one half stars</br>
-<br>6 – three stars</br>
-<br>7 – two and one half stars</br>
-<br>8 – two stars</br>
+<p>1 – new song not yet rated (one star)</p>
+<p>(2 is reserved)</p>
+<p>3 – five stars</p>
+<p>4 – four stars</p>
+<p>5 – three and one half stars</p>
+<p>6 – three stars</p>
+<p>7 – two and one half stars</p>
+<p>8 – two stars</p>
 
 Important – ArchSimian stores the above rating codes in the “Grouping” tag field” for all tracks in your library based on the star ratings you have. It is better to configure these rating codes yourself (although not required). This is important because the codes can be both stored and changed on the tag. You can then change a track rating from within Linux directly to the tag. This is easy to set up in MM4. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.  The “star-rating” field is not used because it has been problematic for writing tag info into it, so the “Grouping” field is used here. You can reconcile rating changes made in Linux by creating smart playlists in MM4 to track mismatches between codes and star ratings (and update the star ratings in MM4 to match your rating code changes) if you change your tags in Linux using the rating codes.
 
