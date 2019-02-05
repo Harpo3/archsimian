@@ -28,8 +28,10 @@ For example, this program lets you set the repeat frequency for your highest rat
 
 
     • Obtains music tag data and other data stored within the MM.DB file to create a new database for this application
-    • Using the database created, and statistics compiled from it, uses the data as constraints to determine ‘optimum availability’ then iteratively select each single track added to the chosen playlist
-    • Saves user preferences, such as file locations for MM4 backup database, MM4 backup playlists and Archsimian program/playlist preferences
+    • Using the database created, and statistics compiled from it, uses the data as constraints to determine ‘optimum
+    availability’ then iteratively select each single track added to the chosen playlist
+    • Saves user preferences, such as file locations for MM4 backup database, MM4 backup playlists and Archsimian 
+    program/playlist preferences
     • Obtains or calculates variables for calculating the track selected to add to the playlist: 
             ▪     user’s listening rate (for total tracks needed to be added to the current playlist)
             ▪     song rating (to determine frequency played)  
