@@ -9,6 +9,7 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QSettings>
+#include <QCloseEvent>
 #include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -54,7 +55,7 @@ static bool s_bool_ExcludedArtistsProcessed{false};
 
 const std::string cleanLibFile("cleanlib.dsv");
 const std::string cleanedPlaylist("cleanedplaylist.txt");
-static std::string s_mmbackupdbdirname{""};
+//static std::string s_mmbackupdbdirname{""};
 static std::string s_musiclibrarydirname{""};
 static std::string s_mmbackuppldirname{""};
 static std::string s_selectedplaylist{""};
@@ -112,13 +113,14 @@ static std::string s_LastTableDate{""};
 static long s_histCount{0};
 static double s_AvgMinsPerSong{0.0};
 static double s_avgListeningRateInMins{0.0};
-static int s_repeatFreqForCode1{20};
+//static int s_repeatFreqForCode1{20};
 
 
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
+    loadSettings(); // load user settings
     //
 // Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
@@ -155,19 +157,19 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
         ui->setlibrarylabel->setText(QString::fromStdString(s_musiclibrarydirname));
         //dim the setlibraryButton button
-        ui->setlibraryButton->setEnabled(false);
+        ui->setlibraryButton->setEnabled(true);
         //enable the reset button
         s_mmbackuppldirname = userconfig::getConfigEntry(3);
         ui->setmmpllabel->setText(QString::fromStdString(s_mmbackuppldirname));
         //dim the setmmplButton button
         ui->setmmplButton->setEnabled(true);
         //enable the reset button
-        std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5);
-        ui->setmmdblabel->setText(QString::fromStdString(s_mmbackupdbdirname));
-        std::string selectedplaylist = userconfig::getConfigEntry(7);
-        ui->setgetplaylistLabel->setText("Selected: " + QString::fromStdString(selectedplaylist));
+        //std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5);
+        ui->setmmdblabel->setText(m_prefs.mmBackupDBDir);
+        //std::string selectedplaylist = userconfig::getConfigEntry(7);
+        ui->setgetplaylistLabel->setText("Selected: " + m_prefs.defaultPlaylist);
         //dim the setmmdbButton button
-        ui->setmmdbButton->setEnabled(false);
+        ui->setmmdbButton->setEnabled(true);
         //enable the reset button
 
 
@@ -306,10 +308,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         c_pid = fork(); // Run fork function
         int status; // For status of pid process
         if( c_pid == 0 ){ // Child process: Get songs table from MM4 database, and create libtable.dsv with table;
-            std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+            //std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
             // revise for QStandardPaths class if this does not set with makefile for this location
             const std::string sqlpathdirname = getenv("HOME");
-            std::string path1 = s_mmbackupdbdirname + "/MM.DB";
+            std::string path1 = m_prefs.mmBackupDBDir.toStdString() + "/MM.DB";
             std::string path2 = ".read " + sqlpathdirname + "/exportMMTable.sql";
             const char* const argv[] = {" ", path1.c_str(), path2.c_str(), nullptr};
             execvp("sqlite3", argv);
@@ -633,7 +635,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
 
     ui->currentplsizeLabel->setText(tr("Current playlist size is: ") + QString::number(s_playlistSize));
-    loadSettings();
+
     ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
     ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
 }
@@ -644,17 +646,17 @@ void ArchSimian::on_addsongsButton_clicked(){
     int numTracks = ui->addtrksspinBox->value();
     int n;
     for (n=0; n < numTracks; n++){
-    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &s_repeatFreqForCode1,&m_prefs.repeatFreqCode1);
-    if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-    selectTrack(&s_ratingNextTrack);
-    s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
-    if (Constants::verbose == true) std::cout <<'\n';
-    std::cout <<", track "<< s_playlistSize << ", rating " << "___" << std::endl;
-    if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
-    s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-    getExcludedArtists(&s_histCount, &s_playlistSize);
-    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &s_repeatFreqForCode1, &m_prefs.repeatFreqCode1);
-}
+        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
+        if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
+        selectTrack(&s_ratingNextTrack);
+        s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
+        if (Constants::verbose == true) std::cout <<'\n';
+        std::cout <<", track "<< s_playlistSize << ", rating " << "___" << std::endl;
+        if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
+        s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
+        getExcludedArtists(&s_histCount, &s_playlistSize);
+        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
+    }
 
 }
 
@@ -679,14 +681,16 @@ void ArchSimian::on_setlibraryButton_clicked(){
                 );
     ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
     // Write description note and directory configuration to archsimian.conf
-    std::ofstream userconfig(Constants::userFileName);
-    std::string str("# Location of music library");
-    userconfig << str << "\n";  // Write to line 1, archsimian.conf
-    str = s_musiclibrarydirname.toStdString();
-    userconfig << str << "\n";  // Write to line 2, archsimian.conf
-    userconfig.close();
+    m_prefs.musicLibraryDir = s_musiclibrarydirname;
+
+    //std::ofstream userconfig(Constants::userFileName);
+    //std::string str("# Location of music library");
+    //userconfig << str << "\n";  // Write to line 1, archsimian.conf
+    //str = s_musiclibrarydirname.toStdString();
+    //userconfig << str << "\n";  // Write to line 2, archsimian.conf
+    //userconfig.close();
     // dim the setlibraryButton button
-    ui->setlibraryButton->setEnabled(false);
+    //ui->setlibraryButton->setEnabled(false);
     // Enable the reset button
     // Activate the second of three config buttons
     ui->setmmplButton->setEnabled(true);
@@ -703,24 +707,25 @@ void ArchSimian::on_setmmplButton_clicked(){
     //       else {
     setmmpldialog.setFileMode(QFileDialog::Directory);
     setmmpldialog.setOption(QFileDialog::ShowDirsOnly);
-    const QString s_mmbackuppldirname=QFileDialog::getExistingDirectory(
+    const QString mmbackuppldirname=QFileDialog::getExistingDirectory(
                 this,
                 tr("Select MediaMonkey Playlist Backup Directory"),
                 "/"
                 );
-    ui->setmmpllabel->setText(QString(s_mmbackuppldirname));
+    ui->setmmpllabel->setText(QString(mmbackuppldirname));
+    m_prefs.mmPlaylistDir = mmbackuppldirname;
     // Write description note and directory configuration to archsimian.conf
-    std::ofstream userconfig(Constants::userFileName, std::ios::app);
-    std::string str("# Location of MediaMonkey Playlist Backup Directory");
-    userconfig << str << "\n";  // Write to line 3, archsimian.conf
-    str = s_mmbackuppldirname.toStdString();
-    userconfig << str << "\n"; // Write to line 4, archsimian.conf
-    userconfig.close();
+    //std::ofstream userconfig(Constants::userFileName, std::ios::app);
+    //std::string str("# Location of MediaMonkey Playlist Backup Directory");
+    //userconfig << str << "\n";  // Write to line 3, archsimian.conf
+    //str = s_mmbackuppldirname.toStdString();
+    //userconfig << str << "\n"; // Write to line 4, archsimian.conf
+    //userconfig.close();
     //dim the setmmplButton button
-    ui->setmmplButton->setEnabled(false); // test with enabled
+    //ui->setmmplButton->setEnabled(false); // test with enabled
     //enable the reset button
     // Activate the last of three config buttons
-    ui->setmmdbButton->setEnabled(true);
+    //ui->setmmdbButton->setEnabled(true);
 }
 
 void ArchSimian::on_setmmdbButton_clicked(){
@@ -733,21 +738,22 @@ void ArchSimian::on_setmmdbButton_clicked(){
     //       else {
     setmmdbdialog.setFileMode(QFileDialog::Directory);
     setmmdbdialog.setOption(QFileDialog::ShowDirsOnly);
-    const QString s_mmbackupdbdirname=QFileDialog::getExistingDirectory(
+    const QString mmbackupdbdirname=QFileDialog::getExistingDirectory(
                 this,
                 tr("Select MediaMonkey Database (MM.DB) Backup Directory"),
                 "/"
                 );
-    ui->setmmdblabel->setText(QString(s_mmbackupdbdirname));
+    ui->setmmdblabel->setText(QString(mmbackupdbdirname));
+    m_prefs.mmBackupDBDir = mmbackupdbdirname;
     // Write description note and directory configuration to archsimian.conf
-    std::ofstream userconfig(Constants::userFileName, std::ios::app);
-    std::string str("# Location of MediaMonkey Database Backup Directory");
-    userconfig << str << "\n";  // Write to line 5, archsimian.conf
-    str = s_mmbackupdbdirname.toStdString();
-    userconfig << str << "\n"; // Write to line 6, archsimian.conf
-    userconfig.close();
+    //std::ofstream userconfig(Constants::userFileName, std::ios::app);
+    //std::string str("# Location of MediaMonkey Database Backup Directory");
+    //userconfig << str << "\n";  // Write to line 5, archsimian.conf
+    //str = s_mmbackupdbdirname.toStdString();
+    //userconfig << str << "\n"; // Write to line 6, archsimian.conf
+    //userconfig.close();
     //dim the setmmdbButton button
-    ui->setmmdbButton->setEnabled(false);
+    //ui->setmmdbButton->setEnabled(true);
     //enable the reset button
 }
 
@@ -760,17 +766,17 @@ void ArchSimian::on_getplaylistButton_clicked()
     QString selectedplaylist = QFileDialog::getOpenFileName (
                 this,
                 "Select playlist for which you will add tracks",
-                QString::fromStdString(userconfig::getConfigEntry(3)),//default dir for playlists
+                QString(m_prefs.defaultPlaylist),//default dir for playlists
                 "playlists(.m3u) (*.m3u)");
     m_prefs.defaultPlaylist = selectedplaylist;
-    ui->setgetplaylistLabel->setText("Selected: " + QString(m_prefs.defaultPlaylist)); // to redo the config file to use QSettings instead
+    ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist)); // to redo the config file to use QSettings instead
     // Write description note and playlist name to archsimian.conf
-    std::ofstream userconfig(Constants::userFileName, std::ios::app);
-    std::string str("# Name of default playlist");
-    userconfig << str << "\n";  // Write to line 7, archsimian.conf
-    str = selectedplaylist.toStdString();
-    userconfig << str << "\n"; // Write to line 8, archsimian.conf
-    userconfig.close();
+    //std::ofstream userconfig(Constants::userFileName, std::ios::app);
+    //std::string str("# Name of default playlist");
+    //userconfig << str << "\n";  // Write to line 7, archsimian.conf
+    //str = selectedplaylist.toStdString();
+    //userconfig << str << "\n"; // Write to line 8, archsimian.conf
+    //userconfig.close();
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
@@ -829,6 +835,9 @@ void ArchSimian::loadSettings()
     m_prefs.repeatFreqCode1 = settings.value("repeatFreqCode1", 20).toInt();
     m_prefs.tracksToAdd = settings.value("tracksToAdd", 50).toInt();
     m_prefs.defaultPlaylist = settings.value("defaultPlaylist", "").toString();
+    m_prefs.musicLibraryDir = settings.value("musicLibraryDir", "").toString();
+    m_prefs.mmBackupDBDir = settings.value("mmBackupDBDir", "").toString();
+    m_prefs.mmPlaylistDir = settings.value("mmPlaylistDir", "").toString();
 }
 
 void ArchSimian::saveSettings()
@@ -837,9 +846,13 @@ void ArchSimian::saveSettings()
     settings.setValue("repeatFreqCode1", m_prefs.repeatFreqCode1);
     settings.setValue("tracksToAdd", m_prefs.tracksToAdd);
     settings.setValue("defaultPlaylist",m_prefs.defaultPlaylist);
+    settings.setValue("musicLibraryDir",m_prefs.musicLibraryDir);
+    settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
+    settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
 
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
     saveSettings();
+    event->accept();
 }

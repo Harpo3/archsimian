@@ -182,14 +182,14 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
 }
 
 int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_sratingRatio5,
-                       double *_sratingRatio6, double *_sratingRatio7, double *_sratingRatio8, int *_srCode1TotTrackQty, int *_srepeatFreqForCode1, int *_repeatFreqCode1){
+                       double *_sratingRatio6, double *_sratingRatio7, double *_sratingRatio8, int *_srCode1TotTrackQty, int *_repeatFreqCode1){
     //Lookup the rating codes for last two tracks on the playlist;
     //std::cout << "ratingCodeSelected started." << std::endl;
 
     int x = 0; // variable to return the rating code to be used for the next track selection
     bool isRating1Qty = (*_srCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
     int rating1PosCount{0};
-    std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: "<< *_srepeatFreqForCode1 << " and " <<*_repeatFreqCode1 <<  std::endl;
+    std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
     if (isRating1Qty == true) //Before going to logic for other rating codes, determine whether to select rating code 1
     {
         // check if rating 1 total in playlist is equal to *_srCode1TotTrackQty; if true
@@ -197,7 +197,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         // Else calculate the 'most recent' playlist position and set variable rating1PosCountuse
         // Compare rating1PosCount with *_srepeatFreqForCode1
         bool select1Here{0};
-        select1Here = (rating1PosCount == *_srepeatFreqForCode1);
+        select1Here = (rating1PosCount == *_repeatFreqCode1);
         std::cout << "rating Code 1 Selection started. bool isRating1Qty result is: "<< isRating1Qty <<" and select1Here result is: "<<select1Here<< std::endl;
         rating1PosCount = 1;
     }

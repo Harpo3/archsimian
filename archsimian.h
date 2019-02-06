@@ -59,6 +59,9 @@ private:
         int repeatFreqCode1;
         int tracksToAdd;
         QString defaultPlaylist;
+        QString musicLibraryDir;
+        QString mmBackupDBDir;
+        QString mmPlaylistDir;
     };
 
     void loadSettings();
