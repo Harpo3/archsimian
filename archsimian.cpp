@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
+#include <QSettings>
 #include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -36,6 +37,8 @@ inline bool doesFileExist (const std::string& name) {
     struct stat buffer;
     return (stat (name.c_str(), &buffer) == 0);
 }
+
+
 
 // VARIABLE DECLARATIONS & INITIALIZATIONS
 static bool s_bool_IsUserConfigSet {false};
@@ -109,6 +112,8 @@ static std::string s_LastTableDate{""};
 static long s_histCount{0};
 static double s_AvgMinsPerSong{0.0};
 static double s_avgListeningRateInMins{0.0};
+static int s_repeatFreqForCode1{20};
+
 
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
@@ -119,9 +124,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //
     // UI configuration: set default state to "false" for user config reset buttons
     ui->setupUi(this);
-    ui->setlibraryButtonReset->setVisible(false);
-    ui->setmmplButtonReset->setVisible(false);
-    ui->setmmdbButtonReset->setVisible(false);
+    //connect(ui->repeatFreq1SpinBox,SIGNAL(valueChanged)),ui->addsongsButton,SLOT(setValue(s_repeatFreqForCode1))
+
+
 
     //Check whether the configuration file currently has any data in it
     std::streampos archsimianconfsize;
@@ -152,13 +157,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         //dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(false);
         //enable the reset button
-        ui->setlibraryButtonReset->setVisible(true);
         s_mmbackuppldirname = userconfig::getConfigEntry(3);
         ui->setmmpllabel->setText(QString::fromStdString(s_mmbackuppldirname));
         //dim the setmmplButton button
-        ui->setmmplButton->setEnabled(false);
+        ui->setmmplButton->setEnabled(true);
         //enable the reset button
-        ui->setmmplButtonReset->setVisible(true);
         std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5);
         ui->setmmdblabel->setText(QString::fromStdString(s_mmbackupdbdirname));
         std::string selectedplaylist = userconfig::getConfigEntry(7);
@@ -166,7 +169,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         //dim the setmmdbButton button
         ui->setmmdbButton->setEnabled(false);
         //enable the reset button
-        ui->setmmdbButtonReset->setVisible(true);
 
 
         //****************************************** Consider moving this section to step 4
@@ -196,15 +198,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setlibrarylabel->setText(tr("Select the base directory of "
                                         "your music library"));
         ui->setlibraryButton->setEnabled(true);
-        ui->setlibraryButtonReset->setVisible(false);
         ui->setmmpllabel->setText(tr("Select the shared Windows directory"
                                      " where you manually exported your playlist(s) from MediaMonkey"));
-        ui->setmmplButton->setEnabled(false);
-        ui->setmmplButtonReset->setVisible(false);
+        ui->setmmplButton->setEnabled(true);
         ui->setmmdblabel->setText(tr("Select the shared Windows directory"
                                      " where you stored the MediaMonkey database backup file (MM.DB)"));
         ui->setmmdbButton->setEnabled(false);
-        ui->setmmdbButtonReset->setVisible(false);
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
     }
 
@@ -632,8 +631,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_PlaylistExist == true)   {
         getExcludedArtists(&s_histCount, &s_playlistSize);
     }
-    ui->currentplsizeLabel->setText(tr("Current playlist size is: ") + QString::number(s_playlistSize));
 
+    ui->currentplsizeLabel->setText(tr("Current playlist size is: ") + QString::number(s_playlistSize));
+    loadSettings();
+    ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
+    ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
 }
 
 
@@ -642,7 +644,7 @@ void ArchSimian::on_addsongsButton_clicked(){
     int numTracks = ui->addtrksspinBox->value();
     int n;
     for (n=0; n < numTracks; n++){
-    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &s_repeatFreqForCode1,&m_prefs.repeatFreqCode1);
     if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
     selectTrack(&s_ratingNextTrack);
     s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
@@ -651,7 +653,7 @@ void ArchSimian::on_addsongsButton_clicked(){
     if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
     s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
     getExcludedArtists(&s_histCount, &s_playlistSize);
-    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8);
+    s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &s_repeatFreqForCode1, &m_prefs.repeatFreqCode1);
 }
 
 }
@@ -686,7 +688,6 @@ void ArchSimian::on_setlibraryButton_clicked(){
     // dim the setlibraryButton button
     ui->setlibraryButton->setEnabled(false);
     // Enable the reset button
-    ui->setlibraryButtonReset->setVisible(true);
     // Activate the second of three config buttons
     ui->setmmplButton->setEnabled(true);
     //      }
@@ -716,9 +717,8 @@ void ArchSimian::on_setmmplButton_clicked(){
     userconfig << str << "\n"; // Write to line 4, archsimian.conf
     userconfig.close();
     //dim the setmmplButton button
-    ui->setmmplButton->setEnabled(false);
+    ui->setmmplButton->setEnabled(false); // test with enabled
     //enable the reset button
-    ui->setmmplButtonReset->setVisible(true);
     // Activate the last of three config buttons
     ui->setmmdbButton->setEnabled(true);
 }
@@ -749,27 +749,9 @@ void ArchSimian::on_setmmdbButton_clicked(){
     //dim the setmmdbButton button
     ui->setmmdbButton->setEnabled(false);
     //enable the reset button
-    ui->setmmdbButtonReset->setVisible(true);
 }
 
-void ArchSimian::on_setlibraryButtonReset_clicked()
-{
-    //dim the reset button
 
-    //enable the current button
-}
-
-void ArchSimian::on_setmmplButtonReset_clicked()
-{
-    //dim the reset button
-    //enable the current button
-}
-
-void ArchSimian::on_setmmdbButtonReset_clicked()
-{
-    //dim the reset button
-    //enable the current button
-}
 
 // User selects playlist from configured directory for 'backup playlists'
 void ArchSimian::on_getplaylistButton_clicked()
@@ -780,7 +762,8 @@ void ArchSimian::on_getplaylistButton_clicked()
                 "Select playlist for which you will add tracks",
                 QString::fromStdString(userconfig::getConfigEntry(3)),//default dir for playlists
                 "playlists(.m3u) (*.m3u)");
-    ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
+    m_prefs.defaultPlaylist = selectedplaylist;
+    ui->setgetplaylistLabel->setText("Selected: " + QString(m_prefs.defaultPlaylist)); // to redo the config file to use QSettings instead
     // Write description note and playlist name to archsimian.conf
     std::ofstream userconfig(Constants::userFileName, std::ios::app);
     std::string str("# Name of default playlist");
@@ -830,7 +813,33 @@ void ArchSimian::on_refreshdbButton_clicked()
 
 void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
 {
-        ui->daystracksLabel->setText(QString::number((s_numTracks * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+        m_prefs.tracksToAdd = s_numTracks;
+        ui->daystracksLabel->setText(QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
 }
 
+void ArchSimian::on_repeatFreq1SpinBox_valueChanged(int myvalue)
+{
+    m_prefs.repeatFreqCode1 = myvalue;
+    //s_repeatFreqForCode1 = ui->repeatFreq1SpinBox->value();
+}
 
+void ArchSimian::loadSettings()
+{
+    QSettings settings;
+    m_prefs.repeatFreqCode1 = settings.value("repeatFreqCode1", 20).toInt();
+    m_prefs.tracksToAdd = settings.value("tracksToAdd", 50).toInt();
+    m_prefs.defaultPlaylist = settings.value("defaultPlaylist", "").toString();
+}
+
+void ArchSimian::saveSettings()
+{
+    QSettings settings;
+    settings.setValue("repeatFreqCode1", m_prefs.repeatFreqCode1);
+    settings.setValue("tracksToAdd", m_prefs.tracksToAdd);
+    settings.setValue("defaultPlaylist",m_prefs.defaultPlaylist);
+
+}
+void ArchSimian::closeEvent(QCloseEvent *event)
+{
+    saveSettings();
+}

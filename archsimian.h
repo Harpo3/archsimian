@@ -13,6 +13,7 @@ class ArchSimian : public QMainWindow
 
 public:
     explicit ArchSimian(QWidget *parent = nullptr);
+
 //    ~ArchSimian();
 
 public slots:
@@ -29,19 +30,10 @@ public slots:
 
     void on_exportplaylistButton_clicked();
 
-    void on_setlibraryButtonReset_clicked();
 
-    void on_setmmplButtonReset_clicked();
-
-    void on_setmmdbButtonReset_clicked();    
 
 
 private slots:
-
-
-
-
-
 
     void on_mainQTabWidget_tabBarClicked(int index);
 
@@ -52,13 +44,27 @@ private slots:
     void on_addtrksspinBox_valueChanged(int s_numTracks);
 
 
+    void on_repeatFreq1SpinBox_valueChanged(int myvalue);
+
+
 private:
     Ui::ArchSimian *ui;
 
-
+public:
+    void closeEvent(QCloseEvent *event);
 
 private:
+    struct SPreferences
+    {
+        int repeatFreqCode1;
+        int tracksToAdd;
+        QString defaultPlaylist;
+    };
 
+    void loadSettings();
+    void saveSettings();
+
+    SPreferences m_prefs;
 
 
 

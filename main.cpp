@@ -16,6 +16,9 @@ int main(int argc,char* argv[])
     if (s_isConfigSetResult == 0) { // Evaluate and run gui for user config setup, if result is 0, otherwise continue
         std::cout << "The configuration is not set up: " << s_isConfigSetResult << ". Starting configuration setup in gui." << std::endl;
         QApplication mainapp(argc, argv);
+        mainapp.setOrganizationName("archsimian");
+        mainapp.setApplicationName("archsimian");
+
         ArchSimian guiWindow;
         guiWindow.show(); // This launches the user interface (UI) for configuration
         mainapp.exec();
@@ -23,6 +26,8 @@ int main(int argc,char* argv[])
     // Section to launch GUI with data
     if (s_isConfigSetResult == 1) { //If user config setup was already run (s_isConfigSetResult is 1) run GUI app
         QApplication mainapp(argc, argv);
+        mainapp.setOrganizationName("archsimian");
+        mainapp.setApplicationName("archsimian");
         ArchSimian guiWindow;
         guiWindow.show();   // This launches the user interface (UI)
         mainapp.exec();
