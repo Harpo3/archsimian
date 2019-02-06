@@ -56,9 +56,9 @@ static bool s_bool_ExcludedArtistsProcessed{false};
 const std::string cleanLibFile("cleanlib.dsv");
 const std::string cleanedPlaylist("cleanedplaylist.txt");
 //static std::string s_mmbackupdbdirname{""};
-static std::string s_musiclibrarydirname{""};
-static std::string s_mmbackuppldirname{""};
-static std::string s_selectedplaylist{""};
+//static std::string s_musiclibrarydirname{""};
+//static std::string s_mmbackuppldirname{""};
+//static std::string s_selectedplaylist{""};
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
 static double s_daysTillRepeatCode3 = 65.0;
@@ -159,8 +159,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         //dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(true);
         //enable the reset button
-        s_mmbackuppldirname = userconfig::getConfigEntry(3);
-        ui->setmmpllabel->setText(QString::fromStdString(s_mmbackuppldirname));
+        //s_mmbackuppldirname = userconfig::getConfigEntry(3);
+        ui->setmmpllabel->setText(QString(m_prefs.defaultPlaylist));
         //dim the setmmplButton button
         ui->setmmplButton->setEnabled(true);
         //enable the reset button
@@ -838,6 +838,12 @@ void ArchSimian::loadSettings()
     m_prefs.musicLibraryDir = settings.value("musicLibraryDir", "").toString();
     m_prefs.mmBackupDBDir = settings.value("mmBackupDBDir", "").toString();
     m_prefs.mmPlaylistDir = settings.value("mmPlaylistDir", "").toString();
+    m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", 65).toDouble();
+    m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", 2.7).toDouble();
+    m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", 2.1).toDouble();
+    m_prefs.s_repeatFactorCode6 = settings.value("s_repeatFactorCode6", 2.2).toDouble();
+    m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
+    m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
 }
 
 void ArchSimian::saveSettings()
@@ -849,10 +855,46 @@ void ArchSimian::saveSettings()
     settings.setValue("musicLibraryDir",m_prefs.musicLibraryDir);
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
+    settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
+    settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
+    settings.setValue("s_repeatFactorCode5",m_prefs.s_repeatFactorCode5);
+    settings.setValue("s_repeatFactorCode6",m_prefs.s_repeatFactorCode6);
+    settings.setValue("s_repeatFactorCode7",m_prefs.s_repeatFactorCode7);
+    settings.setValue("s_repeatFactorCode8",m_prefs.s_repeatFactorCode8);
 
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
     saveSettings();
     event->accept();
+}
+
+void ArchSimian::on_weeksradioButton_clicked()
+{
+    ui->horizontalSlider->setMinimum(1);
+    ui->horizontalSlider->setMaximum(30);
+    ui->horizontalSlider->setValue(10);
+    ui->sliderLabel->setNum(10);
+
+}
+
+void ArchSimian::on_monthsradioButton_clicked()
+{
+    ui->horizontalSlider->setMinimum(1);
+    ui->horizontalSlider->setMaximum(12);
+    ui->horizontalSlider->setValue(3);
+    ui->sliderLabel->setNum(3);
+}
+
+void ArchSimian::on_horizontalSlider_valueChanged(int value)
+{
+
+}
+
+void ArchSimian::on_daysradioButton_clicked()
+{
+    ui->horizontalSlider->setMinimum(10);
+    ui->horizontalSlider->setMaximum(120);
+    ui->horizontalSlider->setValue(65);
+    ui->sliderLabel->setNum(65);
 }

@@ -47,6 +47,14 @@ private slots:
     void on_repeatFreq1SpinBox_valueChanged(int myvalue);
 
 
+    void on_weeksradioButton_clicked();
+
+    void on_monthsradioButton_clicked();
+
+    void on_horizontalSlider_valueChanged(int value);
+
+    void on_daysradioButton_clicked();
+
 private:
     Ui::ArchSimian *ui;
 
@@ -62,6 +70,13 @@ private:
         QString musicLibraryDir;
         QString mmBackupDBDir;
         QString mmPlaylistDir;
+        double s_daysTillRepeatCode3;
+        double s_repeatFactorCode4;
+        double s_repeatFactorCode5;
+        double s_repeatFactorCode6;
+        double s_repeatFactorCode7;
+        double s_repeatFactorCode8;
+
     };
 
     void loadSettings();
