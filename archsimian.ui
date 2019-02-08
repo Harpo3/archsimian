@@ -217,6 +217,9 @@
            </property>
           </widget>
           <widget class="QPushButton" name="refreshdbButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -266,42 +269,85 @@
             <rect>
              <x>10</x>
              <y>70</y>
-             <width>441</width>
+             <width>141</width>
              <height>16</height>
             </rect>
            </property>
            <property name="text">
-            <string>Current playlist size is:</string>
+            <string>Current playlist size:</string>
            </property>
           </widget>
-          <widget class="QLabel" name="label_3">
+          <widget class="QProgressBar" name="progressBarPL">
            <property name="geometry">
             <rect>
-             <x>80</x>
-             <y>90</y>
-             <width>371</width>
-             <height>31</height>
+             <x>330</x>
+             <y>190</y>
+             <width>118</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="value">
+            <number>24</number>
+           </property>
+          </widget>
+          <widget class="QPlainTextEdit" name="songsstatTextEdit">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>120</y>
+             <width>441</width>
+             <height>71</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLabel" name="playlistdaysLabel">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>70</y>
+             <width>301</width>
+             <height>16</height>
             </rect>
            </property>
            <property name="text">
-            <string>Set repeat frequency for new tracks (rating code 1)</string>
+            <string>Current playlist days (based on est. listening rate): </string>
            </property>
           </widget>
-          <widget class="QSpinBox" name="repeatFreq1SpinBox">
+          <widget class="QWidget" name="">
            <property name="geometry">
             <rect>
              <x>10</x>
              <y>90</y>
-             <width>50</width>
-             <height>29</height>
+             <width>441</width>
+             <height>31</height>
             </rect>
            </property>
-           <property name="maximum">
-            <number>500</number>
-           </property>
-           <property name="value">
-            <number>20</number>
-           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QSpinBox" name="repeatFreq1SpinBox">
+              <property name="maximum">
+               <number>500</number>
+              </property>
+              <property name="value">
+               <number>20</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="repeatfreqtxtLabel">
+              <property name="text">
+               <string>Set repeat frequency for new tracks (rating code 1)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="newtracksqtyLabel">
+              <property name="text">
+               <string>New tracks qty:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -687,9 +733,9 @@
        <widget class="QSlider" name="horizontalSlider">
         <property name="geometry">
          <rect>
-          <x>210</x>
-          <y>50</y>
-          <width>221</width>
+          <x>200</x>
+          <y>60</y>
+          <width>241</width>
           <height>20</height>
          </rect>
         </property>
@@ -719,8 +765,8 @@
         <property name="geometry">
          <rect>
           <x>450</x>
-          <y>50</y>
-          <width>31</width>
+          <y>60</y>
+          <width>21</width>
           <height>16</height>
          </rect>
         </property>
@@ -728,7 +774,7 @@
          <string>60</string>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>130</x>
@@ -764,18 +810,27 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>50</y>
-          <width>141</width>
+          <width>151</width>
           <height>231</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout" name="starsVerticalLayout">
+         <property name="spacing">
+          <number>10</number>
+         </property>
          <item>
           <widget class="QLabel" name="fivestarLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -789,6 +844,12 @@
          </item>
          <item>
           <widget class="QLabel" name="fourstarLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -801,7 +862,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_5">
+          <widget class="QLabel" name="threehalfLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -814,7 +881,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_6">
+          <widget class="QLabel" name="threeLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -827,7 +900,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="twohalfLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -840,7 +919,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_8">
+          <widget class="QLabel" name="twoLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -854,12 +939,12 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>150</x>
           <y>50</y>
-          <width>41</width>
+          <width>43</width>
           <height>231</height>
          </rect>
         </property>
@@ -867,48 +952,48 @@
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Code 3</string>
+            <string> Code 3</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_10">
            <property name="text">
-            <string>Code 4</string>
+            <string> Code 4</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Code 5</string>
+            <string> Code 5</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Code 6</string>
+            <string> Code 6</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_18">
            <property name="text">
-            <string>Code 7</string>
+            <string> Code 7</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_19">
            <property name="text">
-            <string>Code 8</string>
+            <string> Code 8</string>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>200</x>
@@ -955,12 +1040,12 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>240</x>
           <y>90</y>
-          <width>69</width>
+          <width>71</width>
           <height>191</height>
          </rect>
         </property>
@@ -1017,7 +1102,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>320</x>
@@ -1028,41 +1113,54 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="QLabel" name="label_26">
+          <widget class="QLabel" name="cd4factyrslabel">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_27">
+          <widget class="QLabel" name="cd5factyrslabel">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_28">
+          <widget class="QLabel" name="cd6factyrslabel">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_29">
+          <widget class="QLabel" name="cd7factyrslabel">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_30">
+          <widget class="QLabel" name="cd8factyrslabel">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QLabel" name="label_20">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>30</y>
+          <width>241</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set repeat rate in days (Code 3) using slider:</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_5">
@@ -1101,22 +1199,5 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections>
-  <connection>
-   <sender>horizontalSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>sliderLabel</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>363</x>
-     <y>136</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>432</x>
-     <y>135</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

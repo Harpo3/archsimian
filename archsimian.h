@@ -55,6 +55,7 @@ private slots:
 
     void on_daysradioButton_clicked();
 
+
 private:
     Ui::ArchSimian *ui;
 

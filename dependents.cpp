@@ -125,7 +125,7 @@ std::string getMMdbDate()
 
 std::string getLastTableDate()
 {
-    const std::string existlibname = "libtable.dsv";
+    const std::string existlibname = "cleanlib.dsv";
     struct stat stbuf2;
     struct tm *foo;
     stat(existlibname.c_str(), &stbuf2);

@@ -55,6 +55,7 @@ static bool s_bool_ExcludedArtistsProcessed{false};
 
 const std::string cleanLibFile("cleanlib.dsv");
 const std::string cleanedPlaylist("cleanedplaylist.txt");
+static std::string s_mmBackupDBDir{""};
 //static std::string s_mmbackupdbdirname{""};
 //static std::string s_musiclibrarydirname{""};
 //static std::string s_mmbackuppldirname{""};
@@ -116,11 +117,12 @@ static double s_avgListeningRateInMins{0.0};
 //static int s_repeatFreqForCode1{20};
 
 
+
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
-    loadSettings(); // load user settings
+    loadSettings(); // load user settings    
     //
 // Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
@@ -179,7 +181,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         // The next section is apparently for updating the UI for DB update status - it is a different (older) function than the new one
         //
 
-        bool needUpdate = recentlyUpdated();
+        bool needUpdate = recentlyUpdated(&s_mmBackupDBDir);
 
         //bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
         if (Constants::verbose == true) std::cout << "Step 1. Checking isLibRefreshNeeded(): "<<needUpdate<<std::endl;
@@ -266,7 +268,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
     // will need to be updated.
 
-    s_bool_MMdbUpdated = recentlyUpdated();
+    s_bool_MMdbUpdated = recentlyUpdated(&s_mmBackupDBDir);
     if (Constants::verbose == true) std::cout << "Step 4. Is the MM.DB file date newer (greater) than the CleanLib file date."
                                                  " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
     // set ui labels if MM.DB was recently updated
@@ -311,9 +313,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
             //std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
             // revise for QStandardPaths class if this does not set with makefile for this location
             const std::string sqlpathdirname = getenv("HOME");
-            std::string path1 = m_prefs.mmBackupDBDir.toStdString() + "/MM.DB";
+            s_mmBackupDBDir = m_prefs.mmBackupDBDir.toStdString() + "/MM.DB";
             std::string path2 = ".read " + sqlpathdirname + "/exportMMTable.sql";
-            const char* const argv[] = {" ", path1.c_str(), path2.c_str(), nullptr};
+            const char* const argv[] = {" ", s_mmBackupDBDir.c_str(), path2.c_str(), nullptr};
             execvp("sqlite3", argv);
             perror("execvp");
             if (execvp("sqlite3", argv) == -1)
@@ -634,30 +636,41 @@ ArchSimian::ArchSimian(QWidget *parent) :
         getExcludedArtists(&s_histCount, &s_playlistSize);
     }
 
-    ui->currentplsizeLabel->setText(tr("Current playlist size is: ") + QString::number(s_playlistSize));
-
+    ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
+    //playlistdaysLabel
+    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+    //s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong)
     ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
     ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
+    ui->statusBar->addPermanentWidget(ui->progressBarPL);
+    ui->progressBarPL->hide();
+    ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
+
 }
 
 
 void ArchSimian::on_addsongsButton_clicked(){
     // Add loop here:  For each number of songs selected, run...
     int numTracks = ui->addtrksspinBox->value();
+    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",10000);
+    ui->progressBarPL->show();
     int n;
     for (n=0; n < numTracks; n++){
-        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
+        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,
+                                               &s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
         if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
         selectTrack(&s_ratingNextTrack);
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
+
         if (Constants::verbose == true) std::cout <<'\n';
         std::cout <<", track "<< s_playlistSize << ", rating " << "___" << std::endl;
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
         s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
         getExcludedArtists(&s_histCount, &s_playlistSize);
-        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,&s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
+        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,
+                                               &s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
     }
-
+    ui->progressBarPL->hide();
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
@@ -844,6 +857,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_repeatFactorCode6 = settings.value("s_repeatFactorCode6", 2.2).toDouble();
     m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
     m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
+    s_mmBackupDBDir = m_prefs.mmBackupDBDir.toStdString();
 }
 
 void ArchSimian::saveSettings()
@@ -871,19 +885,21 @@ void ArchSimian::closeEvent(QCloseEvent *event)
 
 void ArchSimian::on_weeksradioButton_clicked()
 {
-    ui->horizontalSlider->setMinimum(1);
-    ui->horizontalSlider->setMaximum(30);
-    ui->horizontalSlider->setValue(10);
-    ui->sliderLabel->setNum(10);
+    // These are commented out becuase I want to use this to change the time display format for
+    // repeatFactorCodes for 4 - 8
 
+    //ui->horizontalSlider->setMinimum(1);
+    //ui->horizontalSlider->setMaximum(30);
+    //ui->horizontalSlider->setValue(10);
+    //ui->sliderLabel->setNum(10);
 }
 
 void ArchSimian::on_monthsradioButton_clicked()
 {
-    ui->horizontalSlider->setMinimum(1);
-    ui->horizontalSlider->setMaximum(12);
-    ui->horizontalSlider->setValue(3);
-    ui->sliderLabel->setNum(3);
+    //ui->horizontalSlider->setMinimum(1);
+    //ui->horizontalSlider->setMaximum(12);
+    //ui->horizontalSlider->setValue(3);
+    //ui->sliderLabel->setNum(3);
 }
 
 void ArchSimian::on_horizontalSlider_valueChanged(int value)

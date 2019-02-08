@@ -51,18 +51,17 @@ StringVector2D readCSV(std::string filename)
     return result;
 }
 
-bool recentlyUpdated()
+bool recentlyUpdated(std::string *_smmBackupDBDir)
 {
-    const std::string existlibname = "cleanlib.dsv";
-    bool existResult;
+    bool existResult{0};
     bool refreshNeededResult{0};
-    existResult = doesFileExist(existlibname);// See inline function at top
+    existResult = doesFileExist(Constants::existLibName);// See inline function at top
     if (Constants::verbose == true) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
     if (existResult == 0) {refreshNeededResult = 1;}
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
     if (existResult == 1){
-        std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+        std::string mmdbdir = *_smmBackupDBDir; // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
         std::string mmpath = mmdbdir + "/MM.DB";
         struct stat stbuf1;
         stat(mmpath.c_str(), &stbuf1);
@@ -71,7 +70,7 @@ bool recentlyUpdated()
         if (Constants::verbose == true) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
         // Now get the date for the cleanlib.csv file
         struct stat stbuf2;
-        stat(existlibname.c_str(), &stbuf2);
+        stat(Constants::existLibName, &stbuf2);
         localtime(&stbuf2.st_mtime);
         //printf("Modification time for cleanlib.csv is %ld\n",stbuf2.st_mtime);
         if (Constants::verbose == true) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;

@@ -32,7 +32,7 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
 {
     std::fstream filestrinterval;
     int s_playlistPosition;
-    filestrinterval.open ("ratedabbr2.txt");
+    filestrinterval.open ("ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file ." << std::endl;}
     std::string ratedlibrary = "ratedabbr.txt"; // now we can use it as input file
@@ -43,8 +43,8 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
         std::exit(EXIT_FAILURE);
     }
     StringVector2D ratedabbrVec = readCSV("ratedabbr.txt");
-    std::vector<std::string>histvect;
-    std::vector<std::string> artistExcludesVec;
+    std::vector<std::string>histvect; // vector to collect excluded artists from 'outside the playlist'
+    std::vector<std::string> artistExcludesVec;// vector to collect all excluded artists
     std::ofstream playlistPosList("playlistposlist.txt"); // output file for writing ratedabbr.txt with added artist intervals
     std::ofstream ratedabbr2("ratedabbr2.txt"); // output file for writing ratedabbr.txt with added artist intervals
     std::string str1; // store the string for ratedabbr.txt
@@ -55,9 +55,9 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     std::string songLength; // Song length from ratedabbrVec
     std::string artistInterval; // Artist interval from ratedabbrVec
     std::string path;
-    std::map<std::string,int> countMap; // Create a map for two types, string and int
-    std::vector<std::string>plvect;
-    plvect.reserve(5000);
+    //std::map<std::string,int> countMap; // Create a map for two types, string and int
+    //std::vector<std::string>plvect;
+    //plvect.reserve(5000);
 
     //open playlist to read in position number of each track
     std::fstream playList;
@@ -65,12 +65,6 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     if (playList.is_open()) {playList.close();}
     else {std::cout << "getArtistExcludes: Error opening cleanedplaylist.txt file." << std::endl;}
     std::string playlist = "cleanedplaylist.txt"; // now we can use it as input file
-    //*_splaylistSize = cstyleStringCount("cleanedplaylist.txt");
-
-
-    //std::cout << "getExcludedArtists: *_splaylistSize is: "<<*_splaylistSize << std::endl;
-
-
     std::ifstream playlistTable(playlist);
     if (!playlistTable.is_open())
     {
@@ -189,7 +183,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     int x = 0; // variable to return the rating code to be used for the next track selection
     bool isRating1Qty = (*_srCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
     int rating1PosCount{0};
-    std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
+    //std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
     if (isRating1Qty == true) //Before going to logic for other rating codes, determine whether to select rating code 1
     {
         // check if rating 1 total in playlist is equal to *_srCode1TotTrackQty; if true
@@ -198,7 +192,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         // Compare rating1PosCount with *_srepeatFreqForCode1
         bool select1Here{0};
         select1Here = (rating1PosCount == *_repeatFreqCode1);
-        std::cout << "rating Code 1 Selection started. bool isRating1Qty result is: "<< isRating1Qty <<" and select1Here result is: "<<select1Here<< std::endl;
+        //std::cout << "rating Code 1 Selection started. bool isRating1Qty result is: "<< isRating1Qty <<" and select1Here result is: "<<select1Here<< std::endl;
         rating1PosCount = 1;
     }
     std::string codeForPos1;
@@ -588,4 +582,6 @@ void selectTrack(int *_sratingNextTrack){
     //remove("ratedabbr2.txt");
     //ratedabbrvec.shrink_to_fit();
     finaltracksvect.shrink_to_fit();
+    // add formatted report with: playlistPos + ". " + Artist + " - " + SongTitle + " (" + SongLength +
+    // ") - Rating " + ratingCode ", Last played " + LastTimePlayed + ", Custom Group " + selectedArtistToken + '\n';
 }

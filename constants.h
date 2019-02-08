@@ -21,8 +21,9 @@ const int kLowerRndBound{30};
 const int kUpperRndBound{500};
 
 // Constant used to standardize the user configuration file name for Arch
-const char userFileName[16]{"archsimian.conf"};
-const char sqlFileName[19]{"/exportMMTable.sql"};
+const char userFileName[16]{"archsimian.conf"};  // user configuration and preferences filename
+const char sqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that the MM.DB Songs table can be exported
+const char existLibName[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
 
 // Constant to turn on or off troubleshooting feedback in console
 const bool verbose{false};
