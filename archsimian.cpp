@@ -115,8 +115,8 @@ static long s_histCount{0};
 static double s_AvgMinsPerSong{0.0};
 static double s_avgListeningRateInMins{0.0};
 //static int s_repeatFreqForCode1{20};
-
-
+static int s_dateTranslation{0};
+static std::string dateTransTextVal{""};
 
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
@@ -129,6 +129,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // UI configuration: set default state to "false" for user config reset buttons
     ui->setupUi(this);
     //connect(ui->repeatFreq1SpinBox,SIGNAL(valueChanged)),ui->addsongsButton,SLOT(setValue(s_repeatFreqForCode1))
+    ui->mainQTabWidget->setCurrentIndex(0);
 
 
 
@@ -190,9 +191,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
             s_MMdbDate = getMMdbDate();
             s_LastTableDate = getLastTableDate();
             ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+
-                                           tr(", Library date: ")+ QString::fromStdString(s_LastTableDate) + "\n No update is needed.");
+                                           tr(", Library date: ")+ QString::fromStdString(s_LastTableDate));
             // dim update library button
-            ui->refreshdbButton->setEnabled(false);
+            //ui->refreshdbButton->setEnabled(false);
         }
     }
 
@@ -645,6 +646,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->statusBar->addPermanentWidget(ui->progressBarPL);
     ui->progressBarPL->hide();
     ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
+    ui->factor3horizontalSlider->setMinimum(10);
+    ui->factor3horizontalSlider->setMaximum(120);
+    ui->factor3horizontalSlider->setValue(65);
+    ui->factor3IntTxtLabel->setNum(65);
+
+    //ui->setupUi(index = 1);
 
 }
 
@@ -652,7 +659,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 void ArchSimian::on_addsongsButton_clicked(){
     // Add loop here:  For each number of songs selected, run...
     int numTracks = ui->addtrksspinBox->value();
-    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",10000);
+    ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
     ui->progressBarPL->show();
     int n;
     for (n=0; n < numTracks; n++){
@@ -822,21 +829,27 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 
 //}
 
-void ArchSimian::on_refreshdbButton_clicked()
-{
+//void ArchSimian::on_refreshdbButton_clicked()
+//{
 
     // Add code to 'goto' beginning of this cpp, then delete the rest of the below code except last few lines?
 
 
-    s_LastTableDate = getLastTableDate(); // function is in dependents.cpp
-    ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
+//    s_LastTableDate = getLastTableDate(); // function is in dependents.cpp
+//   ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
     //ui->updatestatusLabel->setText("Library update completed.");
-}
+//}
 
 void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
 {
         m_prefs.tracksToAdd = s_numTracks;
-        ui->daystracksLabel->setText(QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+        //s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+        ui->daystoaddLabel->setText(tr("Based on a daily listening rate (in mins.) of ") + QString::number(s_avgListeningRateInMins,'g', 3)
+                                    + tr(", tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
+        ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be: ") + QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
+
+        //days added for 'Add Songs' quantity selected above will be:
+
 }
 
 void ArchSimian::on_repeatFreq1SpinBox_valueChanged(int myvalue)
@@ -888,32 +901,29 @@ void ArchSimian::closeEvent(QCloseEvent *event)
 
 void ArchSimian::on_weeksradioButton_clicked()
 {
-    // These are commented out becuase I want to use this to change the time display format for
-    // repeatFactorCodes for 4 - 8
-
-    //ui->horizontalSlider->setMinimum(1);
-    //ui->horizontalSlider->setMaximum(30);
-    //ui->horizontalSlider->setValue(10);
-    //ui->sliderLabel->setNum(10);
+    s_dateTranslation = 52;
+    dateTransTextVal = " weeks";
 }
 
 void ArchSimian::on_monthsradioButton_clicked()
 {
-    //ui->horizontalSlider->setMinimum(1);
-    //ui->horizontalSlider->setMaximum(12);
-    //ui->horizontalSlider->setValue(3);
-    //ui->sliderLabel->setNum(3);
+    s_dateTranslation = 12;
+    dateTransTextVal = " months";
 }
-
-void ArchSimian::on_horizontalSlider_valueChanged(int value)
+void ArchSimian::on_yearsradioButton_clicked()
 {
-
+    s_dateTranslation = 1;
+    dateTransTextVal = " years";
+}
+void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
+{
+m_prefs.s_daysTillRepeatCode3 = value;
 }
 
 void ArchSimian::on_daysradioButton_clicked()
 {
-    ui->horizontalSlider->setMinimum(10);
-    ui->horizontalSlider->setMaximum(120);
-    ui->horizontalSlider->setValue(65);
-    ui->sliderLabel->setNum(65);
+    s_dateTranslation = 365;
+    dateTransTextVal = " days";
 }
+
+

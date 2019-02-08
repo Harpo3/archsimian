@@ -89,7 +89,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="horizontalLayout1">
           <property name="sizeConstraint">
            <enum>QLayout::SetNoConstraint</enum>
           </property>
@@ -203,8 +203,8 @@
           <widget class="QLabel" name="updatestatusLabel">
            <property name="geometry">
             <rect>
-             <x>130</x>
-             <y>10</y>
+             <x>10</x>
+             <y>0</y>
              <width>321</width>
              <height>31</height>
             </rect>
@@ -216,52 +216,39 @@
             <bool>true</bool>
            </property>
           </widget>
-          <widget class="QPushButton" name="refreshdbButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>101</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Refresh Library</string>
-           </property>
-          </widget>
           <widget class="QLabel" name="daystoaddLabel">
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>50</y>
-             <width>251</width>
-             <height>16</height>
+             <y>30</y>
+             <width>441</width>
+             <height>21</height>
             </rect>
            </property>
            <property name="text">
             <string>Days to add (based on estimated listening rate): </string>
            </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
           </widget>
           <widget class="QLabel" name="daystracksLabel">
            <property name="geometry">
             <rect>
-             <x>260</x>
+             <x>10</x>
              <y>50</y>
-             <width>31</width>
+             <width>351</width>
              <height>20</height>
             </rect>
            </property>
            <property name="maximumSize">
             <size>
-             <width>75</width>
+             <width>167777</width>
              <height>16777215</height>
             </size>
            </property>
            <property name="text">
-            <string/>
+            <string>days added for 'Add Songs' quantity selected above will be:</string>
            </property>
           </widget>
           <widget class="QLabel" name="currentplsizeLabel">
@@ -313,7 +300,7 @@
             <string>Current playlist days (based on est. listening rate): </string>
            </property>
           </widget>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget1">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -717,20 +704,20 @@
        <attribute name="title">
         <string>Frequency</string>
        </attribute>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="factorradiobuttonLabel">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>111</width>
+          <width>151</width>
           <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>Show frequency in: </string>
+         <string>Show factor frequencies in: </string>
         </property>
        </widget>
-       <widget class="QSlider" name="horizontalSlider">
+       <widget class="QSlider" name="factor3horizontalSlider">
         <property name="geometry">
          <rect>
           <x>200</x>
@@ -761,12 +748,12 @@
          <number>15</number>
         </property>
        </widget>
-       <widget class="QLabel" name="sliderLabel">
+       <widget class="QLabel" name="factor3IntTxtLabel">
         <property name="geometry">
          <rect>
           <x>450</x>
           <y>60</y>
-          <width>21</width>
+          <width>31</width>
           <height>16</height>
          </rect>
         </property>
@@ -774,16 +761,16 @@
          <string>60</string>
         </property>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget2">
         <property name="geometry">
          <rect>
-          <x>130</x>
+          <x>160</x>
           <y>10</y>
-          <width>299</width>
-          <height>22</height>
+          <width>321</width>
+          <height>21</height>
          </rect>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="radiobuttonshorizontalLayout">
          <item>
           <widget class="QRadioButton" name="daysradioButton">
            <property name="text">
@@ -808,9 +795,16 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QRadioButton" name="yearsradioButton">
+           <property name="text">
+            <string>Years</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QFrame" name="starsFrame">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -939,7 +933,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget3">
         <property name="geometry">
          <rect>
           <x>150</x>
@@ -948,44 +942,44 @@
           <height>231</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <layout class="QVBoxLayout" name="codelabelsverticalLayout">
          <item>
-          <widget class="QLabel" name="label_9">
+          <widget class="QLabel" name="code3label">
            <property name="text">
             <string> Code 3</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_10">
+          <widget class="QLabel" name="code4label">
            <property name="text">
             <string> Code 4</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="code5label">
            <property name="text">
             <string> Code 5</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_12">
+          <widget class="QLabel" name="code6label">
            <property name="text">
             <string> Code 6</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_18">
+          <widget class="QLabel" name="code7label">
            <property name="text">
             <string> Code 7</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_19">
+          <widget class="QLabel" name="code8label">
            <property name="text">
             <string> Code 8</string>
            </property>
@@ -993,7 +987,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget4">
         <property name="geometry">
          <rect>
           <x>200</x>
@@ -1002,37 +996,37 @@
           <height>191</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QVBoxLayout" name="factortxtverticalLayout_5">
          <item>
-          <widget class="QLabel" name="label_21">
+          <widget class="QLabel" name="factortxtlabel_21">
            <property name="text">
             <string>Factor</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_22">
+          <widget class="QLabel" name="factortxtlabel_22">
            <property name="text">
             <string>Factor</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_23">
+          <widget class="QLabel" name="factortxtlabel_23">
            <property name="text">
             <string>Factor</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_24">
+          <widget class="QLabel" name="factortxtlabel_24">
            <property name="text">
             <string>Factor</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_25">
+          <widget class="QLabel" name="factortxtlabel_25">
            <property name="text">
             <string>Factor</string>
            </property>
@@ -1040,7 +1034,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget5">
         <property name="geometry">
          <rect>
           <x>240</x>
@@ -1049,9 +1043,9 @@
           <height>191</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
+        <layout class="QVBoxLayout" name="factorspinverticalLayout">
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <widget class="QDoubleSpinBox" name="factor4doubleSpinBox">
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -1061,7 +1055,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+          <widget class="QDoubleSpinBox" name="factor5doubleSpinBox">
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -1071,7 +1065,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+          <widget class="QDoubleSpinBox" name="factor6doubleSpinBox">
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -1081,7 +1075,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+          <widget class="QDoubleSpinBox" name="factor7doubleSpinBox">
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -1091,7 +1085,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+          <widget class="QDoubleSpinBox" name="factor8doubleSpinBox">
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -1102,7 +1096,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget6">
         <property name="geometry">
          <rect>
           <x>320</x>
@@ -1111,37 +1105,37 @@
           <height>191</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
+        <layout class="QVBoxLayout" name="factorlabelsverticalLayout">
          <item>
-          <widget class="QLabel" name="cd4factyrslabel">
+          <widget class="QLabel" name="factor4label">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="cd5factyrslabel">
+          <widget class="QLabel" name="factor5label">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="cd6factyrslabel">
+          <widget class="QLabel" name="factor6label">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="cd7factyrslabel">
+          <widget class="QLabel" name="factor7label">
            <property name="text">
             <string>TextLabel</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="cd8factyrslabel">
+          <widget class="QLabel" name="factor8label">
            <property name="text">
             <string>TextLabel</string>
            </property>
@@ -1149,7 +1143,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QLabel" name="label_20">
+       <widget class="QLabel" name="factor3sliderLabel">
         <property name="geometry">
          <rect>
           <x>200</x>
@@ -1199,5 +1193,22 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>factor3horizontalSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>factor3IntTxtLabel</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>322</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>470</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

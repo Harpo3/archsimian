@@ -39,7 +39,7 @@ private slots:
 
 //    void on_pushButton_clicked();
 
-    void on_refreshdbButton_clicked();
+//    void on_refreshdbButton_clicked();
 
     void on_addtrksspinBox_valueChanged(int s_numTracks);
 
@@ -51,10 +51,12 @@ private slots:
 
     void on_monthsradioButton_clicked();
 
-    void on_horizontalSlider_valueChanged(int value);
+    void on_factor3horizontalSlider_valueChanged(int value);
 
     void on_daysradioButton_clicked();
 
+
+    void on_yearsradioButton_clicked();
 
 private:
     Ui::ArchSimian *ui;
