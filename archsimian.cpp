@@ -661,7 +661,6 @@ void ArchSimian::on_addsongsButton_clicked(){
         if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
         selectTrack(&s_ratingNextTrack);
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
-
         if (Constants::verbose == true) std::cout <<'\n';
         std::cout <<", track "<< s_playlistSize << ", rating " << "___" << std::endl;
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
@@ -669,8 +668,12 @@ void ArchSimian::on_addsongsButton_clicked(){
         getExcludedArtists(&s_histCount, &s_playlistSize);
         s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,
                                                &s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
+        ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
+        ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     }
     ui->progressBarPL->hide();
+    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",50000);
+
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
