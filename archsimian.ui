@@ -753,7 +753,7 @@
          <rect>
           <x>450</x>
           <y>60</y>
-          <width>31</width>
+          <width>21</width>
           <height>16</height>
          </rect>
         </property>
@@ -1049,9 +1049,6 @@
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
-           <property name="value">
-            <double>2.700000000000000</double>
-           </property>
           </widget>
          </item>
          <item>
@@ -1207,6 +1204,38 @@
     <hint type="destinationlabel">
      <x>470</x>
      <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>factor3horizontalSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>factor4doubleSpinBox</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>149</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>282</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>factor4doubleSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>factor4label</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>341</x>
+     <y>189</y>
     </hint>
    </hints>
   </connection>

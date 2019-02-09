@@ -58,6 +58,8 @@ private slots:
 
     void on_yearsradioButton_clicked();
 
+    void on_factor4doubleSpinBox_valueChanged(double argfact4);
+
 private:
     Ui::ArchSimian *ui;
 

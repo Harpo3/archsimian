@@ -115,14 +115,23 @@ static long s_histCount{0};
 static double s_AvgMinsPerSong{0.0};
 static double s_avgListeningRateInMins{0.0};
 //static int s_repeatFreqForCode1{20};
-static int s_dateTranslation{0};
-static std::string dateTransTextVal{""};
+static int s_dateTranslation{12};
+static QString dateTransTextVal{" months"};
+static double sliderBaseVal3{0.0};
 
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
-    loadSettings(); // load user settings    
+    loadSettings(); // load user settings
+    s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    std::cout << "LoadSettings, s_repeatFactorCode4 result: "<< s_repeatFactorCode4<<" and s_yrsTillRepeatCode4 result: "<< s_yrsTillRepeatCode4<<std::endl;
+
+
+    sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
     //
 // Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
@@ -648,11 +657,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
     ui->factor3horizontalSlider->setMinimum(10);
     ui->factor3horizontalSlider->setMaximum(120);
-    ui->factor3horizontalSlider->setValue(65);
-    ui->factor3IntTxtLabel->setNum(65);
-
-    //ui->setupUi(index = 1);
-
+    ui->factor3horizontalSlider->setValue(s_daysTillRepeatCode3);
+    ui->factor3IntTxtLabel->setNum(s_daysTillRepeatCode3);
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor4doubleSpinBox->setValue(m_prefs.s_repeatFactorCode4);
+    ui->monthsradioButton->click();
 }
 
 
@@ -903,27 +912,54 @@ void ArchSimian::on_weeksradioButton_clicked()
 {
     s_dateTranslation = 52;
     dateTransTextVal = " weeks";
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
 }
 
 void ArchSimian::on_monthsradioButton_clicked()
 {
     s_dateTranslation = 12;
     dateTransTextVal = " months";
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
 }
 void ArchSimian::on_yearsradioButton_clicked()
 {
     s_dateTranslation = 1;
     dateTransTextVal = " years";
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+
 }
 void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
 {
 m_prefs.s_daysTillRepeatCode3 = value;
+s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
+//sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
+sliderBaseVal3 = s_yrsTillRepeatCode3;
+ui->factor4label->setText(QString::number(((m_prefs.s_daysTillRepeatCode3 / 365) * m_prefs.s_repeatFactorCode4),'g', 5) + dateTransTextVal);
 }
 
 void ArchSimian::on_daysradioButton_clicked()
 {
     s_dateTranslation = 365;
     dateTransTextVal = " days";
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
 }
 
 
+void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
+{
+    m_prefs.s_repeatFactorCode4 = argfact4;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(argfact4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+
+}
