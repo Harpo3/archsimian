@@ -41,8 +41,6 @@ inline bool doesFileExist (const std::string& name) {
     return (stat (name.c_str(), &buffer) == 0);
 }
 
-
-
 // VARIABLE DECLARATIONS & INITIALIZATIONS
 static bool s_bool_IsUserConfigSet {false};
 static bool s_bool_MMdbExist{false};
@@ -54,12 +52,9 @@ static bool s_bool_RatedAbbrExist{false};
 static bool s_bool_PlaylistExist{false};
 static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
-
 static QString s_mmBackupDBDir{""};
 static QString s_musiclibrarydirname{""};
 static QString mmPlaylistDir{""};
-//static std::string s_mmbackuppldirname{""};
-//static std::string s_selectedplaylist{""};
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
 static double s_daysTillRepeatCode3 = 65.0;
@@ -129,7 +124,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
     s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    //std::cout << "LoadSettings, s_repeatFactorCode4 result: "<< s_repeatFactorCode4<<" and s_yrsTillRepeatCode4 result: "<< s_yrsTillRepeatCode4<<std::endl;
     s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
     s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
     s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
@@ -140,16 +134,13 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
-    m_prefs.musicLibraryDir = s_musiclibrarydirname;
+    s_musiclibrarydirname = m_prefs.musicLibraryDir;
     //
 // Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
     // UI configuration: set default state to "false" for user config reset buttons
     ui->setupUi(this);
-    //connect(ui->repeatFreq1SpinBox,SIGNAL(valueChanged)),ui->addsongsButton,SLOT(setValue(s_repeatFreqForCode1))
     ui->mainQTabWidget->setCurrentIndex(0);
-
-
 
     //Check whether the configuration file currently has any data in it
     std::streampos archsimianconfsize;
@@ -195,10 +186,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
         //****************************************** Consider moving this section to step 4
 
-        //
-        // The next section is apparently for updating the UI for DB update status - it is a different (older) function than the new one
-        //
-
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
 
         //bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
@@ -227,13 +214,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                      " where you stored the MediaMonkey database backup file (MM.DB)"));
         ui->setmmdbButton->setEnabled(false);
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
+        ui->mainQTabWidget->setCurrentIndex(1);
     }
 
     //******************************************
 
 // Step 2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
 
-    std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+    std::string mmdbdir = s_mmBackupDBDir.toStdString();
     const std::string mmpath = mmdbdir + "/MM.DB";
     s_bool_MMdbExist = doesFileExist(mmpath);
 
@@ -576,7 +564,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // s_bool_dbStatsCalculated, bool10 are all true), run function buildDB() to create a modified database file with rated tracks
     // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist)
 
-
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)  && (s_bool_dbStatsCalculated == true)
             && (s_bool_artistsadjExist == true) && (s_bool_RatedAbbrExist == false)) {
         buildDB();
@@ -654,7 +641,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_PlaylistExist == true)   {
         getExcludedArtists(s_histCount, s_playlistSize);
     }
-
     ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
     //playlistdaysLabel
     ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
@@ -678,10 +664,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->factor7doubleSpinBox->setValue(m_prefs.s_repeatFactorCode7);
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
-
     ui->monthsradioButton->click();
 }
-
 
 void ArchSimian::on_addsongsButton_clicked(){
     int numTracks = ui->addtrksspinBox->value();
@@ -728,7 +712,6 @@ void ArchSimian::on_addsongsButton_clicked(){
         QMessageBox::information(nullptr,"info",songtext1.errorString());
     QTextStream in(&songtext1);
     ui->songsaddtextBrowser->setText(in.readAll());
-
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
@@ -753,17 +736,6 @@ void ArchSimian::on_setlibraryButton_clicked(){
     ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
     // Write description note and directory configuration to archsimian.conf
     m_prefs.musicLibraryDir = s_musiclibrarydirname;
-
-    //std::ofstream userconfig(Constants::userFileName);
-    //std::string str("# Location of music library");
-    //userconfig << str << "\n";  // Write to line 1, archsimian.conf
-    //str = s_musiclibrarydirname.toStdString();
-    //userconfig << str << "\n";  // Write to line 2, archsimian.conf
-    //userconfig.close();
-    // dim the setlibraryButton button
-    //ui->setlibraryButton->setEnabled(false);
-    // Enable the reset button
-    // Activate the second of three config buttons
     ui->setmmplButton->setEnabled(true);
     //      }
 }
@@ -785,18 +757,6 @@ void ArchSimian::on_setmmplButton_clicked(){
                 );
     ui->setmmpllabel->setText(QString(mmbackuppldirname));
     m_prefs.mmPlaylistDir = mmbackuppldirname;
-    // Write description note and directory configuration to archsimian.conf
-    //std::ofstream userconfig(Constants::userFileName, std::ios::app);
-    //std::string str("# Location of MediaMonkey Playlist Backup Directory");
-    //userconfig << str << "\n";  // Write to line 3, archsimian.conf
-    //str = s_mmbackuppldirname.toStdString();
-    //userconfig << str << "\n"; // Write to line 4, archsimian.conf
-    //userconfig.close();
-    //dim the setmmplButton button
-    //ui->setmmplButton->setEnabled(false); // test with enabled
-    //enable the reset button
-    // Activate the last of three config buttons
-    //ui->setmmdbButton->setEnabled(true);
 }
 
 void ArchSimian::on_setmmdbButton_clicked(){
@@ -816,19 +776,7 @@ void ArchSimian::on_setmmdbButton_clicked(){
                 );
     ui->setmmdblabel->setText(QString(mmbackupdbdirname));
     m_prefs.mmBackupDBDir = mmbackupdbdirname;
-    // Write description note and directory configuration to archsimian.conf
-    //std::ofstream userconfig(Constants::userFileName, std::ios::app);
-    //std::string str("# Location of MediaMonkey Database Backup Directory");
-    //userconfig << str << "\n";  // Write to line 5, archsimian.conf
-    //str = s_mmbackupdbdirname.toStdString();
-    //userconfig << str << "\n"; // Write to line 6, archsimian.conf
-    //userconfig.close();
-    //dim the setmmdbButton button
-    //ui->setmmdbButton->setEnabled(true);
-    //enable the reset button
 }
-
-
 
 // User selects playlist from configured directory for 'backup playlists'
 void ArchSimian::on_getplaylistButton_clicked()
@@ -840,21 +788,13 @@ void ArchSimian::on_getplaylistButton_clicked()
                 QString(m_prefs.defaultPlaylist),//default dir for playlists
                 "playlists(.m3u) (*.m3u)");
     m_prefs.defaultPlaylist = selectedplaylist;
-    ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist)); // to redo the config file to use QSettings instead
-    // Write description note and playlist name to archsimian.conf
-    //std::ofstream userconfig(Constants::userFileName, std::ios::app);
-    //std::string str("# Name of default playlist");
-    //userconfig << str << "\n";  // Write to line 7, archsimian.conf
-    //str = selectedplaylist.toStdString();
-    //userconfig << str << "\n"; // Write to line 8, archsimian.conf
-    //userconfig.close();
+    ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 {
     if (index == 2) // if the Statistics tab is selected, refresh stats
-    {
-        ;
+    {        
         ui->ybrLabel3->setText("Years between repeats for rating code 3 (5 stars): " + QString::number(s_yrsTillRepeatCode3,'g', 3) +
                                " (in days: " + QString::fromStdString(std::to_string(int(s_daysTillRepeatCode3))) + ")");
         ui->ybrLabel4->setText("Years between repeats for rating code 4 (4 stars): " + QString::number(s_yrsTillRepeatCode4,'g', 3));
@@ -862,31 +802,13 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
         ui->ybrLabel6->setText("Years between repeats for rating code 6 (3 stars): " + QString::number(s_yrsTillRepeatCode6,'g', 3));
         ui->ybrLabel7->setText("Years between repeats for rating code 7 (2 1/2 stars): " + QString::number(s_yrsTillRepeatCode7,'g', 3));
         ui->ybrLabel8->setText("Years between repeats for rating code 8 (2 stars): " + QString::number(s_yrsTillRepeatCode8,'g', 3));
-
         ui->totadjtracksLabel->setText(tr("Current playlist size is: ") + QString::fromStdString(std::to_string(s_playlistSize)));
         ui->tottracksLabel->setText("Total tracks in the library is: " + QString::fromStdString(std::to_string(s_totalLibQty)));
         ui->totratedtracksLabel->setText("Total rated tracks in the library is: " + QString::fromStdString(std::to_string(s_totalRatedQty)));
         ui->totratedtimeLabel->setText("Total rated time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
         ui->dailylistenLabel->setText("Calculated daily listening rate (in hours) is: " + QString::number(s_listeningRate,'g', 3));
-
     }
 }
-
-//void ArchSimian::on_pushButton_clicked()
-//{
-
-//}
-
-//void ArchSimian::on_refreshdbButton_clicked()
-//{
-
-    // Add code to 'goto' beginning of this cpp, then delete the rest of the below code except last few lines?
-
-
-//    s_LastTableDate = getLastTableDate(); // function is in dependents.cpp
-//   ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+ tr(" Library date: ")+ QString::fromStdString(s_LastTableDate));
-    //ui->updatestatusLabel->setText("Library update completed.");
-//}
 
 void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
 {
@@ -894,10 +816,8 @@ void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
         //s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
         ui->daystoaddLabel->setText(tr("Based on a daily listening rate (in mins.) of ") + QString::number(s_avgListeningRateInMins,'g', 3)
                                     + tr(", tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
-        ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be: ") + QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
-
-        //days added for 'Add Songs' quantity selected above will be:
-
+        ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be: ") +
+                                     QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
 }
 
 void ArchSimian::on_repeatFreq1SpinBox_valueChanged(int myvalue)
@@ -1123,5 +1043,3 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(argfact8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
 }
-
-
