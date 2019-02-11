@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QFile>
 #include <QTextStream>
 #include <QFileInfo>
 #include <QSystemTrayIcon>
@@ -53,11 +54,9 @@ static bool s_bool_PlaylistExist{false};
 static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
 
-const std::string cleanLibFile("cleanlib.dsv");
-const std::string cleanedPlaylist("cleanedplaylist.txt");
-static std::string s_mmBackupDBDir{""};
-//static std::string s_mmbackupdbdirname{""};
-//static std::string s_musiclibrarydirname{""};
+static QString s_mmBackupDBDir{""};
+static QString s_musiclibrarydirname{""};
+static QString mmPlaylistDir{""};
 //static std::string s_mmbackuppldirname{""};
 //static std::string s_selectedplaylist{""};
 // Repeat factor codes used to calculate repeat rate in years
@@ -128,10 +127,18 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
     s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    std::cout << "LoadSettings, s_repeatFactorCode4 result: "<< s_repeatFactorCode4<<" and s_yrsTillRepeatCode4 result: "<< s_yrsTillRepeatCode4<<std::endl;
-
-
+    //std::cout << "LoadSettings, s_repeatFactorCode4 result: "<< s_repeatFactorCode4<<" and s_yrsTillRepeatCode4 result: "<< s_yrsTillRepeatCode4<<std::endl;
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
+    s_mmBackupDBDir = m_prefs.mmBackupDBDir;
+    m_prefs.musicLibraryDir = s_musiclibrarydirname;
     //
 // Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
@@ -165,9 +172,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_IsUserConfigSet = true;
         if (Constants::verbose == true) std::cout << "Step 1. Configuration has already been set. s_bool_IsUserConfigSet result: "<<s_bool_IsUserConfigSet<<std::endl;
         //ui->setCurrentIndex(0);
-        // getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
-        std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
-        ui->setlibrarylabel->setText(QString::fromStdString(s_musiclibrarydirname));
+        m_prefs.musicLibraryDir = s_musiclibrarydirname;
+        ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
         //dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(true);
         //enable the reset button
@@ -191,7 +197,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         // The next section is apparently for updating the UI for DB update status - it is a different (older) function than the new one
         //
 
-        bool needUpdate = recentlyUpdated(&s_mmBackupDBDir);
+        bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
 
         //bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
         if (Constants::verbose == true) std::cout << "Step 1. Checking isLibRefreshNeeded(): "<<needUpdate<<std::endl;
@@ -252,12 +258,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)) {
         bool tmpbool;
-        tmpbool = doesFileExist(cleanLibFile);
+        tmpbool = doesFileExist(Constants::cleanLibFile);
         if (tmpbool == true){ // check that file is not empty
             //Check whether the songs table currently has any data in it
             std::streampos cleanLibFilesize;
             char * memblock;
-            std:: ifstream file (cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
+            std:: ifstream file (Constants::cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
             if (file.is_open())
             {
                 cleanLibFilesize = file.tellg();
@@ -278,7 +284,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
     // will need to be updated.
 
-    s_bool_MMdbUpdated = recentlyUpdated(&s_mmBackupDBDir);
+    s_bool_MMdbUpdated = recentlyUpdated(s_mmBackupDBDir);
     if (Constants::verbose == true) std::cout << "Step 4. Is the MM.DB file date newer (greater) than the CleanLib file date."
                                                  " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
     // set ui labels if MM.DB was recently updated
@@ -323,9 +329,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
             //std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
             // revise for QStandardPaths class if this does not set with makefile for this location
             const std::string sqlpathdirname = getenv("HOME");
-            s_mmBackupDBDir = m_prefs.mmBackupDBDir.toStdString() + "/MM.DB";
+            s_mmBackupDBDir = m_prefs.mmBackupDBDir + "/MM.DB";
+            std::string tmpDBdir = s_mmBackupDBDir.toStdString();
             std::string path2 = ".read " + sqlpathdirname + "/exportMMTable.sql";
-            const char* const argv[] = {" ", s_mmBackupDBDir.c_str(), path2.c_str(), nullptr};
+            const char* const argv[] = {" ", tmpDBdir.c_str(), path2.c_str(), nullptr};
             execvp("sqlite3", argv);
             perror("execvp");
             if (execvp("sqlite3", argv) == -1)
@@ -338,9 +345,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 perror("wait");
                 _exit(1);
             }
-            getLibrary(); // get songs table from MM.DB
+            getLibrary(s_musiclibrarydirname); // get songs table from MM.DB
         }
-        s_bool_CleanLibExist = doesFileExist (cleanLibFile);
+        s_bool_CleanLibExist = doesFileExist (Constants::cleanLibFile);
         if (s_bool_CleanLibExist == true) {remove ("libtable.dsv");}
         else {
             std::cout << "Step 5. Unable to create cleanlib.dsv." << std::endl;
@@ -581,7 +588,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // Determine if cleaned (path-corrected) playlist selected (s_bool_PlaylistExist) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
     // sets bool6 and bool7
 
-    s_bool_PlaylistExist = doesFileExist (cleanedPlaylist);
+    s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
     if (s_bool_PlaylistExist == true) {
         s_bool_PlaylistSelected = true;
         if (Constants::verbose == true){std::cout << "Step 9. Playlist exists and was not updated." << std::endl;}
@@ -606,7 +613,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     {
         if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
         getPlaylist();
-        s_bool_PlaylistExist = doesFileExist (cleanedPlaylist);
+        s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
         if (s_bool_PlaylistExist == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }
     if ((Constants::verbose == true)&& (s_bool_PlaylistExist == true)){std::cout << "Step 10. Playlist exists and was not updated." << std::endl;}
@@ -618,7 +625,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
 
     if (s_bool_PlaylistExist == true) {
-        s_playlistSize = cstyleStringCount(cleanedPlaylist);
+        s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
         if (Constants::verbose == true){std::cout << "Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
     }
 
@@ -630,7 +637,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
     // and SequentialTrackLimit obtained with data from function getDBStats()]
     if (s_bool_PlaylistExist == true) {
-        s_playlistSize = cstyleStringCount(cleanedPlaylist);
+        s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
         s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
         if (Constants::verbose == true){std::cout << "Step 12. s_histCount is: "<< s_histCount << std::endl;}
     }
@@ -643,7 +650,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //ratingCodeSelected and selectTrack
 
     if (s_bool_PlaylistExist == true)   {
-        getExcludedArtists(&s_histCount, &s_playlistSize);
+        getExcludedArtists(s_histCount, s_playlistSize);
     }
 
     ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
@@ -657,38 +664,52 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
     ui->factor3horizontalSlider->setMinimum(10);
     ui->factor3horizontalSlider->setMaximum(120);
-    ui->factor3horizontalSlider->setValue(s_daysTillRepeatCode3);
+    ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
     ui->factor3IntTxtLabel->setNum(s_daysTillRepeatCode3);
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
     ui->factor4doubleSpinBox->setValue(m_prefs.s_repeatFactorCode4);
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor5doubleSpinBox->setValue(m_prefs.s_repeatFactorCode5);
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor6doubleSpinBox->setValue(m_prefs.s_repeatFactorCode6);
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor7doubleSpinBox->setValue(m_prefs.s_repeatFactorCode7);
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
+
     ui->monthsradioButton->click();
 }
 
 
 void ArchSimian::on_addsongsButton_clicked(){
-    // Add loop here:  For each number of songs selected, run...
     int numTracks = ui->addtrksspinBox->value();
     ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
-    ui->progressBarPL->show();
+    //ui->progressBarPL->show();
+    remove("songtext.txt");
     int n;
+    s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
+                                           s_ratingRatio7,s_ratingRatio8, s_rCode1TotTrackQty, m_prefs.repeatFreqCode1);
     for (n=0; n < numTracks; n++){
-        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,
-                                               &s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
         if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-        selectTrack(&s_ratingNextTrack);
+        selectTrack(s_ratingNextTrack);
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
         if (Constants::verbose == true) std::cout <<'\n';
         std::cout <<", track "<< s_playlistSize << ", rating " << "___" << std::endl;
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
         s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-        getExcludedArtists(&s_histCount, &s_playlistSize);
-        s_ratingNextTrack = ratingCodeSelected(&s_ratingRatio3,&s_ratingRatio4,&s_ratingRatio5,&s_ratingRatio6,
-                                               &s_ratingRatio7,&s_ratingRatio8, &s_rCode1TotTrackQty, &m_prefs.repeatFreqCode1);
+        getExcludedArtists(s_histCount, s_playlistSize);
+        s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
+                                               s_ratingRatio7,s_ratingRatio8, s_rCode1TotTrackQty, m_prefs.repeatFreqCode1);
         ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
         ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     }
-    ui->progressBarPL->hide();
+    //ui->progressBarPL->hide();
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",50000);
+    QFile songtext("songtext.txt");
+    if(!songtext.open(QIODevice::ReadOnly))
+        QMessageBox::information(nullptr,"info",songtext.errorString());
+    QTextStream in(&songtext);
+    ui->songsaddtextBrowser->setText(in.readAll());
 
 }
 
@@ -706,14 +727,14 @@ void ArchSimian::on_setlibraryButton_clicked(){
     //    else {
     setlibraryButton.setFileMode(QFileDialog::Directory);
     setlibraryButton.setOption(QFileDialog::ShowDirsOnly);
-    const QString s_musiclibrarydirname=QFileDialog::getExistingDirectory(
+    m_prefs.musicLibraryDir = QFileDialog::getExistingDirectory(
                 this,
                 tr("Select Shared Music Library Directory"),
                 "/"
                 );
     ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
     // Write description note and directory configuration to archsimian.conf
-    m_prefs.musicLibraryDir = s_musiclibrarydirname;
+    //m_prefs.musicLibraryDir = s_musiclibrarydirname;
 
     //std::ofstream userconfig(Constants::userFileName);
     //std::string str("# Location of music library");
@@ -882,7 +903,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_repeatFactorCode6 = settings.value("s_repeatFactorCode6", 2.2).toDouble();
     m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
     m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
-    s_mmBackupDBDir = m_prefs.mmBackupDBDir.toStdString();
+    s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
 void ArchSimian::saveSettings()
@@ -908,6 +929,19 @@ void ArchSimian::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
+void ArchSimian::on_daysradioButton_clicked()
+{
+    s_dateTranslation = 365;
+    dateTransTextVal = " days";
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+}
+
 void ArchSimian::on_weeksradioButton_clicked()
 {
     s_dateTranslation = 52;
@@ -915,6 +949,10 @@ void ArchSimian::on_weeksradioButton_clicked()
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
 }
 
 void ArchSimian::on_monthsradioButton_clicked()
@@ -924,7 +962,12 @@ void ArchSimian::on_monthsradioButton_clicked()
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
 }
+
 void ArchSimian::on_yearsradioButton_clicked()
 {
     s_dateTranslation = 1;
@@ -932,27 +975,33 @@ void ArchSimian::on_yearsradioButton_clicked()
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+  }
 
-}
 void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
 {
 m_prefs.s_daysTillRepeatCode3 = value;
 s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
 s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
-//sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
 sliderBaseVal3 = s_yrsTillRepeatCode3;
-ui->factor4label->setText(QString::number(((m_prefs.s_daysTillRepeatCode3 / 365) * m_prefs.s_repeatFactorCode4),'g', 5) + dateTransTextVal);
+ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
 }
-
-void ArchSimian::on_daysradioButton_clicked()
-{
-    s_dateTranslation = 365;
-    dateTransTextVal = " days";
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-}
-
 
 void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
 {
@@ -961,5 +1010,100 @@ void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
     sliderBaseVal3 = s_yrsTillRepeatCode3;
     ui->factor4label->setText(QString::number(argfact4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
 }
+
+void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
+{
+    m_prefs.s_repeatFactorCode5 = argfact5;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    ui->factor5label->setText(QString::number(argfact5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
+}
+
+void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
+{
+    m_prefs.s_repeatFactorCode6 = argfact6;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    ui->factor6label->setText(QString::number(argfact6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+}
+
+void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
+{
+    m_prefs.s_repeatFactorCode7 = argfact7;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    ui->factor7label->setText(QString::number(argfact7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+}
+
+void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
+{
+    m_prefs.s_repeatFactorCode8 = argfact8;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    ui->factor8label->setText(QString::number(argfact8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+}
+
+

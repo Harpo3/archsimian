@@ -1,7 +1,7 @@
 #ifndef BASICLIBFUNCTIONS_H
 #define BASICLIBFUNCTIONS_H
 #include <vector>
-#include <string>
+#include <QString>
 
 typedef std::vector<std::string> StringVector;
 typedef std::vector<StringVector> StringVector2D;
@@ -9,11 +9,11 @@ using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
 StringVector2D readCSV(std::string filename);
-bool recentlyUpdated(std::string *_smmBackupDBDir);
+bool recentlyUpdated(const QString &s_mmBackupDBDir);
 std::string removeSpaces(std::string str);
 std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgdString);
 std::string getChgdDirStr(std::vector<std::string> const &input,std::string chgdString);
-void getLibrary();
+void getLibrary(const QString &s_musiclibrarydirname);
 void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1TotTrackQty,int *_srCode1MsTotTime,
                  int *_srCode3TotTrackQty,int *_srCode3MsTotTime,int *_srCode4TotTrackQty,int *_srCode4MsTotTime,
                  int *_srCode5TotTrackQty,int *_srCode5MsTotTime,int *_srCode6TotTrackQty,int *_srCode6MsTotTime,

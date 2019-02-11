@@ -60,6 +60,15 @@ private slots:
 
     void on_factor4doubleSpinBox_valueChanged(double argfact4);
 
+    void on_factor5doubleSpinBox_valueChanged(double argfact5);
+
+    void on_factor6doubleSpinBox_valueChanged(double argfact6);
+
+    void on_factor7doubleSpinBox_valueChanged(double argfact7);
+
+    void on_factor8doubleSpinBox_valueChanged(double argfact8);
+
+
 private:
     Ui::ArchSimian *ui;
 

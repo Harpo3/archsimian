@@ -25,10 +25,12 @@ inline bool isEqual(double x, double y){
 void trim_cruft(std::string& buffer)
 {
     static const char cruft[] = "\n\r";
-    buffer.erase(buffer.find_last_not_of(cruft) + 1);
+    buffer.erase(buffer.find_last_not_of(cruft) + 1);    
 }
 
-void getExcludedArtists(long *_shistCount, int *_splaylistSize)
+
+
+void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
 {
     std::fstream filestrinterval;
     int s_playlistPosition;
@@ -61,10 +63,10 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
 
     //open playlist to read in position number of each track
     std::fstream playList;
-    playList.open ("cleanedplaylist.txt");
+    playList.open (Constants::cleanedPlaylist);
     if (playList.is_open()) {playList.close();}
     else {std::cout << "getArtistExcludes: Error opening cleanedplaylist.txt file." << std::endl;}
-    std::string playlist = "cleanedplaylist.txt"; // now we can use it as input file
+    std::string playlist = Constants::cleanedPlaylist; // now we can use it as input file
     std::ifstream playlistTable(playlist);
     if (!playlistTable.is_open())
     {
@@ -76,7 +78,7 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     static std::string song;
     while (getline(playlistTable,song)){
         ++playlistCount;
-        s_playlistPosition = *_splaylistSize-playlistCount + 1; // playlist position is most recently added (to bottom)
+        s_playlistPosition = s_playlistSize-playlistCount + 1; // playlist position is most recently added (to bottom)
         std::string txtPos;
         std::string pathinlib;
         std::string artistinvec;
@@ -138,10 +140,10 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     }
 
     std::vector<std::string>::const_iterator begin = histvect.begin();
-    std::vector<std::string>::const_iterator last = histvect.begin() + *_shistCount;
+    std::vector<std::string>::const_iterator last = histvect.begin() + s_histCount;
     std::vector<std::string> new_histvect(begin, last); // copy histvect to new vector
     for (std::size_t i = 0 ;  i < new_histvect.size(); i++){ // write new vector to "playlistposlist.txt"
-        playlistPosList << new_histvect[i] << "," << i + 1 + *_splaylistSize << "\n";
+        playlistPosList << new_histvect[i] << "," << i + 1 + s_playlistSize << "\n";
     }
     playlistPosList.close();
     // Calculate the extended playlist to find infrequent artists played within their interval value (ex. postion 452 and interval 487)
@@ -175,13 +177,13 @@ void getExcludedArtists(long *_shistCount, int *_splaylistSize)
     //remove("playlistposlist.txt");
 }
 
-int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_sratingRatio5,
-                       double *_sratingRatio6, double *_sratingRatio7, double *_sratingRatio8, int *_srCode1TotTrackQty, int *_repeatFreqCode1){
+int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
+                       double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8, int &s_rCode1TotTrackQty, int &repeatFreqCode1){
     //Lookup the rating codes for last two tracks on the playlist;
     //std::cout << "ratingCodeSelected started." << std::endl;
 
     int x = 0; // variable to return the rating code to be used for the next track selection
-    bool isRating1Qty = (*_srCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
+    bool isRating1Qty = (s_rCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
     int rating1PosCount{0};
     //std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
     if (isRating1Qty == true) //Before going to logic for other rating codes, determine whether to select rating code 1
@@ -191,7 +193,7 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
         // Else calculate the 'most recent' playlist position and set variable rating1PosCountuse
         // Compare rating1PosCount with *_srepeatFreqForCode1
         bool select1Here{0};
-        select1Here = (rating1PosCount == *_repeatFreqCode1);
+        select1Here = (rating1PosCount == repeatFreqCode1);
         //std::cout << "rating Code 1 Selection started. bool isRating1Qty result is: "<< isRating1Qty <<" and select1Here result is: "<<select1Here<< std::endl;
         rating1PosCount = 1;
     }
@@ -291,21 +293,21 @@ int ratingCodeSelected(double *_sratingRatio3, double *_sratingRatio4, double *_
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
     if (Constants::verbose == true) {
-    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << *_sratingRatio3 << std::endl;
-    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << *_sratingRatio4<< std::endl;
-    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << *_sratingRatio5<< std::endl;
-    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << *_sratingRatio6<< std::endl;
-    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << *_sratingRatio7<< std::endl;
-    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << *_sratingRatio8<< std::endl;
+    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_ratingRatio3 << std::endl;
+    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_ratingRatio4<< std::endl;
+    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << s_ratingRatio5<< std::endl;
+    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << s_ratingRatio6<< std::endl;
+    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_ratingRatio7<< std::endl;
+    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_ratingRatio8<< std::endl;
     }
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
-    double varianceRatioTime3 = (*_sratingRatio3 - ratioTime3) / *_sratingRatio3;
-    double varianceRatioTime4 = (*_sratingRatio4 - ratioTime4) / *_sratingRatio4;
-    double varianceRatioTime5 = (*_sratingRatio5 - ratioTime5) / *_sratingRatio5;
-    double varianceRatioTime6 = (*_sratingRatio6 - ratioTime6) / *_sratingRatio6;
-    double varianceRatioTime7 = (*_sratingRatio7 - ratioTime7) / *_sratingRatio7;
-    double varianceRatioTime8 = (*_sratingRatio8 - ratioTime8) / *_sratingRatio8;
+    double varianceRatioTime3 = (s_ratingRatio3 - ratioTime3) / s_ratingRatio3;
+    double varianceRatioTime4 = (s_ratingRatio4 - ratioTime4) / s_ratingRatio4;
+    double varianceRatioTime5 = (s_ratingRatio5 - ratioTime5) / s_ratingRatio5;
+    double varianceRatioTime6 = (s_ratingRatio6 - ratioTime6) / s_ratingRatio6;
+    double varianceRatioTime7 = (s_ratingRatio7 - ratioTime7) / s_ratingRatio7;
+    double varianceRatioTime8 = (s_ratingRatio8 - ratioTime8) / s_ratingRatio8;
     if (Constants::verbose == true) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
@@ -473,8 +475,8 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
 
 //std::ofstream outfratedint2("extendexcludes.txt"); // output file for writing ratedabbr2.txt with added artist intervals
 
-void selectTrack(int *_sratingNextTrack){
-    if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << *_sratingNextTrack << std::endl;
+void selectTrack(int &s_ratingNextTrack){
+    if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
@@ -485,6 +487,8 @@ void selectTrack(int *_sratingNextTrack){
         std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
+    std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
+
     std::string str1; // store the string for ratedabbr2.txt
     std::string str2; // store the string for artistexcludes.txt
     std::string str3; // store the string for ratedabbr2.txt (second opening)
@@ -534,9 +538,9 @@ void selectTrack(int *_sratingNextTrack){
         // playlist, notInPlaylist == false
         if (notInPlaylist == 0) {continue;}
         //std::cout << "notInPlaylist = false:" << notInPlaylist << ". Going to next line..." << std::endl;
-        else if (ratingCode != std::to_string(*_sratingNextTrack)) {continue;}
+        else if (ratingCode != std::to_string(s_ratingNextTrack)) {continue;}
         //std::cout << ". RatingCode is: " << ratingCode << " and *_sratingNextTrack is " << *_sratingNextTrack << ". Going to next line..." << std::endl;
-        else if ((ratingCode == std::to_string(*_sratingNextTrack)) && (notInPlaylist == 1)){
+        else if ((ratingCode == std::to_string(s_ratingNextTrack)) && (notInPlaylist == 1)){
             //std::cout << "Track found with current rating (not yet excluded): " << selectedArtistToken << ", " << songPath << std::endl;
         }
         // If not yet skipped, open an inner loop and iterate through artistexcludes.txt and compare each entry against the artist token.
@@ -573,10 +577,15 @@ void selectTrack(int *_sratingNextTrack){
     selectedTrackPath = splittedStrings[1];
     if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
-    std::ofstream playlist("cleanedplaylist.txt",std::ios::app);
+    std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
     playlist << selectedTrackPath << "\n";
     playlist.close();
+    int new_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
+    std::string selectedTrackPathshort;
+   // selectedTrackPathshort = (selectedTrackPath.find('/') + 1);
+    songtext << new_playlistSize<<". "<<"  need to fix         "<<'\n';
     ratedSongsTable.close();
+    songtext.close();
     if (Constants::verbose == true) std::cout <<'\n';
     std::cout << "Added "<< selectedTrackPath;
     //remove("ratedabbr2.txt");

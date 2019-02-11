@@ -39,7 +39,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -277,16 +277,6 @@
             <number>24</number>
            </property>
           </widget>
-          <widget class="QPlainTextEdit" name="songsstatTextEdit">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>120</y>
-             <width>441</width>
-             <height>71</height>
-            </rect>
-           </property>
-          </widget>
           <widget class="QLabel" name="playlistdaysLabel">
            <property name="geometry">
             <rect>
@@ -335,6 +325,16 @@
              </widget>
             </item>
            </layout>
+          </widget>
+          <widget class="QTextBrowser" name="songsaddtextBrowser">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>120</y>
+             <width>441</width>
+             <height>61</height>
+            </rect>
+           </property>
           </widget>
          </widget>
         </item>
@@ -767,7 +767,7 @@
           <x>160</x>
           <y>10</y>
           <width>321</width>
-          <height>21</height>
+          <height>22</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="radiobuttonshorizontalLayout">
@@ -1057,7 +1057,7 @@
             <double>0.010000000000000</double>
            </property>
            <property name="value">
-            <double>2.100000000000000</double>
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -1067,7 +1067,7 @@
             <double>0.010000000000000</double>
            </property>
            <property name="value">
-            <double>2.200000000000000</double>
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -1077,7 +1077,7 @@
             <double>0.010000000000000</double>
            </property>
            <property name="value">
-            <double>1.600000000000000</double>
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -1087,7 +1087,7 @@
             <double>0.010000000000000</double>
            </property>
            <property name="value">
-            <double>1.400000000000000</double>
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>

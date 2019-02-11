@@ -51,17 +51,17 @@ StringVector2D readCSV(std::string filename)
     return result;
 }
 
-bool recentlyUpdated(std::string *_smmBackupDBDir)
+bool recentlyUpdated(const QString &s_mmBackupDBDir)
 {
     bool existResult{0};
     bool refreshNeededResult{0};
-    existResult = doesFileExist(Constants::existLibName);// See inline function at top
+    existResult = doesFileExist(Constants::cleanLibFile);// See inline function at top
     if (Constants::verbose == true) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
     if (existResult == 0) {refreshNeededResult = 1;}
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
     if (existResult == 1){
-        std::string mmdbdir = *_smmBackupDBDir; // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+        std::string mmdbdir = s_mmBackupDBDir.toStdString(); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
         std::string mmpath = mmdbdir + "/MM.DB";
         struct stat stbuf1;
         stat(mmpath.c_str(), &stbuf1);
@@ -70,7 +70,7 @@ bool recentlyUpdated(std::string *_smmBackupDBDir)
         if (Constants::verbose == true) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
         // Now get the date for the cleanlib.csv file
         struct stat stbuf2;
-        stat(Constants::existLibName, &stbuf2);
+        stat(Constants::cleanLibFile, &stbuf2);
         localtime(&stbuf2.st_mtime);
         //printf("Modification time for cleanlib.csv is %ld\n",stbuf2.st_mtime);
         if (Constants::verbose == true) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;
@@ -117,16 +117,15 @@ std::string getChgdDirStr(std::vector<std::string> const &input,std::string chgd
     return chgdString;
 }
 
-void getLibrary()
+void getLibrary(const QString &s_musiclibrarydirname)
 {
     std::ifstream filestr1;
     filestr1.open ("libtable.dsv");
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getLibrary: Error opening libtable.dsv file." << std::endl;}
-    std::string databaseFile = "libtable.dsv"; // now we can use it as input file
-    std::ofstream outf("cleanlib.dsv"); // output file for writing clean track paths
+    std::string databaseFile = "libtable.dsv"; // now we can use it as a temporary input file
+    std::ofstream outf(Constants::cleanLibFile); // output file for writing clean track paths
     std::ifstream primarySongsTable(databaseFile);
-    std::string s_musiclibrarydirname = "/media/sdc2"; // fix in main function**********************************
 
     if (!primarySongsTable.is_open())
     {
@@ -165,7 +164,7 @@ void getLibrary()
         {
             dirPathTokens.push_back(intermediate2);
         }
-        dirPathTokens.at(0) = s_musiclibrarydirname;
+        dirPathTokens.at(0) = s_musiclibrarydirname.toStdString();
         songPath1 = getChgdDirStr(dirPathTokens,songPath1);
         tokens.at(8) = songPath1;
         dirPathTokens.shrink_to_fit();
@@ -225,10 +224,10 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
                  int *_sSQL40DayTracksTot,double *_sSQL50TotTimeListened,int *_sSQL50DayTracksTot,double *_sSQL60TotTimeListened,
                  int *_sSQL60DayTracksTot) {
     std::ifstream filestr1;
-    filestr1.open ("cleanlib.dsv");
+    filestr1.open (Constants::cleanLibFile);
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getDBStats: Error opening cleanlib.dsv file." << std::endl;}
-    std::string databaseFile = "cleanlib.dsv"; // now we can use it as input file
+    std::string databaseFile = Constants::cleanLibFile; // now we can use it as input file
     std::ifstream primarySongsTable(databaseFile);
     double currDate = std::chrono::duration_cast<std::chrono::seconds>
             (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
@@ -346,10 +345,10 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
 {
     //std::cout << "Working on artist counts and factors. This will take a few seconds...";
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
-    cleanlib.open ("cleanlib.dsv");
+    cleanlib.open (Constants::cleanLibFile);
     if (cleanlib.is_open()) {cleanlib.close();}
     else {std::cout << "getArtistAdjustedCount: Error opening cleanlib.dsv file." << std::endl;}
-    std::string cleanlibSongsTable = "cleanlib.dsv";    // Now we can use it as input file
+    std::string cleanlibSongsTable = Constants::cleanLibFile;    // Now we can use it as input file
     std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib.dsv as ifstream
     if (!SongsTable.is_open())
     {
@@ -408,10 +407,10 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     if( remove( "artists2.txt" ) != 0 )
         perror( "getArtistAdjustedCount: Error deleting file" );
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
-    cleanlib2.open ("cleanlib.dsv");
+    cleanlib2.open (Constants::cleanLibFile);
     if (cleanlib2.is_open()) {cleanlib2.close();}
     else {std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;}
-    std::string cleanlibSongsTable2 = "cleanlib.dsv"; // now we can use it as input file
+    std::string cleanlibSongsTable2 = Constants::cleanLibFile; // now we can use it as input file
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open ("artists.txt");
     if (artists2.is_open()) {artists2.close();}
@@ -527,8 +526,6 @@ void buildDB()
 {
     if (Constants::verbose == true) std::cout << "Building the Archsimian database with artist intervals calculated....";
 
-    const std::string cleanLibFile("cleanlib.dsv"); // remove when adding to main*****************
-
     //****************
     // function createDatabase - writing ratedabbr.txt using multiple vectors
     //****************
@@ -536,10 +533,10 @@ void buildDB()
     // function getSubset() to create the file ratedabbr.txt, which will then be used for track selection functions
     std::ofstream ratedabbr("ratedabbr.txt"); // output file for subset table
     std::fstream filestrinterval;
-    filestrinterval.open (cleanLibFile);
+    filestrinterval.open (Constants::cleanLibFile);
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "Error opening cleanLibFile." << std::endl;}
-    std::string ratedlibrary = cleanLibFile; // now we can use it as input file
+    std::string ratedlibrary = Constants::cleanLibFile; // now we can use it as input file
     std::ifstream primarySongsTable(ratedlibrary);
     if (!primarySongsTable.is_open()){
         std::cout << "Error opening cleanLibFile." << std::endl;
