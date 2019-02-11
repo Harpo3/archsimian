@@ -19,6 +19,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <cstddef>
 #include "archsimian.h"
 #include "constants.h"
 #include "ui_archsimian.h"
@@ -117,6 +118,7 @@ static double s_avgListeningRateInMins{0.0};
 static int s_dateTranslation{12};
 static QString dateTransTextVal{" months"};
 static double sliderBaseVal3{0.0};
+static std::string s_selectedTrackPath{""};
 
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
@@ -686,15 +688,30 @@ void ArchSimian::on_addsongsButton_clicked(){
     ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
     //ui->progressBarPL->show();
     remove("songtext.txt");
+    std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
     int n;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8, s_rCode1TotTrackQty, m_prefs.repeatFreqCode1);
     for (n=0; n < numTracks; n++){
         if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-        selectTrack(s_ratingNextTrack);
+        selectTrack(s_ratingNextTrack,&s_selectedTrackPath);
+        std::string shortselectedTrackPath;
+        shortselectedTrackPath = s_selectedTrackPath;
+        std::string key1 ("/");
+        std::string key2 ("_");
+        //std::string key3 (".mp3");
+        shortselectedTrackPath.erase(0,12);
+        std::size_t found = shortselectedTrackPath.rfind(key1);
+        std::size_t found1 = shortselectedTrackPath.rfind(key2);
+        //std::size_t found2 = shortselectedTrackPath.rfind(key3);
+        if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}
+        if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length()," ");}
+        //if (found2!=std::string::npos){shortselectedTrackPath.replace (found,key3.length()," ");}
+        //std::cout <<s_playlistSize<< ". " << shortselectedTrackPath<<std::endl;
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
-        if (Constants::verbose == true) std::cout <<'\n';
-        std::cout <<", track "<< s_playlistSize << ", rating " << "___" << std::endl;
+        songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n';
+        //if (Constants::verbose == true) std::cout <<'\n';
+        //std::cout << ", rating " << "___" << std::endl;
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
         s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
         getExcludedArtists(s_histCount, s_playlistSize);
@@ -703,12 +720,13 @@ void ArchSimian::on_addsongsButton_clicked(){
         ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
         ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     }
+    songtext.close();
     //ui->progressBarPL->hide();
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",50000);
-    QFile songtext("songtext.txt");
-    if(!songtext.open(QIODevice::ReadOnly))
-        QMessageBox::information(nullptr,"info",songtext.errorString());
-    QTextStream in(&songtext);
+    QFile songtext1("songtext.txt");
+    if(!songtext1.open(QIODevice::ReadOnly))
+        QMessageBox::information(nullptr,"info",songtext1.errorString());
+    QTextStream in(&songtext1);
     ui->songsaddtextBrowser->setText(in.readAll());
 
 }
@@ -727,14 +745,14 @@ void ArchSimian::on_setlibraryButton_clicked(){
     //    else {
     setlibraryButton.setFileMode(QFileDialog::Directory);
     setlibraryButton.setOption(QFileDialog::ShowDirsOnly);
-    m_prefs.musicLibraryDir = QFileDialog::getExistingDirectory(
+    s_musiclibrarydirname= QFileDialog::getExistingDirectory(
                 this,
                 tr("Select Shared Music Library Directory"),
                 "/"
                 );
     ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
     // Write description note and directory configuration to archsimian.conf
-    //m_prefs.musicLibraryDir = s_musiclibrarydirname;
+    m_prefs.musicLibraryDir = s_musiclibrarydirname;
 
     //std::ofstream userconfig(Constants::userFileName);
     //std::string str("# Location of music library");

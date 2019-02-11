@@ -475,7 +475,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
 
 //std::ofstream outfratedint2("extendexcludes.txt"); // output file for writing ratedabbr2.txt with added artist intervals
 
-void selectTrack(int &s_ratingNextTrack){
+std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath){
     if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr2.txt");
@@ -487,7 +487,7 @@ void selectTrack(int &s_ratingNextTrack){
         std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
+    //std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
 
     std::string str1; // store the string for ratedabbr2.txt
     std::string str2; // store the string for artistexcludes.txt
@@ -503,7 +503,7 @@ void selectTrack(int &s_ratingNextTrack){
     std::string playlistPos;
     std::string songLengtha; //just added
     std::string artistIntervala;
-    std::string selectedTrackPath;
+    //std::string selectedTrackPath;
     static bool s_excludeMatch{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
     if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
@@ -574,23 +574,24 @@ void selectTrack(int &s_ratingNextTrack){
     std::sort (finaltracksvect.begin(), finaltracksvect.end());
     std::string fullstring = finaltracksvect.front();
     std::vector<std::string> splittedStrings = split(fullstring, ',');
-    selectedTrackPath = splittedStrings[1];
+    *s_selectedTrackPath = splittedStrings[1];
     if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
-    playlist << selectedTrackPath << "\n";
+    playlist << *s_selectedTrackPath << "\n";
     playlist.close();
     int new_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
     std::string selectedTrackPathshort;
    // selectedTrackPathshort = (selectedTrackPath.find('/') + 1);
-    songtext << new_playlistSize<<". "<<"  need to fix         "<<'\n';
+    //songtext << new_playlistSize<<". "<<"  need to fix         "<<'\n';
     ratedSongsTable.close();
-    songtext.close();
+    //songtext.close();
     if (Constants::verbose == true) std::cout <<'\n';
-    std::cout << "Added "<< selectedTrackPath;
+    //std::cout << "Added "<< *s_selectedTrackPath;
     //remove("ratedabbr2.txt");
     //ratedabbrvec.shrink_to_fit();
     finaltracksvect.shrink_to_fit();
+    return *s_selectedTrackPath;
     // add formatted report with: playlistPos + ". " + Artist + " - " + SongTitle + " (" + SongLength +
     // ") - Rating " + ratingCode ", Last played " + LastTimePlayed + ", Custom Group " + selectedArtistToken + '\n';
 }
