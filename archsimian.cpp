@@ -12,6 +12,7 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <sstream>
+#include <cassert>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -281,6 +282,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_MMdbUpdated == true) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
     // If result is 1, remove ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
     {
+        KDEmessage("ArchSimian Library Update Notification","A new MediaMonkey database backup was "
+                                                      "identified...updating the ArchSimian "
+                                                      "database. The program will launch when completed...",15);
         remove("ratedabbr.txt");
         s_bool_RatedAbbrExist = false;
         remove("ratedabbr2.txt");
@@ -292,7 +296,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         remove("cleanedplaylist.txt");
         s_bool_PlaylistExist = false;
         //ui->refreshdbButton->setEnabled(true);
-        ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));}
+        ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));
+        //const char* const argz[] = {"--title", "Updating Library", "--passivepopup", "The MediaMonkey library was recently backed up. This will take a minute to complete.", "30", nullptr};
+        //execvp("kdialog", argz);
+    }
 
 // Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table into Archsimian: If user configuration
     // and MM4 data exist, but the songs table does not (bool_IsUserConfigSet, s_bool_MMdbExist are true, s_bool_CleanLibExist is false), import songs table into AS, by running
@@ -664,6 +671,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->factor7doubleSpinBox->setValue(m_prefs.s_repeatFactorCode7);
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
+    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->monthsradioButton->click();
 }
 
@@ -701,10 +709,11 @@ void ArchSimian::on_addsongsButton_clicked(){
         getExcludedArtists(s_histCount, s_playlistSize);
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                                s_ratingRatio7,s_ratingRatio8, s_rCode1TotTrackQty, m_prefs.repeatFreqCode1);
-        ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
-        ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    }
+        }
     songtext.close();
+    ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
+    double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
+    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(currplaylistdays,'g', 3));
     //ui->progressBarPL->hide();
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",50000);
     QFile songtext1("songtext.txt");

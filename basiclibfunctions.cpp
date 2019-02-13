@@ -617,3 +617,32 @@ void buildDB()
     ratedabbrvect.shrink_to_fit();
     if (Constants::verbose == true) std::cout << "...finished!" << std::endl;
 }
+
+void KDEmessage(std::string title, std::string msgtxt, int seconds){
+    //First, build and write the python script file
+    std::string str1{"#!/usr/bin/python3"};
+    std::string str2{"import os, sys "};
+    std::string str3{"import subprocess"};
+    //Build str 4 with substrings and user defined variables
+    std::string pre4a{"subprocess.run(['kdialog', '--title', '"};
+    std::string x {title};
+    std::string pre4b{"', '--passivepopup','"};
+    std::string y {msgtxt};
+    std::string pre4c{"', '"};
+    int z {seconds};
+    std::string pre4d{"'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)"};
+    std::string str4{pre4a + x + pre4b + y + pre4c + std::to_string(z) + pre4d};
+    std::ofstream popupmsgfile("popupmsg.py");
+    popupmsgfile << str1 << "\n";
+    popupmsgfile << str2 << "\n";
+    popupmsgfile << str3 << "\n";
+    popupmsgfile << str4 << "\n";
+    popupmsgfile.close();
+    // Second, execute python script
+    std::string pythonCode = "popupmsg.py";
+    std::string command = "python ";
+    command += pythonCode;
+    system(command.c_str());
+    // Third, remove script file after execution
+    //remove ("popupmsg.py");
+}

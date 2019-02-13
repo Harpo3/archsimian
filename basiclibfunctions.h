@@ -27,4 +27,5 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                             int *_srCode3TotTrackQty,int *_srCode4TotTrackQty,int *_srCode5TotTrackQty,
                             int *_srCode6TotTrackQty,int *_srCode7TotTrackQty,int *_srCode8TotTrackQty);
 void buildDB();
+void KDEmessage(std::string title, std::string msgtxt, int seconds);
 #endif // BASICLIBFUNCTIONS_H
