@@ -27,7 +27,7 @@ const char cleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSim
 const char cleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
 
 // Constant to turn on or off troubleshooting feedback in console
-const bool verbose{false};
+const bool verbose{true};
 
 }
 #endif // CONSTANTS_H

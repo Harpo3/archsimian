@@ -71,6 +71,7 @@ private slots:
 
 private:
     Ui::ArchSimian *ui;
+    QString m_sSettingsFile;
 
 public:
     void closeEvent(QCloseEvent *event);

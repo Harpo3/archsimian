@@ -10,6 +10,7 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QSettings>
+#include <QApplication>
 #include <QCloseEvent>
 #include <sstream>
 #include <cassert>
@@ -123,6 +124,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
+    m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf";
     loadSettings(); // load user settings
     s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
