@@ -181,9 +181,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         //dim the setmmplButton button
         ui->setmmplButton->setEnabled(true);
         //enable the reset button
-        //std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5);
         ui->setmmdblabel->setText(m_prefs.mmBackupDBDir);
-        //std::string selectedplaylist = userconfig::getConfigEntry(7);
         ui->setgetplaylistLabel->setText("Selected: " + m_prefs.defaultPlaylist);
         //dim the setmmdbButton button
         ui->setmmdbButton->setEnabled(true);
