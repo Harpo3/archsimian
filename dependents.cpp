@@ -8,6 +8,7 @@
 #include <iostream>
 #include <unistd.h>
 #include "userconfig.h"
+#include <QString>
 
 inline bool doesFileExist (const std::string& name) {
     struct stat buffer;
@@ -70,7 +71,7 @@ bool isAppRunning(std::string x)
     else {return true;}
 }
 
-bool isLibRefreshNeeded()
+bool isLibRefreshNeeded(const QString &s_mmBackupDBDir)
 {
     const std::string existlibname = "ratedlib.dsv";
     bool existResult;
@@ -81,7 +82,7 @@ bool isLibRefreshNeeded()
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
     if (existResult == 1){
-        std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+        std::string mmdbdir = s_mmBackupDBDir.toStdString(); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
         std::string mmpath = mmdbdir + "/MM.DB";
         struct stat stbuf1;
         stat(mmpath.c_str(), &stbuf1);
@@ -105,9 +106,9 @@ bool isLibRefreshNeeded()
     return refreshNeededResult;
 }
 
-std::string getMMdbDate()
+std::string getMMdbDate(const QString &s_mmBackupDBDir)
 {
-    std::string mmdbdir = userconfig::getConfigEntry(5); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+    std::string mmdbdir = s_mmBackupDBDir.toStdString(); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
     std::string mmpath = mmdbdir + "/MM.DB";
     struct stat stbuf1;
     struct tm *foo;

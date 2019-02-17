@@ -61,7 +61,7 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
     // If the lib file exists, Get the epoch date for the MM.DB file
     // and see which file is older
     if (existResult == 1){
-        std::string mmdbdir = s_mmBackupDBDir.toStdString(); // z: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath);
+        std::string mmdbdir = s_mmBackupDBDir.toStdString();
         std::string mmpath = mmdbdir + "/MM.DB";
         struct stat stbuf1;
         stat(mmpath.c_str(), &stbuf1);
@@ -109,7 +109,7 @@ std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgd
 // Function to return all vector contents to a single dir path string using a '/' delimiter
 std::string getChgdDirStr(std::vector<std::string> const &input,std::string chgdString) {
     std::ostringstream oschgdString;
-    std::string s_musiclibrarydirname = "/media/sdc2"; // fix in main function**********************************
+    std::string s_musiclibrarydirname = "/mnt/music"; // fix in main function**********************************
     for (unsigned long i = 1; i < input.size(); i++) {
         oschgdString << '/' << input.at(i);
     }

@@ -53,9 +53,7 @@ static bool s_bool_RatedAbbrExist{false};
 static bool s_bool_PlaylistExist{false};
 static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
-static QString s_mmBackupDBDir{""};
-static QString s_musiclibrarydirname{""};
-static QString mmPlaylistDir{""};
+
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
 static double s_daysTillRepeatCode3 = 65.0;
@@ -116,6 +114,11 @@ static QString dateTransTextVal{" months"};
 static double sliderBaseVal3{0.0};
 static std::string s_selectedTrackPath{""};
 
+static QString s_mmBackupDBDir{""};
+static QString s_musiclibrarydirname{""};
+static QString mmPlaylistDir{""};
+static QString s_defaultPlaylist{""};
+
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
@@ -136,6 +139,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
     s_musiclibrarydirname = m_prefs.musicLibraryDir;
+    s_defaultPlaylist = m_prefs.defaultPlaylist;
+
     //
 // Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
@@ -193,7 +198,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::verbose == true) std::cout << "Step 1. Checking isLibRefreshNeeded(): "<<needUpdate<<std::endl;
         if (needUpdate == 0)
         {
-            s_MMdbDate = getMMdbDate();
+            s_MMdbDate = getMMdbDate(s_mmBackupDBDir);
             s_LastTableDate = getLastTableDate();
             ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+
                                            tr(", Library date: ")+ QString::fromStdString(s_LastTableDate));
@@ -323,7 +328,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         c_pid = fork(); // Run fork function
         int status; // For status of pid process
         if( c_pid == 0 ){ // Child process: Get songs table from MM4 database, and create libtable.dsv with table;
-            //std::string s_mmbackupdbdirname = userconfig::getConfigEntry(5); // 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
             // revise for QStandardPaths class if this does not set with makefile for this location
             const std::string sqlpathdirname = getenv("HOME");
             s_mmBackupDBDir = m_prefs.mmBackupDBDir + "/MM.DB";
@@ -593,7 +597,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_PlaylistExist == false){
         if (Constants::verbose == true){std::cout << "Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
         //getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
-        std::string s_selectedplaylist = userconfig::getConfigEntry(7);
+        std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
         if (s_selectedplaylist != "") {
             s_bool_PlaylistSelected = true;
             if (Constants::verbose == true){std::cout << "Step 9. Playlist found in user config." << std::endl;}
@@ -608,7 +612,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_PlaylistSelected == true) && (s_bool_PlaylistExist == false))
     {
         if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
-        getPlaylist();
+        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
         s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
         if (s_bool_PlaylistExist == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }

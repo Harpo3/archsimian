@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <QString>
 
 std::istream& safeGetline(std::istream& is, std::string& t){
     t.clear();
@@ -47,10 +48,10 @@ int cstyleStringCount(std::string path){
     return n;
 }
 
-void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving just the file path
+void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
-    static std::string s_selectedplaylist = userconfig::getConfigEntry(7);//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
-    static std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
+    static std::string s_selectedplaylist = s_defaultPlaylist.toStdString();//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+    static std::string musiclibdirname = s_musiclibrarydirname.toStdString();
     std::string playlistFile = s_selectedplaylist;
     std::ifstream readFile(playlistFile);
     std::ofstream outf("cleanedplaylist.txt");
@@ -69,7 +70,7 @@ void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving ju
         std::string str2 ("\\");
         std::size_t found = line.find(str2);
         if (found!=std::string::npos) {// colon is one char before the first dir symbol
-            line.replace(line.find(str2),str2.length(),s_musiclibrarydirname + "/");
+            line.replace(line.find(str2),str2.length(),musiclibdirname + "/");
             found=line.find("second dir symbol",found+1,1);
             line.replace(line.find(str2),str2.length(),"/");
             found=line.find("third dir symbol",found+1,1);
