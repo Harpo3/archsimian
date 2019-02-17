@@ -48,6 +48,7 @@ int cstyleStringCount(std::string path){
 }
 
 void getPlaylist(){   //  Purpose is to remove the m3u headers lines, leaving just the file path
+    // need to change config management for selected playlist and music library directory to QSettings format
     static std::string s_selectedplaylist = userconfig::getConfigEntry(7);//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
     static std::string s_musiclibrarydirname = userconfig::getConfigEntry(1);
     std::string playlistFile = s_selectedplaylist;
