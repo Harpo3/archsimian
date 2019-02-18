@@ -39,7 +39,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -373,9 +373,9 @@
         <property name="geometry">
          <rect>
           <x>140</x>
-          <y>20</y>
-          <width>261</width>
-          <height>31</height>
+          <y>10</y>
+          <width>341</width>
+          <height>41</height>
          </rect>
         </property>
         <property name="layoutDirection">
@@ -421,7 +421,7 @@
          <rect>
           <x>140</x>
           <y>60</y>
-          <width>261</width>
+          <width>331</width>
           <height>31</height>
          </rect>
         </property>
@@ -453,7 +453,7 @@
          <rect>
           <x>140</x>
           <y>100</y>
-          <width>271</width>
+          <width>331</width>
           <height>31</height>
          </rect>
         </property>
@@ -467,11 +467,11 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="instructionlabel">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>210</y>
+          <y>140</y>
           <width>451</width>
           <height>121</height>
          </rect>
@@ -483,7 +483,7 @@
          <number>15</number>
         </property>
         <property name="text">
-         <string>Welcome to ArchSimian! The program was created to improve the &quot;primary&quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. First you need to identify the location where your music library is stored, then set the locations where you did backups for your M3U playlist and the MM.DB file. Once you set these, you can select the M3U file and import the database and enable all of the program features!</string>
+         <string>Welcome to ArchSimian! The program was created to improve the &quot;primary&quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. Use the frequency tab to set your time preferences using the statistics found in the statistics tab. Then use the playlist tab to add tracks to the playlist using the settings specified.</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>

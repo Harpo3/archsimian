@@ -12,6 +12,7 @@
 #include <QSettings>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QtWidgets>
 #include <sstream>
 #include <cassert>
 #include <unistd.h>
@@ -31,6 +32,7 @@
 #include "writesqlfile.h"
 #include "basiclibfunctions.h"
 #include "playlistfunctions.h"
+#include "dialogsetup.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -120,10 +122,12 @@ static QString s_musiclibrarydirname{""};
 static QString mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 
+
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
+    QWidget setupwindow;
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf";
     loadSettings(); // load user settings
     s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
@@ -142,35 +146,47 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
     s_musiclibrarydirname = m_prefs.musicLibraryDir;
     s_defaultPlaylist = m_prefs.defaultPlaylist;
+    mmPlaylistDir = m_prefs.mmPlaylistDir;
 
     //
-// Step 1. Determine if user configuration exists:  Run isConfigSetup() function (s_bool_IsUserConfigSet)
+// Step 1. Determine if user configuration exists:  OLD: Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
-    // UI configuration: set default state to "false" for user config reset buttons
+    // NEW: Use QSettings to check the existence of entries for mmBackupDBDir, mmPlaylistDir, and musicLibraryDir
+    // If any are blank, or the dir does not exist, of file MM.DB does not exist at the location, then
+    // launch child window for user to set the locations prior to launch of main window. When child window
+    // is closed verfiy the locations anf files selected exist.
+    //
+
+    // UI configuration: determine state of user config
     ui->setupUi(this);
     ui->mainQTabWidget->setCurrentIndex(0);
+    if ((s_mmBackupDBDir != nullptr) && (s_musiclibrarydirname != nullptr) && (mmPlaylistDir != nullptr)){
+        // add code to verify file /dir locations *****************
+        if (Constants::verbose == true) {std::cout << "Step 1. s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDirset up." <<std::endl;}
+        s_bool_IsUserConfigSet = true;
+    }
 
     //Check whether the configuration file currently has any data in it
-    std::streampos archsimianconfsize;
-    char * memblock;
-    std:: ifstream file ("archsimian.conf", std::ios::in|std::ios::binary|std::ios::ate);
-    if (file.is_open())
-    {
-        archsimianconfsize = file.tellg();
-        memblock = new char [archsimianconfsize];
-        file.seekg (0, std::ios::beg);
-        file.read (memblock, archsimianconfsize);
-        file.close();
-        delete[] memblock;
-    }
+    //std::streampos archsimianconfsize;
+    //char * memblock;
+    //std:: ifstream file ("archsimian.conf", std::ios::in|std::ios::binary|std::ios::ate);
+    //if (file.is_open())
+    //{
+    //    archsimianconfsize = file.tellg();
+    //    memblock = new char [archsimianconfsize];
+    //    file.seekg (0, std::ios::beg);
+    //    file.read (memblock, archsimianconfsize);
+    //    file.close();
+    //    delete[] memblock;
+    //}
     else {
         s_bool_IsUserConfigSet = false;
         std::cout << "Step 1. Unable to open archsimian.conf configuration file or file has no data. s_bool_IsUserConfigSet result: "<< s_bool_IsUserConfigSet<<std::endl;
     }
     //If configuration has already been set, populate the ui labels accordingly
-    if (archsimianconfsize != 0)
+    if (s_bool_IsUserConfigSet == true)
     {
-        s_bool_IsUserConfigSet = true;
+
         if (Constants::verbose == true) std::cout << "Step 1. Configuration has already been set. s_bool_IsUserConfigSet result: "<<s_bool_IsUserConfigSet<<std::endl;
         //ui->setCurrentIndex(0);
         m_prefs.musicLibraryDir = s_musiclibrarydirname;
@@ -210,26 +226,33 @@ ArchSimian::ArchSimian(QWidget *parent) :
     else {  // Otherwise, configuration has not been set. Load instructions for user to locate and set config
         // Initially, only the first of three config buttons is activated. Build the file in sequence.
         s_bool_IsUserConfigSet = false;
-        ui->setlibrarylabel->setText(tr("Select the base directory of "
-                                        "your music library"));
+        if (Constants::verbose == true) std::cout << "Step 1. Configuration has not been set. Adjusting gui settings"<<std::endl;
+
+        ui->setlibrarylabel->setText(tr(""));
         ui->setlibraryButton->setEnabled(true);
-        ui->setmmpllabel->setText(tr("Select the shared Windows directory"
-                                     " where you manually exported your playlist(s) from MediaMonkey"));
+        ui->setmmpllabel->setText(tr(""));
         ui->setmmplButton->setEnabled(true);
-        ui->setmmdblabel->setText(tr("Select the shared Windows directory"
-                                     " where you stored the MediaMonkey database backup file (MM.DB)"));
-        ui->setmmdbButton->setEnabled(false);
+        ui->setmmdblabel->setText(tr(""));
+        ui->setmmdbButton->setEnabled(true);
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
         ui->mainQTabWidget->setCurrentIndex(1);
+        ui->setlibrarylabel->setText(tr("Set the home directory (top level) of the music library and store in user settings."));
+        ui->setmmpllabel->setText(tr("Select the shared Windows directory where you store your m3u playlists."));
+        ui->setmmdblabel->setText(tr("Select the shared Windows directory where you stored the MediaMonkey database (MM.DB) backup file."));
+        ui->instructionlabel->setText(tr("ArchSimian Setup: (1) identify the location where your music library is stored, then "
+                                         "(2) set the locations where you did backups for your M3U playlist, and (3) set the locations"
+                                         " where you did backup of the MM.DB file. After these three are set, exit and restart the program."));
     }
 
     //******************************************
 
 // Step 2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
 
+    if (s_bool_IsUserConfigSet == true) {
     std::string mmdbdir = s_mmBackupDBDir.toStdString();
     const std::string mmpath = mmdbdir + "/MM.DB";
     s_bool_MMdbExist = doesFileExist(mmpath);
+
 
     //    a. If s_boolIsUserConfigSet is true, but s_bool_MMdbExist is false, report to user that MM.DB was not found at the
     //       location specified and set s_bool_IsUserConfigSet to false
@@ -237,6 +260,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
 
     if (Constants::verbose == true) std::cout << "Step 2. Does MM.DB file exist. s_bool_MMdbExist result: "<< s_bool_MMdbExist << std::endl;
+    }
 
     if (s_bool_IsUserConfigSet == false) {
         s_bool_MMdbExist = false;
@@ -273,37 +297,39 @@ ArchSimian::ArchSimian(QWidget *parent) :
             if (cleanLibFilesize != 0) {s_bool_CleanLibExist = true;}//doesFileExist(cleanLibFile);
         }
     }
-    if (Constants::verbose == true) std::cout << "Step 3. Does CleanLib file exist. s_bool_CleanLibExist result: "
+    if ((Constants::verbose == true)&&(s_bool_IsUserConfigSet == true)) std::cout << "Step 3. Does CleanLib file exist. s_bool_CleanLibExist result: "
                                               << s_bool_CleanLibExist << std::endl;
 
     // 4. Determine if MM.DB was recently updated: s_bool_MMdbUpdated is set by comparing MM.DB file date
     // to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
     // will need to be updated.
 
-    s_bool_MMdbUpdated = recentlyUpdated(s_mmBackupDBDir);
-    if (Constants::verbose == true) std::cout << "Step 4. Is the MM.DB file date newer (greater) than the CleanLib file date."
-                                                 " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
-    // set ui labels if MM.DB was recently updated
-    if (s_bool_MMdbUpdated == true) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
-    // If result is 1, remove ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
-    {
-        KDEmessage("ArchSimian Library Update Notification","A new MediaMonkey database backup was "
-                                                      "identified...updating the ArchSimian "
-                                                      "database. The program will launch when completed...",15);
-        remove("ratedabbr.txt");
-        s_bool_RatedAbbrExist = false;
-        remove("ratedabbr2.txt");
-        remove("artistsadj.txt");
-        s_bool_artistsadjExist = false;
-        remove("playlistposlist.txt");
-        remove("artistexcludes.txt");
-        s_bool_ExcludedArtistsProcessed = false;
-        remove("cleanedplaylist.txt");
-        s_bool_PlaylistExist = false;
-        //ui->refreshdbButton->setEnabled(true);
-        ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));
-        //const char* const argz[] = {"--title", "Updating Library", "--passivepopup", "The MediaMonkey library was recently backed up. This will take a minute to complete.", "30", nullptr};
-        //execvp("kdialog", argz);
+    if (s_bool_IsUserConfigSet == true) {
+        s_bool_MMdbUpdated = recentlyUpdated(s_mmBackupDBDir);
+        if (Constants::verbose == true) std::cout << "Step 4. Is the MM.DB file date newer (greater) than the CleanLib file date."
+                                                     " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
+        // set ui labels if MM.DB was recently updated
+        if (s_bool_MMdbUpdated == true) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
+            // If result is 1, remove ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
+        {
+            KDEmessage("ArchSimian Library Update Notification","A new MediaMonkey database backup was "
+                                                                "identified...updating the ArchSimian "
+                                                                "database. The program will launch when completed...",15);
+            remove("ratedabbr.txt");
+            s_bool_RatedAbbrExist = false;
+            remove("ratedabbr2.txt");
+            remove("artistsadj.txt");
+            s_bool_artistsadjExist = false;
+            remove("playlistposlist.txt");
+            remove("artistexcludes.txt");
+            s_bool_ExcludedArtistsProcessed = false;
+            remove("cleanedplaylist.txt");
+            s_bool_PlaylistExist = false;
+            //ui->refreshdbButton->setEnabled(true);
+            ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));
+            //const char* const argz[] = {"--title", "Updating Library", "--passivepopup", "The MediaMonkey library was recently backed up. This will take a minute to complete.", "30", nullptr};
+            //execvp("kdialog", argz);
+        }
     }
 
 // Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table into Archsimian: If user configuration
@@ -316,7 +342,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // run doesFileExist (const std::string& name) function. After verifying  cleanlib.dsv exists, remove temporary basic table file
     // libtable.dsv Evaluates s_bool_CleanLibExist for existence of cleanlib.dsv (cleanLibFile)
 
-    if ((Constants::verbose == true)&&(s_bool_MMdbUpdated == false)&&(s_bool_CleanLibExist == true)){
+    if ((Constants::verbose == true)&&(s_bool_MMdbUpdated == false)&&(s_bool_CleanLibExist == true)&&(s_bool_IsUserConfigSet == true)){
         std::cout << "Step 5. CleanLib file exists and MM.DB was not recently updated. Skip to Step 6."<< std::endl;}
 
     if (((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == false)) || (s_bool_MMdbUpdated == true)) {
@@ -359,7 +385,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 // Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
     // songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), run function to process/update statistics getDBStats()
 
-    if (Constants::verbose == true) std::cout << "Step 6. User configuration exists, MM.DB exists and songs table exists. Processing database statistics:" << std::endl;
+    if ((Constants::verbose == true) && (s_bool_IsUserConfigSet == true)&& (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true))std::cout << "Step 6. User configuration exists, MM.DB exists and songs table exists. Processing database statistics:" << std::endl;
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)) {
         getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
@@ -485,7 +511,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     else {
         s_bool_dbStatsCalculated = false;
+        if (s_bool_IsUserConfigSet == true){
         std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
+        }
     }
 
 // Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
@@ -582,12 +610,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (s_bool_RatedAbbrExist == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
         if ((s_bool_RatedAbbrExist == true)&&(Constants::verbose == true)){std::cout << "Step 8. ratedabbr.txt was created." << std::endl;}
     }
-    if ((Constants::verbose == true)&& (s_bool_RatedAbbrExist == true)){std::cout << "Step 8. MM.DB and artist.adj not recently updated. ratedabbr.txt not updated." << std::endl;}
+    if ((Constants::verbose == true)&& (s_bool_RatedAbbrExist == true)&&(s_bool_IsUserConfigSet == true)){std::cout << "Step 8. MM.DB and artist.adj not recently updated. ratedabbr.txt not updated." << std::endl;}
 
     // 9. Determine if a playlist exists, and if not, determine if it was identified as being selected in the user's config:
     // Determine if cleaned (path-corrected) playlist selected (s_bool_PlaylistExist) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
     // sets bool6 and bool7
 
+
+    if (s_bool_IsUserConfigSet == true){
     s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
     if (s_bool_PlaylistExist == true) {
         s_bool_PlaylistSelected = true;
@@ -603,6 +633,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             if (Constants::verbose == true){std::cout << "Step 9. Playlist found in user config." << std::endl;}
         }
     }
+    }
     // 10. If a playlist was identified in the user config, but the playlist file is not found, obtain the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists (s_bool_PlaylistSelected is true),
     // but cleaned playlist does not (s_bool_PlaylistExist is false), run function to obtain cleaned playlist file getPlaylist() then set s_bool_PlaylistExist to true,
@@ -616,7 +647,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
         if (s_bool_PlaylistExist == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }
-    if ((Constants::verbose == true)&& (s_bool_PlaylistExist == true)){std::cout << "Step 10. Playlist exists and was not updated." << std::endl;}
+    if ((Constants::verbose == true)&& (s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true)){std::cout << "Step 10. Playlist exists and was not updated." << std::endl;}
 
     // NOTE: functions used in the next  three steps (11-13) will later be reused when adding tracks to
     // playlist - here, this is to get the initial values if a playlist exists
@@ -624,7 +655,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
 
-    if (s_bool_PlaylistExist == true) {
+    if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true)) {
         s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
         if (Constants::verbose == true){std::cout << "Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
     }
@@ -636,7 +667,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
     // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
     // and SequentialTrackLimit obtained with data from function getDBStats()]
-    if (s_bool_PlaylistExist == true) {
+    if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true)) {
         s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
         s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
         if (Constants::verbose == true){std::cout << "Step 12. s_histCount is: "<< s_histCount << std::endl;}
@@ -649,34 +680,53 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
     //ratingCodeSelected and selectTrack
 
-    if (s_bool_PlaylistExist == true)   {
+    if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true))   {
         getExcludedArtists(s_histCount, s_playlistSize);
     }
-    ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
-    //playlistdaysLabel
-    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    //s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong)
-    ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
-    ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
-    ui->statusBar->addPermanentWidget(ui->progressBarPL);
-    ui->progressBarPL->hide();
-    ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
-    ui->factor3horizontalSlider->setMinimum(10);
-    ui->factor3horizontalSlider->setMaximum(120);
-    ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
-    ui->factor3IntTxtLabel->setNum(s_daysTillRepeatCode3);
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    ui->factor4doubleSpinBox->setValue(m_prefs.s_repeatFactorCode4);
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    ui->factor5doubleSpinBox->setValue(m_prefs.s_repeatFactorCode5);
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    ui->factor6doubleSpinBox->setValue(m_prefs.s_repeatFactorCode6);
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    ui->factor7doubleSpinBox->setValue(m_prefs.s_repeatFactorCode7);
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
-    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    ui->monthsradioButton->click();
+    if (s_bool_IsUserConfigSet == true){
+        ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
+        //playlistdaysLabel
+        ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+        //s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong)
+        ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
+        ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
+        ui->statusBar->addPermanentWidget(ui->progressBarPL);
+        ui->progressBarPL->hide();
+        ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
+        ui->factor3horizontalSlider->setMinimum(10);
+        ui->factor3horizontalSlider->setMaximum(120);
+        ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
+        ui->factor3IntTxtLabel->setNum(s_daysTillRepeatCode3);
+        ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+        ui->factor4doubleSpinBox->setValue(m_prefs.s_repeatFactorCode4);
+        ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+        ui->factor5doubleSpinBox->setValue(m_prefs.s_repeatFactorCode5);
+        ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+        ui->factor6doubleSpinBox->setValue(m_prefs.s_repeatFactorCode6);
+        ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+        ui->factor7doubleSpinBox->setValue(m_prefs.s_repeatFactorCode7);
+        ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+        ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
+        ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+        ui->monthsradioButton->click();
+        ui->playlistTab->setEnabled(1);
+        ui->statisticsTab->setEnabled(1);
+        ui->frequencyTab->setEnabled(1);
+        ui->mainQTabWidget->setTabEnabled(4, false);
+        ui->mainQTabWidget->setTabEnabled(5, false);
+    }
+    if (s_bool_IsUserConfigSet == false){
+        ui->mainQTabWidget->setTabEnabled(0, false);
+        ui->mainQTabWidget->setTabEnabled(2, false);
+        ui->mainQTabWidget->setTabEnabled(3, false);
+        ui->mainQTabWidget->setTabEnabled(4, false);
+        ui->mainQTabWidget->setTabEnabled(5, false);
+        //QList<QWidget*> list = ui->mainQTabWidget->findChildren<QWidget*>() ;
+        //foreach( QWidget* w, list ) {
+        //   w->setEnabled(false) ;
+        //}
+        ui->settingsTab->setEnabled(1);
+    }
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
@@ -696,12 +746,12 @@ void ArchSimian::on_addsongsButton_clicked(){
         std::string key1 ("/");
         std::string key2 ("_");
         //std::string key3 (".mp3");
-        shortselectedTrackPath.erase(0,12);
+        shortselectedTrackPath.erase(0,11);
         std::size_t found = shortselectedTrackPath.rfind(key1);
         std::size_t found1 = shortselectedTrackPath.rfind(key2);
         //std::size_t found2 = shortselectedTrackPath.rfind(key3);
         if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}
-        if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length()," ");}
+        if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length(),"");}
         //if (found2!=std::string::npos){shortselectedTrackPath.replace (found,key3.length()," ");}
         //std::cout <<s_playlistSize<< ". " << shortselectedTrackPath<<std::endl;
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");

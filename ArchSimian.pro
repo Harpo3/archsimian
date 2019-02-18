@@ -35,7 +35,8 @@ SOURCES += \
     reformatlib.cpp \
     writesqlfile.cpp \
     basiclibfunctions.cpp \
-    playlistfunctions.cpp
+    playlistfunctions.cpp \
+    dialogsetup.cpp
 
 HEADERS += \
     archsimian.h \
@@ -48,10 +49,12 @@ HEADERS += \
     reformatlib.h \
     writesqlfile.h \
     playlistfunctions.h \
-    basiclibfunctions.h
+    basiclibfunctions.h \
+    dialogsetup.h
 
 FORMS += \
-    archsimian.ui
+    archsimian.ui \
+    dialogsetup.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
