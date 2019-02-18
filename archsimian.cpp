@@ -32,7 +32,6 @@
 #include "writesqlfile.h"
 #include "basiclibfunctions.h"
 #include "playlistfunctions.h"
-#include "dialogsetup.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
