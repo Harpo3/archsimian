@@ -178,25 +178,25 @@ void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
 }
 
 int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
-                       double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8, int &s_rCode1TotTrackQty, int &repeatFreqCode1){
+                       double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8){
     //Lookup the rating codes for last two tracks on the playlist;
     //std::cout << "ratingCodeSelected started." << std::endl;
 
     int x = 0; // variable to return the rating code to be used for the next track selection
-    bool isRating1Qty = (s_rCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
-    int rating1PosCount{0};
+    //bool isRating1Qty = (s_rCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
+   // int rating1PosCount{0};
     //std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
-    if (isRating1Qty == true) //Before going to logic for other rating codes, determine whether to select rating code 1
-    {
+   // if (isRating1Qty == true) //Before going to logic for other rating codes, determine whether to select rating code 1
+    //{
         // check if rating 1 total in playlist is equal to *_srCode1TotTrackQty; if true
         // set isRating1Qty to false and continue function
         // Else calculate the 'most recent' playlist position and set variable rating1PosCountuse
         // Compare rating1PosCount with *_srepeatFreqForCode1
-        bool select1Here{0};
-        select1Here = (rating1PosCount == repeatFreqCode1);
+        //bool select1Here{0};
+       // select1Here = (rating1PosCount == repeatFreqCode1);
         //std::cout << "rating Code 1 Selection started. bool isRating1Qty result is: "<< isRating1Qty <<" and select1Here result is: "<<select1Here<< std::endl;
-        rating1PosCount = 1;
-    }
+       // rating1PosCount = 1;
+    //}
     std::string codeForPos1;
     std::string codeForPos2;
     bool exclude7and8 = false;
@@ -473,8 +473,6 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
 // Sort vector to select the oldest dated track for addition to the playlist
 // Write/append the cleanedplaylist.txt file the oldest dated track found.
 
-//std::ofstream outfratedint2("extendexcludes.txt"); // output file for writing ratedabbr2.txt with added artist intervals
-
 std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath){
     if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     std::fstream filestrinterval;
@@ -487,8 +485,6 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
         std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    //std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
-
     std::string str1; // store the string for ratedabbr2.txt
     std::string str2; // store the string for artistexcludes.txt
     std::string str3; // store the string for ratedabbr2.txt (second opening)
@@ -503,7 +499,6 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::string playlistPos;
     std::string songLengtha; //just added
     std::string artistIntervala;
-    //std::string selectedTrackPath;
     static bool s_excludeMatch{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
     if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
@@ -533,7 +528,6 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
         }
         if (playlistPos == "0") {notInPlaylist = 1;}
         else if (playlistPos != "0"){notInPlaylist = 0;}// store temp variable to check that item is not in playlist
-        //std::cout << "Artist: " << selectedArtistToken;
         // For either of these variable results, continue to next row: (1) rating is not equal to s_ratingNextTrack (2) item is already on the
         // playlist, notInPlaylist == false
         if (notInPlaylist == 0) {continue;}
@@ -545,7 +539,6 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
         }
         // If not yet skipped, open an inner loop and iterate through artistexcludes.txt and compare each entry against the artist token.
         // Continue to next row if a match found.
-        //std::cout << "selectTrack function: ifstream artistexcludes." << std::endl;
         std::ifstream artistexcludes;  // Next ensure artistexcludes.txt is ready to open
         artistexcludes.open ("artistexcludes.txt");
         if (artistexcludes.is_open()) {artistexcludes.close();}
@@ -561,8 +554,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             //std::cout << "Artist from artistexcludes.txt: "<< str2<<". Artist with sel rating from ratedabbr2.txt is: "<<selectedArtistToken << std::endl;
             std::istringstream iss(str2); // str2 is the string of each row
             if (std::string(str2) == selectedArtistToken) {
-                s_excludeMatch = true; // If excluded artist found, set bool to true
-                //std::cout << "Excluding since selectedArtistToken is " << selectedArtistToken << " and str2 is : " << str2 << std::endl;
+                s_excludeMatch = true; // If excluded artist found, set bool to true                
             }
         }
         if (s_excludeMatch == false){ // if an excluded artist is not found write to final selection vector
@@ -579,19 +571,9 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
     playlist << *s_selectedTrackPath << "\n";
-    playlist.close();
-    int new_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
+    playlist.close();    
     std::string selectedTrackPathshort;
-   // selectedTrackPathshort = (selectedTrackPath.find('/') + 1);
-    //songtext << new_playlistSize<<". "<<"  need to fix         "<<'\n';
     ratedSongsTable.close();
-    //songtext.close();
-    if (Constants::verbose == true) std::cout <<'\n';
-    //std::cout << "Added "<< *s_selectedTrackPath;
-    //remove("ratedabbr2.txt");
-    //ratedabbrvec.shrink_to_fit();
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
-    // add formatted report with: playlistPos + ". " + Artist + " - " + SongTitle + " (" + SongLength +
-    // ") - Rating " + ratingCode ", Last played " + LastTimePlayed + ", Custom Group " + selectedArtistToken + '\n';
 }
