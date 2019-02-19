@@ -69,6 +69,8 @@ private slots:
     void on_factor8doubleSpinBox_valueChanged(double argfact8);
 
 
+    void on_InclNewcheckbox_stateChanged(int inclNew);
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -85,6 +87,7 @@ private:
         QString musicLibraryDir;
         QString mmBackupDBDir;
         QString mmPlaylistDir;
+        bool s_includeNewTracks;
         double s_daysTillRepeatCode3;
         double s_repeatFactorCode4;
         double s_repeatFactorCode5;

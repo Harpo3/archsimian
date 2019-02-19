@@ -152,6 +152,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_musiclibrarydirname = m_prefs.musicLibraryDir;
     s_defaultPlaylist = m_prefs.defaultPlaylist;
     mmPlaylistDir = m_prefs.mmPlaylistDir;
+    s_includeNewTracks = m_prefs.s_includeNewTracks;
 
     //
 // Step 1. Determine if user configuration exists:  OLD: Run isConfigSetup() function (s_bool_IsUserConfigSet)
@@ -191,10 +192,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //If configuration has already been set, populate the ui labels accordingly
     if (s_bool_IsUserConfigSet == true)
     {
-
         if (Constants::verbose == true) std::cout << "Step 1. Configuration has already been set. s_bool_IsUserConfigSet result: "<<s_bool_IsUserConfigSet<<std::endl;
         //ui->setCurrentIndex(0);
         m_prefs.musicLibraryDir = s_musiclibrarydirname;
+        if (s_includeNewTracks == true) {ui->InclNewcheckbox->setChecked(true);}
         ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
         //dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(true);
@@ -917,6 +918,7 @@ void ArchSimian::loadSettings()
     m_prefs.musicLibraryDir = settings.value("musicLibraryDir", "").toString();
     m_prefs.mmBackupDBDir = settings.value("mmBackupDBDir", "").toString();
     m_prefs.mmPlaylistDir = settings.value("mmPlaylistDir", "").toString();
+    m_prefs.s_includeNewTracks = settings.value("includeNewTracks", 0).toBool();
     m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", 65).toDouble();
     m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", 2.7).toDouble();
     m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", 2.1).toDouble();
@@ -935,6 +937,7 @@ void ArchSimian::saveSettings()
     settings.setValue("musicLibraryDir",m_prefs.musicLibraryDir);
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
+    settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
     settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
     settings.setValue("s_repeatFactorCode5",m_prefs.s_repeatFactorCode5);
@@ -1124,4 +1127,9 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
     s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(argfact8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+}
+
+void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
+{
+m_prefs.s_includeNewTracks = inclNew;
 }
