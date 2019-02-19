@@ -107,13 +107,12 @@ std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgd
 }
 
 // Function to return all vector contents to a single dir path string using a '/' delimiter
-std::string getChgdDirStr(std::vector<std::string> const &input,std::string chgdString) {
+std::string getChgdDirStr(std::vector<std::string> const &input, std::string chgdString, const QString &s_musiclibrarydirname) {
     std::ostringstream oschgdString;
-    std::string s_musiclibrarydirname = "/mnt/music"; // fix in main function**********************************
     for (unsigned long i = 1; i < input.size(); i++) {
         oschgdString << '/' << input.at(i);
     }
-    chgdString = s_musiclibrarydirname + oschgdString.str();
+    chgdString = s_musiclibrarydirname.toStdString() + oschgdString.str();
     return chgdString;
 }
 

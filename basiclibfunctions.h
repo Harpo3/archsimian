@@ -12,7 +12,7 @@ StringVector2D readCSV(std::string filename);
 bool recentlyUpdated(const QString &s_mmBackupDBDir);
 std::string removeSpaces(std::string str);
 std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgdString);
-std::string getChgdDirStr(std::vector<std::string> const &input,std::string chgdString);
+std::string getChgdDirStr(std::vector<std::string> const &input,std::string chgdString, const QString &s_musiclibrarydirname);
 void getLibrary(const QString &s_musiclibrarydirname);
 void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1TotTrackQty,int *_srCode1MsTotTime,
                  int *_srCode3TotTrackQty,int *_srCode3MsTotTime,int *_srCode4TotTrackQty,int *_srCode4MsTotTime,
