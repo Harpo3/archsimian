@@ -1,28 +1,11 @@
 //archsimian.cpp is equivalent to MainWindow.cpp. This and archsimian.h are
 // where the UI code resides. The main () function is located at main.cpp
 
-#include <QDir>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QFile>
-#include <QTextStream>
-#include <QFileInfo>
-#include <QSystemTrayIcon>
-#include <QMessageBox>
 #include <QSettings>
-#include <QApplication>
-#include <QCloseEvent>
 #include <QtWidgets>
-#include <sstream>
-#include <cassert>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <iomanip>
-#include <cstddef>
 #include "archsimian.h"
 #include "constants.h"
 #include "ui_archsimian.h"
@@ -127,7 +110,6 @@ static QString mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
 
-
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
@@ -156,13 +138,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
     //
-// Step 1. Determine if user configuration exists:  OLD: Run isConfigSetup() function (s_bool_IsUserConfigSet)
+    // Step 1. Determine if user configuration exists:  OLD: Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
     // NEW: Use QSettings to check the existence of entries for mmBackupDBDir, mmPlaylistDir, and musicLibraryDir
     // If any are blank, or the dir does not exist, of file MM.DB does not exist at the location, then
     // launch child window for user to set the locations prior to launch of main window. When child window
     // is closed verfiy the locations anf files selected exist.
-    //
 
     // UI configuration: determine state of user config
     ui->setupUi(this);
@@ -172,20 +153,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::verbose == true) {std::cout << "Step 1. s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDirset up." <<std::endl;}
         s_bool_IsUserConfigSet = true;
     }
-
-    //Check whether the configuration file currently has any data in it
-    //std::streampos archsimianconfsize;
-    //char * memblock;
-    //std:: ifstream file ("archsimian.conf", std::ios::in|std::ios::binary|std::ios::ate);
-    //if (file.is_open())
-    //{
-    //    archsimianconfsize = file.tellg();
-    //    memblock = new char [archsimianconfsize];
-    //    file.seekg (0, std::ios::beg);
-    //    file.read (memblock, archsimianconfsize);
-    //    file.close();
-    //    delete[] memblock;
-    //}
     else {
         s_bool_IsUserConfigSet = false;
         std::cout << "Step 1. Unable to open archsimian.conf configuration file or file has no data. s_bool_IsUserConfigSet result: "<< s_bool_IsUserConfigSet<<std::endl;
@@ -210,10 +177,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setgetplaylistLabel->setText("Selected: " + m_prefs.defaultPlaylist);
         //dim the setmmdbButton button
         ui->setmmdbButton->setEnabled(true);
-        //enable the reset button
-
-
-        //****************************************** Consider moving this section to step 4
 
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
 
@@ -251,24 +214,19 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                          " where you did backup of the MM.DB file. After these three are set, exit and restart the program."));
     }
 
-    //******************************************
-
-// Step 2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
+    // Step 2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
 
     if (s_bool_IsUserConfigSet == true) {
-    std::string mmdbdir = s_mmBackupDBDir.toStdString();
-    const std::string mmpath = mmdbdir + "/MM.DB";
-    s_bool_MMdbExist = doesFileExist(mmpath);
+        std::string mmdbdir = s_mmBackupDBDir.toStdString();
+        const std::string mmpath = mmdbdir + "/MM.DB";
+        s_bool_MMdbExist = doesFileExist(mmpath);
 
+        //    a. If s_boolIsUserConfigSet is true, but s_bool_MMdbExist is false, report to user that MM.DB was not found at the
+        //       location specified and set s_bool_IsUserConfigSet to false
+        //    b. If s_boolIsUserConfigSet is false, set s_bool_MMdbExist to false
 
-    //    a. If s_boolIsUserConfigSet is true, but s_bool_MMdbExist is false, report to user that MM.DB was not found at the
-    //       location specified and set s_bool_IsUserConfigSet to false
-    //    b. If s_boolIsUserConfigSet is false, set s_bool_MMdbExist to false
-
-
-    if (Constants::verbose == true) std::cout << "Step 2. Does MM.DB file exist. s_bool_MMdbExist result: "<< s_bool_MMdbExist << std::endl;
+        if (Constants::verbose == true) std::cout << "Step 2. Does MM.DB file exist. s_bool_MMdbExist result: "<< s_bool_MMdbExist << std::endl;
     }
-
     if (s_bool_IsUserConfigSet == false) {
         s_bool_MMdbExist = false;
         s_bool_MMdbUpdated = false;
@@ -279,7 +237,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_IsUserConfigSet = false;
     }
 
-// Step 3. Determine if Archsimian songs table exists: If user configuration exists and MM4 data exists (s_bool_IsUserConfigSet and s_bool_MMdbExist are true),
+    // Step 3. Determine if Archsimian songs table exists: If user configuration exists and MM4 data exists (s_bool_IsUserConfigSet and s_bool_MMdbExist are true),
     //determine if cleanlib.dsv songs table exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
     // imported from MM.DB) (sets s_bool_CleanLibExist)
 
@@ -300,12 +258,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 file.close();
                 delete[] memblock;
             }
-
             if (cleanLibFilesize != 0) {s_bool_CleanLibExist = true;}//doesFileExist(cleanLibFile);
         }
     }
     if ((Constants::verbose == true)&&(s_bool_IsUserConfigSet == true)) std::cout << "Step 3. Does CleanLib file exist. s_bool_CleanLibExist result: "
-                                              << s_bool_CleanLibExist << std::endl;
+                                                                                  << s_bool_CleanLibExist << std::endl;
 
     // 4. Determine if MM.DB was recently updated: s_bool_MMdbUpdated is set by comparing MM.DB file date
     // to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
@@ -339,7 +296,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-// Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table into Archsimian: If user configuration
+    // Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table into Archsimian: If user configuration
     // and MM4 data exist, but the songs table does not (bool_IsUserConfigSet, s_bool_MMdbExist are true, s_bool_CleanLibExist is false), import songs table into AS, by running
     // writeSQLFile() function, which creates the temporary basic table file libtable.dsv; then run the getLibrary() function, which creates
     // the refined table file cleanlib.dsv The getLibrary() function completes the
@@ -389,7 +346,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-// Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
+    // Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
     // songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), run function to process/update statistics getDBStats()
 
     if ((Constants::verbose == true) && (s_bool_IsUserConfigSet == true)&& (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true))std::cout << "Step 6. User configuration exists, MM.DB exists and songs table exists. Processing database statistics:" << std::endl;
@@ -461,56 +418,56 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
         //Print verbose results to console
         if (Constants::verbose == true) {
-        std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
-        std::cout << "Total tracks Rating 1 - s_rCode1TotTrackQty : " << s_rCode1TotTrackQty << ". Total Time (hrs) - s_rCode1TotTime : " <<  s_rCode1TotTime << std::endl;
-        std::cout << "Total tracks Rating 3 - s_rCode3TotTrackQty : " << s_rCode3TotTrackQty << ". Total Time (hrs) - s_rCode3TotTime : " <<  s_rCode3TotTime << std::endl;
-        std::cout << "Total tracks Rating 4 - s_rCode4TotTrackQty : " << s_rCode4TotTrackQty << ". Total Time (hrs) - s_rCode4TotTime : " <<  s_rCode4TotTime << std::endl;
-        std::cout << "Total tracks Rating 5 - s_rCode5TotTrackQty : " << s_rCode5TotTrackQty << ". Total Time (hrs) - s_rCode5TotTime : " <<  s_rCode5TotTime << std::endl;
-        std::cout << "Total tracks Rating 6 - s_rCode6TotTrackQty : " << s_rCode6TotTrackQty << ". Total Time (hrs) - s_rCode6TotTime : " <<  s_rCode6TotTime << std::endl;
-        std::cout << "Total tracks Rating 7 - s_rCode7TotTrackQty : " << s_rCode7TotTrackQty << ". Total Time (hrs) - s_rCode7TotTime : " <<  s_rCode7TotTime << std::endl;
-        std::cout << "Total tracks Rating 8 - s_rCode8TotTrackQty : " << s_rCode8TotTrackQty << ". Total Time (hrs) - s_rCode8TotTime : " <<  s_rCode8TotTime << std::endl;
-        std::cout << "Total tracks in the library is - s_totalLibQty : " << s_totalLibQty << std::endl;
-        std::cout << "Total rated tracks in the library is - s_totalRatedQty : " << s_totalRatedQty << std::endl;
-        std::cout << "Total rated time in the library is - s_TotalRatedTime : " <<s_totalRatedTime << std::endl;
-        std::cout << "Total time listened for first 10-day period is (hrs) - s_SQL10TotTimeListened : " << s_SQL10TotTimeListened << std::endl;
-        std::cout << "Total tracks played in the first period is - s_SQL10DayTracksTot : " << s_SQL10DayTracksTot << std::endl;
-        std::cout << "Total time listened for second 10-day period is (hrs) - s_SQL20TotTimeListened : " << s_SQL20TotTimeListened << std::endl;
-        std::cout << "Total tracks played in the second period is - s_SQL20DayTracksTot : " << s_SQL20DayTracksTot << std::endl;
-        std::cout << "Total time listened for third 10-day period is (hrs): " << s_SQL30TotTimeListened << std::endl;
-        std::cout << "Total tracks played in the third period is - s_SQL30TotTimeListened : " << s_SQL30DayTracksTot << std::endl;
-        std::cout << "Total time listened for fourth 10-day period is (hrs) - s_SQL40TotTimeListened : " << s_SQL40TotTimeListened << std::endl;
-        std::cout << "Total tracks played in the fourth period is - s_SQL40DayTracksTot : " << s_SQL40DayTracksTot << std::endl;
-        std::cout << "Total time listened for fifth 10-day period is (hrs) - s_SQL50TotTimeListened : " << s_SQL50TotTimeListened << std::endl;
-        std::cout << "Total tracks played in the fifth period is - s_SQL50DayTracksTot : " << s_SQL50DayTracksTot << std::endl;
-        std::cout << "Total time listened for sixth 10-day period is (hrs) - s_SQL60TotTimeListened : " << s_SQL60TotTimeListened << std::endl;
-        std::cout << "Total tracks played in the sixth period is - s_SQL60DayTracksTot : " << s_SQL60DayTracksTot << std::endl;
-        std::cout << "Total time listened for the last 60 days is (hrs) - s_totHrsLast60Days : " << s_totHrsLast60Days << std::endl;
-        std::cout << "Calculated daily listening rate is (hrs) - s_listeningRate : "<< s_listeningRate << std::endl;
-        std::cout << "Years between repeats code 3 - s_yrsTillRepeatCode3 : "<< s_yrsTillRepeatCode3 << std::endl;
-        std::cout << "Years between repeats code 4 - s_yrsTillRepeatCode4 : "<< s_yrsTillRepeatCode4 << std::endl;
-        std::cout << "Years between repeats code 5 - s_yrsTillRepeatCode5 : "<< s_yrsTillRepeatCode5 << std::endl;
-        std::cout << "Years between repeats code 6 - s_yrsTillRepeatCode6 : "<< s_yrsTillRepeatCode6 << std::endl;
-        std::cout << "Years between repeats code 7 - s_yrsTillRepeatCode7 : "<< s_yrsTillRepeatCode7 << std::endl;
-        std::cout << "Years between repeats code 8 - s_yrsTillRepeatCode8 : "<< s_yrsTillRepeatCode8 << std::endl;
-        std::cout << "Adjusted hours code 3 - s_adjHoursCode3 : "<< s_adjHoursCode3 << std::endl;
-        std::cout << "Adjusted hours code 4 - s_adjHoursCode4 : "<< s_adjHoursCode4 << std::endl;
-        std::cout << "Adjusted hours code 5 - s_adjHoursCode5 : "<< s_adjHoursCode5 << std::endl;
-        std::cout << "Adjusted hours code 6 - s_adjHoursCode6 : "<< s_adjHoursCode6 << std::endl;
-        std::cout << "Adjusted hours code 7 - s_adjHoursCode7 : "<< s_adjHoursCode7 << std::endl;
-        std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
-        std::cout << "Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
-        std::cout << "Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
-        std::cout << "Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * 100 << "%" << std::endl;
-        std::cout << "Percentage of track time for scheduling rating code 4 - s_ratingRatio4 * 100 : "<< s_ratingRatio4  * 100 << "%" << std::endl;
-        std::cout << "Percentage of track time for scheduling rating code 5 - s_ratingRatio5 * 100 : "<< s_ratingRatio5  * 100 << "%" << std::endl;
-        std::cout << "Percentage of track time for scheduling rating code 6 - s_ratingRatio6 * 100 : "<< s_ratingRatio6 * 100 <<  "%" << std::endl;
-        std::cout << "Percentage of track time for scheduling rating code 7 - s_ratingRatio7 * 100 : "<< s_ratingRatio7 * 100 <<  "%" << std::endl;
-        std::cout << "Percentage of track time for scheduling rating code 8 - s_ratingRatio8 * 100 : "<< s_ratingRatio8 * 100 <<  "%" << std::endl;
-        std::cout << "Number of days until track repeat under rating code 3 - s_DaysBeforeRepeatCode3 : "<< s_DaysBeforeRepeatCode3 << std::endl;
-        std::cout << "Average length of rated songs in fractional minutes - s_AvgMinsPerSong : "<< s_AvgMinsPerSong << std::endl;
-        std::cout << "Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
-        std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
-        std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
+            std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
+            std::cout << "Total tracks Rating 1 - s_rCode1TotTrackQty : " << s_rCode1TotTrackQty << ". Total Time (hrs) - s_rCode1TotTime : " <<  s_rCode1TotTime << std::endl;
+            std::cout << "Total tracks Rating 3 - s_rCode3TotTrackQty : " << s_rCode3TotTrackQty << ". Total Time (hrs) - s_rCode3TotTime : " <<  s_rCode3TotTime << std::endl;
+            std::cout << "Total tracks Rating 4 - s_rCode4TotTrackQty : " << s_rCode4TotTrackQty << ". Total Time (hrs) - s_rCode4TotTime : " <<  s_rCode4TotTime << std::endl;
+            std::cout << "Total tracks Rating 5 - s_rCode5TotTrackQty : " << s_rCode5TotTrackQty << ". Total Time (hrs) - s_rCode5TotTime : " <<  s_rCode5TotTime << std::endl;
+            std::cout << "Total tracks Rating 6 - s_rCode6TotTrackQty : " << s_rCode6TotTrackQty << ". Total Time (hrs) - s_rCode6TotTime : " <<  s_rCode6TotTime << std::endl;
+            std::cout << "Total tracks Rating 7 - s_rCode7TotTrackQty : " << s_rCode7TotTrackQty << ". Total Time (hrs) - s_rCode7TotTime : " <<  s_rCode7TotTime << std::endl;
+            std::cout << "Total tracks Rating 8 - s_rCode8TotTrackQty : " << s_rCode8TotTrackQty << ". Total Time (hrs) - s_rCode8TotTime : " <<  s_rCode8TotTime << std::endl;
+            std::cout << "Total tracks in the library is - s_totalLibQty : " << s_totalLibQty << std::endl;
+            std::cout << "Total rated tracks in the library is - s_totalRatedQty : " << s_totalRatedQty << std::endl;
+            std::cout << "Total rated time in the library is - s_TotalRatedTime : " <<s_totalRatedTime << std::endl;
+            std::cout << "Total time listened for first 10-day period is (hrs) - s_SQL10TotTimeListened : " << s_SQL10TotTimeListened << std::endl;
+            std::cout << "Total tracks played in the first period is - s_SQL10DayTracksTot : " << s_SQL10DayTracksTot << std::endl;
+            std::cout << "Total time listened for second 10-day period is (hrs) - s_SQL20TotTimeListened : " << s_SQL20TotTimeListened << std::endl;
+            std::cout << "Total tracks played in the second period is - s_SQL20DayTracksTot : " << s_SQL20DayTracksTot << std::endl;
+            std::cout << "Total time listened for third 10-day period is (hrs): " << s_SQL30TotTimeListened << std::endl;
+            std::cout << "Total tracks played in the third period is - s_SQL30TotTimeListened : " << s_SQL30DayTracksTot << std::endl;
+            std::cout << "Total time listened for fourth 10-day period is (hrs) - s_SQL40TotTimeListened : " << s_SQL40TotTimeListened << std::endl;
+            std::cout << "Total tracks played in the fourth period is - s_SQL40DayTracksTot : " << s_SQL40DayTracksTot << std::endl;
+            std::cout << "Total time listened for fifth 10-day period is (hrs) - s_SQL50TotTimeListened : " << s_SQL50TotTimeListened << std::endl;
+            std::cout << "Total tracks played in the fifth period is - s_SQL50DayTracksTot : " << s_SQL50DayTracksTot << std::endl;
+            std::cout << "Total time listened for sixth 10-day period is (hrs) - s_SQL60TotTimeListened : " << s_SQL60TotTimeListened << std::endl;
+            std::cout << "Total tracks played in the sixth period is - s_SQL60DayTracksTot : " << s_SQL60DayTracksTot << std::endl;
+            std::cout << "Total time listened for the last 60 days is (hrs) - s_totHrsLast60Days : " << s_totHrsLast60Days << std::endl;
+            std::cout << "Calculated daily listening rate is (hrs) - s_listeningRate : "<< s_listeningRate << std::endl;
+            std::cout << "Years between repeats code 3 - s_yrsTillRepeatCode3 : "<< s_yrsTillRepeatCode3 << std::endl;
+            std::cout << "Years between repeats code 4 - s_yrsTillRepeatCode4 : "<< s_yrsTillRepeatCode4 << std::endl;
+            std::cout << "Years between repeats code 5 - s_yrsTillRepeatCode5 : "<< s_yrsTillRepeatCode5 << std::endl;
+            std::cout << "Years between repeats code 6 - s_yrsTillRepeatCode6 : "<< s_yrsTillRepeatCode6 << std::endl;
+            std::cout << "Years between repeats code 7 - s_yrsTillRepeatCode7 : "<< s_yrsTillRepeatCode7 << std::endl;
+            std::cout << "Years between repeats code 8 - s_yrsTillRepeatCode8 : "<< s_yrsTillRepeatCode8 << std::endl;
+            std::cout << "Adjusted hours code 3 - s_adjHoursCode3 : "<< s_adjHoursCode3 << std::endl;
+            std::cout << "Adjusted hours code 4 - s_adjHoursCode4 : "<< s_adjHoursCode4 << std::endl;
+            std::cout << "Adjusted hours code 5 - s_adjHoursCode5 : "<< s_adjHoursCode5 << std::endl;
+            std::cout << "Adjusted hours code 6 - s_adjHoursCode6 : "<< s_adjHoursCode6 << std::endl;
+            std::cout << "Adjusted hours code 7 - s_adjHoursCode7 : "<< s_adjHoursCode7 << std::endl;
+            std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
+            std::cout << "Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
+            std::cout << "Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
+            std::cout << "Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * 100 << "%" << std::endl;
+            std::cout << "Percentage of track time for scheduling rating code 4 - s_ratingRatio4 * 100 : "<< s_ratingRatio4  * 100 << "%" << std::endl;
+            std::cout << "Percentage of track time for scheduling rating code 5 - s_ratingRatio5 * 100 : "<< s_ratingRatio5  * 100 << "%" << std::endl;
+            std::cout << "Percentage of track time for scheduling rating code 6 - s_ratingRatio6 * 100 : "<< s_ratingRatio6 * 100 <<  "%" << std::endl;
+            std::cout << "Percentage of track time for scheduling rating code 7 - s_ratingRatio7 * 100 : "<< s_ratingRatio7 * 100 <<  "%" << std::endl;
+            std::cout << "Percentage of track time for scheduling rating code 8 - s_ratingRatio8 * 100 : "<< s_ratingRatio8 * 100 <<  "%" << std::endl;
+            std::cout << "Number of days until track repeat under rating code 3 - s_DaysBeforeRepeatCode3 : "<< s_DaysBeforeRepeatCode3 << std::endl;
+            std::cout << "Average length of rated songs in fractional minutes - s_AvgMinsPerSong : "<< s_AvgMinsPerSong << std::endl;
+            std::cout << "Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
+            std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
+            std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
         }
         s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
         ui->daystracksLabel->setText(QString::number((50 * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
@@ -519,11 +476,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     else {
         s_bool_dbStatsCalculated = false;
         if (s_bool_IsUserConfigSet == true){
-        std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
+            std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
         }
     }
 
-// Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
+    // Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
     //MM.DB was not recently updated, check for existence of s_bool_artistsadjExist (artistsadj.txt).
     //If file is missing or empty, create file with artist statistics
 
@@ -589,8 +546,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-// Step 7b. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
-   // MM.DB was recently updated, create file with artist statistics
+    // Step 7b. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
+    // MM.DB was recently updated, create file with artist statistics
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)&& (s_bool_CleanLibExist == true)&&
             (s_bool_dbStatsCalculated == true)&&(s_bool_MMdbUpdated == true)) {
@@ -623,23 +580,22 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // Determine if cleaned (path-corrected) playlist selected (s_bool_PlaylistExist) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
     // sets bool6 and bool7
 
-
     if (s_bool_IsUserConfigSet == true){
-    s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
-    if (s_bool_PlaylistExist == true) {
-        s_bool_PlaylistSelected = true;
-        if (Constants::verbose == true){std::cout << "Step 9. Playlist exists and was not updated." << std::endl;}
-    }
-    //a. If s_bool_PlaylistExist is false, determine if playlist was identified as selected in user config (sets s_bool_PlaylistSelected)
-    if (s_bool_PlaylistExist == false){
-        if (Constants::verbose == true){std::cout << "Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
-        //getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
-        std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
-        if (s_selectedplaylist != "") {
+        s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
+        if (s_bool_PlaylistExist == true) {
             s_bool_PlaylistSelected = true;
-            if (Constants::verbose == true){std::cout << "Step 9. Playlist found in user config." << std::endl;}
+            if (Constants::verbose == true){std::cout << "Step 9. Playlist exists and was not updated." << std::endl;}
         }
-    }
+        //a. If s_bool_PlaylistExist is false, determine if playlist was identified as selected in user config (sets s_bool_PlaylistSelected)
+        if (s_bool_PlaylistExist == false){
+            if (Constants::verbose == true){std::cout << "Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
+            //getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+            std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
+            if (s_selectedplaylist != "") {
+                s_bool_PlaylistSelected = true;
+                if (Constants::verbose == true){std::cout << "Step 9. Playlist found in user config." << std::endl;}
+            }
+        }
     }
     // 10. If a playlist was identified in the user config, but the playlist file is not found, obtain the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists (s_bool_PlaylistSelected is true),
@@ -647,8 +603,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // rechecking, run doesFileExist (const std::string& name) function. Evaluates s_bool_PlaylistExist and sets to true (after running getPlaylist) if
     // initially false
 
-    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_PlaylistSelected == true) && (s_bool_PlaylistExist == false))
-    {
+    if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_PlaylistSelected == true) && (s_bool_PlaylistExist == false)){
         if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
         s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
@@ -719,8 +674,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->playlistTab->setEnabled(1);
         ui->statisticsTab->setEnabled(1);
         ui->frequencyTab->setEnabled(1);
-        ui->mainQTabWidget->setTabEnabled(4, false);
-        ui->mainQTabWidget->setTabEnabled(5, false);
+        ui->mainQTabWidget->setTabEnabled(4, false);// unused tab
+        ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
     if (s_bool_IsUserConfigSet == false){
         ui->mainQTabWidget->setTabEnabled(0, false);
@@ -728,18 +683,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->mainQTabWidget->setTabEnabled(3, false);
         ui->mainQTabWidget->setTabEnabled(4, false);
         ui->mainQTabWidget->setTabEnabled(5, false);
-        //QList<QWidget*> list = ui->mainQTabWidget->findChildren<QWidget*>() ;
-        //foreach( QWidget* w, list ) {
-        //   w->setEnabled(false) ;
-        //}
         ui->settingsTab->setEnabled(1);
     }
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
     KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
-                                                        "tracks requested have been processed. This can take some "
-                                                        "time...",15);
+                                            "tracks requested have been processed. This can take some "
+                                            "time...",15);
     int numTracks = ui->addtrksspinBox->value();
     ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
     //ui->progressBarPL->show();
@@ -748,7 +699,7 @@ void ArchSimian::on_addsongsButton_clicked(){
     int n;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8);
-    for (n=0; n < numTracks; n++){        
+    for (n=0; n < numTracks; n++){
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = 99999;
@@ -759,10 +710,10 @@ void ArchSimian::on_addsongsButton_clicked(){
             getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
             s_selectedTrackPath = s_selectedCode1Path; // set the track selection to the code 1 selection
         }
-        else {s_selectedCode1Path = "";} // If selection criteria for rating code 1 is not met, return empty string        
+        else {s_selectedCode1Path = "";} // If selection criteria for rating code 1 is not met, return empty string
         if (s_selectedCode1Path != "") {s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
-        if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;        
-        if (s_ratingNextTrack != 1) { // if the next rating code is not 1, process normal track selection logic           
+        if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
+        if (s_ratingNextTrack != 1) { // if the next rating code is not 1, process normal track selection logic
             selectTrack(s_ratingNextTrack,&s_selectedTrackPath);
         }
         std::string shortselectedTrackPath;
@@ -787,7 +738,7 @@ void ArchSimian::on_addsongsButton_clicked(){
         getExcludedArtists(s_histCount, s_playlistSize);
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                                s_ratingRatio7,s_ratingRatio8);
-        }
+    }
     songtext.close();
     ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
     double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
@@ -881,7 +832,7 @@ void ArchSimian::on_getplaylistButton_clicked()
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 {
     if (index == 2) // if the Statistics tab is selected, refresh stats
-    {        
+    {
         ui->ybrLabel3->setText("Years between repeats for rating code 3 (5 stars): " + QString::number(s_yrsTillRepeatCode3,'g', 3) +
                                " (in days: " + QString::fromStdString(std::to_string(int(s_daysTillRepeatCode3))) + ")");
         ui->ybrLabel4->setText("Years between repeats for rating code 4 (4 stars): " + QString::number(s_yrsTillRepeatCode4,'g', 3));
@@ -899,12 +850,12 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 
 void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
 {
-        m_prefs.tracksToAdd = s_numTracks;
-        //s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
-        ui->daystoaddLabel->setText(tr("Based on a daily listening rate (in mins.) of ") + QString::number(s_avgListeningRateInMins,'g', 3)
-                                    + tr(", tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
-        ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be: ") +
-                                     QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
+    m_prefs.tracksToAdd = s_numTracks;
+    //s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
+    ui->daystoaddLabel->setText(tr("Based on a daily listening rate (in mins.) of ") + QString::number(s_avgListeningRateInMins,'g', 3)
+                                + tr(", tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
+    ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be: ") +
+                                 QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
 }
 
 void ArchSimian::on_repeatFreq1SpinBox_valueChanged(int myvalue)
@@ -1007,28 +958,28 @@ void ArchSimian::on_yearsradioButton_clicked()
     ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
     ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-  }
+}
 
 void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
 {
-m_prefs.s_daysTillRepeatCode3 = value;
-s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
-s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
-sliderBaseVal3 = s_yrsTillRepeatCode3;
-ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
-s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
-s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
-s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
+    m_prefs.s_daysTillRepeatCode3 = value;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / 365;
+    s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
+    sliderBaseVal3 = s_yrsTillRepeatCode3;
+    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
+    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
+    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
+    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
+    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
+    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
+    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
+    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
+    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
 }
 
 void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
@@ -1136,5 +1087,5 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
 
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
 {
-m_prefs.s_includeNewTracks = inclNew;
+    m_prefs.s_includeNewTracks = inclNew;
 }

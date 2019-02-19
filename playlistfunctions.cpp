@@ -1,13 +1,6 @@
-#include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <string>
-#include <algorithm>
-#include <iterator>
-#include <map>
-#include <stdio.h>
 #include "basiclibfunctions.h"
 #include "getplaylist.h"
 #include "constants.h"
@@ -27,7 +20,6 @@ void trim_cruft(std::string& buffer)
     static const char cruft[] = "\n\r";
     buffer.erase(buffer.find_last_not_of(cruft) + 1);    
 }
-
 
 void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
 {
@@ -260,12 +252,10 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
                     codeForPos2 = selectedRatingCode;
                     if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 2 is: "<< str << std::endl;
                 }
-                //***********************************************
                 if (token == "3") { // this is used as needed to replace rating code 1
                     codeForPos3 = selectedRatingCode;
                     if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 3 is: "<< str << std::endl;
-                }
-                //***********************************************
+                }                
             }
             ++ tokenCount;
         }
@@ -333,9 +323,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     const double vrt5 = varianceRatioTime5;
     const double vrt6 = varianceRatioTime6;
     const double vrt7 = varianceRatioTime7;
-    const double vrt8 = varianceRatioTime8;
-
-    //***********************************************
+    const double vrt8 = varianceRatioTime8;    
     // Determine whether a code of 1 was added in either of the last two tracks
     // If either has a rating code of 1, reassign other rating code using codeForPos3, as applicable
     if ((codeForPos1 == "1") || (codeForPos2 == "1")) {
@@ -347,8 +335,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
             codeForPos2 = codeForPos3;
         }
     }
-    //***********************************************
-
     // Determine whether a code of 7 or 8 was added in either of the last two tracks
     if ((codeForPos1 == "7") || (codeForPos1 == "8") || (codeForPos2 == "7") || (codeForPos2 == "8")) {
         exclude7and8 = true;
@@ -599,7 +585,6 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     return *s_selectedTrackPath;
 }
 
-
 // Function to populate four variables used to determine rating code 1 track selection in function getNewTrack
 void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_slowestCode1Pos, std::string *_sartistLastCode1){
     std::vector<std::string>code1artistsvect;
@@ -650,13 +635,6 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
     }
 }
 // Function used to select a rating code 1 track
-
-// need to add static bool s_includeNewTracks to archsimian.cpp
-// need to add static int s_uniqueCode1ArtistCount to archsimian.cpp
-// need to add static int s_code1PlaylistCount to archsimian.cpp
-// need to add static int s_lowestCode1Pos to archsimian.cpp
-// need to add static std::string s_artistLastCode1 to archsimian.cpp
-// need to add static std::string s_selectedCode1Path to archsimian.cpp
 
 void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path){
     std::string returntrack;

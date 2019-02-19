@@ -3,12 +3,8 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
-#include <string>
-#include <fstream>
-#include <iostream>
 #include <unistd.h>
 #include "userconfig.h"
-#include <QString>
 
 inline bool doesFileExist (const std::string& name) {
     struct stat buffer;
@@ -19,7 +15,6 @@ inline bool doesFileExist (const std::string& name) {
 int getProcIdByName(std::string x)
 {
     int pid = -1;
-
     // Open the /proc directory
     DIR *dp = opendir("/proc");
     if (dp != nullptr)

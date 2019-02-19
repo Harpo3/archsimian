@@ -1,9 +1,5 @@
 #include <sstream>
 #include "userconfig.h"
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <QString>
 
 std::istream& safeGetline(std::istream& is, std::string& t){
     t.clear();

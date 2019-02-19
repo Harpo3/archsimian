@@ -1,12 +1,6 @@
 #include <QSettings>
 #include <QApplication>
-#include <QCloseEvent>
-#include <QtWidgets>
 #include "archsimian.h"
-#include "dependents.h"
-#include "userconfig.h"
-#include "constants.h"
-#include "runbashapp.h"
 
 int main(int argc,char* argv[])
 {

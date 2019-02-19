@@ -1,26 +1,9 @@
-#include <dirent.h>
-#include <sys/stat.h>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <unistd.h>
-#include <sstream>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <iomanip>
-#include <time.h>
-#include <stdio.h>
 #include <vector>
-#include <algorithm>
-#include <map>
-#include <chrono>
-#include <random> // for std::mt19937
-#include <ctime> // for std::time
+#include <sstream>
+#include <sys/stat.h>
 #include "userconfig.h"
 #include "constants.h"
 #include "lastplayeddays.h"
-
 
 inline bool doesFileExist (const std::string& name) {
     struct stat buffer;
@@ -29,7 +12,6 @@ inline bool doesFileExist (const std::string& name) {
 
 typedef std::vector<std::string> StringVector;
 typedef std::vector<StringVector> StringVector2D;
-
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
@@ -38,7 +20,6 @@ StringVector2D readCSV(std::string filename)
     char separator = ',';
     StringVector2D result;
     std::string row, item;
-
     std::ifstream in(filename);
     while(getline(in,row))
     {
@@ -84,10 +65,6 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
     }
     return refreshNeededResult;
 }
-
-
-
-// Above functions and constants can be removed after referencing include for lastplayeddays.h and constants.h
 
 // Function to remove all spaces from a given string
 std::string removeSpaces(std::string str)
@@ -167,10 +144,6 @@ void getLibrary(const QString &s_musiclibrarydirname)
         songPath1 = getChgdDirStr(dirPathTokens,songPath1,s_musiclibrarydirname);
         tokens.at(8) = songPath1;
         dirPathTokens.shrink_to_fit();
-
-         //Printing the dirPathTokens vector
-        //for(unsigned long i = 0; i < dirPathTokens.size(); i++)
-        //    std::cout << dirPathTokens[i] << '\n';
 
         //Adds a calculated rating code to Col 29 if Col 29 does not have a rating code already
         if (tokens[29] == "") {
