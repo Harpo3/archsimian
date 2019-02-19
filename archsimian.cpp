@@ -55,6 +55,12 @@ static bool s_bool_RatedAbbrExist{false};
 static bool s_bool_PlaylistExist{false};
 static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
+static bool s_includeNewTracks{true};
+static int s_uniqueCode1ArtistCount{0};
+static int s_code1PlaylistCount{0};
+static int s_lowestCode1Pos{99999};
+static std::string s_artistLastCode1{""};
+static std::string s_selectedCode1Path{""};
 
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
@@ -110,7 +116,7 @@ static std::string s_LastTableDate{""};
 static long s_histCount{0};
 static double s_AvgMinsPerSong{0.0};
 static double s_avgListeningRateInMins{0.0};
-//static int s_repeatFreqForCode1{20};
+static int s_repeatFreqForCode1{20};
 static int s_dateTranslation{12};
 static QString dateTransTextVal{" months"};
 static double sliderBaseVal3{0.0};
@@ -737,9 +743,23 @@ void ArchSimian::on_addsongsButton_clicked(){
     int n;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8);
-    for (n=0; n < numTracks; n++){
-        if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-        selectTrack(s_ratingNextTrack,&s_selectedTrackPath);
+    for (n=0; n < numTracks; n++){        
+        s_uniqueCode1ArtistCount = 0;
+        s_code1PlaylistCount = 0;
+        s_lowestCode1Pos = 99999;
+        if (s_includeNewTracks == true){ //Retrieve rating code 1 stats is user is including new tracks
+            code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);
+        }
+        if ((s_includeNewTracks == true) && (s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){
+            getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
+            s_selectedTrackPath = s_selectedCode1Path; // set the track selection to the code 1 selection
+        }
+        else {s_selectedCode1Path = "";} // If selection criteria for rating code 1 is not met, return empty string        
+        if (s_selectedCode1Path != "") {s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
+        if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;        
+        if (s_ratingNextTrack != 1) { // if the next rating code is not 1, process normal track selection logic           
+            selectTrack(s_ratingNextTrack,&s_selectedTrackPath);
+        }
         std::string shortselectedTrackPath;
         shortselectedTrackPath = s_selectedTrackPath;
         std::string key1 ("/");

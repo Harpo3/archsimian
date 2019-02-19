@@ -29,7 +29,6 @@ void trim_cruft(std::string& buffer)
 }
 
 
-
 void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
 {
     std::fstream filestrinterval;
@@ -199,6 +198,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     //}
     std::string codeForPos1;
     std::string codeForPos2;
+    std::string codeForPos3;
     bool exclude7and8 = false;
     std::string codeForPos;
     //Collect the time on the current playlist for each rating category and for the playlist as a whole;
@@ -260,6 +260,12 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
                     codeForPos2 = selectedRatingCode;
                     if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 2 is: "<< str << std::endl;
                 }
+                //***********************************************
+                if (token == "3") { // this is used as needed to replace rating code 1
+                    codeForPos3 = selectedRatingCode;
+                    if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 3 is: "<< str << std::endl;
+                }
+                //***********************************************
             }
             ++ tokenCount;
         }
@@ -328,6 +334,21 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     const double vrt6 = varianceRatioTime6;
     const double vrt7 = varianceRatioTime7;
     const double vrt8 = varianceRatioTime8;
+
+    //***********************************************
+    // Determine whether a code of 1 was added in either of the last two tracks
+    // If either has a rating code of 1, reassign other rating code using codeForPos3, as applicable
+    if ((codeForPos1 == "1") || (codeForPos2 == "1")) {
+        if (codeForPos1 == "1"){
+            codeForPos1 = codeForPos2;
+            codeForPos2 = codeForPos3;
+        }
+        if (codeForPos2 == "1"){
+            codeForPos2 = codeForPos3;
+        }
+    }
+    //***********************************************
+
     // Determine whether a code of 7 or 8 was added in either of the last two tracks
     if ((codeForPos1 == "7") || (codeForPos1 == "8") || (codeForPos2 == "7") || (codeForPos2 == "8")) {
         exclude7and8 = true;
@@ -576,4 +597,116 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     ratedSongsTable.close();
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
+}
+
+
+// Function to populate four variables used to determine rating code 1 track selection in function getNewTrack
+void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_slowestCode1Pos, std::string *_sartistLastCode1){
+    std::vector<std::string>code1artistsvect;
+    std::string selectedArtistToken; // Artist variable
+    std::string str; // store the string for ratedabbr2.txt
+    std::string ratingCode;
+    std::string playlistPos;
+    int posint{99999};
+    std::fstream filestrinterval;
+    filestrinterval.open ("ratedabbr2.txt");
+    if (filestrinterval.is_open()) {filestrinterval.close();}
+    else {std::cout << "code1stats: Error opening ratedabbr2.txt file." << std::endl;}
+    std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
+    std::ifstream ratedSongsTable(ratedlibrary);
+    if (!ratedSongsTable.is_open()) {
+        std::cout << "code1stats: Error opening ratedabbr2.txt." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    while (std::getline(ratedSongsTable, str)) {  // Declare variables applicable to all rows
+        std::istringstream iss(str); // str is the string of each row
+        std::string token; // token is the contents of each column of data
+        int tokenCount{0}; //token count is the number of delimiter characters within str
+        while (std::getline(iss, token, ',')) {
+            // TOKEN PROCESSING - COL 1
+            if (tokenCount == 1) {ratingCode = token;}// store rating variable
+            // TOKEN PROCESSING - COL 2
+            if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+            // TOKEN PROCESSING - COL 6
+            if (tokenCount == 6)  {
+                playlistPos = token;
+                if ((ratingCode == "1") && (playlistPos != "0")){
+                    ++*_scode1PlaylistCount;
+                }
+            }
+            ++ tokenCount;
+        }
+        if ((ratingCode == "1") && (playlistPos != "0")){//rating code 1 track is in the playlist
+            posint = std::stoi(playlistPos);
+            if (*_slowestCode1Pos > posint){
+                *_slowestCode1Pos = posint;
+                *_sartistLastCode1 = selectedArtistToken;
+            }
+        }
+        if ((std::find(code1artistsvect.begin(), code1artistsvect.end(), selectedArtistToken) == code1artistsvect.end()) && (ratingCode == "1")) {
+            code1artistsvect.push_back(selectedArtistToken);
+            ++*_suniqueCode1ArtistCount;
+        }
+    }
+}
+// Function used to select a rating code 1 track
+
+// need to add static bool s_includeNewTracks to archsimian.cpp
+// need to add static int s_uniqueCode1ArtistCount to archsimian.cpp
+// need to add static int s_code1PlaylistCount to archsimian.cpp
+// need to add static int s_lowestCode1Pos to archsimian.cpp
+// need to add static std::string s_artistLastCode1 to archsimian.cpp
+// need to add static std::string s_selectedCode1Path to archsimian.cpp
+
+void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path){
+    std::string returntrack;
+    std::fstream filestrinterval;
+    filestrinterval.open ("ratedabbr2.txt");
+    if (filestrinterval.is_open()) {filestrinterval.close();}
+    else {std::cout << "getNewTrack: Error opening ratedabbr2.txt file." << std::endl;}
+    std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
+    std::ifstream ratedSongsTable(ratedlibrary);
+    if (!ratedSongsTable.is_open()) {
+        std::cout << "getNewTrack: Error opening ratedabbr2.txt." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    std::string str1; // store the string for ratedabbr2.txt
+    std::string tokenLTP;
+    std::string ratingCode;
+    std::string selectedArtistToken; // Artist variable
+    std::string songPath;
+    std::string playlistPos;
+    std::vector<std::string>code1tracksvect; // New vector to store all code 1 selections
+    // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"
+    while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
+        std::istringstream iss(str1); // str is the string of each row
+        std::string token; // token is the contents of each column of data
+        int tokenCount{0}; //token count is the number of delimiter characters within str
+        // Inner loop: iterate through each column (token) of row
+        while (std::getline(iss, token, ',')) {
+            // TOKEN PROCESSING - COL 0
+            if ((tokenCount == 0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
+            // TOKEN PROCESSING - COL 1
+            if (tokenCount == 1) {ratingCode = token;}// store rating variable
+            // TOKEN PROCESSING - COL 2
+            if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+            // TOKEN PROCESSING - COL 3
+            if (tokenCount == 3) {songPath = token;}// store song path variable
+            // TOKEN PROCESSING - COL 6
+            if (tokenCount == 6)  {playlistPos = token;}
+            ++ tokenCount;
+        }
+        if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1))  // if a code 1 track is not
+            //in the playlist and not the last artist selected, add to vector used to return track path to s_selectedCode1Path
+        {code1tracksvect.push_back(tokenLTP+","+selectedArtistToken+","+songPath+","+playlistPos);}
+    }
+    std::sort (code1tracksvect.begin(), code1tracksvect.end());
+    std::string fullstring = code1tracksvect.front();
+    std::vector<std::string> splittedStrings = split(fullstring, ',');
+    returntrack = splittedStrings[2];
+    *s_selectedCode1Path = returntrack;
+    //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
+    std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
+    playlist << *s_selectedCode1Path << "\n";
+    playlist.close();
 }
