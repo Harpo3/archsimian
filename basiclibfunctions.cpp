@@ -155,7 +155,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
         // Within tokens vector, open dirPathTokens vector tp tokenize dir path of tokens[8] using '\' as delimiter
         // then redefine tokens[8] with the corrected path
         std::string songPath1;
-        songPath1 = tokens[8];
+        songPath1 = tokens[8];        
         std::istringstream iss2(songPath1);
         std::stringstream check2(songPath1);// stringstream for parsing \ delimiter of dir path
         std::string intermediate2; // intermediate value for parsing \ delimiter of dir path
@@ -164,7 +164,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
             dirPathTokens.push_back(intermediate2);
         }
         dirPathTokens.at(0) = s_musiclibrarydirname.toStdString();
-        songPath1 = getChgdDirStr(dirPathTokens,songPath1);
+        songPath1 = getChgdDirStr(dirPathTokens,songPath1,s_musiclibrarydirname);
         tokens.at(8) = songPath1;
         dirPathTokens.shrink_to_fit();
 

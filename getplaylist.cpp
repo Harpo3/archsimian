@@ -50,7 +50,7 @@ int cstyleStringCount(std::string path){
 
 void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
-    static std::string s_selectedplaylist = s_defaultPlaylist.toStdString();//1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
+    static std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
     static std::string musiclibdirname = s_musiclibrarydirname.toStdString();
     std::string playlistFile = s_selectedplaylist;
     std::ifstream readFile(playlistFile);
@@ -80,4 +80,16 @@ void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrary
     }
     readFile.close();
     outf.close();
+}
+
+void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr)
+{
+    static std::string playlist = s_defaultPlaylist.toStdString();
+    std::ifstream readFile(playlist);
+    std::string line;
+    std::getline(readFile, line); //skip first line
+    std::getline(readFile, line);
+    std::istringstream iss(line); //start with first line
+    *s_winDriveLtr = line.front();
+    readFile.close();
 }

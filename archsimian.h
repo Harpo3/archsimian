@@ -87,6 +87,7 @@ private:
         QString musicLibraryDir;
         QString mmBackupDBDir;
         QString mmPlaylistDir;
+        QString s_WindowsDriveLetter;
         bool s_includeNewTracks;
         double s_daysTillRepeatCode3;
         double s_repeatFactorCode4;

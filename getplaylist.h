@@ -7,4 +7,5 @@
 std::vector<std::string> getPlaylistVect(std::string fileName);
 void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname);
 int cstyleStringCount(std::string path);
+void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr);
 #endif // GETPLAYLIST_H

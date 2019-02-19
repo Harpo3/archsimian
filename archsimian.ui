@@ -39,7 +39,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -301,8 +301,8 @@
             <rect>
              <x>10</x>
              <y>90</y>
-             <width>441</width>
-             <height>31</height>
+             <width>474</width>
+             <height>34</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -336,10 +336,23 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>130</y>
+             <y>150</y>
              <width>471</width>
-             <height>311</height>
+             <height>291</height>
             </rect>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>130</y>
+             <width>411</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Tracks panel for songs added (Panel will appear when request is completed)</string>
            </property>
           </widget>
          </widget>
@@ -789,7 +802,7 @@
           <x>160</x>
           <y>10</y>
           <width>321</width>
-          <height>22</height>
+          <height>24</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="radiobuttonshorizontalLayout">
@@ -960,7 +973,7 @@
          <rect>
           <x>150</x>
           <y>50</y>
-          <width>43</width>
+          <width>49</width>
           <height>231</height>
          </rect>
         </property>
@@ -1014,7 +1027,7 @@
          <rect>
           <x>200</x>
           <y>90</y>
-          <width>37</width>
+          <width>42</width>
           <height>191</height>
          </rect>
         </property>
@@ -1061,7 +1074,7 @@
          <rect>
           <x>240</x>
           <y>90</y>
-          <width>71</width>
+          <width>74</width>
           <height>191</height>
          </rect>
         </property>

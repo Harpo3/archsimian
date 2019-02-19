@@ -121,11 +121,11 @@ static int s_dateTranslation{12};
 static QString dateTransTextVal{" months"};
 static double sliderBaseVal3{0.0};
 static std::string s_selectedTrackPath{""};
-
 static QString s_mmBackupDBDir{""};
 static QString s_musiclibrarydirname{""};
 static QString mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
+static QString s_winDriveLtr;
 
 
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -153,7 +153,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_defaultPlaylist = m_prefs.defaultPlaylist;
     mmPlaylistDir = m_prefs.mmPlaylistDir;
     s_includeNewTracks = m_prefs.s_includeNewTracks;
-
+    getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
+    m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
     //
 // Step 1. Determine if user configuration exists:  OLD: Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
@@ -714,7 +715,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
         ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
         ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-        ui->monthsradioButton->click();
+        ui->yearsradioButton->click();
         ui->playlistTab->setEnabled(1);
         ui->statisticsTab->setEnabled(1);
         ui->frequencyTab->setEnabled(1);
@@ -736,6 +737,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
+    KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
+                                                        "tracks requested have been processed. This can take some "
+                                                        "time...",15);
     int numTracks = ui->addtrksspinBox->value();
     ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
     //ui->progressBarPL->show();
@@ -925,6 +929,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_repeatFactorCode6 = settings.value("s_repeatFactorCode6", 2.2).toDouble();
     m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
     m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
+    m_prefs.s_WindowsDriveLetter = settings.value("s_WindowsDriveLetter","").toString();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -944,7 +949,7 @@ void ArchSimian::saveSettings()
     settings.setValue("s_repeatFactorCode6",m_prefs.s_repeatFactorCode6);
     settings.setValue("s_repeatFactorCode7",m_prefs.s_repeatFactorCode7);
     settings.setValue("s_repeatFactorCode8",m_prefs.s_repeatFactorCode8);
-
+    settings.setValue("s_WindowsDriveLetter",m_prefs.s_WindowsDriveLetter);
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
