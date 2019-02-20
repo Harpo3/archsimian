@@ -1,5 +1,18 @@
 #include <sstream>
+#include <string>
+#include <iostream>
+#include <fstream>
 #include "userconfig.h"
+
+int musicLibraryDirLen(QString &s_musiclibrarydirname)
+{
+static std::string musicLibraryDir = s_musiclibrarydirname.toStdString(); // in main prgm, need to fix with QSettings variable
+// std::string str = "anyString";
+ unsigned long cnt = 0;
+ for(size_t i=0; musicLibraryDir[i]; i++)
+    cnt++;
+ return int(cnt);
+}
 
 std::istream& safeGetline(std::istream& is, std::string& t){
     t.clear();
@@ -88,4 +101,42 @@ void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr)
     std::istringstream iss(line); //start with first line
     *s_winDriveLtr = line.front();
     readFile.close();
+}
+
+void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_defaultPlaylist, QString &s_winDriveLtr, QString &s_musiclibrarydirname){
+    static std::string playlistpath = s_defaultPlaylist.toStdString();
+    static std::string playlistdirname = s_mmPlaylistDir.toStdString();
+    static std::string musicLibraryDir=s_musiclibrarydirname.toStdString();
+    std::string winDriveLtr = s_winDriveLtr.toStdString(); // in main prgm, need to fix with QSettings variable
+    //std::string cleanedPlaylist{Constants::cleanedPlaylist}; // in main prgm, instead reference Constants::cleanedPlaylist
+    std::ifstream readFile(Constants::cleanedPlaylist);
+    std::ofstream outf(playlistpath);
+    if (!readFile.is_open()) {
+        std::cout << "exportPlaylistToWindows: The readFile did not open. Did you delete the active playlist?";
+        std::exit(EXIT_FAILURE);
+    }
+    std::string line;
+    while (std::getline(readFile, line)){
+        std::istringstream iss(line);
+        std::string str = line;
+        str.replace(str.begin(),str.begin()+s_musicdirlength,winDriveLtr+":");
+        line = str;
+        std::string str1 (musicLibraryDir);
+        std::size_t found1 = line.find(str1);
+        if (found1!=std::string::npos){
+            str.replace(str.begin(),str.begin(),"");
+        }
+        std::string str2 ("/");
+        std::size_t found = line.find(str2);
+        if (found!=std::string::npos) {
+            line.replace(line.find(str2),str2.length(),"\\");
+            found=line.find("second dir symbol",found+1,1);
+            line.replace(line.find(str2),str2.length(),"\\");
+            found=line.find("third dir symbol",found+1,1);
+            line.replace(line.find(str2),str2.length(),"\\");
+        }
+        outf << line << '\n'; // DO NOT ADD endl here
+    }
+    readFile.close();
+    outf.close();
 }

@@ -106,7 +106,7 @@ static double sliderBaseVal3{0.0};
 static std::string s_selectedTrackPath{""};
 static QString s_mmBackupDBDir{""};
 static QString s_musiclibrarydirname{""};
-static QString mmPlaylistDir{""};
+static QString s_mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
 
@@ -133,7 +133,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
     s_musiclibrarydirname = m_prefs.musicLibraryDir;
     s_defaultPlaylist = m_prefs.defaultPlaylist;
-    mmPlaylistDir = m_prefs.mmPlaylistDir;
+    s_mmPlaylistDir = m_prefs.mmPlaylistDir;
     s_includeNewTracks = m_prefs.s_includeNewTracks;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
@@ -148,7 +148,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // UI configuration: determine state of user config
     ui->setupUi(this);
     ui->mainQTabWidget->setCurrentIndex(0);
-    if ((s_mmBackupDBDir != nullptr) && (s_musiclibrarydirname != nullptr) && (mmPlaylistDir != nullptr)){
+    if ((s_mmBackupDBDir != nullptr) && (s_musiclibrarydirname != nullptr) && (s_mmPlaylistDir != nullptr)){
         // add code to verify file /dir locations *****************
         if (Constants::verbose == true) {std::cout << "Step 1. s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDirset up." <<std::endl;}
         s_bool_IsUserConfigSet = true;
@@ -753,7 +753,10 @@ void ArchSimian::on_addsongsButton_clicked(){
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
-
+    int s_musicdirlength{};
+    s_musicdirlength = musicLibraryDirLen(s_musiclibrarydirname);
+    exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_defaultPlaylist,  s_winDriveLtr,  s_musiclibrarydirname);
+    ui->statusBar->showMessage("Replaced Windows playlist with Archsimian-modified playlist",50000);
 }
 
 void ArchSimian::on_setlibraryButton_clicked(){

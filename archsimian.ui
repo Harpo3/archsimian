@@ -180,7 +180,7 @@
           <item>
            <widget class="QLabel" name="exportplaylistlabel">
             <property name="text">
-             <string>Export playlist with newly-added tracks back to MM4 Windows</string>
+             <string>Replace Windows playlist with modified one for import into MM4</string>
             </property>
            </widget>
           </item>
