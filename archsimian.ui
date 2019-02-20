@@ -180,7 +180,7 @@
           <item>
            <widget class="QLabel" name="exportplaylistlabel">
             <property name="text">
-             <string>Replace Windows playlist with modified one for import into MM4</string>
+             <string>Replace above-selected Windows playlist with modified one.</string>
             </property>
            </widget>
           </item>
@@ -347,12 +347,12 @@
             <rect>
              <x>10</x>
              <y>130</y>
-             <width>411</width>
+             <width>461</width>
              <height>16</height>
             </rect>
            </property>
            <property name="text">
-            <string>Tracks panel for songs added (Panel will appear when request is completed)</string>
+            <string>Tracks Panel - Tracks added will appear below when request is completed (takes time)</string>
            </property>
           </widget>
          </widget>
