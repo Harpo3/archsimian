@@ -39,7 +39,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -123,7 +123,7 @@
            <widget class="QSpinBox" name="addtrksspinBox">
             <property name="maximumSize">
              <size>
-              <width>70</width>
+              <width>60</width>
               <height>16777215</height>
              </size>
             </property>
@@ -314,6 +314,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QSpinBox" name="repeatFreq1SpinBox">
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="toolTip">
                <string>Sets the frequency at which new tracks appear in the playlist. Feature enabled in the settings tab.</string>
               </property>
@@ -558,7 +564,7 @@
          <string extracomment="Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab">Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab</string>
         </property>
         <property name="text">
-         <string>Enable Album-level variety</string>
+         <string>Enable album-level variety</string>
         </property>
        </widget>
       </widget>
@@ -648,7 +654,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>150</y>
+          <y>130</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -661,22 +667,22 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>170</y>
-          <width>470</width>
+          <y>340</y>
+          <width>221</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>Total rated tracks in the library is:</string>
+         <string>Total rated tracks:</string>
         </property>
        </widget>
        <widget class="QLabel" name="totratedtimeLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>190</y>
-          <width>470</width>
-          <height>15</height>
+          <y>360</y>
+          <width>221</width>
+          <height>16</height>
          </rect>
         </property>
         <property name="text">
@@ -687,7 +693,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>210</y>
+          <y>160</y>
           <width>470</width>
           <height>15</height>
          </rect>
@@ -696,77 +702,119 @@
          <string>Calculated daily listening rate (in hours) is:</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_13">
+       <widget class="QLabel" name="cd1trcktimeLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>240</y>
-          <width>470</width>
-          <height>15</height>
+          <y>190</y>
+          <width>481</width>
+          <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Code 1 - Total tracks          Tot time (hrs)     </string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="label_14">
+       <widget class="QLabel" name="cd3trcktimeLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>260</y>
-          <width>470</width>
-          <height>15</height>
+          <y>210</y>
+          <width>471</width>
+          <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Code 3 - Total tracks          Tot time (hrs)     Adj. (for repeat frequency) tot time (hrs)  </string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_15">
+       <widget class="QLabel" name="cd4trcktimeLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>280</y>
-          <width>470</width>
-          <height>15</height>
+          <y>230</y>
+          <width>481</width>
+          <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Code 4 - Total tracks          Tot time (hrs)     Adj. (for repeat frequency) tot time (hrs)  </string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_16">
+       <widget class="QLabel" name="cd5trcktimeLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>300</y>
-          <width>470</width>
-          <height>15</height>
+          <y>250</y>
+          <width>481</width>
+          <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Code 5 - Total tracks          Tot time (hrs)     Adj. (for repeat frequency) tot time (hrs)  </string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_17">
+       <widget class="QLabel" name="cd6trcktimeLabel">
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>320</y>
-          <width>470</width>
-          <height>15</height>
+          <y>270</y>
+          <width>481</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Code 6 - Total tracks          Tot time (hrs)     Adj. (for repeat frequency) tot time (hrs)  </string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="cd7trcktimeLabel">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>290</y>
+          <width>481</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Code 7 - Total tracks          Tot time (hrs)     Adj. (for repeat frequency) tot time (hrs)  </string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="cd8trcktimeLabel">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>310</y>
+          <width>481</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Code 8 - Total tracks          Tot time (hrs)     Adj. (for repeat frequency) tot time (hrs)  </string>
         </property>
        </widget>
        <widget class="QLabel" name="totadjtracksLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>130</y>
-          <width>391</width>
+          <x>230</x>
+          <y>340</y>
+          <width>221</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Total adj. rated tracks:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="totadjhoursLabel">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>360</y>
+          <width>251</width>
           <height>16</height>
          </rect>
         </property>

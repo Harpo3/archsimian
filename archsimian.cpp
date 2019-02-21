@@ -90,6 +90,7 @@ static double s_listeningRate{0.0};
 static int s_totalRatedQty{0};
 static double s_totalRatedTime{0.0};
 static int s_totalLibQty{0};
+static double s_totAdjHours{0.0};
 static double s_DaysBeforeRepeatCode3{0.0};
 static double s_totHrsLast60Days{0.0};
 static double s_totalAdjRatedQty{0.0};
@@ -111,6 +112,7 @@ static QString s_mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
 
+
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
@@ -126,9 +128,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
     s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
     s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode5;
+    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode6;
+    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / 365;
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
@@ -139,7 +141,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
-    //
+
+
     // Step 1. Determine if user configuration exists:  OLD: Run isConfigSetup() function (s_bool_IsUserConfigSet)
     //
     // NEW: Use QSettings to check the existence of entries for mmBackupDBDir, mmPlaylistDir, and musicLibraryDir
@@ -396,7 +399,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         static double s_adjHoursCode6 = (1 / s_yrsTillRepeatCode6) * s_rCode6TotTime;
         static double s_adjHoursCode7 = (1 / s_yrsTillRepeatCode7) * s_rCode7TotTime;
         static double s_adjHoursCode8 = (1 / s_yrsTillRepeatCode8) * s_rCode8TotTime;
-        static double s_totAdjHours = s_adjHoursCode3 + s_adjHoursCode4 + s_adjHoursCode5 + s_adjHoursCode6 +s_adjHoursCode7 + s_adjHoursCode8;
+        s_totAdjHours = s_adjHoursCode3 + s_adjHoursCode4 + s_adjHoursCode5 + s_adjHoursCode6 +s_adjHoursCode7 + s_adjHoursCode8;
         s_ratingRatio3 = s_adjHoursCode3 / s_totAdjHours;
         s_ratingRatio4 = s_adjHoursCode4 / s_totAdjHours;
         s_ratingRatio5 = s_adjHoursCode5 / s_totAdjHours;
@@ -453,7 +456,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Adjusted hours code 5 - s_adjHoursCode5 : "<< s_adjHoursCode5 << std::endl;
             std::cout << "Adjusted hours code 6 - s_adjHoursCode6 : "<< s_adjHoursCode6 << std::endl;
             std::cout << "Adjusted hours code 7 - s_adjHoursCode7 : "<< s_adjHoursCode7 << std::endl;
-            std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
+            std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;            
             std::cout << "Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
             std::cout << "Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
             std::cout << "Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * 100 << "%" << std::endl;
@@ -468,6 +471,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
             std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
         }
+
         s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
         ui->daystracksLabel->setText(QString::number((50 * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
 
@@ -866,6 +870,28 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
         ui->totratedtracksLabel->setText("Total rated tracks in the library is: " + QString::fromStdString(std::to_string(s_totalRatedQty)));
         ui->totratedtimeLabel->setText("Total rated time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
         ui->dailylistenLabel->setText("Calculated daily listening rate (in hours) is: " + QString::number(s_listeningRate,'g', 3));
+        ui->cd1trcktimeLabel->setText("Code 1 - Total tracks: " + QString::number(s_rCode1TotTrackQty)+ ", Tot hours: "
+                                      + QString::number((s_rCode1MsTotTime/60000)/60));
+        ui->cd3trcktimeLabel->setText("Code 3 - Tot tracks: " + QString::number(s_rCode3TotTrackQty) + ", Tot hours: "
+                                      + QString::number((s_rCode3MsTotTime/60000)/60)+", Adj (for repeat freq) tot hours: "
+                                      + QString::number((1 / s_yrsTillRepeatCode3) * (s_rCode3MsTotTime/60000)/60));
+        ui->cd4trcktimeLabel->setText("Code 4 - Tot tracks: " + QString::number(s_rCode4TotTrackQty) + ", Tot hours: "
+                                      + QString::number((s_rCode4MsTotTime/60000)/60)+", Adj (for repeat freq) tot hours: "
+                                      + QString::number((1 / s_yrsTillRepeatCode4) * (s_rCode4MsTotTime/60000)/60));
+        ui->cd5trcktimeLabel->setText("Code 5 - Tot tracks: " + QString::number(s_rCode5TotTrackQty) + ", Tot hours: "
+                                      + QString::number((s_rCode5MsTotTime/60000)/60)+", Adj (for repeat freq) tot hours: "
+                                      + QString::number((1 / s_yrsTillRepeatCode5) * (s_rCode5MsTotTime/60000)/60));
+        ui->cd6trcktimeLabel->setText("Code 6 - Tot tracks: " + QString::number(s_rCode6TotTrackQty) + ", Tot hours: "
+                                      + QString::number((s_rCode6MsTotTime/60000)/60)+", Adj (for repeat freq) tot hours: "
+                                      + QString::number((1 / s_yrsTillRepeatCode6) * (s_rCode6MsTotTime/60000)/60));
+        ui->cd7trcktimeLabel->setText("Code 7 - Tot tracks: " + QString::number(s_rCode7TotTrackQty) + ", Tot hours: "
+                                      + QString::number((s_rCode7MsTotTime/60000)/60)+", Adj (for repeat freq) tot hours: "
+                                      + QString::number((1 / s_yrsTillRepeatCode7) * (s_rCode7MsTotTime/60000)/60));
+        ui->cd8trcktimeLabel->setText("Code 8 - Tot tracks: " + QString::number(s_rCode8TotTrackQty) + ", Tot hours: "
+                                      + QString::number((s_rCode8MsTotTime/60000)/60)+", Adj (for repeat freq) tot hours: "
+                                      + QString::number((1 / s_yrsTillRepeatCode8) * (s_rCode8MsTotTime/60000)/60));
+        ui->totadjhoursLabel->setText("Tot adjusted hours: " + QString::number(s_totAdjHours));
+        ui->totadjtracksLabel->setText("Tot adjusted tracks: " + QString::number(s_totalAdjRatedQty));
     }
 }
 
@@ -903,6 +929,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
     m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
     m_prefs.s_WindowsDriveLetter = settings.value("s_WindowsDriveLetter","").toString();
+
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -924,6 +951,7 @@ void ArchSimian::saveSettings()
     settings.setValue("s_repeatFactorCode7",m_prefs.s_repeatFactorCode7);
     settings.setValue("s_repeatFactorCode8",m_prefs.s_repeatFactorCode8);
     settings.setValue("s_WindowsDriveLetter",m_prefs.s_WindowsDriveLetter);
+
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
@@ -1003,6 +1031,9 @@ void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
+
+
 }
 
 void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
@@ -1024,6 +1055,7 @@ void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
 }
 
 void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
@@ -1046,6 +1078,7 @@ void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
 }
 
 void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
@@ -1066,6 +1099,7 @@ void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
     s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
 }
 
 void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
@@ -1086,6 +1120,7 @@ void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
     s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
 }
 
 void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
@@ -1106,6 +1141,7 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
     s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(argfact8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
+    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
 }
 
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
