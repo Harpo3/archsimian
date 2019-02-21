@@ -39,6 +39,7 @@ static bool s_bool_PlaylistExist{false};
 static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
 static bool s_includeNewTracks{true};
+static bool s_includeAlbumVariety{true};
 static int s_uniqueCode1ArtistCount{0};
 static int s_code1PlaylistCount{0};
 static int s_lowestCode1Pos{99999};
@@ -135,6 +136,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_defaultPlaylist = m_prefs.defaultPlaylist;
     s_mmPlaylistDir = m_prefs.mmPlaylistDir;
     s_includeNewTracks = m_prefs.s_includeNewTracks;
+    s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
     //
@@ -148,6 +150,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // UI configuration: determine state of user config
     ui->setupUi(this);
     ui->mainQTabWidget->setCurrentIndex(0);
+    //PlainTextEdit::PlainTextEdit(QWidget *parent):QPlainTextEdit(parent)
     if ((s_mmBackupDBDir != nullptr) && (s_musiclibrarydirname != nullptr) && (s_mmPlaylistDir != nullptr)){
         // add code to verify file /dir locations *****************
         if (Constants::verbose == true) {std::cout << "Step 1. s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDirset up." <<std::endl;}
@@ -164,18 +167,16 @@ ArchSimian::ArchSimian(QWidget *parent) :
         //ui->setCurrentIndex(0);
         m_prefs.musicLibraryDir = s_musiclibrarydirname;
         if (s_includeNewTracks == true) {ui->InclNewcheckbox->setChecked(true);}
+        if (s_includeAlbumVariety == true) {
+            ui->albumscheckBox->setChecked(true);
+            ui->mainQTabWidget->setTabEnabled(4, true);
+        }
         ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
-        //dim the setlibraryButton button
         ui->setlibraryButton->setEnabled(true);
-        //enable the reset button
-        //s_mmbackuppldirname = userconfig::getConfigEntry(3);
         ui->setmmpllabel->setText(QString(m_prefs.defaultPlaylist));
-        //dim the setmmplButton button
         ui->setmmplButton->setEnabled(true);
-        //enable the reset button
         ui->setmmdblabel->setText(m_prefs.mmBackupDBDir);
         ui->setgetplaylistLabel->setText("Selected: " + m_prefs.defaultPlaylist);
-        //dim the setmmdbButton button
         ui->setmmdbButton->setEnabled(true);
 
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
@@ -188,8 +189,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             s_LastTableDate = getLastTableDate();
             ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(s_MMdbDate)+
                                            tr(", Library date: ")+ QString::fromStdString(s_LastTableDate));
-            // dim update library button
-            //ui->refreshdbButton->setEnabled(false);
         }
     }
 
@@ -674,7 +673,24 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->playlistTab->setEnabled(1);
         ui->statisticsTab->setEnabled(1);
         ui->frequencyTab->setEnabled(1);
-        ui->mainQTabWidget->setTabEnabled(4, false);// unused tab
+
+        if (m_prefs.s_includeAlbumVariety == true){
+            ui->mainQTabWidget->setTabEnabled(4, true);
+            ui->albumsTab->setEnabled(1);
+        }
+        if (m_prefs.s_includeAlbumVariety == false){
+            ui->mainQTabWidget->setTabEnabled(4, false);
+            ui->albumsTab->setEnabled(0);
+        }
+
+        if (m_prefs.s_includeNewTracks == false){
+            ui->repeatFreq1SpinBox->setEnabled(0);
+        }
+        if (m_prefs.s_includeNewTracks == true){
+            ui->repeatFreq1SpinBox->setEnabled(1);
+        }
+
+
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
     if (s_bool_IsUserConfigSet == false){
@@ -685,6 +701,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->mainQTabWidget->setTabEnabled(5, false);
         ui->settingsTab->setEnabled(1);
     }
+
+
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
@@ -877,6 +895,7 @@ void ArchSimian::loadSettings()
     m_prefs.mmBackupDBDir = settings.value("mmBackupDBDir", "").toString();
     m_prefs.mmPlaylistDir = settings.value("mmPlaylistDir", "").toString();
     m_prefs.s_includeNewTracks = settings.value("includeNewTracks", 0).toBool();
+    m_prefs.s_includeAlbumVariety = settings.value("s_includeAlbumVariety", 0).toBool();
     m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", 65).toDouble();
     m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", 2.7).toDouble();
     m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", 2.1).toDouble();
@@ -897,6 +916,7 @@ void ArchSimian::saveSettings()
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
     settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
+    settings.setValue("s_includeAlbumVariety",m_prefs.s_includeAlbumVariety);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
     settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
     settings.setValue("s_repeatFactorCode5",m_prefs.s_repeatFactorCode5);
@@ -1091,4 +1111,19 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
 {
     m_prefs.s_includeNewTracks = inclNew;
+}
+
+void ArchSimian::on_albumscheckBox_stateChanged(int inclAlbums)
+{
+    m_prefs.s_includeAlbumVariety = inclAlbums;
+    if (inclAlbums == 1){
+        ui->mainQTabWidget->setTabEnabled(4, true);
+        ui->albumsTab->setEnabled(1);
+        ui->centralWidget->repaint();
+    }
+    if (inclAlbums == 0){
+        ui->mainQTabWidget->setTabEnabled(4, false);
+        ui->albumsTab->setEnabled(0);
+        ui->centralWidget->repaint();
+    }
 }

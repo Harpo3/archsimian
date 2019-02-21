@@ -33,6 +33,7 @@ public slots:
 
 
 
+
 private slots:
 
     void on_mainQTabWidget_tabBarClicked(int index);
@@ -55,7 +56,6 @@ private slots:
 
     void on_daysradioButton_clicked();
 
-
     void on_yearsradioButton_clicked();
 
     void on_factor4doubleSpinBox_valueChanged(double argfact4);
@@ -68,8 +68,9 @@ private slots:
 
     void on_factor8doubleSpinBox_valueChanged(double argfact8);
 
-
     void on_InclNewcheckbox_stateChanged(int inclNew);
+
+    void on_albumscheckBox_stateChanged(int inclAlbums);
 
 private:
     Ui::ArchSimian *ui;
@@ -89,6 +90,7 @@ private:
         QString mmPlaylistDir;
         QString s_WindowsDriveLetter;
         bool s_includeNewTracks;
+        bool s_includeAlbumVariety;
         double s_daysTillRepeatCode3;
         double s_repeatFactorCode4;
         double s_repeatFactorCode5;

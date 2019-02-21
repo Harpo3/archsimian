@@ -39,7 +39,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -215,6 +215,9 @@
              <height>31</height>
             </rect>
            </property>
+           <property name="toolTip">
+            <string>If the library date is equal to or newer than the MM.DB date, the library is not refreshed. ArchSimian automatically detects a new MM.DB backup and will automatically refresh the library.</string>
+           </property>
            <property name="text">
             <string>MM.DB was last updated: </string>
            </property>
@@ -230,6 +233,9 @@
              <width>441</width>
              <height>21</height>
             </rect>
+           </property>
+           <property name="toolTip">
+            <string>ArchSimian determines your listening rate based on you MediaMonkey play history, then calculates the number of days that will be added based on the number of tracks selected from the 'Add Songs' quantity above.</string>
            </property>
            <property name="text">
             <string>Days to add (based on estimated listening rate): </string>
@@ -308,6 +314,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QSpinBox" name="repeatFreq1SpinBox">
+              <property name="toolTip">
+               <string>Sets the frequency at which new tracks appear in the playlist. Feature enabled in the settings tab.</string>
+              </property>
               <property name="maximum">
                <number>500</number>
               </property>
@@ -351,6 +360,9 @@
              <height>16</height>
             </rect>
            </property>
+           <property name="toolTip">
+            <string>The more tracks added the longer it takes to add tracks. When all tracks have been added, all tracks will appear in the panel below. Please be patient.</string>
+           </property>
            <property name="text">
             <string>Tracks Panel - Tracks added will appear below when request is completed (takes time)</string>
            </property>
@@ -373,13 +385,13 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome to ArchSimian! The program was created to improve the &amp;quot;primary&amp;quot; playlist you use for daily listening so you can enjoy your large library. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;First you need to identify the location where your music library is stored, then set the locations where you strored backups for your M3U playlist and the MM.DB file. Once you set these locations, you can import the database and enable all of the program features!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select only the top directory. All music found under the top directory will be found.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="toolTipDuration">
-         <number>10</number>
+         <number>-1</number>
         </property>
         <property name="text">
-         <string>Set Library Location</string>
+         <string>Music library location</string>
         </property>
        </widget>
        <widget class="QLabel" name="setlibrarylabel">
@@ -414,7 +426,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string/>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;It is best to use a shared directory (between Linux and Windows) to store your Windows-format playlists. When you revise them here, the file in the shared directory will be overwritten, but the file paths will still have the Windows filepath format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="toolTipDuration">
          <number>-1</number>
@@ -457,6 +469,9 @@
           <height>31</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Do not select the actual MM.DB file in the Windows program directory for MediaMonkey. Create a backup in another directory and select that as this location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>MM.db location</string>
         </property>
@@ -484,7 +499,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>170</y>
+          <y>200</y>
           <width>451</width>
           <height>121</height>
          </rect>
@@ -514,11 +529,36 @@
           <height>21</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Any tracks in the library rated as 1 star are treated as new and unrated. Set frequency in the Playlist tab if this is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Include new tracks (Code 1) that need to be rated</string>
         </property>
         <property name="checked">
          <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="albumscheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>160</y>
+          <width>401</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="statusTip">
+         <string extracomment="Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab"/>
+        </property>
+        <property name="whatsThis">
+         <string extracomment="Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab">Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab</string>
+        </property>
+        <property name="text">
+         <string>Enable Album-level variety</string>
         </property>
        </widget>
       </widget>
@@ -1189,10 +1229,23 @@
         </property>
        </widget>
       </widget>
-      <widget class="QWidget" name="tab_5">
+      <widget class="QWidget" name="albumsTab">
        <attribute name="title">
-        <string>Page</string>
+        <string>Albums</string>
        </attribute>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>60</y>
+          <width>53</width>
+          <height>15</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="tab_6">
        <attribute name="title">
@@ -1271,6 +1324,38 @@
     <hint type="destinationlabel">
      <x>341</x>
      <y>189</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addsongsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>songsaddtextBrowser</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>78</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>413</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addsongsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>statusBar</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>37</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>358</x>
+     <y>667</y>
     </hint>
    </hints>
   </connection>
