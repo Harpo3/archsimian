@@ -59,7 +59,7 @@ Replay intervals – if you set 30 days for the repeat rate of your highest-rate
 
 A CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
-Arch Linux OS (I highly recommend KDE as your Arch Desktop Environment (DE); also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
+A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
 
 MediaMonkey4 Gold for Windows (while it could installed be on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will need to also have the VM installed in Arch to avoid having to reboot twice for every library/playlist update). 
 
@@ -70,17 +70,17 @@ Update Location of Files in Database;
 RegEx Find and Replace; and, 
 ImportM3U
 
-<b>Arch Linux applications you will need (from the AUR):</b>
-
-id3ted for tag scripting requirements
+<b>Linux applications you will need (For Arch, via the AUR):</b>
 
 SQLite 3 for database commands
 
-<b>Arch Linux applications you will likely want to use with this program:</b>
+<b>Linux applications you will likely want to use along with this program:</b>
 
 audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
 
 conky (if you wish to display cover art and most other tag elements right on a panel docked onto your desktop (cool!)
+
+id3ted for tag scripting requirements if you want to update tags in Linux
 
 Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
 
@@ -88,9 +88,9 @@ Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
 
 <b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons).
 
-Whether you do this or not, you will need to use a VM in Arch to update music tags and the MM4 database between the two operating systems. 
+Whether you do this or not, you will want to use a VM in Arch to update music tags and the MM4 database between the two operating systems if you do not wish to do constant reboots to change OSes. 
 
-Your music library must contain at least 1,000 rated tracks and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location.
+Your music library should contain at least <b> 1,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location.
 
 When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
 
@@ -146,7 +146,7 @@ Important – ArchSimian stores the above rating codes in the “Grouping” tag
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 
-To use ArchSimian, (unfortunately) you have to manually export the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
+To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
 
 To export specific .m3u files:
 1.	Select the Tracks you wish to export from a Playlist
@@ -156,4 +156,6 @@ To export specific .m3u files:
 The Playlist will be saved as xxxxx.m3u, which can then be opened by another media player.
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying. After you revise the playlist in ArchSimian, it will place it in the folder where you placed the MM4 exported playlist. You can then import it back into MM4 using the ImportM3U plugin and update the playlist in MM4.
+
+When you have added tracks from ArchSimian, you can export back to your playlist a Windows-compatible playlist that can be imported by MM4.
 
