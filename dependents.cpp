@@ -1,10 +1,12 @@
 ﻿// This cpp is used to provide functions used to identify the state of any
 // third party app (Whether it is running) and update status of MM.DB.
-
+#include <fstream>
+#include <iostream>
+#include <QString>
+#include "constants.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "userconfig.h"
 
 inline bool doesFileExist (const std::string& name) {
     struct stat buffer;

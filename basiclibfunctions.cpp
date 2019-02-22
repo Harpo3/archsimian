@@ -1,7 +1,8 @@
 #include <vector>
 #include <sstream>
+#include <fstream>
+#include <iostream>
 #include <sys/stat.h>
-#include "userconfig.h"
 #include "constants.h"
 #include "lastplayeddays.h"
 

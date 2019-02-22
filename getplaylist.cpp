@@ -2,7 +2,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "userconfig.h"
+#include <QString>
+#include <iostream>
+#include "constants.h"
 
 int musicLibraryDirLen(QString &s_musiclibrarydirname)
 {
