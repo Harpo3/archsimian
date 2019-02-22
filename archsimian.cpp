@@ -3,13 +3,13 @@
 
 #include <QSettings>
 #include <QtWidgets>
+#include <fstream>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include "archsimian.h"
 #include "constants.h"
 #include "ui_archsimian.h"
-#include "userconfig.h"
 #include "dependents.h"
 #include "getplaylist.h"
 #include "writesqlfile.h"
@@ -592,7 +592,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         //a. If s_bool_PlaylistExist is false, determine if playlist was identified as selected in user config (sets s_bool_PlaylistSelected)
         if (s_bool_PlaylistExist == false){
             if (Constants::verbose == true){std::cout << "Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
-            //getConfigEntry: 1=musiclib dir, 3=playlist dir, 5=mm.db dir 7=playlist filepath
             std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
             if (s_selectedplaylist != "") {
                 s_bool_PlaylistSelected = true;

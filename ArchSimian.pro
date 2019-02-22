@@ -27,7 +27,6 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     archsimian.cpp \
-    userconfig.cpp \
     dependents.cpp \
     lastplayeddays.cpp \
     runbashapp.cpp \
@@ -39,7 +38,6 @@ SOURCES += \
 
 HEADERS += \
     archsimian.h \
-    userconfig.h \
     dependents.h \
     lastplayeddays.h \
     constants.h \
