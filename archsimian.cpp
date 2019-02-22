@@ -471,10 +471,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
             std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
         }
-
         s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
         ui->daystracksLabel->setText(QString::number((50 * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));//s_listeningRate //double(s_AvgMinsPerSong*value)/s_avgListeningRateInMins)
-
     }
     else {
         s_bool_dbStatsCalculated = false;
@@ -685,15 +683,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->mainQTabWidget->setTabEnabled(4, false);
             ui->albumsTab->setEnabled(0);
         }
-
         if (m_prefs.s_includeNewTracks == false){
             ui->repeatFreq1SpinBox->setEnabled(0);
         }
         if (m_prefs.s_includeNewTracks == true){
             ui->repeatFreq1SpinBox->setEnabled(1);
         }
-
-
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
     if (s_bool_IsUserConfigSet == false){
@@ -704,8 +699,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->mainQTabWidget->setTabEnabled(5, false);
         ui->settingsTab->setEnabled(1);
     }
-
-
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
@@ -741,7 +734,6 @@ void ArchSimian::on_addsongsButton_clicked(){
         shortselectedTrackPath = s_selectedTrackPath;
         std::string key1 ("/");
         std::string key2 ("_");
-        //std::string key3 (".mp3");
         shortselectedTrackPath.erase(0,11);
         std::size_t found = shortselectedTrackPath.rfind(key1);
         std::size_t found1 = shortselectedTrackPath.rfind(key2);
@@ -752,8 +744,6 @@ void ArchSimian::on_addsongsButton_clicked(){
         //std::cout <<s_playlistSize<< ". " << shortselectedTrackPath<<std::endl;
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
         songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n';
-        //if (Constants::verbose == true) std::cout <<'\n';
-        //std::cout << ", rating " << "___" << std::endl;
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
         s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
         getExcludedArtists(s_histCount, s_playlistSize);
@@ -928,7 +918,6 @@ void ArchSimian::loadSettings()
     m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
     m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
     m_prefs.s_WindowsDriveLetter = settings.value("s_WindowsDriveLetter","").toString();
-
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
