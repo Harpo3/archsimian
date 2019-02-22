@@ -31,7 +31,6 @@ SOURCES += \
     lastplayeddays.cpp \
     runbashapp.cpp \
     getplaylist.cpp \
-    reformatlib.cpp \
     writesqlfile.cpp \
     basiclibfunctions.cpp \
     playlistfunctions.cpp
@@ -43,7 +42,6 @@ HEADERS += \
     constants.h \
     runbashapp.h \
     getplaylist.h \
-    reformatlib.h \
     writesqlfile.h \
     playlistfunctions.h \
     basiclibfunctions.h
