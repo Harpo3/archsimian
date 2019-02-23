@@ -519,7 +519,6 @@ void buildDB()
     std::string str2; // store the string for playlistTable
     std::string str3; // store the string for artistsadjVec
     std::string str4; // store the string for vector parsing string of each artistadj line
-
     std::string selectedArtistToken; // Artist variable from
     std::string songPath;
     std::string tokenLTP;
@@ -528,7 +527,6 @@ void buildDB()
     std::string popmRating;
     static std::string s_artistInterval{"0"};
     std::string s_selectedTrackPath;
-
     StringVector2D artistIntervalVec = readCSV("artistsadj.txt");
     //std::cout << "Starting getline to read artistsadj.txt file into artistsadjVec." << std::endl;
     std::vector<std::string>ratedabbrvect;
