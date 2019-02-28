@@ -1,4 +1,4 @@
-# archsimian
+# ArchSimian
 You built a large music library...make the most out of it with ArchSimian!
 
 Improve management of a music library built with MediaMonkey 4 (MM4) for Windows by integrating MM4 database data with an Arch Linux program. Adds more advanced playlist building features than MM4 currently offers, specifically to better control variety and frequency of play than MM4’s smart playlists provides. Users will then import the improved playlists back into MM4 for use in Windows or to sync with mobile devices using the MM4 for Android App. They will also be able to use the same playlists in Audacious or other Linux-based media players, using a shared music library.
@@ -12,7 +12,7 @@ It depends on whether you have a large music library, and whether you are happy 
 
 For example, what if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, better variety?
 
-What if you have two different artists, like "Tom Petty" and "Tom Petty & the Heartbreakers" but you wish to treat them both as one artist for purposes of repeat frequency? You can store the custom grouping "Petty" in the Custom2 field for all files of either one, and archsimian will treat them all as being from one artist. With this in mind, you can create whatever custom groups you like, such as "Pop1971."
+What if you have two different artists, like "Tom Petty" and "Tom Petty & the Heartbreakers" but you wish to treat them both as one artist for purposes of repeat frequency? When you store both with the custom grouping "Petty" in MM4 (in the Custom2 field), ArchSimian will treat either one as being from the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971."
 
 While MM4 has many great smart playlist features built in (and far better than any other retail package out there), it does not provide the complexity or speed with which you can build them in C++, and a big benefit of using Arch and KDE is having some added programs/scripts to tag elements the way I want them, and have them integrated right onto my desktop (using KDE and Conky). I can update tag elements or add art work using convenient shortcuts, and update them in real time.
 
