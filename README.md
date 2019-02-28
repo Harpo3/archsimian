@@ -36,7 +36,7 @@ For example, this program lets you set the repeat frequency for your tracks by r
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Also select the top dir of your music library, and folder where you export any playlists from MediaMonkey. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
-6. ArchSimian exports the modified playlist back to the dir where it was originally selected, and overwrites the older playlist.
+6. ArchSimian exports the modified playlist back to the dir where it was originally selected, and overwrites the older playlist.You will have a Windows-compatible playlist that can be imported by MediaMonkey.
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
