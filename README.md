@@ -34,30 +34,27 @@ For example, this program lets you set the repeat frequency for your tracks by r
     playlist
     • Saves user preferences, such as file locations for MM4 backup database, MM4 backup playlists 
     and Archsimian program/playlist preferences
-    • Obtains or calculates variables for calculating the track selected to add to the playlist: 
+    • Obtains or calculates variables for calculating which track will be selected to add to the playlist: 
             ▪     user’s listening rate (for total tracks needed to be added to the current playlist)
             ▪     song rating (to determine frequency played)  
             ▪     days since last played (to use with rating)
             ▪     how many tracks ago was the last appearance of an artist (to avoid repeat artists)
-            ▪     total number of rated tracks of an artist (statistic)
-            ▪     total number of each rating category in the library (statistic)    
-            ▪     total number of each rating category by artist (statistic)
-            ▪     last album played for a given artist
+            ▪     total number of rated tracks for each artist 
+            ▪     total number of each rating category in the library     
+            ▪     total number of each rating category by artist 
+            ▪     last album played for a given artist (not yet available)
 
-For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you cannot easily adjust when that artist next appears, so you end up with a song from the same artist after only 10-20 tracks. 
+For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of tracks for each artist. 
 
-**To be added in later version: Also, when that artist is repeated you hear another track from the same album. ArchSimian can increase variety at the album level. 
+**To be added in a later version: Also, when that artist is repeated you will hear another track from a different album than the one last played.  
 
-For artists with only three songs, a problem is that you might hear all three within one month and the all three again in six months, So, ArchSimian sets a variable that evaluates the “distance in the playlist” that takes into account there are only three tracks from that artist, as well as the frequency chosen via the rating and general frequency assigned. So using this example, if you only have three tracks for a particular artist, all rated to play every three months, but two of them were actually last played a month apart, this program will compare the two dates and not play the second song for three months since the previous one. 
-
-Replay intervals – if you set 30 days for the repeat rate of your highest-rated tracks, it sets the default rate for the lower rated tracks. However, you can override the next lower rating interval. It will then reset the remaining intervals accordingly. The “duration” of time between repeats for the lowest rating category is automatic, but the higher categories can be manually set. This is because the program calculates the user’s average listening rate. Since higher rated songs are repeated multiple times during the year, the “number of hours per-year” for that rating are higher than the actual total hours of the tracks themselves. Conversely, if a low rated song is only played once every five years, total hours in one year of that category is only a fraction of the actual total  hours. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist.
-
+Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
 
 <b>Minimum Computer Requirements:</b>
 
-8GB of RAM (You will need this much to run KDE and the Windows VM smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE. 
+8GB of RAM (You will need this much if you need to run KDE and the Windows VM smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE. If you do not use the VM, 4GB is enough.
 
-A CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
+IF you use the VM, a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
 A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
 
