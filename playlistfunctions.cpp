@@ -130,9 +130,8 @@ void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
         ratedabbr2 << std::endl;
     }
 
-    std::vector<std::string>::const_iterator begin = histvect.begin();
-    std::vector<std::string>::const_iterator last = histvect.begin() + s_histCount;
-    std::vector<std::string> new_histvect(begin, last); // copy histvect to new vector
+    std::vector<std::string> new_histvect;
+    new_histvect = histvect;
     for (std::size_t i = 0 ;  i < new_histvect.size(); i++){ // write new vector to "playlistposlist.txt"
         playlistPosList << new_histvect[i] << "," << i + 1 + s_playlistSize << "\n";
     }
