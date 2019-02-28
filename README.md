@@ -1,5 +1,5 @@
 # ArchSimian
-You built a large music library...make the most out of it with ArchSimian!
+You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
 
 Improve management of a music library built with MediaMonkey 4 (MM4) for Windows by integrating MM4 database data with an Arch Linux program. Adds more advanced playlist building features than MM4 currently offers, specifically to better control variety and frequency of play than MM4’s smart playlists provides. Users will then import the improved playlists back into MM4 for use in Windows or to sync with mobile devices using the MM4 for Android App. They will also be able to use the same playlists in Audacious or other Linux-based media players, using a shared music library.
 
@@ -26,7 +26,7 @@ For example, this program lets you set the repeat frequency for your tracks by r
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in this program. You should have 1,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Library tree should look like drive:/artist/album/song.
+1. Rate all tracks in MediaMonkey you want to include in this program. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Library tree should look like drive:/artist/album/song.
 
 2.  A one-star rating is special in Archsimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. 
 
@@ -101,7 +101,7 @@ Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
 
 Whether you do this or not, you will want to use a VM in Arch to update music tags and the MM4 database between the two operating systems if you do not wish to do constant reboots to change OSes. 
 
-Your music library should contain at least <b> 1,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location.
+Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. It may run on fewer rated tracks, but that has not been tested.
 
 When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
 
@@ -114,7 +114,7 @@ If you decide the program is not working for you, you can restore it back to you
 
 Even if you choose to not use ArchSimian, the below configuration changes are useful for configuring your library to access it via your Linux distribution. The below configuration worked for me:
 
-MM4 Configuration – Under Tools > Options > Library, enable the following: Infer file properties from filenames, use Tags then inferred properties; Get album titles and track numbers for tags only; Scan file directories for artwork; Update file info from tags when rescanning files. Under  Tools > Options > Library > Tags & Playlists, enable ID3v2 tags; ASCII ****CHANGED+ UTF-16 (when needed) TO *****ASCII Always; Update tags when editing properties; enable ‘Use Unicode (UTF-8 encoding) for M3U playlists, Warn when duplicate files are added; for artwork, Save image to file folder, First image per album/series: folder.jpg.
+MM4 Configuration – Under Tools > Options > Library, enable the following: Infer file properties from filenames, use Tags then inferred properties; Get album titles and track numbers for tags only; Scan file directories for artwork; Update file info from tags when rescanning files. Under  Tools > Options > Library > Tags & Playlists, enable ID3v2 tags; ASCII Always; Update tags when editing properties; enable ‘Use Unicode (UTF-8 encoding) for M3U playlists, Warn when duplicate files are added; for artwork, Save image to file folder, First image per album/series: folder.jpg.
 
 Tools > Options > Library > Appearance > Ignore prefixes
 
