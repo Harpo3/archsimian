@@ -24,6 +24,18 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 For example, this program lets you set the repeat frequency for your tracks by rating catgory. For example, you might like 60 days for 5 stars, 180 days for four stars, etc. MM4 smart playlists can do this, but it does not consider the specific order of play of the individual artists within it. 
 
+<b>(TL;DR) Quickstart:</b>
+
+1. Rate all tracks rated in MediaMonkey you want to include in this program. You should have 1,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Library tree should look like drive:/artist/album/song.
+
+2.  A one-star rating is special in Archsimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. 
+
+3. Assign zero stars in MediaMonkey to exclude tracks from this program.
+
+4. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Also select the top dir of your music library, and folder where you export any playlists from MediaMonkey. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
+
+5. ArchSimian exports the modified playlist back to the dir where it was originally selected, and overwrites the older playlist.
+
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
 
