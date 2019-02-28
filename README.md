@@ -136,8 +136,6 @@ Unfortunately, it does not work for double quotation marks, which have to be cha
 
 As referenced under MM4 configuration, artwork files must be stored as a single image in each album folder using the filename folder.jpg.
 
-File tags will require some adjustment, primarily for tracking ratings. The new program will embed the track rating, not in the id3v2 tag storage location for ratings (‘POPM’ ), but in the “group” field (TIT1) as a rating code, which is can be by MM4 in its db and also within the id3v3 tag under ‘TIT1’). Since most music applications use id3v2 tags, this approach will store your ratings for use in Archsimian, as well as other applications. 
-
 You need to ensure all tracks in MM4 you want to include in your playlists are rated prior to running Archsimian. 
 
 Tracks with no rating are excluded from playlist computation in Archsimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). Archsimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
