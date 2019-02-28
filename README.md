@@ -26,7 +26,7 @@ For example, this program lets you set the repeat frequency for your tracks by r
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in this program. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Library tree should look like drive:/artist/album/song.
+1. Rate all tracks in MediaMonkey you want to include in this program. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Your music library dir tree should look like ->  Drive:/artist/album/song in Windows.
 
 2.  A one-star rating is special in Archsimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. 
 
