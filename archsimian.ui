@@ -952,7 +952,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>five.png</pixmap>
+            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/five.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -971,7 +971,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>four.png</pixmap>
+            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/four.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -990,7 +990,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>threeonehalf.png</pixmap>
+            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/threeonehalf.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1009,7 +1009,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>three.png</pixmap>
+            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/three.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1028,7 +1028,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>twoonehalf.png</pixmap>
+            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/twoonehalf.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1047,7 +1047,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>two.png</pixmap>
+            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/two.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1276,6 +1276,17 @@
          <string>Set repeat rate in days (Code 3) using slider:</string>
         </property>
        </widget>
+       <widget class="QWidget" name="gridLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>480</x>
+          <y>210</y>
+          <width>160</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout"/>
+       </widget>
       </widget>
       <widget class="QWidget" name="albumsTab">
        <attribute name="title">
@@ -1325,7 +1336,9 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="systray.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>factor3horizontalSlider</sender>
