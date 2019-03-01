@@ -1,5 +1,5 @@
-# archsimian
-You built a large music library...make the most out of it with ArchSimian!
+# ArchSimian
+You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
 
 Improve management of a music library built with MediaMonkey 4 (MM4) for Windows by integrating MM4 database data with an Arch Linux program. Adds more advanced playlist building features than MM4 currently offers, specifically to better control variety and frequency of play than MM4’s smart playlists provides. Users will then import the improved playlists back into MM4 for use in Windows or to sync with mobile devices using the MM4 for Android App. They will also be able to use the same playlists in Audacious or other Linux-based media players, using a shared music library.
 
@@ -12,7 +12,7 @@ It depends on whether you have a large music library, and whether you are happy 
 
 For example, what if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, better variety?
 
-What if you have two different artists, like "Tom Petty" and "Tom Petty & the Heartbreakers" but you wish to treat them both as one artist for purposes of repeat frequency? You can store the custom grouping "Petty" in the Custom2 field for all files of either one, and archsimian will treat them all as being from one artist. With this in mind, you can create whatever custom groups you like, such as "Pop1971."
+What if you have two different artists, like "Tom Petty" and "Tom Petty & the Heartbreakers" but you wish to treat them both as one artist for purposes of repeat frequency? When you store both with the custom grouping "Petty" in MM4 (in the Custom2 field), ArchSimian will treat either one as being from the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971."
 
 While MM4 has many great smart playlist features built in (and far better than any other retail package out there), it does not provide the complexity or speed with which you can build them in C++, and a big benefit of using Arch and KDE is having some added programs/scripts to tag elements the way I want them, and have them integrated right onto my desktop (using KDE and Conky). I can update tag elements or add art work using convenient shortcuts, and update them in real time.
 
@@ -20,9 +20,23 @@ While MM4 has many great smart playlist features built in (and far better than a
 
 It creates refined playlists using existing data from your MediaMonkey database file.
 
-The playlist improvement concept is this: the play history in the MM database can be used to compute a user’s average listening time per day. By also calculating the number of rated tracks, along with the ratings and playing times for each, it can be determined how frequently a song should be added for a repeat play onto the playlist. While MM4 already has a smart playlist feature for “days since last played” by rating, it does not do so with a high degree of specialization for variety, such as the arrangement of tracks within the list (for example: play a different rating than the song just played, or do not repeat an artist until x number of tracks since that artist was played). There are some workarounds in MM4, but they are cumbersome, and then building them is a very slow process of nesting multiple smart playlists. In short, this program aims for a faster way to create a more specialized playlist and determine the specific order of individual tracks using more advanced filters and settings.
+The playlist improvement concept is this: the play history in the MM database can be used to compute a user’s average listening time per day. By also calculating the number of rated tracks, along with the ratings and playing times for each, it can be determined how frequently a song should be added for a repeat play onto the playlist. While MM4 already has a smart playlist feature for “days since last played” by rating, it does not do so with a high degree of specialization for variety, such as the arrangement of tracks within the list.
 
-For example, this program lets you set the repeat frequency for your highest rated tracks, second highest rated tracks, and so on to better control over when the track can be played again (that is, when it can be added to the playlist). For example, you might like 60 days for 5 stars, 180 days for four stars, etc. MM4 smart playlists already can do this, but it does not consider the specific order of play beyond the basic screening without layering smart playlists. ArchSimian allows you, based on the total number of total rated tracks you have and your average listening rate, to set a ratio for each rating category with more specific preferences. 
+For example, this program lets you set the repeat frequency for your tracks by rating catgory. For example, you might like 60 days for 5 stars, 180 days for four stars, etc. MM4 smart playlists can do this, but it does not consider the specific order of play of the individual artists within it. 
+
+<b>(TL;DR) Quickstart:</b>
+
+1. Rate all tracks in MediaMonkey you want to include in this program. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Your music library dir tree should look like ->  Drive:/artist/album/song in Windows.
+
+2.  A one-star rating is special in Archsimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. 
+
+3. Assign zero stars in MediaMonkey to exclude tracks from this program.
+
+4. You can set custom artist groupings in MediaMonkey using the "Custom2" field. ArchSimian will override artist tags wherever Custom2 is used.
+
+5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Also select the top dir of your music library, and folder where you export any playlists from MediaMonkey. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
+
+6. ArchSimian exports the modified playlist back to the dir where it was originally selected, and overwrites the older playlist.You will have a Windows-compatible playlist that can be imported by MediaMonkey.
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
@@ -34,30 +48,27 @@ For example, this program lets you set the repeat frequency for your highest rat
     playlist
     • Saves user preferences, such as file locations for MM4 backup database, MM4 backup playlists 
     and Archsimian program/playlist preferences
-    • Obtains or calculates variables for calculating the track selected to add to the playlist: 
+    • Obtains or calculates variables for calculating which track will be selected to add to the playlist: 
             ▪     user’s listening rate (for total tracks needed to be added to the current playlist)
             ▪     song rating (to determine frequency played)  
             ▪     days since last played (to use with rating)
             ▪     how many tracks ago was the last appearance of an artist (to avoid repeat artists)
-            ▪     total number of rated tracks of an artist (statistic)
-            ▪     total number of each rating category in the library (statistic)    
-            ▪     total number of each rating category by artist (statistic)
-            ▪     last album played for a given artist
+            ▪     total number of rated tracks for each artist 
+            ▪     total number of each rating category in the library     
+            ▪     total number of each rating category by artist 
+            ▪     last album played for a given artist (not yet available)
 
-For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you cannot easily adjust when that artist next appears, so you end up with a song from the same artist after only 10-20 tracks. 
+For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. 
 
-**To be added in later version: Also, when that artist is repeated you hear another track from the same album. ArchSimian can increase variety at the album level. 
+**To be added in a later version: Also, when that artist is repeated you will hear a track from a different album than the one last played.  
 
-For artists with only three songs, a problem is that you might hear all three within one month and the all three again in six months, So, ArchSimian sets a variable that evaluates the “distance in the playlist” that takes into account there are only three tracks from that artist, as well as the frequency chosen via the rating and general frequency assigned. So using this example, if you only have three tracks for a particular artist, all rated to play every three months, but two of them were actually last played a month apart, this program will compare the two dates and not play the second song for three months since the previous one. 
-
-Replay intervals – if you set 30 days for the repeat rate of your highest-rated tracks, it sets the default rate for the lower rated tracks. However, you can override the next lower rating interval. It will then reset the remaining intervals accordingly. The “duration” of time between repeats for the lowest rating category is automatic, but the higher categories can be manually set. This is because the program calculates the user’s average listening rate. Since higher rated songs are repeated multiple times during the year, the “number of hours per-year” for that rating are higher than the actual total hours of the tracks themselves. Conversely, if a low rated song is only played once every five years, total hours in one year of that category is only a fraction of the actual total  hours. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist.
-
+Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
 
 <b>Minimum Computer Requirements:</b>
 
-8GB of RAM (You will need this much to run KDE and the Windows VM smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE. 
+8GB of RAM (You will need this much if you need to run KDE and the Windows VM smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE. If you do not use the VM, 4GB is enough.
 
-A CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
+IF you use the VM, a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
 A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
 
@@ -90,7 +101,7 @@ Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
 
 Whether you do this or not, you will want to use a VM in Arch to update music tags and the MM4 database between the two operating systems if you do not wish to do constant reboots to change OSes. 
 
-Your music library should contain at least <b> 1,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location.
+Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. It may run on fewer rated tracks, but that has not been tested.
 
 When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
 
@@ -103,7 +114,7 @@ If you decide the program is not working for you, you can restore it back to you
 
 Even if you choose to not use ArchSimian, the below configuration changes are useful for configuring your library to access it via your Linux distribution. The below configuration worked for me:
 
-MM4 Configuration – Under Tools > Options > Library, enable the following: Infer file properties from filenames, use Tags then inferred properties; Get album titles and track numbers for tags only; Scan file directories for artwork; Update file info from tags when rescanning files. Under  Tools > Options > Library > Tags & Playlists, enable ID3v2 tags; ASCII ****CHANGED+ UTF-16 (when needed) TO *****ASCII Always; Update tags when editing properties; enable ‘Use Unicode (UTF-8 encoding) for M3U playlists, Warn when duplicate files are added; for artwork, Save image to file folder, First image per album/series: folder.jpg.
+MM4 Configuration – Under Tools > Options > Library, enable the following: Infer file properties from filenames, use Tags then inferred properties; Get album titles and track numbers for tags only; Scan file directories for artwork; Update file info from tags when rescanning files. Under  Tools > Options > Library > Tags & Playlists, enable ID3v2 tags; ASCII Always; Update tags when editing properties; enable ‘Use Unicode (UTF-8 encoding) for M3U playlists, Warn when duplicate files are added; for artwork, Save image to file folder, First image per album/series: folder.jpg.
 
 Tools > Options > Library > Appearance > Ignore prefixes
 
@@ -124,8 +135,6 @@ The only issues I found have to do with non-compliance to the above filename sta
 Unfortunately, it does not work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
 
 As referenced under MM4 configuration, artwork files must be stored as a single image in each album folder using the filename folder.jpg.
-
-File tags will require some adjustment, primarily for tracking ratings. The new program will embed the track rating, not in the id3v2 tag storage location for ratings (‘POPM’ ), but in the “group” field (TIT1) as a rating code, which is can be by MM4 in its db and also within the id3v3 tag under ‘TIT1’). Since most music applications use id3v2 tags, this approach will store your ratings for use in Archsimian, as well as other applications. 
 
 You need to ensure all tracks in MM4 you want to include in your playlists are rated prior to running Archsimian. 
 
