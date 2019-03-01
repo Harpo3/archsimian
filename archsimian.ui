@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>505</width>
-    <height>673</height>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -952,7 +952,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>../../../data/mmdata/ratetracks/five.png</pixmap>
+            <pixmap>five.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -971,7 +971,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>../../../data/mmdata/ratetracks/four.png</pixmap>
+            <pixmap>four.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -990,7 +990,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>../../../data/mmdata/ratetracks/threeonehalf.png</pixmap>
+            <pixmap>threeonehalf.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1009,7 +1009,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>../../../data/mmdata/ratetracks/three.png</pixmap>
+            <pixmap>three.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1028,7 +1028,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>../../../data/mmdata/ratetracks/twoonehalf.png</pixmap>
+            <pixmap>twoonehalf.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1047,7 +1047,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>../../../data/mmdata/ratetracks/two.png</pixmap>
+            <pixmap>two.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1310,7 +1310,7 @@
      <x>0</x>
      <y>0</y>
      <width>505</width>
-     <height>27</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

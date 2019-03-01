@@ -627,7 +627,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
     //ratingCodeSelected and selectTrack
     if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true))   {
-        getExcludedArtists(s_histCount, s_playlistSize);
+        getExcludedArtists(s_playlistSize);
     }
     if (s_bool_IsUserConfigSet == true){
         ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
@@ -727,7 +727,7 @@ void ArchSimian::on_addsongsButton_clicked(){
         songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n';
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
         s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-        getExcludedArtists(s_histCount, s_playlistSize);
+        getExcludedArtists(s_playlistSize);
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                                s_ratingRatio7,s_ratingRatio8);
     }

@@ -21,7 +21,7 @@ void trim_cruft(std::string& buffer)
     buffer.erase(buffer.find_last_not_of(cruft) + 1);    
 }
 
-void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
+void getExcludedArtists(const int &s_playlistSize)
 {
     std::fstream filestrinterval;
     int s_playlistPosition;
@@ -129,9 +129,7 @@ void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
         }
         ratedabbr2 << std::endl;
     }
-
-    std::vector<std::string> new_histvect;
-    new_histvect = histvect;
+    std::vector<std::string> new_histvect = histvect;
     for (std::size_t i = 0 ;  i < new_histvect.size(); i++){ // write new vector to "playlistposlist.txt"
         playlistPosList << new_histvect[i] << "," << i + 1 + s_playlistSize << "\n";
     }
@@ -155,7 +153,7 @@ void getExcludedArtists(const long &s_histCount, const int &s_playlistSize)
     fsexclvec = artistExcludesVec;
     std::vector<std::string>::iterator ip;
     std::sort (fsexclvec.begin(), fsexclvec.end());
-    size_t myvecsz = fsexclvec.size();
+    std::size_t myvecsz = fsexclvec.size();
     ip = std::unique(fsexclvec.begin(), fsexclvec.begin() + myvecsz); // 500 here is max number of unique artists - need to set variable
     fsexclvec.resize(std::distance(fsexclvec.begin(), ip));
     for (ip = fsexclvec.begin(); ip != fsexclvec.end(); ++ip) {

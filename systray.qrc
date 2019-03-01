@@ -3,5 +3,14 @@
         <file>bad.png</file>
         <file>heart.png</file>
         <file>trash.png</file>
+        <file>fouronehalf.png</file>
+        <file>one.png</file>
+        <file>oneonehalf.png</file>
+        <file>two.png</file>
+        <file>twoonehalf.png</file>
+        <file>three.png</file>
+        <file>threeonehalf.png</file>
+        <file>four.png</file>
+        <file>five.png</file>
     </qresource>
 </RCC>
