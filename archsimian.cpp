@@ -141,11 +141,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
-
-
     ui->setupUi(this);    
     ui->mainQTabWidget->setCurrentIndex(0);
-
 
     // Step 1. Determine if user configuration exists:
     //
@@ -862,6 +859,13 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
                                       + QString::number((1 / s_yrsTillRepeatCode8) * (s_rCode8MsTotTime/60000)/60));
         ui->totadjhoursLabel->setText("Tot adjusted hours: " + QString::number(s_totAdjHours));
         ui->totadjtracksLabel->setText("Tot adjusted tracks: " + QString::number(s_totalAdjRatedQty));
+        ui->label_perc5->setText(QString::number(s_ratingRatio3 * 100,'g', 3) + "%");
+        ui->label_perc4->setText(QString::number(s_ratingRatio4 * 100,'g', 3) + "%");
+        ui->label_perc35->setText(QString::number(s_ratingRatio5 * 100,'g', 3) + "%");
+        ui->label_perc3->setText(QString::number(s_ratingRatio6 * 100,'g', 3) + "%");
+        ui->label_perc25->setText(QString::number(s_ratingRatio7 * 100,'g', 3) + "%");
+        ui->label_perc2->setText(QString::number(s_ratingRatio8 * 100,'g', 3) + "%");
+
     }
 }
 

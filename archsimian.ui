@@ -10,8 +10,24 @@
     <height>677</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>ArchSimian</string>
+   <string extracomment="Playlist Creator">ArchSimian</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="systray.qrc">
+    <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/as1.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/as1.png</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>48</width>
+    <height>48</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -39,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -235,7 +251,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>ArchSimian determines your listening rate based on you MediaMonkey play history, then calculates the number of days that will be added based on the number of tracks selected from the 'Add Songs' quantity above.</string>
+            <string>ArchSimian determines your listening rate based on your MediaMonkey play history, then calculates the number of days that will be added based on the number of tracks selected from the 'Add Songs' quantity above.</string>
            </property>
            <property name="text">
             <string>Days to add (based on estimated listening rate): </string>
@@ -822,6 +838,298 @@
          <string>TextLabel</string>
         </property>
        </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>380</y>
+          <width>121</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Rating</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>380</y>
+          <width>131</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Percentage of playlist</string>
+        </property>
+       </widget>
+       <widget class="QFrame" name="frame">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>400</y>
+          <width>141</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QLabel" name="label_star5">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>133</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/five.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_star4">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>28</y>
+           <width>133</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/four.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_star35">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>57</y>
+           <width>133</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/threeonehalf.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_star3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>87</y>
+           <width>133</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/three.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_star25">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>117</y>
+           <width>133</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/twoonehalf.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_star2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>144</y>
+           <width>133</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/two.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QFrame" name="frame_2">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>400</y>
+          <width>121</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QLabel" name="label_perc5">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>0</y>
+           <width>81</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_perc4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>53</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_perc35">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>53</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_perc3">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>90</y>
+           <width>53</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_perc25">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>120</y>
+           <width>53</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_perc2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>150</y>
+           <width>53</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
       <widget class="QWidget" name="frequencyTab">
        <attribute name="title">
@@ -1324,6 +1632,11 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="iconas" stdset="0">
+    <iconset>
+     <normalon>:/&lt;qresource prefix=&quot;/&quot;&gt;/as1.png</normalon>
+    </iconset>
+   </property>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -1334,6 +1647,17 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
