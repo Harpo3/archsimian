@@ -67,6 +67,10 @@ static double s_yrsTillRepeatCode5factor = 1 / s_yrsTillRepeatCode5;
 static double s_yrsTillRepeatCode6factor = 1 / s_yrsTillRepeatCode6;
 static double s_yrsTillRepeatCode7factor = 1 / s_yrsTillRepeatCode7;
 static double s_yrsTillRepeatCode8factor = 1 / s_yrsTillRepeatCode8;
+// Variables declared for use with album-level variety calculations
+static int s_minalbums;
+static int s_mintrackseach;
+static int s_mintracks;
 // Variables declared to calculate rating ratios
 static double s_ratingRatio3{0.0},s_ratingRatio4{0.0},s_ratingRatio5{0.0},
 s_ratingRatio6{0.0},s_ratingRatio7{0.0},s_ratingRatio8{0.0};
@@ -868,7 +872,6 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 
     }
 }
-
 void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
 {
     m_prefs.tracksToAdd = s_numTracks;
@@ -903,6 +906,9 @@ void ArchSimian::loadSettings()
     m_prefs.s_repeatFactorCode7 = settings.value("s_repeatFactorCode7", 1.6).toDouble();
     m_prefs.s_repeatFactorCode8 = settings.value("s_repeatFactorCode8", 1.4).toDouble();
     m_prefs.s_WindowsDriveLetter = settings.value("s_WindowsDriveLetter","").toString();
+    m_prefs.s_minalbums = settings.value("s_minalbums", 2).toInt();
+    m_prefs.s_mintrackseach = settings.value("s_mintrackseach", 4).toInt();
+    m_prefs.s_mintracks = settings.value("s_mintracks", 8).toInt();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -923,6 +929,9 @@ void ArchSimian::saveSettings()
     settings.setValue("s_repeatFactorCode6",m_prefs.s_repeatFactorCode6);
     settings.setValue("s_repeatFactorCode7",m_prefs.s_repeatFactorCode7);
     settings.setValue("s_repeatFactorCode8",m_prefs.s_repeatFactorCode8);
+    settings.setValue("s_minalbums",m_prefs.s_minalbums);
+    settings.setValue("s_mintrackseach",m_prefs.s_mintrackseach);
+    settings.setValue("s_mintracks",m_prefs.s_mintracks);
     settings.setValue("s_WindowsDriveLetter",m_prefs.s_WindowsDriveLetter);
 
 }
@@ -1133,4 +1142,22 @@ void ArchSimian::on_albumscheckBox_stateChanged(int inclAlbums)
         ui->albumsTab->setEnabled(0);
         ui->centralWidget->repaint();
     }
+}
+
+void ArchSimian::on_minalbumsspinBox_valueChanged(int arg1)
+{
+   m_prefs.s_minalbums =  arg1;
+   ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
+}
+
+void ArchSimian::on_mintracksspinBox_valueChanged(int arg1)
+{
+    m_prefs.s_mintracks = arg1;
+
+}
+
+void ArchSimian::on_mintrackseachspinBox_valueChanged(int arg1)
+{
+ m_prefs.s_mintrackseach = arg1;
+ ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
 }

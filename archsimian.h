@@ -73,6 +73,12 @@ private slots:
 
     void on_albumscheckBox_stateChanged(int inclAlbums);
 
+    void on_minalbumsspinBox_valueChanged(int arg1);
+
+    void on_mintracksspinBox_valueChanged(int arg1);
+
+    void on_mintrackseachspinBox_valueChanged(int arg1);
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -98,6 +104,9 @@ private:
         double s_repeatFactorCode6;
         double s_repeatFactorCode7;
         double s_repeatFactorCode8;
+        int s_minalbums;
+        int s_mintrackseach;
+        int s_mintracks;
 
     };
 

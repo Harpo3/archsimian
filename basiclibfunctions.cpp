@@ -525,6 +525,7 @@ void buildDB()
     std::string ratingCode;
     std::string songLength;
     std::string popmRating;
+    std::string albumID;
     static std::string s_artistInterval{"0"};
     std::string s_selectedTrackPath;
     StringVector2D artistIntervalVec = readCSV("artistsadj.txt");
@@ -543,6 +544,8 @@ void buildDB()
         //std::cout << "While iterating lines from cleanlib.dsv into vector ratedabbrvect, start token loop." << std::endl;
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^')) {
+            // TOKEN PROCESSING - COL 2
+            if (tokenCount == 2){albumID = token;} // store albumID variable
             // TOKEN PROCESSING - COL 8
             if (tokenCount == 8){songPath = token;} // store song path variable
             // TOKEN PROCESSING - COL 12
@@ -574,7 +577,7 @@ void buildDB()
         if (ratingCode != "0"){
             //std::cout << "Processing rated string #: " <<ratedabbrvect.size() << "." << "\n";
             if ((selectedArtistToken != "Custom2") && (selectedArtistToken != "Artist")){
-                ratedabbrvect.push_back(tokenLTP+","+ratingCode+","+selectedArtistToken+","+songPath+","+songLength+","+s_artistInterval+",0");
+                ratedabbrvect.push_back(tokenLTP+","+ratingCode+","+selectedArtistToken+","+songPath+","+songLength+","+s_artistInterval+","+albumID+",0");
             }
         }
     }

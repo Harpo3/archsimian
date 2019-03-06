@@ -47,6 +47,8 @@ void getExcludedArtists(const int &s_playlistSize)
     std::string ratingCode; // Rating code from ratedabbrVec
     std::string songLength; // Song length from ratedabbrVec
     std::string artistInterval; // Artist interval from ratedabbrVec
+    std::string albumID; // Album ID from ratedabbrVec
+
     std::string path;
     //std::map<std::string,int> countMap; // Create a map for two types, string and int
     //std::vector<std::string>plvect;
@@ -82,16 +84,17 @@ void getExcludedArtists(const int &s_playlistSize)
             pathinlib = ratedabbrVec[i][3];
             songLength = ratedabbrVec[i][4];
             artistInterval = ratedabbrVec[i][5];
+            albumID = ratedabbrVec[i][6];
             trim_cruft(pathinlib);
             trim_cruft(song);
             pathinlib.compare(song);
             // histvect - if path in vector row does not match a playlist entry, push to extended
             // play history vector
             if ((song != pathinlib) && (songCount == 1)){
-                histvect.push_back(tokenLTP+","+selectedArtistToken+","+songLength+","+ratingCode+","+artistInterval);
+                histvect.push_back(tokenLTP+","+selectedArtistToken+","+songLength+","+ratingCode+","+artistInterval+","+albumID);
                 continue;
             }
-            // ratedabbrVec - if path in vector row matches a playlist entry, remove zero from col 6 and emplace
+            // ratedabbrVec - if path in vector row matches a playlist entry, remove zero from col 7 and emplace
             // playlist position number
             if (song == pathinlib){
                 for(int j=0;j<20;j++){
@@ -238,8 +241,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
             // TOKEN PROCESSING - COL 4
             if (tokenCount == 4)  {selectedSongLength = std::atof(token.c_str());
             }
-            // TOKEN PROCESSING - COL 6
-            if (tokenCount == 6)  {
+            // TOKEN PROCESSING - COL 7
+            if (tokenCount == 7)  {
                 selectedPlaylistPosition = token;
                 if (token == "1") {
                     codeForPos1 = selectedRatingCode;
@@ -503,6 +506,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::string playlistPos;
     std::string songLengtha; //just added
     std::string artistIntervala;
+    std::string albumID;
     static bool s_excludeMatch{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
     if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
@@ -527,7 +531,9 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             // TOKEN PROCESSING - COL 5
             if (tokenCount == 5) {artistIntervala = token;} //just added
             // TOKEN PROCESSING - COL 6
-            if (tokenCount == 6)  {playlistPos = token;}
+            if (tokenCount == 6) {albumID = token;} //just added
+            // TOKEN PROCESSING - COL 7
+            if (tokenCount == 7)  {playlistPos = token;}
             ++ tokenCount;
         }
         if (playlistPos == "0") {notInPlaylist = 1;}
@@ -609,8 +615,8 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
             if (tokenCount == 1) {ratingCode = token;}// store rating variable
             // TOKEN PROCESSING - COL 2
             if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
-            // TOKEN PROCESSING - COL 6
-            if (tokenCount == 6)  {
+            // TOKEN PROCESSING - COL 7
+            if (tokenCount == 7)  {
                 playlistPos = token;
                 if ((ratingCode == "1") && (playlistPos != "0")){
                     ++*_scode1PlaylistCount;
@@ -651,6 +657,7 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     std::string selectedArtistToken; // Artist variable
     std::string songPath;
     std::string playlistPos;
+    std::string albumID;
     std::vector<std::string>code1tracksvect; // New vector to store all code 1 selections
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
@@ -668,7 +675,9 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
             // TOKEN PROCESSING - COL 3
             if (tokenCount == 3) {songPath = token;}// store song path variable
             // TOKEN PROCESSING - COL 6
-            if (tokenCount == 6)  {playlistPos = token;}
+            if (tokenCount == 6) {albumID = token;}// store album ID variable
+            // TOKEN PROCESSING - COL 7
+            if (tokenCount == 7)  {playlistPos = token;}
             ++ tokenCount;
         }
         if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1))  // if a code 1 track is not

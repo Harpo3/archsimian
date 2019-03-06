@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -1367,9 +1367,9 @@
        <widget class="QWidget" name="layoutWidget3">
         <property name="geometry">
          <rect>
-          <x>150</x>
+          <x>140</x>
           <y>50</y>
-          <width>49</width>
+          <width>52</width>
           <height>231</height>
          </rect>
         </property>
@@ -1377,42 +1377,42 @@
          <item>
           <widget class="QLabel" name="code3label">
            <property name="text">
-            <string> Code 3</string>
+            <string> (Code 3)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="code4label">
            <property name="text">
-            <string> Code 4</string>
+            <string> (Code 4)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="code5label">
            <property name="text">
-            <string> Code 5</string>
+            <string> (Code 5)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="code6label">
            <property name="text">
-            <string> Code 6</string>
+            <string> (Code 6)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="code7label">
            <property name="text">
-            <string> Code 7</string>
+            <string> (Code 7)</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="code8label">
            <property name="text">
-            <string> Code 8</string>
+            <string> (Code 8)</string>
            </property>
           </widget>
          </item>
@@ -1584,17 +1584,6 @@
          <string>Set repeat rate in days (Code 3) using slider:</string>
         </property>
        </widget>
-       <widget class="QWidget" name="gridLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>480</x>
-          <y>210</y>
-          <width>160</width>
-          <height>80</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout"/>
-       </widget>
       </widget>
       <widget class="QWidget" name="albumsTab">
        <attribute name="title">
@@ -1603,14 +1592,130 @@
        <widget class="QLabel" name="label_3">
         <property name="geometry">
          <rect>
-          <x>40</x>
-          <y>60</y>
-          <width>53</width>
-          <height>15</height>
+          <x>10</x>
+          <y>20</y>
+          <width>211</width>
+          <height>41</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Album-level variety is enabled.</string>
+        </property>
+       </widget>
+       <widget class="QFrame" name="frame_3">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>140</y>
+          <width>371</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>231</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Minimum Albums required for each artist:</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>221</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Minimum total rated tracks per artist:</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_8">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>90</y>
+           <width>211</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Minimum rated tracks on each album to meet the minimum album count:</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="minalbumsspinBox">
+         <property name="geometry">
+          <rect>
+           <x>270</x>
+           <y>10</y>
+           <width>44</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>2</number>
+         </property>
+         <property name="value">
+          <number>2</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="mintracksspinBox">
+         <property name="geometry">
+          <rect>
+           <x>270</x>
+           <y>50</y>
+           <width>44</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>8</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="mintrackseachspinBox">
+         <property name="geometry">
+          <rect>
+           <x>270</x>
+           <y>100</y>
+           <width>44</width>
+           <height>24</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>80</y>
+          <width>321</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>The last album played will be excluded from track selection, if the following crtieria are met:</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </widget>
