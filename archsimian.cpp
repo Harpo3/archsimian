@@ -146,6 +146,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_minalbums = m_prefs.s_minalbums;
     s_mintrackseach= m_prefs.s_mintrackseach;
     s_mintracks = m_prefs.s_mintracks;
+    s_repeatFreqForCode1 = m_prefs.repeatFreqCode1;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
     ui->setupUi(this);    
