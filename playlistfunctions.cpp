@@ -21,6 +21,28 @@ void trim_cruft(std::string& buffer)
     buffer.erase(buffer.find_last_not_of(cruft) + 1);    
 }
 
+// Compares two strings and returns bool for match result
+bool stringMatch(std::string s1, std::string s2)
+{
+    bool x{0};
+    trim_cruft(s1);
+    trim_cruft(s2);
+    if(s1 != s2)x = 0;
+    else x = 1;
+    return x;
+}
+
+// Looks for str in ifstream and returns a bool for match result
+bool matchLineinIfstream(std::ifstream & stream, std::string str) {
+    std::string line;
+    bool x{0};
+    while (getline(stream, line)) {
+        x = stringMatch(line,str);
+        if (x == 1) break;
+    }
+    return x;
+}
+
 void getExcludedArtists(const int &s_playlistSize)
 {
     std::fstream filestrinterval;
@@ -480,12 +502,12 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
 // Sort vector to select the oldest dated track for addition to the playlist
 // Write/append the cleanedplaylist.txt file the oldest dated track found.
 
-std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath){
+std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath, bool &s_includeAlbumVariety){
     if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "Error opening ratedabbr2.txt file." << std::endl;}
+    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file." << std::endl;}
     std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
@@ -494,7 +516,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     }
     std::string str1; // store the string for ratedabbr2.txt
     std::string str2; // store the string for artistexcludes.txt
-    std::string str3; // store the string for ratedabbr2.txt (second opening)
+    std::string str3; // store the string for finalids.txt
     bool notInPlaylist{0};
     std::string currentArtistInterval; // token is the contents of each column of data
     std::string currentArtist; // Artist variable from
@@ -508,10 +530,10 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::string artistIntervala;
     std::string albumID;
     static bool s_excludeMatch{false};
+    static bool s_excludeMatch2{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
     if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
-    // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"
-    // Need to store col values for Artist (1 or 19), song path (8), LastPlayedDate (17), playlist position (18), rating (29),
+    // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"    
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
         std::istringstream iss(str1); // str is the string of each row
         std::string token; // token is the contents of each column of data
@@ -552,27 +574,51 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
         std::ifstream artistexcludes;  // Next ensure artistexcludes.txt is ready to open
         artistexcludes.open ("artistexcludes.txt");
         if (artistexcludes.is_open()) {artistexcludes.close();}
-        else {std::cout << "Error opening artistexcludes.txt file." << std::endl;}
+        else {std::cout << "selectTrack: Error opening artistexcludes.txt file." << std::endl;}
         std::string artistexcludes2 = "artistexcludes.txt"; // now we can use it as input file
         std::ifstream artexcludes(artistexcludes2); // Open artistexcludes.txt as ifstream
         if (!artexcludes.is_open()) {
-            std::cout << "Error opening artistexcludes.txt." << std::endl;
+            std::cout << "selectTrack: Error opening artistexcludes.txt." << std::endl;
             std::exit(EXIT_FAILURE);
         }
         s_excludeMatch = false;
         while (std::getline(artexcludes, str2)) {
             //std::cout << "Artist from artistexcludes.txt: "<< str2<<". Artist with sel rating from ratedabbr2.txt is: "<<selectedArtistToken << std::endl;
-            std::istringstream iss(str2); // str2 is the string of each row
-            if (std::string(str2) == selectedArtistToken) {
-                s_excludeMatch = true; // If excluded artist found, set bool to true                
+            //std::istringstream iss(str2); // str2 is the string of each row
+            if (std::string(str2) == selectedArtistToken) {s_excludeMatch = true;} // If excluded artist found, set bool to true
+        }
+        if (s_excludeMatch == true){continue;} // if an excluded artist is found continue to next row  write to final selection vector
+            //std::cout << "Track found with current rating and not on exclude list " << selectedArtistToken << " , " << songPath << std::endl;    
+        artexcludes.close();
+
+        // If not yet skipped, open an inner loop and iterate through finalids.txt and compare each entry against the albumID token.
+        // Continue to next row if a match found.
+
+        if (s_includeAlbumVariety == true){
+            std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
+            artistalbexcludes.open ("finalids.txt");
+            if (artistalbexcludes.is_open()) {artistalbexcludes.close();}
+            else {std::cout << "selectTrack: Error opening finalids.txt file." << std::endl;}
+            std::string artistalbexcludes2 = "finalids.txt"; // now we can use it as input file
+            std::ifstream artalbexcludes(artistalbexcludes2); // Open artistexcludes.txt as ifstream
+            if (!artalbexcludes.is_open()) {
+                std::cout << "selectTrack: Error opening finalids.txt." << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
+            s_excludeMatch2 = false;
+            while (std::getline(artalbexcludes, str3)) {
+                //std::istringstream iss3(str3); // str2 is the string of each row
+                if (std::string(str3) == albumID) {
+                    s_excludeMatch2 = true; // If excluded album found, set bool to true
+                }
+                if (s_excludeMatch2 == true){continue;}
             }
         }
-        if (s_excludeMatch == false){ // if an excluded artist is not found write to final selection vector
-            //std::cout << "Track found with current rating and not on exclude list " << selectedArtistToken << " , " << songPath << std::endl;
-            finaltracksvect.push_back(tokenLTP+","+songPath);}
-        artexcludes.close();
+        finaltracksvect.push_back(tokenLTP+","+songPath);
         continue;
     }
+
+
     std::sort (finaltracksvect.begin(), finaltracksvect.end());
     std::string fullstring = finaltracksvect.front();
     std::vector<std::string> splittedStrings = split(fullstring, ',');
@@ -693,4 +739,137 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
     playlist << *s_selectedCode1Path << "\n";
     playlist.close();
+}
+
+/*
+This function runs after the function ratingCodeSelected, if enabled by the user.
+Iterate through tracks in ratedabbr2.txt starting from oldest playlist position to newest
+for each artist in the artistalbmexcls.txt file. Sends the IDs to a text file excludeids.txt
+*/
+
+void getAlbumIDs(){
+    //if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
+    std::fstream filestrartists;
+    filestrartists.open ("selalbmexcl.txt");
+    if (filestrartists.is_open()) {filestrartists.close();}
+    else {std::cout << "Error opening selalbmexcl.txt file." << std::endl;}
+    std::string artistalbmexcls1 = "selalbmexcl.txt";
+    std::ifstream artistTable1(artistalbmexcls1);
+    if (!artistTable1.is_open()) {
+        std::cout << "getArtCompare: Error opening selalbmexcl.txt." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    std::ofstream trimmedlist("finalids.txt");
+    std::string str1;
+    std::string tokenLTP;
+    std::string selectedArtistToken;
+    std::string ratingCode;
+    std::string playlistPos;
+    std::string albumID;
+    while (std::getline(artistTable1, str1)) {
+        std::string str2;
+        //search filestrartists2 for matching string
+        std::fstream filestrartists2;
+        std::fstream filestrinterval;
+        filestrinterval.open ("ratedabbr2.txt");
+        if (filestrinterval.is_open()) {filestrinterval.close();}
+        else {std::cout << "Error opening ratedabbr2.txt file." << std::endl;}
+        std::string ratedlibrary = "ratedabbr2.txt";
+        std::ifstream ratedSongsTable(ratedlibrary);
+        if (!ratedSongsTable.is_open()) {
+            std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+        // set variables used to compare element values in ratedabbr2 against this str1
+        int finalplaylistPos = 99999;
+        int finaltokenLTP = 0;
+        std::string finalAlbumID = "0";
+        while (std::getline(ratedSongsTable, str2)) {  // Declare variables applicable to all rows
+            std::istringstream iss(str2); // str is the string of each row
+            std::string token; // token is the contents of each column of data
+            int tokenCount{0}; //token count is the number of delimiter characters within str
+            while (std::getline(iss, token, ',')) {
+                // TOKEN PROCESSING - COL 0
+                if ((tokenCount == 0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
+                // TOKEN PROCESSING - COL 1
+                if (tokenCount == 1) {ratingCode = token;}// store rating variable
+                // TOKEN PROCESSING - COL 2
+                if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+                // TOKEN PROCESSING - COL 6
+                if (tokenCount == 6) {albumID = token;} // store album ID variable
+                // TOKEN PROCESSING - COL 7
+                if (tokenCount == 7)  {
+                    if (token != "0"){
+                        int tmpint = std::stoi(token);
+                        if (finalplaylistPos > tmpint){playlistPos = token;}
+                        else playlistPos = "0";
+                    }
+                    else playlistPos = "0";
+                }
+                ++ tokenCount;
+            }
+            bool foundmatch{0};
+            foundmatch = stringMatch(selectedArtistToken, str1);// Check whether the artist in ratedabbr2 matches artist in selalbmexcl.txt
+            if ((playlistPos != "0") && (foundmatch == 1)){// If the artist matches, get lowest playlist position and save albumID associated with it
+                // if the matched artist is in the playlist or extended count, get lowest playlist position
+                tokenLTP = "0"; // reset lasttime played when/if playlist entry found
+                int tmppos= std::stoi(playlistPos);
+                finalplaylistPos = tmppos;
+                finalAlbumID = albumID;
+            }
+            // If the artist matches, but no playlist position, get most recent lastplayed date and save albumID associated with it
+            if ((playlistPos == "0") && (foundmatch == 1)){
+                // if the matched artist is not in the playlist or extended count, check last time played if playlist position is zero
+                int tmpltp = std::stoi(tokenLTP);
+                if ((finaltokenLTP < tmpltp) && (finalplaylistPos == 99999)) {
+                    finaltokenLTP = tmpltp; // update finalLTP if greater than existing finalLTP
+                    finalAlbumID = albumID; // save albumID only if not already found in playlist
+                }
+            }
+        }
+        ratedSongsTable.close();
+        trimmedlist << finalAlbumID << std::endl;
+    }
+    artistTable1.close();
+    trimmedlist.close();
+}
+
+/*
+At time of track selection (if user selected album variety), use the file artistalbmexcls.txt
+and artistexcludes.txt to create a list of artists subject to album variety screen but excluding
+those already on the excluded artists list. Output to a temp file selalbmexcl.txt
+*/
+void getTrimArtAlbmList(){
+    std::fstream filestrartists;
+    filestrartists.open ("artistalbmexcls.txt");
+    if (filestrartists.is_open()) {filestrartists.close();}
+    else {std::cout << "Error opening artistalbmexcls.txt file." << std::endl;}
+    std::string artistalbmexcls1 = "artistalbmexcls.txt"; // now we can use it as input file
+    std::ifstream artistTable1(artistalbmexcls1);
+    if (!artistTable1.is_open()) {
+        std::cout << "getArtCompare: Error opening artistalbmexcls.txt." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    std::ofstream trimmedlist("selalbmexcl.txt");
+    std::string str1;
+    while (std::getline(artistTable1, str1)) {
+        //search filestrartists2 for matching string
+        std::fstream filestrartists2;
+        filestrartists2.open ("artistexcludes.txt");
+        if (filestrartists2.is_open()) {filestrartists2.close();}
+        else {std::cout << "Error opening artistexcludes.txt file." << std::endl;}
+        std::string artistexcludes2 = "artistexcludes.txt"; // now we can use it as input file
+        std::ifstream artistTable2(artistexcludes2);
+        if (!artistTable2.is_open()) {
+            std::cout << "getArtCompare: Error opening artistexcludes.txt." << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+        bool foundmatch{0};
+        foundmatch = matchLineinIfstream(artistTable2, str1);
+        artistTable2.close();
+        if (foundmatch == 0)
+            trimmedlist << str1 << std::endl;
+    }
+    trimmedlist.close();
+    artistTable1.close();
 }

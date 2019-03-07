@@ -143,6 +143,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_mmPlaylistDir = m_prefs.mmPlaylistDir;
     s_includeNewTracks = m_prefs.s_includeNewTracks;
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
+    s_minalbums = m_prefs.s_minalbums;
+    s_mintrackseach= m_prefs.s_mintrackseach;
+    s_mintracks = m_prefs.s_mintracks;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
     ui->setupUi(this);    
@@ -683,6 +686,16 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->mainQTabWidget->setTabEnabled(5, false);
         ui->settingsTab->setEnabled(1);
     }
+    /* 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary(const int &s_minalbums,
+      const int &s_mintrackseach, const int &s_mintracks). What it does: When basiclibrary functions are processed
+      (at startup), run this function to get artists meeting the screening criteria (if user selected album variety).
+      This generates the file artistalbmexcls.txt (see albumexcludes project)*/
+
+    if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true) && (s_includeAlbumVariety == true))
+    {
+        buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
+    }
+
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
@@ -710,7 +723,11 @@ void ArchSimian::on_addsongsButton_clicked(){
         if (s_selectedCode1Path != "") {s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
         if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
         if (s_ratingNextTrack != 1) { // if the next rating code is not 1, process normal track selection logic
-            selectTrack(s_ratingNextTrack,&s_selectedTrackPath);
+            if (s_includeAlbumVariety == true){
+                getTrimArtAlbmList();
+                getAlbumIDs();
+            }
+            selectTrack(s_ratingNextTrack,&s_selectedTrackPath, s_includeAlbumVariety);
         }
         std::string shortselectedTrackPath;
         shortselectedTrackPath = s_selectedTrackPath;
