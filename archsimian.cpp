@@ -678,6 +678,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
+        ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
+        ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
+        ui->mintrackseachspinBox->setValue(m_prefs.s_mintrackseach);
+
     if (s_bool_IsUserConfigSet == false){
         ui->mainQTabWidget->setTabEnabled(0, false);
         ui->mainQTabWidget->setTabEnabled(2, false);
