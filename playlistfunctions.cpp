@@ -608,13 +608,18 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             s_excludeMatch2 = false;
             while (std::getline(artalbexcludes, str3)) {
                 //std::istringstream iss3(str3); // str2 is the string of each row
+                //if (albumID == "4376")std::cout << "ID review. str3 is "<< str3<< " and Album ID is "<<albumID << std::endl;
+                trim_cruft(str3);
+                trim_cruft(albumID);
                 if (std::string(str3) == albumID) {
+                    //if (albumID == "4376") std::cout << "ID review MATCH. str3 is "<< str3<< " and Album ID is "<<albumID << std::endl;
                     s_excludeMatch2 = true; // If excluded album found, set bool to true
+                    continue;
                 }
                 if (s_excludeMatch2 == true){continue;}
             }
         }
-        finaltracksvect.push_back(tokenLTP+","+songPath);
+        if (s_excludeMatch2 == false) finaltracksvect.push_back(tokenLTP+","+songPath);
         continue;
     }
 

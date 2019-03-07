@@ -707,7 +707,7 @@ void ArchSimian::on_addsongsButton_clicked(){
                                             "tracks requested have been processed. This can take some "
                                             "time...",15);
     int numTracks = ui->addtrksspinBox->value();
-    ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
+    //ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
     remove("songtext.txt");
     std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
@@ -716,7 +716,7 @@ void ArchSimian::on_addsongsButton_clicked(){
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = 99999;
-        if (s_includeNewTracks == true){ //Retrieve rating code 1 stats is user is including new tracks
+        if (s_includeNewTracks == true){ //Retrieve rating code 1 stats if user is including new tracks
             code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);
         }
         if ((s_includeNewTracks == true) && (s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){

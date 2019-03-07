@@ -692,12 +692,12 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::string totalTracksToken; // Total tracks count variable from artScreenTable [1]
     while (getline(artScreenTable,artScreenLine)){
         for(size_t i = 0; i < artAdjVec1.size(); i++){ // read each row element into the variables needed
-                   selectedArtistToken = artAdjVec1[i][0];
-                   totalTracksToken = artAdjVec1[i][1];
-                   int tmpttt = std::stoi(totalTracksToken);
-                   if (tmpttt >= s_mintracks) {
-                       trackCountMap.insert(std::make_pair(selectedArtistToken,tmpttt));
-                   }
+            selectedArtistToken = artAdjVec1[i][0];
+            totalTracksToken = artAdjVec1[i][1];
+            int tmpttt = std::stoi(totalTracksToken);
+            if (tmpttt >= s_mintracks) {
+                trackCountMap.insert(std::make_pair(selectedArtistToken,tmpttt));
+            }
         }
     }
     artScreenTable.close(); // close ifstream file, leave vector trackCountMap open
@@ -706,31 +706,23 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::map<std::string, int>::iterator it = trackCountMap.begin();
     while(it != trackCountMap.end())
     {
-    totTrackCountList<<it->first<<std::endl;
-    it++;
+        totTrackCountList<<it->first<<std::endl;
+        it++;
     }
     totTrackCountList.close();
-
     std::vector <std::string> albIDVect;
     // add ostream for 2nd tmp file
     std::ofstream dupAlbumIDList("tmpcount2.txt"); // tmp output file for writing vector
-
     // Now, for each artist in the tmp file, iterate through the library file and push the artist and Album ID to a vector
     // including all the duplicate values for album ID
     std::string artist;
-
     int new_artistCount = cstyleStringCount("tmpcount1.txt");
-    //int new_LibCount = cstyleStringCount("cleanlib.dsv");
-    //std::cout << "new_artistCount: "<<new_artistCount << std::endl;
-    //std::cout << "new_LibCount: "<<new_LibCount << std::endl;
-
     // Two read files, first the library: minAlbumsScreenTable
     std::fstream minalbadj;
     minalbadj.open ("cleanlib.dsv");
     if (minalbadj.is_open()) {minalbadj.close();}
     else {std::cout << "buildAlbumExclLibrary: Error opening cleanlib.dsv." << std::endl;}
     std::string minAlbumsScreen = "cleanlib.dsv"; // now we can use it as input file
-
     // Then, the previous tmp file with the list of artists from the first screen: minAlbumsScreenTable1
     std::fstream totTrackCountList1;
     totTrackCountList1.open ("tmpcount1.txt");
@@ -743,7 +735,6 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
         std::cout << "buildAlbumExclLibrary: Error opening minAlbumsScreenTable1." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
     // Outer loop (artist list) needs to be a while loop
     std::string str;
     int h = 0;
@@ -778,7 +769,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
             trim_cruft(selectedArtistTmpToken);
             if (selectedArtistAlbToken == selectedArtistTmpToken){
                 //std::cout << "selectedArtistAlbToken " << selectedArtistAlbToken << ", AlbumIDToken " << AlbumIDToken<< std::endl;
-            albIDVect.push_back(selectedArtistAlbToken + ',' + AlbumIDToken);
+                albIDVect.push_back(selectedArtistAlbToken + ',' + AlbumIDToken);
             }
         }
         ++h;
@@ -787,66 +778,62 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     // write vector to 2nd tmp file
     for (std::size_t i = 0 ;  i < albIDVect.size(); i++){
         dupAlbumIDList << albIDVect[i] << "\n";}
-
-    // close two read files after 2nd tmp file is written, and remove first tmp file
+    // close two read files after 2nd tmp file is written
     dupAlbumIDList.close();
-    //minAlbumsScreenTable.close();
     minAlbumsScreenTable1.close();
-
     std::vector<std::string> mymap;
-        std::string tmpfile = "tmpcount2.txt";
-        std::string stra;
-        std::ifstream mytmpfile(tmpfile);
-        std::ofstream tmp3{"tmpcount3.txt"};
-        while (std::getline(mytmpfile, stra))
-        {
-            // Line contains string of length > 0 then save it in multimap
-            if(stra.size() > 0)
-                mymap.push_back(stra);
-        }
-        std::map<std::string, int> duplicateElements;
-        findDuplicates(mymap, duplicateElements);
+    std::string tmpfile = "tmpcount2.txt";
+    std::string stra;
+    std::ifstream mytmpfile(tmpfile);
+    std::ofstream tmp3{"tmpcount3.txt"};
+    while (std::getline(mytmpfile, stra))
+    {
+        // Line contains string of length > 0 then save it in multimap
+        if(stra.size() > 0)
+            mymap.push_back(stra);
+    }
+    std::map<std::string, int> duplicateElements;
+    findDuplicates(mymap, duplicateElements);
 
-        for (auto & elem : duplicateElements){
-            if (elem.second >= s_mintrackseach){ // This is the minimum tracks per album variable
-                tmp3 << elem.first << "," << elem.second << std::endl;}
+    for (auto & elem : duplicateElements){
+        if (elem.second >= s_mintrackseach){ // This is the minimum tracks per album variable
+            tmp3 << elem.first << "," << elem.second << std::endl;}
+    }
+    tmp3.close();
+    std::string tmpfile1 = "tmpcount3.txt";
+    std::string str1;
+    std::ifstream mytmpfile1(tmpfile1);
+    std::ofstream tmp4{"tmpcount4.txt"};
+    while (std::getline(mytmpfile1, str1))
+    {
+        std::size_t found = str1.find_first_of(',');
+        std::string trimmed1 = str1.substr(0,found);
+        tmp4 << trimmed1 <<std::endl;
+    }
+    tmp4.close();
+    std::vector<std::string> mymap1;
+    std::string tmpfile2 = "tmpcount4.txt";
+    std::string str2;
+    std::ifstream mytmpfile2(tmpfile2);
+    std::ofstream finallist {"artistalbmexcls.txt"};
+    while (std::getline(mytmpfile2, str2))
+    {
+        // Line contains string of length > 0 then save it in multimap
+        if(str2.size() > 0){
+            mymap1.push_back(str2);
+            //std::cout << str2 << std::endl;
         }
-        tmp3.close();
-        std::string tmpfile1 = "tmpcount3.txt";
-        std::string str1;
-        std::ifstream mytmpfile1(tmpfile1);
-        std::ofstream tmp4{"tmpcount4.txt"};
-        while (std::getline(mytmpfile1, str1))
-        {
-            std::size_t found = str1.find_first_of(',');
-            std::string trimmed1 = str1.substr(0,found);
-            tmp4 << trimmed1 <<std::endl;
+    }
+    std::map<std::string, int> duplicateElements1;
+    findDuplicates(mymap1, duplicateElements1);
+    for (auto & elem : duplicateElements1){
+        if (elem.second >= s_minalbums){                  // This is the minimum albums variable
+            finallist << elem.first << std::endl;
         }
-        tmp4.close();
-        std::vector<std::string> mymap1;
-        std::string tmpfile2 = "tmpcount4.txt";
-        std::string str2;
-        std::ifstream mytmpfile2(tmpfile2);
-        std::ofstream finallist {"artistalbmexcls.txt"};
-        while (std::getline(mytmpfile2, str2))
-        {
-            // Line contains string of length > 0 then save it in multimap
-            if(str2.size() > 0){
-                mymap1.push_back(str2);
-                //std::cout << str2 << std::endl;
-            }
-        }
-        std::map<std::string, int> duplicateElements1;
-        findDuplicates(mymap1, duplicateElements1);
-        for (auto & elem : duplicateElements1){
-            if (elem.second >= s_minalbums){                  // This is the minimum albums variable
-                finallist << elem.first << std::endl;
-            }
-        }
-        finallist.close();
-        remove("tmpcount1.txt");
-        remove("tmpcount2.txt");
-        remove("tmpcount3.txt");
-        remove("tmpcount4.txt");
-
+    }
+    finallist.close();
+    remove("tmpcount1.txt");
+    remove("tmpcount2.txt");
+    remove("tmpcount3.txt");
+    remove("tmpcount4.txt");
 }
