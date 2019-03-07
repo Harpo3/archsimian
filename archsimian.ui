@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -547,7 +547,7 @@
          <rect>
           <x>10</x>
           <y>140</y>
-          <width>291</width>
+          <width>381</width>
           <height>21</height>
          </rect>
         </property>
@@ -555,7 +555,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Any tracks in the library rated as 1 star are treated as new and unrated. Set frequency in the Playlist tab if this is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Include new tracks (Code 1) that need to be rated</string>
+         <string>Include new tracks (Code 1) that need to be rated (takes more time)</string>
         </property>
         <property name="checked">
          <bool>false</bool>
@@ -580,7 +580,7 @@
          <string extracomment="Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab">Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab</string>
         </property>
         <property name="text">
-         <string>Enable album-level variety</string>
+         <string>Enable album-level variety (takes more time)</string>
         </property>
        </widget>
       </widget>

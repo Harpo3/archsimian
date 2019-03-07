@@ -844,7 +844,12 @@ void ArchSimian::on_getplaylistButton_clicked()
                 QString(m_prefs.defaultPlaylist),//default dir for playlists
                 "playlists(.m3u) (*.m3u)");
     m_prefs.defaultPlaylist = selectedplaylist;
+    s_defaultPlaylist = m_prefs.defaultPlaylist;
     ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
+    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+    s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
+    s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+    getExcludedArtists(s_playlistSize);
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
