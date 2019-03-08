@@ -850,6 +850,9 @@ void ArchSimian::on_getplaylistButton_clicked()
     s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
     s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
     getExcludedArtists(s_playlistSize);
+    ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
+    double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
+    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(currplaylistdays,'g', 3));
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)

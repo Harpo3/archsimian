@@ -558,19 +558,15 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             if (tokenCount == 7)  {playlistPos = token;}
             ++ tokenCount;
         }
-        if (playlistPos == "0") {notInPlaylist = 1;}
-        else if (playlistPos != "0"){notInPlaylist = 0;}// store temp variable to check that item is not in playlist
-        // For either of these variable results, continue to next row: (1) rating is not equal to s_ratingNextTrack (2) item is already on the
-        // playlist, notInPlaylist == false
-        if (notInPlaylist == 0) {continue;}
-        //std::cout << "notInPlaylist = false:" << notInPlaylist << ". Going to next line..." << std::endl;
-        else if (ratingCode != std::to_string(s_ratingNextTrack)) {continue;}
-        //std::cout << ". RatingCode is: " << ratingCode << " and *_sratingNextTrack is " << *_sratingNextTrack << ". Going to next line..." << std::endl;
-        else if ((ratingCode == std::to_string(s_ratingNextTrack)) && (notInPlaylist == 1)){
-            //std::cout << "Track found with current rating (not yet excluded): " << selectedArtistToken << ", " << songPath << std::endl;
-        }
-        // If not yet skipped, open an inner loop and iterate through artistexcludes.txt and compare each entry against the artist token.
-        // Continue to next row if a match found.
+        if (playlistPos == "0") {notInPlaylist = 1;} // Set variable to check whether item is or is not in the playlist
+        else {notInPlaylist = 0;} // Set variable to check whether item is or is not in the playlist
+        if (notInPlaylist == 0) {continue;} // If item is already on the playlist, continue to next str1
+        else if (ratingCode != std::to_string(s_ratingNextTrack)) {continue;} // If item does not have the rating selected, continue to next str1
+        /*
+         If str1 has not yet been skipped, a track has been found with the rating selected and is not yet been placed on the playlist
+         Now, open an inner loop and iterate through artistexcludes.txt, comparing each 'exclude' entry against the artist token.
+         Continue to next str1 if a match found (meaning it identifies an excluded artist).
+        */
         std::ifstream artistexcludes;  // Next ensure artistexcludes.txt is ready to open
         artistexcludes.open ("artistexcludes.txt");
         if (artistexcludes.is_open()) {artistexcludes.close();}
@@ -581,19 +577,19 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             std::cout << "selectTrack: Error opening artistexcludes.txt." << std::endl;
             std::exit(EXIT_FAILURE);
         }
-        s_excludeMatch = false;
+        s_excludeMatch = false; // set default to not exclude based on artist
         while (std::getline(artexcludes, str2)) {
-            //std::cout << "Artist from artistexcludes.txt: "<< str2<<". Artist with sel rating from ratedabbr2.txt is: "<<selectedArtistToken << std::endl;
-            //std::istringstream iss(str2); // str2 is the string of each row
             if (std::string(str2) == selectedArtistToken) {s_excludeMatch = true;} // If excluded artist found, set bool to true
         }
-        if (s_excludeMatch == true){continue;} // if an excluded artist is found continue to next row  write to final selection vector
-            //std::cout << "Track found with current rating and not on exclude list " << selectedArtistToken << " , " << songPath << std::endl;    
+        if (s_excludeMatch == true){
+            artexcludes.close();
+            continue;} // if an excluded artist is found continue to next str1
         artexcludes.close();
-
-        // If not yet skipped, open an inner loop and iterate through finalids.txt and compare each entry against the albumID token.
-        // Continue to next row if a match found.
-
+        /*
+           If not yet skipped, and if the user has enabled the album variety feature, open another inner loop and iterate through
+           finalids.txt (which contains the album IDs which are to be excluded) and compare each ID to the str1 albumID token.
+           Continue to next str1 if a match found (meaning it identifies an excluded album ID).
+        */
         if (s_includeAlbumVariety == true){
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open ("finalids.txt");
@@ -607,34 +603,30 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             }
             s_excludeMatch2 = false;
             while (std::getline(artalbexcludes, str3)) {
-                //std::istringstream iss3(str3); // str2 is the string of each row
-                //if (albumID == "4376")std::cout << "ID review. str3 is "<< str3<< " and Album ID is "<<albumID << std::endl;
                 trim_cruft(str3);
                 trim_cruft(albumID);
                 if (std::string(str3) == albumID) {
-                    //if (albumID == "4376") std::cout << "ID review MATCH. str3 is "<< str3<< " and Album ID is "<<albumID << std::endl;
-                    s_excludeMatch2 = true; // If excluded album found, set bool to true
-                    continue;
-                }
-                if (s_excludeMatch2 == true){continue;}
+                    s_excludeMatch2 = true; // If excluded album found, set bool to true                    
+                }                
             }
+            if (s_excludeMatch2 == true){
+                artalbexcludes.close();
+                continue;}// if an excluded artist is found continue to next str1
+            artalbexcludes.close();
         }
-        if (s_excludeMatch2 == false) finaltracksvect.push_back(tokenLTP+","+songPath);
-        continue;
+        finaltracksvect.push_back(tokenLTP+","+songPath); // If not skipped by now, add the track to the final list
+        continue; // end of the str1 while block, continue to next str1
     }
-
-
-    std::sort (finaltracksvect.begin(), finaltracksvect.end());
-    std::string fullstring = finaltracksvect.front();
-    std::vector<std::string> splittedStrings = split(fullstring, ',');
+    ratedSongsTable.close();
+    std::sort (finaltracksvect.begin(), finaltracksvect.end()); // sorts vector by LTP so the oldest track is first
+    std::string fullstring = finaltracksvect.front(); // Saves the first item in vector to a variable
+    std::vector<std::string> splittedStrings = split(fullstring, ','); // Function splits the variable and leaves the track path only
     *s_selectedTrackPath = splittedStrings[1];
-    if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
-    //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
-    std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
+    if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
+    std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
     playlist.close();    
-    std::string selectedTrackPathshort;
-    ratedSongsTable.close();
+    std::string selectedTrackPathshort;    
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
 }
