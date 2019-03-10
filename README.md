@@ -32,7 +32,7 @@ For example, this program lets you set the repeat frequency for your tracks by r
 
 3. Assign zero stars in MediaMonkey to exclude tracks from this program.
 
-4. You can set custom artist groupings in MediaMonkey using the "Custom2" field. ArchSimian will override artist tags wherever Custom2 is used.
+4. You can (and should) set 'custom' artist groupings in MediaMonkey using the "Custom2" field. ArchSimian will override artist tags wherever Custom2 is used. It is a best practice to spend some time with the artist groupings. If you make sure all 'variances' to artist names have been reconciled this way, you will get the most real variety in your playlist.
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Also select the top dir of your music library, and folder where you export any playlists from MediaMonkey. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
