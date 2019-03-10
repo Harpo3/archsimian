@@ -153,7 +153,9 @@ Below are the Archsimian rating codes and associated MM4 star ratings:
 <p>7 – two and one half stars</p>
 <p>8 – two stars</p>
 
-Important – ArchSimian converts "star ratings" in MM4 to rating codes. You can do this directly using the “<b>Grouping</b>” tag field for all tracks in your library based on the star ratings you have. It is not required. Archsimian will convert them for you. (If you wish, you can set up directly in MM4. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.) 
+ArchSimian converts "star ratings" in MM4 to rating codes. 
+
+(If you wish, you can set those up directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library based on the star ratings you have, but it is not required. Archsimian converts the star ratings to these codes in its database; it leaves your tags unscathed. You can change the tags yourself,though. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.) 
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 
