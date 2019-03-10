@@ -160,7 +160,9 @@ ArchSimian converts "star ratings" in MM4 to rating codes.
 
 <b> Initial Settings</b>
 
-The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety
+<p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
+<img src="http://imgur.com/0f7CCTJ.png/..." data-canonical-src="http://imgur.com/0f7CCTJ.png" width="200" height="400" />
+
 ![Imgur](http://imgur.com/0f7CCTJ.png)
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
