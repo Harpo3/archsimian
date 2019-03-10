@@ -10,11 +10,9 @@ Why would anyone want to do this, and how can Arch make MediaMonkey 4 Gold (MM4)
 
 It depends on whether you have a large music library, and whether you are happy with the smart playlist features in MM4. 
 
-You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, with better variety.
+You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, with better variety. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.
 
 For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different artists. It is up to you.
-
-While MM4 has many great smart playlist features built in (and far better than any other retail package out there), it does not provide the complexity or speed with which you can build them in C++ (and, a big benefit of using Arch and KDE is having some added programs/scripts to tag elements the way I want them, and have them integrated right onto my desktop, using KDE and Conky. I can update tag elements or add art work using convenient shortcuts, and update them in real time.)
 
 <b>What does ArchSimian do?</b>
 
