@@ -159,12 +159,12 @@ Important – ArchSimian converts "star ratings" in MM4 to rating codes. You can
 
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
 
-To export specific .m3u files:
+<i>To export specific .m3u files:
 1.	Select the Tracks you wish to export from a Playlist
 2.	From the File menu click Export to Playlist or right-click Send to .m3u Playlist
 3.	Choose a folder and filename (xxxxx.m3u) for the Playlist
 
-The Playlist will be saved as xxxxx.m3u, which can then be opened by another media player.
+The Playlist will be saved as xxxxx.m3u, which can then be opened by another media player.</i>
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying. After you revise the playlist in ArchSimian, it will place it in the folder where you placed the MM4 exported playlist. You can then import it back into MM4 using the ImportM3U plugin and update the playlist in MM4.
 
