@@ -68,9 +68,9 @@ Replay intervals – you can set the planned time between repeats based on ratin
 
 <b>Minimum Computer Requirements:</b>
 
-8GB of RAM (You will need this much if you need to run KDE and the Windows VM smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE. If you do not use the VM, 4GB is enough.
+8GB of RAM (You will need this much if you need to run KDE and the Windows VirtualMachine (VM) smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE, but if you do not use the VM, 4GB is enough.
 
-IF you use the VM, a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
+If you do use the VM, a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
 A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
 
