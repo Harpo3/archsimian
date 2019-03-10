@@ -122,7 +122,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
-    ui->setupUi(this);
+
 
     QWidget setupwindow;
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf"; // sets the config file location for QSettings
@@ -152,6 +152,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_repeatFreqForCode1 = m_prefs.repeatFreqCode1;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
+
+    ui->setupUi(this);
 
     ui->mainQTabWidget->setCurrentIndex(0);
 
