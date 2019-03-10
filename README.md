@@ -25,7 +25,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 2.  A one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
-3. Assign zero stars in MediaMonkey to exclude tracks from this program.
+3. Assign zero stars in MediaMonkey to exclude tracks from the ArchSimian-produced playlist.
 
 4. You can (and should) set 'custom' artist groupings in MediaMonkey using the "Custom2" field. ArchSimian will override artist tags wherever Custom2 is used. It is a best practice to spend some time with the artist groupings. If you make sure all 'variances' to artist names have been reconciled this way, you will get the most real variety in your playlist.
 
@@ -33,7 +33,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled.
 
-7. ArchSimian lets you set how tracks are added to the playlist, and after adding tracks, exports the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will have a Windows-compatible playlist that can be imported by MediaMonkey (using the .mmip ImportM3U).
+7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, it exports the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist that can be imported into MediaMonkey (using the .mmip ImportM3U).
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
