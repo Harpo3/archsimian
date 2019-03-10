@@ -166,8 +166,13 @@ ArchSimian converts "star ratings" in MM4 to rating codes.
 <img src="http://imgur.com//CyUlYMx.png/..." data-canonical-src="http://imgur.com//CyUlYMx.png" width="502" height="600" />
 
 <b> Frequency</b>
-<p>The Frequency has functions to set the frequency for repeating tracks based on ratings. Factors are applied in a hierarchical fashion.</p>
+<p>The Frequency tab has functions to set the frequency for repeating tracks based on ratings. Factors are applied in a hierarchical fashion.</p>
 <img src="http://imgur.com//znrCVa8.png/..." data-canonical-src="http://imgur.com//znrCVa8.png" width="502" height="600" />
+
+<b> Albums</b>
+
+<p>The Albums tab appears when the user selects "Album-level variety" in the Settings tab. The user can then set criteria for when album-level variety will be applied.</p>
+<img src="http://imgur.com//nfRaqnE.png/..." data-canonical-src="http://imgur.com//nfRaqnE.png" width="502" height="600" />
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
