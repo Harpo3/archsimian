@@ -72,7 +72,9 @@ IF you use the VM, a CPU capable of running Windows 10 on an Oracle VirtualBox V
 
 A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
 
-MediaMonkey4 Gold for Windows (while it could installed be on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will need to also have the VM installed in Arch to avoid having to reboot twice for every library/playlist update). 
+MediaMonkey4 Gold for Windows 
+
+(Note: while it could installed be on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
 
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
