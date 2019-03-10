@@ -57,7 +57,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. 
 
-Also, when that artist is repeated you will hear a track from a different album than the one last played based on criteria you set.  
+Also, you can enable the album-variety feature. When enabled, you will hear a track from a different album than the one last played of the artist, and the criteria for applying the feature can be set by the user.  
 
 Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
 
