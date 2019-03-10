@@ -129,11 +129,15 @@ MM4 Installation in the VM – Install MM4 Gold and enter your license verificat
 
 If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
 
-The only issues I found have to do with non-compliance to the above filename standard, such as spaces or song files with special characters, or problems with some of the tags. I have not written debugging code for this (yet). Special characters within the music tags can also be fixed in MM4. You can search in MM4 for tags containing special characters by using this search format:
+<b> Troubleshooting</b>
+
+The program works well, but you will have problems if you do not configure your library correctly. If you have any issues, you should first consider this is the cause. Most common are spaces/special characters in the track filenames (see above), and special characters in the tags themselves. 
+
+I have not yet written debugging code for this, but special characters within the music tags can be fixed in MM4. You can search in MM4 for tags containing special characters by using this search format:
 
  '/', '\', '?', ',', '|', ':', '.', '_', '(', ')', '[', ']', '&', '@', '#', '+', '*', '!', '-', ';' '”' 
 
-Unfortunately, it does not work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
+Unfortunately, this method does <b>not</b> work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
 
 As referenced under MM4 configuration, artwork files must be stored as a single image in each album folder using the filename folder.jpg.
 
