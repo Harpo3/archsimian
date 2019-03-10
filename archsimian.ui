@@ -645,7 +645,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables the tab 'Albums' and adds album-level variety to playlist selections.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="statusTip">
          <string extracomment="Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab"/>

@@ -708,6 +708,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true) && (s_includeAlbumVariety == true))
     {
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
+        ui->albumsTab->setEnabled(1);
     }
 
 }
@@ -1168,18 +1169,17 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
 {
     m_prefs.s_includeNewTracks = inclNew;
-    if (inclNew == 1){
+    ui->InclNewcheckbox->checkState();
+    if (ui->InclNewcheckbox->checkState() == 2){
     ui->repeatFreq1SpinBox->setEnabled(1);
     ui->newtracksqtyLabel->setDisabled(0);
     ui->repeatfreqtxtLabel->setDisabled(0);
-    //ui->centralWidget->repaint();
     QWidget::repaint();
     }
-    if (inclNew == 0){
+    if (ui->InclNewcheckbox->checkState() == 0){
     ui->repeatFreq1SpinBox->setEnabled(0);
     ui->newtracksqtyLabel->setDisabled(1);
     ui->repeatfreqtxtLabel->setDisabled(1);
-    //ui->centralWidget->repaint();
     QWidget::repaint();
     }
 }
@@ -1188,12 +1188,12 @@ void ArchSimian::on_albumscheckBox_stateChanged(int inclAlbums)
 {
     ui->albumscheckBox->checkState();
     m_prefs.s_includeAlbumVariety = inclAlbums;
-    if (inclAlbums == 1){
+    if (ui->albumscheckBox->checkState() == 2){
         ui->mainQTabWidget->setTabEnabled(4, true);
         ui->albumsTab->setEnabled(1);
         QWidget::repaint();
     }
-    if (inclAlbums == 0){
+    if (ui->albumscheckBox->checkState() == 0){
         ui->mainQTabWidget->setTabEnabled(4, false);
         ui->albumsTab->setEnabled(0);
         QWidget::repaint();
