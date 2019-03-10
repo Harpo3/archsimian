@@ -36,7 +36,7 @@ For example, this program lets you set the repeat frequency for your tracks by r
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Also select the top dir of your music library, and folder where you export any playlists from MediaMonkey. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
-6. ArchSimian exports the modified playlist back to the dir where it was originally selected, and overwrites the older playlist.You will have a Windows-compatible playlist that can be imported by MediaMonkey.
+6. ArchSimian exports the modified playlist back to the dir where it was originally selected, and overwrites the older playlist.You will have a Windows-compatible playlist that can be imported by MediaMonkey (using the .mmip ImportM3U).
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
@@ -126,7 +126,7 @@ X:\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Re
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
-Tags - the fields for "Grouping" and "Custom2" are special for Archsimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (npot required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
+Tags - the fields for "Grouping" and "Custom2" are special for Archsimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
 
 MM4 Installation in the VM – Install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
 
