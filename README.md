@@ -76,7 +76,7 @@ MediaMonkey4 Gold for Windows
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
 Backup 6.0 (trixmoto) for backing up the MM4 database; 
-Update Location of Files in Database; 
+Update Location of Files in Database (if you install a VM); 
 RegEx Find and Replace; and, 
 ImportM3U
 
