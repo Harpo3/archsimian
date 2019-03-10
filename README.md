@@ -158,6 +158,11 @@ ArchSimian converts "star ratings" in MM4 to rating codes.
 
 (If you wish, you can set those up directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library based on the star ratings you have, but it is not required. Archsimian converts the star ratings to these codes in its database; it leaves your tags unscathed. You can change the tags yourself,though. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.) 
 
+<b> Initial Settings</b>
+
+The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety
+![Imgur](http://imgur.com/0f7CCTJ.png)
+
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
