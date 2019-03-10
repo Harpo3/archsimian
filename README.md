@@ -19,8 +19,6 @@ It depends on whether you have a large music library, and whether you are happy 
 
 The playlist improvement concept is this: the play history in the MM database can be used to compute a user’s average listening time per day. By also calculating the number of rated tracks, along with the ratings and playing times for each, it can be determined how frequently a song should be added for a repeat play onto the playlist. While MM4 already has a smart playlist feature for “days since last played” by rating, it does not do so with a high degree of specialization for variety, such as the arrangement of tracks within the list.
 
-For example, this program lets you set the repeat frequency for your tracks by rating catgory. For example, you might like 60 days for 5 stars, 180 days for four stars, etc. MM4 smart playlists can do this, but it does not consider the specific order of play of the individual artists within it. 
-
 <b>(TL;DR) Quickstart:</b>
 
 1. Rate all tracks in MediaMonkey you want to include in this program. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library dir tree must look like ->  Drive:/artist/album/song in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
