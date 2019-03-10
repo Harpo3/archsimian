@@ -1,7 +1,7 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
 
-<p>![Imgur Image](https://imgur.com/a/2OfqFpt)</p>
+<p>![Imgur](<blockquote class="imgur-embed-pub" lang="en" data-id="a/2OfqFpt"><a href="//imgur.com/2OfqFpt"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>)</p>
 
 You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, with better variety. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.
 
