@@ -17,7 +17,7 @@ It depends on whether you have a large music library, and whether you are happy 
 
 <b>It creates refined playlists using existing data from your MediaMonkey database file.</b>
 
-The playlist improvement concept is this: the play history in the MM database can be used to compute a user’s average listening time per day. By also calculating the number of rated tracks, along with the ratings and playing times for each, it can be determined how frequently a song should be added for a repeat play onto the playlist, and whether a specific artist should be added for the next track. While MM4 already has a smart playlist feature for “days since last played” by rating, it does not do so with a high degree of specialization for variety, such as the arrangement of tracks within the list, and next artist added.
+The playlist improvement concept is this: the play history in the MM database can be used to compute a user’s average listening time per day. By also calculating the number of rated tracks, along with the ratings and playing times for each, it can be determined how frequently a song should be added for a repeat play onto the playlist, and whether a specific artist should be added for the next track. While MM4 already has a smart playlist feature for “days since last played” by rating, it does not do so with a high degree of specialization for variety, such as the arrangement of tracks within the list (next artist added).
 
 <b>(TL;DR) Quickstart:</b>
 
