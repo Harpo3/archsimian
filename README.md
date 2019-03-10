@@ -1,7 +1,7 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
 <img src="http://i.imgur.com/r7WxYoa.png..." data-canonical-src="http://i.imgur.com/r7WxYoa.png" width="502" height="600" />
-You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, with better variety. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.
+<p>You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, with better variety. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
 
 For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different artists. It is up to you.
 
@@ -161,6 +161,10 @@ ArchSimian converts "star ratings" in MM4 to rating codes.
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
 <img src="http://imgur.com/0f7CCTJ.png/..." data-canonical-src="http://imgur.com/0f7CCTJ.png" width="502" height="600" />
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
+
+<b> Statistics</b>
+<p>The Statistics tab lists detailed information about the composition of your music library</p>
+<img src="http://imgur.com//CyUlYMx.png/..." data-canonical-src="http://imgur.com//CyUlYMx.png" width="502" height="600" />
 
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
 
