@@ -58,6 +58,7 @@ void getExcludedArtists(const int &s_playlistSize)
         std::exit(EXIT_FAILURE);
     }
     StringVector2D ratedabbrVec = readCSV("ratedabbr.txt");
+    ratedabbrVec.reserve(50000);
     std::vector<std::string>histvect; // vector to collect excluded artists from 'outside the playlist'
     std::vector<std::string> artistExcludesVec;// vector to collect all excluded artists
     std::ofstream playlistPosList("playlistposlist.txt"); // output file for writing ratedabbr.txt with added artist intervals
@@ -70,12 +71,7 @@ void getExcludedArtists(const int &s_playlistSize)
     std::string songLength; // Song length from ratedabbrVec
     std::string artistInterval; // Artist interval from ratedabbrVec
     std::string albumID; // Album ID from ratedabbrVec
-
     std::string path;
-    //std::map<std::string,int> countMap; // Create a map for two types, string and int
-    //std::vector<std::string>plvect;
-    //plvect.reserve(5000);
-
     //open playlist to read in position number of each track
     std::fstream playList;
     playList.open (Constants::cleanedPlaylist);
@@ -154,7 +150,9 @@ void getExcludedArtists(const int &s_playlistSize)
         }
         ratedabbr2 << std::endl;
     }
-    std::vector<std::string> new_histvect = histvect;
+    std::vector<std::string> new_histvect;
+    new_histvect.reserve(50000);
+    new_histvect = histvect;
     for (std::size_t i = 0 ;  i < new_histvect.size(); i++){ // write new vector to "playlistposlist.txt"
         playlistPosList << new_histvect[i] << "," << i + 1 + s_playlistSize << "\n";
     }
@@ -491,6 +489,7 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
     std::stringstream ss(strToSplit);
     std::string item;
     std::vector<std::string> splittedStrings;
+    splittedStrings.reserve(10000);
     while (std::getline(ss, item, delimeter)) {
         splittedStrings.push_back(item);
     }
@@ -532,6 +531,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     static bool s_excludeMatch{false};
     static bool s_excludeMatch2{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
+    finaltracksvect.reserve(10000);
     if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"    
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows

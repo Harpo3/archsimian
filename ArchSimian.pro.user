@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.8.82, 2019-03-07T17:46:48. -->
+<!-- Written by QtCreator 4.8.82, 2019-03-09T17:49:22. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -60,7 +60,7 @@
    <value type="bool" key="ClangTools.BuildBeforeAnalysis">false</value>
    <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.TidyAndClazy</value>
    <valuelist type="QVariantList" key="ClangTools.SelectedDirs">
-    <value type="QString">/home/lpc123/scripts/cplus/archsimian/ArchSimian.pro</value>
+    <value type="QString">/home/lpc123/scripts/cplus/newas/ArchSimian.pro</value>
    </valuelist>
    <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
    <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>

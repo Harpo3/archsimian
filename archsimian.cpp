@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QtWidgets>
+#include <QPalette>
 #include <fstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -121,6 +122,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {
+    ui->setupUi(this);
+
     QWidget setupwindow;
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf"; // sets the config file location for QSettings
     loadSettings(); // QSettings: load user settings from archsimian.conf file
@@ -149,7 +152,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_repeatFreqForCode1 = m_prefs.repeatFreqCode1;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
-    ui->setupUi(this);    
+
     ui->mainQTabWidget->setCurrentIndex(0);
 
     // Step 1. Determine if user configuration exists:
@@ -174,7 +177,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_IsUserConfigSet == true)
     {
         if (Constants::verbose == true) std::cout << "Step 1. Configuration has already been set. s_bool_IsUserConfigSet result: "<<s_bool_IsUserConfigSet<<std::endl;
-        //ui->setCurrentIndex(0);
         m_prefs.musicLibraryDir = s_musiclibrarydirname;
         if (s_includeNewTracks == true) {ui->InclNewcheckbox->setChecked(true);}
         if (s_includeAlbumVariety == true) {
@@ -673,9 +675,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
         if (m_prefs.s_includeNewTracks == false){
             ui->repeatFreq1SpinBox->setEnabled(0);
+            ui->newtracksqtyLabel->setDisabled(1);
+            ui->repeatfreqtxtLabel->setDisabled(1);
+
         }
         if (m_prefs.s_includeNewTracks == true){
             ui->repeatFreq1SpinBox->setEnabled(1);
+            ui->newtracksqtyLabel->setDisabled(0);
+            ui->repeatfreqtxtLabel->setDisabled(0);
         }
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
@@ -704,36 +711,40 @@ ArchSimian::ArchSimian(QWidget *parent) :
 }
 
 void ArchSimian::on_addsongsButton_clicked(){
+    // First set messages and feedback to user during process
     KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
                                             "tracks requested have been processed. This can take some "
-                                            "time...",15);
-    int numTracks = ui->addtrksspinBox->value();
-    //ui->statusBar->showMessage("Adding " + QString::number(numTracks) + " tracks to playlist",10000);
+                                            "time...",5);
+    int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)
     remove("songtext.txt");
-    std::ofstream songtext("songtext.txt",std::ios::app); // output file for writing final song selection data for ui display
+    std::ofstream songtext("songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
+    // Second, determine the rating for the track selection
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8);
+    // Third, start loop for the number of tracks the user selected to add (numtracks)
     for (int i=0; i < numTracks; i++){
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = 99999;
-        if (s_includeNewTracks == true){ //Retrieve rating code 1 stats if user is including new tracks
-            code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);
-        }
-        if ((s_includeNewTracks == true) && (s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){
-            getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
-            s_selectedTrackPath = s_selectedCode1Path; // set the track selection to the code 1 selection
+        if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+            code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+            // Use stats to check that all code 1 tracks are not already in the playlist, and the repeat frequency is met
+            if ((s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){
+                getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
+                s_selectedTrackPath = s_selectedCode1Path; // set the track selection to the code 1 selection
+            }
         }
         else {s_selectedCode1Path = "";} // If selection criteria for rating code 1 is not met, return empty string
         if (s_selectedCode1Path != "") {s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
         if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
-        if (s_ratingNextTrack != 1) { // if the next rating code is not 1, process normal track selection logic
-            if (s_includeAlbumVariety == true){
+        if ((s_includeNewTracks == false)||(s_ratingNextTrack != 1)) { // If user excluded new tracks, or set rating code is not 1, do normal selection
+            if (s_includeAlbumVariety == true){ // If not 1, and user has selected album variety, get album ID stats
                 getTrimArtAlbmList();
                 getAlbumIDs();
             }
-            selectTrack(s_ratingNextTrack,&s_selectedTrackPath, s_includeAlbumVariety);
+            selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
         }
+        // Collect track selected info for final song selections (ui display)
         std::string shortselectedTrackPath;
         shortselectedTrackPath = s_selectedTrackPath;
         std::string key1 ("/");
@@ -741,25 +752,23 @@ void ArchSimian::on_addsongsButton_clicked(){
         shortselectedTrackPath.erase(0,11);
         std::size_t found = shortselectedTrackPath.rfind(key1);
         std::size_t found1 = shortselectedTrackPath.rfind(key2);
-        //std::size_t found2 = shortselectedTrackPath.rfind(key3);
         if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}
         if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length(),"");}
-        //if (found2!=std::string::npos){shortselectedTrackPath.replace (found,key3.length()," ");}
-        //std::cout <<s_playlistSize<< ". " << shortselectedTrackPath<<std::endl;
         s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
-        songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n';
+        songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n'; // adds the playlist pos number and track to the text display file
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
-        s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize);
-        getExcludedArtists(s_playlistSize);
+        // Calculate excluded artists and get rating for next track selection (accounting for track just added)
+        s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize); // Recalc historical count (outside playlist count) up to sequential track limit
+        getExcludedArtists(s_playlistSize); // Recalc excluded artists
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
-                                               s_ratingRatio7,s_ratingRatio8);
+                                               s_ratingRatio7,s_ratingRatio8); // Recalc rating selection
     }
+    // After all tracks have been processed, update ui with information to user about tracks added to tplaylist
     songtext.close();
     ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
     double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
     ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(currplaylistdays,'g', 3));
-    //ui->progressBarPL->hide();
-    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",50000);
+    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
     QFile songtext1("songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
@@ -1157,20 +1166,35 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
 {
     m_prefs.s_includeNewTracks = inclNew;
+    if (inclNew == 1){
+    ui->repeatFreq1SpinBox->setEnabled(1);
+    ui->newtracksqtyLabel->setDisabled(0);
+    ui->repeatfreqtxtLabel->setDisabled(0);
+    //ui->centralWidget->repaint();
+    QWidget::repaint();
+    }
+    if (inclNew == 0){
+    ui->repeatFreq1SpinBox->setEnabled(0);
+    ui->newtracksqtyLabel->setDisabled(1);
+    ui->repeatfreqtxtLabel->setDisabled(1);
+    //ui->centralWidget->repaint();
+    QWidget::repaint();
+    }
 }
 
 void ArchSimian::on_albumscheckBox_stateChanged(int inclAlbums)
 {
+    ui->albumscheckBox->checkState();
     m_prefs.s_includeAlbumVariety = inclAlbums;
     if (inclAlbums == 1){
         ui->mainQTabWidget->setTabEnabled(4, true);
         ui->albumsTab->setEnabled(1);
-        ui->centralWidget->repaint();
+        QWidget::repaint();
     }
     if (inclAlbums == 0){
         ui->mainQTabWidget->setTabEnabled(4, false);
         ui->albumsTab->setEnabled(0);
-        ui->centralWidget->repaint();
+        QWidget::repaint();
     }
 }
 

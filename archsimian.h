@@ -32,16 +32,9 @@ public slots:
     void on_exportplaylistButton_clicked();
 
 
-
-
-
 private slots:
 
     void on_mainQTabWidget_tabBarClicked(int index);
-
-//    void on_pushButton_clicked();
-
-//    void on_refreshdbButton_clicked();
 
     void on_addtrksspinBox_valueChanged(int s_numTracks);
 
@@ -114,8 +107,6 @@ private:
     void saveSettings();
 
     SPreferences m_prefs;
-
-
 
 };
 
