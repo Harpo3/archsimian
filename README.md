@@ -139,13 +139,11 @@ I have not yet written debugging code for this, but special characters within th
 
 Unfortunately, this method does <b>not</b> work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
 
-As referenced under MM4 configuration, artwork files must be stored as a single image in each album folder using the filename folder.jpg.
+Again, ensure all tracks in MM4 you want to include in your playlists are rated prior to running ArchSimian. 
 
-You need to ensure all tracks in MM4 you want to include in your playlists are rated prior to running Archsimian. 
+Tracks with no rating are excluded from playlist computation in ArchSimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). ArchSimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
 
-Tracks with no rating are excluded from playlist computation in Archsimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). Archsimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
-
-Below are the Archsimian rating codes and associated MM4 star ratings:
+Below are the ArchSimian rating codes and associated MM4 star ratings:
  
 <p>1 – new song not yet rated (one star)</p>
 <p>(2 is reserved)</p>
