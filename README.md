@@ -28,7 +28,7 @@ For example, this program lets you set the repeat frequency for your tracks by r
 
 1. Rate all tracks in MediaMonkey you want to include in this program. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames should not have spaces in them. Your music library dir tree should look like ->  Drive:/artist/album/song in Windows.
 
-2.  A one-star rating is special in Archsimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. 
+2.  A one-star rating is special in Archsimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. The fields for "Grouping" and "Custom2" are special. If you are currently using these fields, you may have to change them (if so, read details).
 
 3. Assign zero stars in MediaMonkey to exclude tracks from this program.
 
@@ -125,6 +125,8 @@ Library - ensure the file hierarchy of your MM4 music library drive conforms to 
 X:\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Replace($lower(<Artist>), ,_)_-_$Replace($lower(<Title>), ,_)
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
+
+Tags - the fields for "Grouping" and "Custom2" are special for Archsimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (npot required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
 
 MM4 Installation in the VM – Install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
 
