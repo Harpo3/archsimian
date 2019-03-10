@@ -56,11 +56,11 @@ For example, this program lets you set the repeat frequency for your tracks by r
             ▪     total number of rated tracks for each artist 
             ▪     total number of each rating category in the library     
             ▪     total number of each rating category by artist 
-            ▪     last album played for a given artist (not yet available)
+            ▪     last album played for a given artist
 
 For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. 
 
-**To be added in a later version: Also, when that artist is repeated you will hear a track from a different album than the one last played.  
+Also, when that artist is repeated you will hear a track from a different album than the one last played based on criteria you set.  
 
 Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
 
