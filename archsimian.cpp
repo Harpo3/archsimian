@@ -713,7 +713,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
 }
 
-void ArchSimian::on_addsongsButton_clicked(){
+void ArchSimian::on_addsongsButton_released(){
     // First set messages and feedback to user during process
     KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
                                             "tracks requested have been processed. This can take some "
@@ -729,6 +729,7 @@ void ArchSimian::on_addsongsButton_clicked(){
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = 99999;
+        s_selectedCode1Path = "";
         if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
             code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
             // Use stats to check that all code 1 tracks are not already in the playlist, and the repeat frequency is met

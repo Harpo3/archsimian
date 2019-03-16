@@ -25,7 +25,7 @@ public slots:
 
     void on_setmmdbButton_clicked();
 
-    void on_addsongsButton_clicked();
+    void on_addsongsButton_released();
 
     void on_getplaylistButton_clicked();
 

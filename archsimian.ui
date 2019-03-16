@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -655,6 +655,16 @@
         </property>
         <property name="text">
          <string>Enable album-level variety (slower)</string>
+        </property>
+       </widget>
+       <widget class="QTreeView" name="treeView">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>430</y>
+          <width>256</width>
+          <height>192</height>
+         </rect>
         </property>
        </widget>
       </widget>
