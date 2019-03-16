@@ -1,7 +1,7 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
 <img src="http://i.imgur.com/r7WxYoa.png..." data-canonical-src="http://i.imgur.com/r7WxYoa.png" width="502" height="600" />
-<p>You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist to have a more refined selection of tracks, with better variety. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
+<p>You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
 
 For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different artists. It is up to you.
 
@@ -23,7 +23,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 1. Rate all tracks in MediaMonkey you want to include in the ArchSimian-produced playlist. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library dir tree must look like ->  Drive:/artist/album/song in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
 
-2.  A one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This tells ArchSimian to include them in the selection process. The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
+2.  A one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated, if you plan to enable this feature in ArchSimian. This tells ArchSimian to include new tracks in the selection process. You can set the frequency for new tracks separately. The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
 3. Assign zero stars in MediaMonkey to exclude tracks from the ArchSimian-produced playlist.
 
@@ -31,7 +31,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
-6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled.
+6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Select a playlist and restart the program. It will then process your MM.DB and launch with all of its features enabled.
 
 7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, it exports the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist that can be imported into MediaMonkey (using the .mmip ImportM3U).
 
@@ -57,7 +57,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. 
 
-Also, when that artist is repeated you will hear a track from a different album than the one last played based on criteria you set.  
+Also, you can enable the album-variety feature. When enabled, you will hear a track from a different album than the one last played of the artist, and the criteria for applying the feature can be set by the user.  
 
 Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
 
@@ -71,7 +71,7 @@ A Linux OS (I have tested it in Arch, for other distros, I have not tested, and 
 
 MediaMonkey4 Gold for Windows 
 
-(Note: while it could installed be on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
+(Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
 
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
@@ -117,31 +117,33 @@ MM4 Configuration – Under Tools > Options > Library, enable the following: Inf
 
 Tools > Options > Library > Appearance > Ignore prefixes
 
-Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive]/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library by the VirtualBox VM guest addition. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
+Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive]/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
 
 X:\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Replace($lower(<Artist>), ,_)_-_$Replace($lower(<Title>), ,_)
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
-Tags - the fields for "Grouping" and "Custom2" are special for Archsimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
+Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
 
-MM4 Installation in the VM – Install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
+<b>MM4 Installation in the VM</b> – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
 
 If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
 
-The only issues I found have to do with non-compliance to the above filename standard, such as spaces or song files with special characters, or problems with some of the tags. I have not written debugging code for this (yet). Special characters within the music tags can also be fixed in MM4. You can search in MM4 for tags containing special characters by using this search format:
+<b> Troubleshooting</b>
+
+The program works well, but you will have problems if you do not configure your library correctly. If you have any issues, you should first consider this is the cause. Most common are spaces/special characters in the track filenames (see above), and special characters in the tags themselves. 
+
+I have not yet written debugging code for this, but special characters within the music tags can be fixed in MM4. You can search in MM4 for tags containing special characters by using this search format:
 
  '/', '\', '?', ',', '|', ':', '.', '_', '(', ')', '[', ']', '&', '@', '#', '+', '*', '!', '-', ';' '”' 
 
-Unfortunately, it does not work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
+Unfortunately, this method does <b>not</b> work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
 
-As referenced under MM4 configuration, artwork files must be stored as a single image in each album folder using the filename folder.jpg.
+Again, ensure all tracks in MM4 you want to include in your playlists are rated prior to running ArchSimian. 
 
-You need to ensure all tracks in MM4 you want to include in your playlists are rated prior to running Archsimian. 
+Tracks with no rating are excluded from playlist computation in ArchSimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). ArchSimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
 
-Tracks with no rating are excluded from playlist computation in Archsimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). Archsimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
-
-Below are the Archsimian rating codes and associated MM4 star ratings:
+Below are the ArchSimian rating codes and associated MM4 star ratings:
  
 <p>1 – new song not yet rated (one star)</p>
 <p>(2 is reserved)</p>
@@ -152,9 +154,9 @@ Below are the Archsimian rating codes and associated MM4 star ratings:
 <p>7 – two and one half stars</p>
 <p>8 – two stars</p>
 
-ArchSimian converts "star ratings" in MM4 to rating codes. 
+ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. 
 
-(If you wish, you can set those up directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library based on the star ratings you have, but it is not required. Archsimian converts the star ratings to these codes in its database; it leaves your tags unscathed. You can change the tags yourself,though. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.) 
+(If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. Archsimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself,though. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.) 
 
 <b> Initial Settings</b>
 
