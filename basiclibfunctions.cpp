@@ -1,5 +1,6 @@
 #include <QStandardPaths>
 #include <QDir>
+#include <QString>
 #include <vector>
 #include <sstream>
 #include <fstream>
@@ -9,6 +10,7 @@
 #include <map>
 #include <iterator>
 #include <sys/stat.h>
+#include <stdio.h>
 #include "constants.h"
 #include "lastplayeddays.h"
 #include "playlistfunctions.h"
@@ -80,6 +82,23 @@ void findDuplicates(std::vector<T> & vecOfElements, std::map<T, int> & countMap)
             it = countMap.erase(it);
         else
             it++;
+    }
+}
+
+void removeAppData(std::string str)
+{
+    QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
+    str = appDataPathstr.toStdString() +"/" + str;
+    bool existResult;
+    existResult = doesFileExist(str);// See inline function at top
+    //std::cout <<"removeAppData: Removing: "<< str << std::endl;
+    if (existResult == 1) {
+        remove (str.c_str());  // remove file referenced by str from the AppData directory
+        if(remove( str.c_str() ) != 0 ) {
+            std::cout <<"removeAppData: Error deleting file: "<< str << std::endl;
+        }
+        else
+            puts( "removeAppData: File successfully deleted" );
     }
 }
 
@@ -435,8 +454,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     }
     myfile.close();
     artistList.close();
-    if( remove( "artists2.txt" ) != 0 )
-        perror( "getArtistAdjustedCount: Error deleting file" );
+    removeAppData("artists2.txt");
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
     cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib2.is_open()) {cleanlib2.close();}

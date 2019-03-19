@@ -126,9 +126,7 @@ static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
-{
-
-    removeSQLFile();
+{   
     QWidget setupwindow;
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf"; // sets the config file location for QSettings
     loadSettings(); // QSettings: load user settings from archsimian.conf file
@@ -290,20 +288,20 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                                      " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
         // set ui labels if MM.DB was recently updated
         if (s_bool_MMdbUpdated == true) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
-            // If result is 1, remove ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
+            // If result is 1, removeAppData ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
         {
             KDEmessage("ArchSimian Library Update Notification","A new MediaMonkey database backup was "
                                                                 "identified...updating the ArchSimian "
                                                                 "database. The program will launch when completed...",20);
-            remove("ratedabbr.txt");
+            removeAppData("ratedabbr.txt");
             s_bool_RatedAbbrExist = false;
-            remove("ratedabbr2.txt");
-            remove("artistsadj.txt");
+            removeAppData("ratedabbr2.txt");
+            removeAppData("artistsadj.txt");
             s_bool_artistsadjExist = false;
-            remove("playlistposlist.txt");
-            remove("artistexcludes.txt");
+            removeAppData("playlistposlist.txt");
+            removeAppData("artistexcludes.txt");
             s_bool_ExcludedArtistsProcessed = false;
-            remove("cleanedplaylist.txt");
+            removeAppData("cleanedplaylist.txt");
             s_bool_PlaylistExist = false;
             ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));
         }
@@ -349,12 +347,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 _exit(1);
             }
             getLibrary(s_musiclibrarydirname); // get songs table from MM.DB
-        }
-        s_bool_CleanLibExist = doesFileExist (cleanLibFile);
-        if (s_bool_CleanLibExist == true) {remove ("libtable.dsv");}
-        else {
-            std::cout << "Step 5. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
-            s_bool_CleanLibExist = false;
         }
     }
 
@@ -483,7 +475,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
         }
     }
-
+    s_bool_CleanLibExist = doesFileExist (cleanLibFile);
+    if (s_bool_CleanLibExist == true) {removeAppData ("libtable.dsv");}
+    else {
+        std::cout << "Step 6. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
+        s_bool_CleanLibExist = false;
+    }
     // Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
     //MM.DB was not recently updated, check for state of s_bool_artistsadjExist (artistsadj.txt).
     //If file is missing or empty, create file with artist statistics
@@ -721,19 +718,24 @@ ArchSimian::ArchSimian(QWidget *parent) :
 }
 
 void ArchSimian::on_addsongsButton_released(){
+    if (Constants::verbose == true) std::cout << "Starting addSongs function." << std::endl;
     // First set messages and feedback to user during process
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-    KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
-                                            "tracks requested have been processed. This can take some "
-                                            "time...",5);
+    //KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
+    //                                        "tracks requested have been processed. This can take some "
+     //                                       "time...",5);
     int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)
-    remove("songtext.txt");
-    std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
+    remove ("songtext.txt");
+    std::ofstream songtext("songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
     // Second, determine the rating for the track selection
+    if (Constants::verbose == true) std::cout << "Running ratingCodeSelected function before loop."<< std::endl;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8);
+    if (Constants::verbose == true) std::cout <<"ratingCodeSelected function before loop completed. Result is: "<< s_ratingNextTrack <<
+                                                ". Now starting loop for track selections..." <<std::endl;
     // Third, start loop for the number of tracks the user selected to add (numtracks)
     for (int i=0; i < numTracks; i++){
+        if (Constants::verbose == true) std::cout << "Top of Loop. Count: " <<i<< std::endl;
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = 99999;
@@ -744,16 +746,21 @@ void ArchSimian::on_addsongsButton_released(){
             if ((s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){
                 getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
                 s_selectedTrackPath = s_selectedCode1Path; // set the track selection to the code 1 selection
+                if (Constants::verbose == true) std::cout << "Rating code 1 applies to current track selection: " << s_selectedTrackPath << std::endl <<
+                                                             "Code 1 track added to playlist."<< std::endl;
             }
         }
         else {s_selectedCode1Path = "";} // If selection criteria for rating code 1 is not met, return empty string
-        if (s_selectedCode1Path != "") {s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
-        if (Constants::verbose == true) std::cout << "Rating for the next track is " << s_ratingNextTrack << std::endl;
+        if (s_selectedCode1Path != "") {
+            s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
         if ((s_includeNewTracks == false)||(s_ratingNextTrack != 1)) { // If user excluded new tracks, or set rating code is not 1, do normal selection
+            if ((Constants::verbose == true)&&(s_includeNewTracks == false)) std::cout << "User excluding new tracks. Check whether user selected album variety " << std::endl;
             if (s_includeAlbumVariety == true){ // If not 1, and user has selected album variety, get album ID stats
+                if (Constants::verbose == true) std::cout << "User selected album variety. Getting functions getTrimArtAlbmList and getAlbumIDs." << std::endl;
                 getTrimArtAlbmList();
                 getAlbumIDs();
             }
+            if (Constants::verbose == true) std::cout << "Now selecting track for non-code-1 track selection (function selectTrack)." << std::endl;
             selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
         }
         // Collect track selected info for final song selections (ui display)
@@ -772,8 +779,10 @@ void ArchSimian::on_addsongsButton_released(){
         // Calculate excluded artists and get rating for next track selection (accounting for track just added)
         s_histCount = long(s_SequentialTrackLimit) - long(s_playlistSize); // Recalc historical count (outside playlist count) up to sequential track limit
         getExcludedArtists(s_playlistSize); // Recalc excluded artists
+        if (Constants::verbose == true) std::cout << "Running ratingCodeSelected function in loop."<< std::endl;
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                                s_ratingRatio7,s_ratingRatio8); // Recalc rating selection
+        if (Constants::verbose == true) std::cout<< "ratingCodeSelected function in loop completed. Result: " << s_ratingNextTrack << std::endl;
     }
     // After all tracks have been processed, update ui with information to user about tracks added to tplaylist
     songtext.close();
@@ -781,11 +790,11 @@ void ArchSimian::on_addsongsButton_released(){
     double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
     ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(currplaylistdays,'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
-    QFile songtext1(appDataPathstr+"/songtext.txt");
+    QFile songtext1("songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
     QTextStream in(&songtext1);
-    ui->songsaddtextBrowser->setText(in.readAll());
+    ui->songsaddtextBrowser->setText(in.readAll()); 
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){

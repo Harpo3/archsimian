@@ -194,7 +194,7 @@ void getExcludedArtists(const int &s_playlistSize)
 int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
                        double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8){
     //Lookup the rating codes for last two tracks on the playlist;
-    //std::cout << "ratingCodeSelected started." << std::endl;
+    if (Constants::verbose == true) std::cout << "ratingCodeSelected function started." << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
 
     int x = 0; // variable to return the rating code to be used for the next track selection
@@ -630,10 +630,11 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::vector<std::string> splittedStrings = split(fullstring, ','); // Function splits the variable and leaves the track path only
     *s_selectedTrackPath = splittedStrings[1];
     if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
-    std::ofstream playlist(appDataPathstr.toStdString()+'/'+appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
+    std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
     playlist.close();    
-    std::string selectedTrackPathshort;    
+    std::string selectedTrackPathshort;
+    if (Constants::verbose == true) std::cout << "selectTrack function: Track selected (non-code-1): " << *s_selectedTrackPath  << std::endl;
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
 }
@@ -743,7 +744,7 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     *s_selectedCode1Path = returntrack;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
-    playlist << *s_selectedCode1Path << "\n";
+    playlist << *s_selectedCode1Path << "\n";    
     playlist.close();
 }
 

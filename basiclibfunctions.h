@@ -9,6 +9,7 @@ using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
 StringVector2D readCSV(std::string filename);
+void removeAppData(std::string str);
 bool recentlyUpdated(const QString &s_mmBackupDBDir);
 std::string removeSpaces(std::string str);
 std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgdString);
