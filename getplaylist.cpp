@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <QString>
+#include <QStandardPaths>
+#include <QDir>
 #include <iostream>
 #include "constants.h"
 
@@ -62,11 +64,12 @@ int cstyleStringCount(std::string path){
 
 void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     static std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
     static std::string musiclibdirname = s_musiclibrarydirname.toStdString();
     std::string playlistFile = s_selectedplaylist;
     std::ifstream readFile(playlistFile);
-    std::ofstream outf("cleanedplaylist.txt");
+    std::ofstream outf(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (!readFile.is_open()) {
         std::cout << "getPlaylist: The readFile did not open. Did you manually export the MediaMonkey playlist?";
         std::exit(EXIT_FAILURE);

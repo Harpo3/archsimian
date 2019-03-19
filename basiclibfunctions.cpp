@@ -1,3 +1,5 @@
+#include <QStandardPaths>
+#include <QDir>
 #include <vector>
 #include <sstream>
 #include <fstream>
@@ -83,9 +85,11 @@ void findDuplicates(std::vector<T> & vecOfElements, std::map<T, int> & countMap)
 
 bool recentlyUpdated(const QString &s_mmBackupDBDir)
 {
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     bool existResult{0};
     bool refreshNeededResult{0};
-    existResult = doesFileExist(Constants::cleanLibFile);// See inline function at top
+    std::string convertStd2 = appDataPathstr.toStdString()+"/cleanlib.dsv";
+    existResult = doesFileExist(convertStd2);// See inline function at top
     if (Constants::verbose == true) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
     if (existResult == 0) {refreshNeededResult = 1;}
     // If the lib file exists, Get the epoch date for the MM.DB file
@@ -100,7 +104,8 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
         if (Constants::verbose == true) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;
         // Now get the date for the cleanlib.csv file
         struct stat stbuf2;
-        stat(Constants::cleanLibFile, &stbuf2);
+        std::string mmpath99 = appDataPathstr.toStdString()+"/cleanlib.dsv";
+        stat(mmpath99.c_str(), &stbuf2);
         localtime(&stbuf2.st_mtime);
         //printf("Modification time for cleanlib.csv is %ld\n",stbuf2.st_mtime);
         if (Constants::verbose == true) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;
@@ -144,12 +149,13 @@ std::string getChgdDirStr(std::vector<std::string> const &input, std::string chg
 
 void getLibrary(const QString &s_musiclibrarydirname)
 {
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream filestr1;
-    filestr1.open ("libtable.dsv");
+    filestr1.open (appDataPathstr.toStdString()+"/libtable.dsv");
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getLibrary: Error opening libtable.dsv file." << std::endl;}
-    std::string databaseFile = "libtable.dsv"; // now we can use it as a temporary input file
-    std::ofstream outf(Constants::cleanLibFile); // output file for writing clean track paths
+    std::string databaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // now we can use it as a temporary input file
+    std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing clean track paths
     std::ifstream primarySongsTable(databaseFile);
 
     if (!primarySongsTable.is_open())
@@ -244,11 +250,13 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
                  int *_sSQL20DayTracksTot,double *_sSQL30TotTimeListened,int *_sSQL30DayTracksTot,double *_sSQL40TotTimeListened,
                  int *_sSQL40DayTracksTot,double *_sSQL50TotTimeListened,int *_sSQL50DayTracksTot,double *_sSQL60TotTimeListened,
                  int *_sSQL60DayTracksTot) {
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream filestr1;
-    filestr1.open (Constants::cleanLibFile);
+    std::string combinedPath = appDataPathstr.toStdString()+"/cleanlib.dsv";
+    filestr1.open (combinedPath);
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getDBStats: Error opening cleanlib.dsv file." << std::endl;}
-    std::string databaseFile = Constants::cleanLibFile; // now we can use it as input file
+    std::string databaseFile = combinedPath; // now we can use it as input file
     std::ifstream primarySongsTable(databaseFile);
     double currDate = std::chrono::duration_cast<std::chrono::seconds>
             (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
@@ -365,11 +373,13 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
                             int *_srCode6TotTrackQty,int *_srCode7TotTrackQty,int *_srCode8TotTrackQty)
 {
     //std::cout << "Working on artist counts and factors. This will take a few seconds...";
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
-    cleanlib.open (Constants::cleanLibFile);
+    cleanlib.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
+    std::cout << appDataPathstr.toStdString()+"/cleanlib.dsv"<< std::endl;
     if (cleanlib.is_open()) {cleanlib.close();}
     else {std::cout << "getArtistAdjustedCount: Error opening cleanlib.dsv file." << std::endl;}
-    std::string cleanlibSongsTable = Constants::cleanLibFile;    // Now we can use it as input file
+    std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib.dsv";    // Now we can use it as input file
     std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib.dsv as ifstream
     if (!SongsTable.is_open())
     {
@@ -428,10 +438,10 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     if( remove( "artists2.txt" ) != 0 )
         perror( "getArtistAdjustedCount: Error deleting file" );
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
-    cleanlib2.open (Constants::cleanLibFile);
+    cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib2.is_open()) {cleanlib2.close();}
     else {std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;}
-    std::string cleanlibSongsTable2 = Constants::cleanLibFile; // now we can use it as input file
+    std::string cleanlibSongsTable2 = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open ("artists.txt");
     if (artists2.is_open()) {artists2.close();}
@@ -445,7 +455,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     }
     std::string str1; // store the string for artists.txt
     std::string str2; // store the string for cleanlib.dsv
-    std::ofstream outartists2("artistsadj.txt"); // Create ostream file to collect artists and adjusted counts
+    std::ofstream outartists2(appDataPathstr.toStdString()+"/artistsadj.txt"); // Create ostream file to collect artists and adjusted counts
     std::string currentArtist;
     int currentArtistCount{0};
     // Outer loop: iterate through artist, track count in the file "artists.txt"
@@ -546,18 +556,19 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
 void buildDB()
 {
     if (Constants::verbose == true) std::cout << "Building the Archsimian database with artist intervals calculated....";
+        QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
 
     //****************
     // function createDatabase - writing ratedabbr.txt using multiple vectors
     //****************
     // Since adding tracks is iterative, we will limit vector size of songs table by first doing a smaller subset
     // function getSubset() to create the file ratedabbr.txt, which will then be used for track selection functions
-    std::ofstream ratedabbr("ratedabbr.txt"); // output file for subset table
+    std::ofstream ratedabbr(appDataPathstr.toStdString()+"/ratedabbr.txt"); // output file for subset table
     std::fstream filestrinterval;
-    filestrinterval.open (Constants::cleanLibFile);
+    filestrinterval.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "Error opening cleanLibFile." << std::endl;}
-    std::string ratedlibrary = Constants::cleanLibFile; // now we can use it as input file
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     std::ifstream primarySongsTable(ratedlibrary);
     if (!primarySongsTable.is_open()){
         std::cout << "Error opening cleanLibFile." << std::endl;
@@ -576,7 +587,7 @@ void buildDB()
     std::string albumID;
     static std::string s_artistInterval{"0"};
     std::string s_selectedTrackPath;
-    StringVector2D artistIntervalVec = readCSV("artistsadj.txt");
+    StringVector2D artistIntervalVec = readCSV(appDataPathstr.toStdString()+"/artistsadj.txt");
     //std::cout << "Starting getline to read artistsadj.txt file into artistsadjVec." << std::endl;
     std::vector<std::string>ratedabbrvect;
     //ratedabbrvect.reserve(20000);
@@ -674,12 +685,13 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     // Open artadj.txt (contains total track count) to find which artists meet the minimum
     // number of total tracks, then run 'for' loop on each artist that meets and populate
     // map vector trackCountMap with the results
-    StringVector2D artAdjVec1 = readCSV("artistsadj.txt");
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    StringVector2D artAdjVec1 = readCSV(appDataPathstr.toStdString()+"/artistsadj.txt");
     std::fstream artadj;
-    artadj.open ("artistsadj.txt");
+    artadj.open (appDataPathstr.toStdString()+"/artistsadj.txt");
     if (artadj.is_open()) {artadj.close();}
     else {std::cout << "buildAlbumExclLibrary: Error opening artadj.txt file ." << std::endl;}
-    std::string artscreen = "artistsadj.txt"; // now we can use it as input file
+    std::string artscreen = appDataPathstr.toStdString()+"/artistsadj.txt"; // now we can use it as input file
     std::ifstream artScreenTable(artscreen);
     if (!artScreenTable.is_open())
     {
@@ -719,10 +731,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     int new_artistCount = cstyleStringCount("tmpcount1.txt");
     // Two read files, first the library: minAlbumsScreenTable
     std::fstream minalbadj;
-    minalbadj.open ("cleanlib.dsv");
+    minalbadj.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (minalbadj.is_open()) {minalbadj.close();}
     else {std::cout << "buildAlbumExclLibrary: Error opening cleanlib.dsv." << std::endl;}
-    std::string minAlbumsScreen = "cleanlib.dsv"; // now we can use it as input file
+    std::string minAlbumsScreen = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     // Then, the previous tmp file with the list of artists from the first screen: minAlbumsScreenTable1
     std::fstream totTrackCountList1;
     totTrackCountList1.open ("tmpcount1.txt");
@@ -815,7 +827,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::string tmpfile2 = "tmpcount4.txt";
     std::string str2;
     std::ifstream mytmpfile2(tmpfile2);
-    std::ofstream finallist {"artistalbmexcls.txt"};
+    std::ofstream finallist {appDataPathstr.toStdString()+"/artistalbmexcls.txt"};
     while (std::getline(mytmpfile2, str2))
     {
         // Line contains string of length > 0 then save it in multimap

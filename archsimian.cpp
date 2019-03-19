@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QtWidgets>
 #include <QPalette>
+#include <QStandardPaths>
 #include <fstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -116,6 +117,10 @@ static QString s_musiclibrarydirname{""};
 static QString s_mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
+//QApplication::applicationName();
+static QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
+static QDir appDataPath = appDataPathstr;
+static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
 
 
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -123,7 +128,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui(new Ui::ArchSimian)
 {
 
-
+    removeSQLFile();
     QWidget setupwindow;
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf"; // sets the config file location for QSettings
     loadSettings(); // QSettings: load user settings from archsimian.conf file
@@ -195,8 +200,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
 
-        //bool needUpdate = isLibRefreshNeeded(); // function isLibRefreshNeeded() is from dependents.cpp
-        if (Constants::verbose == true) std::cout << "Step 1. Checking isLibRefreshNeeded(): "<<needUpdate<<std::endl;
+        //bool needUpdate = getMMdbDate(); // function getMMdbDate() is from dependents.cpp
+        if (Constants::verbose == true) std::cout << "Step 1. Checking getMMdbDate(): "<<needUpdate<<std::endl;
         if (needUpdate == 0)
         {
             s_MMdbDate = getMMdbDate(s_mmBackupDBDir);
@@ -251,16 +256,18 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // imported from MM.DB) (sets s_bool_CleanLibExist)
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true)) {
-        bool tmpbool;
-        tmpbool = doesFileExist(Constants::cleanLibFile);
+        bool tmpbool{1};
+        tmpbool = doesFileExist(cleanLibFile);
+        if (Constants::verbose == true) std::cout << "Step 3. tmpbool indicating cleanLibFile file: " << cleanLibFile <<"  exists result: " <<tmpbool  << std::endl;
         if (tmpbool == true){ // check that file is not empty
             //Check whether the songs table currently has any data in it
             std::streampos cleanLibFilesize;
             char * memblock;
-            std:: ifstream file (Constants::cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
+            std:: ifstream file (cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
             if (file.is_open())
             {
                 cleanLibFilesize = file.tellg();
+                if (Constants::verbose == true) std::cout << "Step 3. cleanLibFilesize result: " <<cleanLibFilesize  << std::endl;
                 memblock = new char [cleanLibFilesize];
                 file.seekg (0, std::ios::beg);
                 file.read (memblock, cleanLibFilesize);
@@ -343,7 +350,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             }
             getLibrary(s_musiclibrarydirname); // get songs table from MM.DB
         }
-        s_bool_CleanLibExist = doesFileExist (Constants::cleanLibFile);
+        s_bool_CleanLibExist = doesFileExist (cleanLibFile);
         if (s_bool_CleanLibExist == true) {remove ("libtable.dsv");}
         else {
             std::cout << "Step 5. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
@@ -485,12 +492,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_artistsadjExist = false;
         bool tmpbool;
         bool tmpbool2;
-        tmpbool = doesFileExist("artistsadj.txt");
+        tmpbool = doesFileExist(appDataPathstr.toStdString()+"/artistsadj.txt");
         if (tmpbool == true){ // check that file is not empty
             //Check whether the songs table currently has any data in it
             std::streampos artsistAdjsize;
             char * memblock;
-            std:: ifstream file ("artistsadj.txt", std::ios::in|std::ios::binary|std::ios::ate);
+            std:: ifstream file (appDataPathstr.toStdString()+"/artistsadj.txt", std::ios::in|std::ios::binary|std::ios::ate);
             if (file.is_open())
             {
                 artsistAdjsize = file.tellg();
@@ -505,12 +512,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 // If it does set s_bool_RatedAbbrExist to true.
                 if (Constants::verbose == true) {std::cout << "Step 7. MM.DB not recently updated and artistsadj.txt does not need to be updated. "
                                                               "Now checking s_bool_RatedAbbrExist." << std::endl;}
-                tmpbool2 = doesFileExist("ratedabbr.txt");
+                tmpbool2 = doesFileExist(appDataPathstr.toStdString()+"/ratedabbr.txt");
                 if (tmpbool2 == true){ // check that file is not empty
                     //Check whether the songs table currently has any data in it
                     std::streampos ratedabbrsize;
                     char * memblock;
-                    std:: ifstream file ("ratedabbr.txt", std::ios::in|std::ios::binary|std::ios::ate);
+                    std:: ifstream file (appDataPathstr.toStdString()+"/ratedabbr.txt", std::ios::in|std::ios::binary|std::ios::ate);
                     if (file.is_open())
                     {
                         ratedabbrsize = file.tellg();
@@ -537,7 +544,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                    &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                                    &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                                    &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
-            s_bool_artistsadjExist = doesFileExist ("artistsadj.txt");
+            s_bool_artistsadjExist = doesFileExist (appDataPathstr.toStdString()+"/artistsadj.txt");
             s_bool_RatedAbbrExist = false;
             if (s_bool_artistsadjExist == false)  {std::cout << "Step 7(a) Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
         }
@@ -554,7 +561,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                                &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
         s_bool_RatedAbbrExist = false;
-        s_bool_artistsadjExist = doesFileExist ("artistsadj.txt");
+        s_bool_artistsadjExist = doesFileExist (appDataPathstr.toStdString()+"/artistsadj.txt");
         if (s_bool_artistsadjExist == false)  {std::cout << "Step 7(b). Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
     }
 
@@ -567,7 +574,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)  && (s_bool_dbStatsCalculated == true)
             && (s_bool_artistsadjExist == true) && (s_bool_RatedAbbrExist == false)) {
         buildDB();
-        s_bool_RatedAbbrExist = doesFileExist ("ratedabbr.txt");
+        s_bool_RatedAbbrExist = doesFileExist (appDataPathstr.toStdString()+"/ratedabbr.txt");
         if (s_bool_RatedAbbrExist == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
         if ((s_bool_RatedAbbrExist == true)&&(Constants::verbose == true)){std::cout << "Step 8. ratedabbr.txt was created." << std::endl;}
     }
@@ -578,7 +585,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // Determine if cleaned (path-corrected) playlist selected (s_bool_PlaylistExist) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
     // sets bool6 and bool7
     if (s_bool_IsUserConfigSet == true){
-        s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
+        s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (s_bool_PlaylistExist == true) {
             s_bool_PlaylistSelected = true;
             if (Constants::verbose == true){std::cout << "Step 9. Playlist exists and was not updated." << std::endl;}
@@ -601,7 +608,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true) && (s_bool_PlaylistSelected == true) && (s_bool_PlaylistExist == false)){
         if (Constants::verbose == true){std::cout << "Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
-        s_bool_PlaylistExist = doesFileExist (Constants::cleanedPlaylist);
+        s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (s_bool_PlaylistExist == false) {std::cout << "Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }
     if ((Constants::verbose == true)&& (s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true)){std::cout << "Step 10. Playlist exists and was not updated." << std::endl;}
@@ -612,7 +619,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
     if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true)) {
-        s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
+        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (Constants::verbose == true){std::cout << "Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
     }
 
@@ -624,7 +631,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
     // and SequentialTrackLimit obtained with data from function getDBStats()]
     if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true)) {
-        s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
+        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
         if (Constants::verbose == true){std::cout << "Step 12. s_histCount is: "<< s_histCount << std::endl;}
     }
@@ -715,12 +722,13 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
 void ArchSimian::on_addsongsButton_released(){
     // First set messages and feedback to user during process
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
                                             "tracks requested have been processed. This can take some "
                                             "time...",5);
     int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)
     remove("songtext.txt");
-    std::ofstream songtext("songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
+    std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
     // Second, determine the rating for the track selection
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8);
@@ -758,7 +766,7 @@ void ArchSimian::on_addsongsButton_released(){
         std::size_t found1 = shortselectedTrackPath.rfind(key2);
         if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}
         if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length(),"");}
-        s_playlistSize = cstyleStringCount("cleanedplaylist.txt");
+        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n'; // adds the playlist pos number and track to the text display file
         if (Constants::verbose == true) std::cout << "Playlist length is: " << s_playlistSize << " tracks." << std::endl;
         // Calculate excluded artists and get rating for next track selection (accounting for track just added)
@@ -773,7 +781,7 @@ void ArchSimian::on_addsongsButton_released(){
     double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
     ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(currplaylistdays,'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
-    QFile songtext1("songtext.txt");
+    QFile songtext1(appDataPathstr+"/songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
     QTextStream in(&songtext1);
@@ -860,7 +868,7 @@ void ArchSimian::on_getplaylistButton_clicked()
     s_defaultPlaylist = m_prefs.defaultPlaylist;
     ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
     getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
-    s_playlistSize = cstyleStringCount(Constants::cleanedPlaylist);
+    s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
     getExcludedArtists(s_playlistSize);
     ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));

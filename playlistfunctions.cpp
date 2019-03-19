@@ -1,3 +1,5 @@
+#include <QStandardPaths>
+#include <QDir>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -45,24 +47,25 @@ bool matchLineinIfstream(std::ifstream & stream, std::string str) {
 
 void getExcludedArtists(const int &s_playlistSize)
 {
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::fstream filestrinterval;
     int s_playlistPosition;
-    filestrinterval.open ("ratedabbr.txt");
+    filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file ." << std::endl;}
-    std::string ratedlibrary = "ratedabbr.txt"; // now we can use it as input file
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())
     {
         std::cout << "getArtistExcludes: Error opening ratedSongsTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    StringVector2D ratedabbrVec = readCSV("ratedabbr.txt");
+    StringVector2D ratedabbrVec = readCSV(appDataPathstr.toStdString()+"/ratedabbr.txt");
     ratedabbrVec.reserve(50000);
     std::vector<std::string>histvect; // vector to collect excluded artists from 'outside the playlist'
     std::vector<std::string> artistExcludesVec;// vector to collect all excluded artists
-    std::ofstream playlistPosList("playlistposlist.txt"); // output file for writing ratedabbr.txt with added artist intervals
-    std::ofstream ratedabbr2("ratedabbr2.txt"); // output file for writing ratedabbr.txt with added artist intervals
+    std::ofstream playlistPosList(appDataPathstr.toStdString()+"/playlistposlist.txt"); // output file for writing ratedabbr.txt with added artist intervals
+    std::ofstream ratedabbr2(appDataPathstr.toStdString()+"/ratedabbr2.txt"); // output file for writing ratedabbr.txt with added artist intervals
     std::string str1; // store the string for ratedabbr.txt
     //std::string playlistPosition; // Custom1 variable for playlistposlist.txt
     std::string selectedArtistToken; // Artist variable from ratedabbrVec
@@ -74,10 +77,10 @@ void getExcludedArtists(const int &s_playlistSize)
     std::string path;
     //open playlist to read in position number of each track
     std::fstream playList;
-    playList.open (Constants::cleanedPlaylist);
+    playList.open (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (playList.is_open()) {playList.close();}
     else {std::cout << "getArtistExcludes: Error opening cleanedplaylist.txt file." << std::endl;}
-    std::string playlist = Constants::cleanedPlaylist; // now we can use it as input file
+    std::string playlist = appDataPathstr.toStdString()+"/cleanedplaylist.txt"; // now we can use it as input file
     std::ifstream playlistTable(playlist);
     if (!playlistTable.is_open())
     {
@@ -158,8 +161,8 @@ void getExcludedArtists(const int &s_playlistSize)
     }
     playlistPosList.close();
     // Calculate the extended playlist to find infrequent artists played within their interval value (ex. postion 452 and interval 487)
-    std::ofstream artistExcList("artistexcludes.txt"); // output file for writing final exclude list
-    StringVector2D finalhistvec = readCSV("playlistposlist.txt"); // open "playlistposlist.txt" as 2D vector finalhistvec
+    std::ofstream artistExcList(appDataPathstr.toStdString()+"/artistexcludes.txt"); // output file for writing final exclude list
+    StringVector2D finalhistvec = readCSV(appDataPathstr.toStdString()+"/playlistposlist.txt"); // open "playlistposlist.txt" as 2D vector finalhistvec
     for (std::size_t i = 0 ;  i < finalhistvec.size(); i++){
         for(int j=0;j<6;j++){
             //std::cout << finalhistvec[i][4] << ", " <<finalhistvec[i][5] << std::endl;
@@ -192,6 +195,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
                        double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8){
     //Lookup the rating codes for last two tracks on the playlist;
     //std::cout << "ratingCodeSelected started." << std::endl;
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
 
     int x = 0; // variable to return the rating code to be used for the next track selection
     //bool isRating1Qty = (s_rCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
@@ -233,10 +237,10 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::string selectedPlaylistPosition;
     std::string selectedRatingCode;
     std::fstream filestrinterval;
-    filestrinterval.open ("ratedabbr2.txt");
+    filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "ratingCodeSelected: Error opening ratedabbr2.txt file." << std::endl;}
-    std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "ratingCodeSelected: Error opening ratedSongsTable." << std::endl;
@@ -502,15 +506,16 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
 // Write/append the cleanedplaylist.txt file the oldest dated track found.
 
 std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath, bool &s_includeAlbumVariety){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     std::fstream filestrinterval;
-    filestrinterval.open ("ratedabbr2.txt");
+    filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file." << std::endl;}
-    std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
+    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file (514)." << std::endl;}
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
-        std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
+        std::cout << "selectTrack: Error opening ratedabbr2.txt (518)." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // store the string for ratedabbr2.txt
@@ -567,11 +572,12 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
          Now, open an inner loop and iterate through artistexcludes.txt, comparing each 'exclude' entry against the artist token.
          Continue to next str1 if a match found (meaning it identifies an excluded artist).
         */
+        QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
         std::ifstream artistexcludes;  // Next ensure artistexcludes.txt is ready to open
-        artistexcludes.open ("artistexcludes.txt");
+        artistexcludes.open (appDataPathstr.toStdString()+"/artistexcludes.txt");
         if (artistexcludes.is_open()) {artistexcludes.close();}
         else {std::cout << "selectTrack: Error opening artistexcludes.txt file." << std::endl;}
-        std::string artistexcludes2 = "artistexcludes.txt"; // now we can use it as input file
+        std::string artistexcludes2 = appDataPathstr.toStdString()+"/artistexcludes.txt"; // now we can use it as input file
         std::ifstream artexcludes(artistexcludes2); // Open artistexcludes.txt as ifstream
         if (!artexcludes.is_open()) {
             std::cout << "selectTrack: Error opening artistexcludes.txt." << std::endl;
@@ -591,12 +597,13 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
            Continue to next str1 if a match found (meaning it identifies an excluded album ID).
         */
         if (s_includeAlbumVariety == true){
+            QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
-            artistalbexcludes.open ("finalids.txt");
+            artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
             if (artistalbexcludes.is_open()) {artistalbexcludes.close();}
             else {std::cout << "selectTrack: Error opening finalids.txt file." << std::endl;}
-            std::string artistalbexcludes2 = "finalids.txt"; // now we can use it as input file
-            std::ifstream artalbexcludes(artistalbexcludes2); // Open artistexcludes.txt as ifstream
+            std::string artistalbexcludes2 = appDataPathstr.toStdString()+"/finalids.txt"; // now we can use it as input file
+            std::ifstream artalbexcludes(artistalbexcludes2); // Open artistalbexcludes.txt as ifstream
             if (!artalbexcludes.is_open()) {
                 std::cout << "selectTrack: Error opening finalids.txt." << std::endl;
                 std::exit(EXIT_FAILURE);
@@ -623,7 +630,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::vector<std::string> splittedStrings = split(fullstring, ','); // Function splits the variable and leaves the track path only
     *s_selectedTrackPath = splittedStrings[1];
     if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
-    std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
+    std::ofstream playlist(appDataPathstr.toStdString()+'/'+appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
     playlist.close();    
     std::string selectedTrackPathshort;    
@@ -633,6 +640,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
 
 // Function to populate four variables used to determine rating code 1 track selection in function getNewTrack
 void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_slowestCode1Pos, std::string *_sartistLastCode1){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::vector<std::string>code1artistsvect;
     std::string selectedArtistToken; // Artist variable
     std::string str; // store the string for ratedabbr2.txt
@@ -640,10 +648,10 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
     std::string playlistPos;
     int posint{99999};
     std::fstream filestrinterval;
-    filestrinterval.open ("ratedabbr2.txt");
+    filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "code1stats: Error opening ratedabbr2.txt file." << std::endl;}
-    std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "code1stats: Error opening ratedabbr2.txt." << std::endl;
@@ -683,12 +691,13 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
 // Function used to select a rating code 1 track
 
 void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::string returntrack;
     std::fstream filestrinterval;
-    filestrinterval.open ("ratedabbr2.txt");
+    filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "getNewTrack: Error opening ratedabbr2.txt file." << std::endl;}
-    std::string ratedlibrary = "ratedabbr2.txt"; // now we can use it as input file
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "getNewTrack: Error opening ratedabbr2.txt." << std::endl;
@@ -733,7 +742,7 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     returntrack = splittedStrings[2];
     *s_selectedCode1Path = returntrack;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
-    std::ofstream playlist(Constants::cleanedPlaylist,std::ios::app);
+    std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     playlist << *s_selectedCode1Path << "\n";
     playlist.close();
 }
@@ -746,17 +755,18 @@ for each artist in the artistalbmexcls.txt file. Sends the IDs to a text file ex
 
 void getAlbumIDs(){
     //if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::fstream filestrartists;
-    filestrartists.open ("selalbmexcl.txt");
+    filestrartists.open (appDataPathstr.toStdString()+"/selalbmexcl.txt");
     if (filestrartists.is_open()) {filestrartists.close();}
     else {std::cout << "Error opening selalbmexcl.txt file." << std::endl;}
-    std::string artistalbmexcls1 = "selalbmexcl.txt";
+    std::string artistalbmexcls1 = appDataPathstr.toStdString()+"/selalbmexcl.txt";
     std::ifstream artistTable1(artistalbmexcls1);
     if (!artistTable1.is_open()) {
-        std::cout << "getArtCompare: Error opening selalbmexcl.txt." << std::endl;
+        std::cout << "getAlbumIDs: Error opening selalbmexcl.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    std::ofstream trimmedlist("finalids.txt");
+    std::ofstream trimmedlist(appDataPathstr.toStdString()+"/finalids.txt");
     std::string str1;
     std::string tokenLTP;
     std::string selectedArtistToken;
@@ -768,13 +778,13 @@ void getAlbumIDs(){
         //search filestrartists2 for matching string
         std::fstream filestrartists2;
         std::fstream filestrinterval;
-        filestrinterval.open ("ratedabbr2.txt");
+        filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
         if (filestrinterval.is_open()) {filestrinterval.close();}
-        else {std::cout << "Error opening ratedabbr2.txt file." << std::endl;}
-        std::string ratedlibrary = "ratedabbr2.txt";
+        else {std::cout << "getAlbumIDs: Error opening ratedabbr2.txt file (783)." << std::endl;}
+        std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt";
         std::ifstream ratedSongsTable(ratedlibrary);
         if (!ratedSongsTable.is_open()) {
-            std::cout << "selectTrack: Error opening ratedabbr2.txt." << std::endl;
+            std::cout << "getAlbumIDs: Error opening ratedabbr2.txt (787)." << std::endl;
             std::exit(EXIT_FAILURE);
         }
         // set variables used to compare element values in ratedabbr2 against this str1
@@ -838,24 +848,25 @@ those already on the excluded artists list. Output to a temp file selalbmexcl.tx
 */
 void getTrimArtAlbmList(){
     std::fstream filestrartists;
-    filestrartists.open ("artistalbmexcls.txt");
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    filestrartists.open (appDataPathstr.toStdString()+"/artistalbmexcls.txt");
     if (filestrartists.is_open()) {filestrartists.close();}
-    else {std::cout << "Error opening artistalbmexcls.txt file." << std::endl;}
-    std::string artistalbmexcls1 = "artistalbmexcls.txt"; // now we can use it as input file
+    else {std::cout << "getTrimArtAlbmList: Error opening artistalbmexcls.txt file." << std::endl;}
+    std::string artistalbmexcls1 = appDataPathstr.toStdString() + "/artistalbmexcls.txt"; // now we can use it as input file
     std::ifstream artistTable1(artistalbmexcls1);
     if (!artistTable1.is_open()) {
-        std::cout << "getArtCompare: Error opening artistalbmexcls.txt." << std::endl;
+        std::cout << "getTrimArtAlbmList: Error opening artistalbmexcls.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    std::ofstream trimmedlist("selalbmexcl.txt");
+    std::ofstream trimmedlist(appDataPathstr.toStdString()+"/selalbmexcl.txt");
     std::string str1;
     while (std::getline(artistTable1, str1)) {
         //search filestrartists2 for matching string
         std::fstream filestrartists2;
-        filestrartists2.open ("artistexcludes.txt");
+        filestrartists2.open (appDataPathstr.toStdString()+"/artistexcludes.txt");
         if (filestrartists2.is_open()) {filestrartists2.close();}
         else {std::cout << "Error opening artistexcludes.txt file." << std::endl;}
-        std::string artistexcludes2 = "artistexcludes.txt"; // now we can use it as input file
+        std::string artistexcludes2 = appDataPathstr.toStdString()+"/artistexcludes.txt"; // now we can use it as input file
         std::ifstream artistTable2(artistexcludes2);
         if (!artistTable2.is_open()) {
             std::cout << "getArtCompare: Error opening artistexcludes.txt." << std::endl;

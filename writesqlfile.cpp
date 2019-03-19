@@ -1,12 +1,15 @@
+#include <QStandardPaths>
+#include <QDir>
 #include <iostream>
 #include <fstream>
 #include <constants.h>
 #include <stdio.h>
 
 void writeSQLFile(){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::string str1{".separator \"^\""};
     std::string str2{".header on"};
-    std::string str3{".once libtable.dsv"};
+    std::string str3{".once "+appDataPathstr.toStdString()+"/libtable.dsv"};
     std::string str4{"SELECT"};
     std::string str5{"ID,Artist,IDAlbum,Album,AlbumArtist,DiscNumber,TrackNumber,"
                      "SongTitle,SongPath,Year,Genre,FileLength,SongLength,Rating,"
@@ -31,6 +34,10 @@ void writeSQLFile(){
 
 void removeSQLFile(){
     const std::string sqlpathdirname = getenv("HOME");
-    std::string sqlfile(sqlpathdirname + Constants::sqlFileName);
+    std::string sqlfile(sqlpathdirname + '/'+ Constants::sqlFileName);
     remove (sqlfile.c_str());// remove exportMMTable.sql from home directory
+    if( remove( sqlfile.c_str() ) != 0 )
+      perror( "Error deleting file" );
+    else
+      puts( "File successfully deleted" );
 }

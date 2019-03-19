@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 #include <QString>
+#include <QStandardPaths>
+#include <QDir>
 #include "constants.h"
 #include <dirent.h>
 #include <sys/stat.h>
@@ -123,7 +125,8 @@ std::string getMMdbDate(const QString &s_mmBackupDBDir)
 
 std::string getLastTableDate()
 {
-    const std::string existlibname = "cleanlib.dsv";
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    const std::string existlibname = appDataPathstr.toStdString()+"/cleanlib.dsv";
     struct stat stbuf2;
     struct tm *foo;
     stat(existlibname.c_str(), &stbuf2);
