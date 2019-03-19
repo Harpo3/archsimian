@@ -349,6 +349,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
             getLibrary(s_musiclibrarydirname); // get songs table from MM.DB
         }
     }
+    s_bool_CleanLibExist = doesFileExist (cleanLibFile);
+    if (s_bool_CleanLibExist == true) {removeAppData ("libtable.dsv");}
+    else {
+        std::cout << "Step 6. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
+        s_bool_CleanLibExist = false;
+    }
 
     // Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
     // songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), run function to process/update statistics getDBStats()
@@ -475,12 +481,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Step 6. Something went wrong at function getDBStats." << std::endl;
         }
     }
-    s_bool_CleanLibExist = doesFileExist (cleanLibFile);
-    if (s_bool_CleanLibExist == true) {removeAppData ("libtable.dsv");}
-    else {
-        std::cout << "Step 6. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
-        s_bool_CleanLibExist = false;
-    }
+
     // Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
     //MM.DB was not recently updated, check for state of s_bool_artistsadjExist (artistsadj.txt).
     //If file is missing or empty, create file with artist statistics
