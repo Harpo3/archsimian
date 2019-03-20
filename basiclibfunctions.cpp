@@ -406,7 +406,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
     std::string str; // Create ostream file to log artists and duplicates; dups will be used to create a vector with # tracks per artist
-    std::ofstream outartists("artists2.txt"); // output file for writing artists list with dups
+    std::ofstream outartists(appDataPathstr.toStdString()+"/artists2.txt"); // output file for writing artists list with dups
     //  Outer loop: iterate through rows of SongsTable
     while (std::getline(SongsTable, str))
     {   // Declare variables applicable to all rows
@@ -430,8 +430,8 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     outartists.close();
     std::map<std::string, int> countMap; // Create a map for two types, string and int
     std::vector<std::string> artists; // Now create vector
-    std::ifstream myfile("artists2.txt"); // Input file for vector
-    std::ofstream artistList("artists.txt"); // output file for writing artists list without dups using vector
+    std::ifstream myfile(appDataPathstr.toStdString()+"/artists2.txt"); // Input file for vector
+    std::ofstream artistList(appDataPathstr.toStdString()+"/artists.txt"); // output file for writing artists list without dups using vector
     std::string line;
     while ( std::getline(myfile, line) ) { //std::cout << "Vector Size is now " << artists.size() << " lines." << std::endl;
         if ( !line.empty() )
@@ -461,14 +461,14 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     else {std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;}
     std::string cleanlibSongsTable2 = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
-    artists2.open ("artists.txt");
+    artists2.open (appDataPathstr.toStdString()+"/artists.txt");
     if (artists2.is_open()) {artists2.close();}
     else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file ." << std::endl;}
-    std::string artistsTable2 = "artists.txt"; // now we can use it as input file
+    std::string artistsTable2 = appDataPathstr.toStdString()+"/artists.txt"; // now we can use it as input file
     std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
     {
-        std::cout << "Error opening artistcsv." << std::endl;
+        std::cout << "getArtistAdjustedCount: Error opening artists.txt." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // store the string for artists.txt
@@ -568,8 +568,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     artistcsv.close();
     outartists2.close();
     artists.shrink_to_fit();
-    if( remove( "artists.txt" ) != 0 )
-        perror( "getArtistAdjustedCount: Error deleting artists.txt file" );
+    removeAppData("artists.txt");
 }
 void buildDB()
 {
@@ -670,6 +669,7 @@ void buildDB()
 }
 
 void KDEmessage(std::string title, std::string msgtxt, int seconds){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
     //First, build and write the python script file
     std::string str1{"#!/usr/bin/python3"};
     std::string str2{"import os, sys "};
@@ -695,7 +695,7 @@ void KDEmessage(std::string title, std::string msgtxt, int seconds){
     command += pythonCode;
     system(command.c_str());
     // Third, remove script file after execution
-    //remove ("popupmsg.py");
+    remove ("popupmsg.py");
 }
 
 void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, const int &s_mintracks)
