@@ -98,7 +98,7 @@ void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrary
 }
 
 void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr)
-{
+{    
     static std::string playlist = s_defaultPlaylist.toStdString();
     std::ifstream readFile(playlist);
     std::string line;
@@ -110,12 +110,13 @@ void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr)
 }
 
 void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_defaultPlaylist, QString &s_winDriveLtr, QString &s_musiclibrarydirname){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     static std::string playlistpath = s_defaultPlaylist.toStdString();
     static std::string playlistdirname = s_mmPlaylistDir.toStdString();
     static std::string musicLibraryDir=s_musiclibrarydirname.toStdString();
     std::string winDriveLtr = s_winDriveLtr.toStdString(); // in main prgm, need to fix with QSettings variable
     //std::string cleanedPlaylist{Constants::cleanedPlaylist}; // in main prgm, instead reference Constants::cleanedPlaylist
-    std::ifstream readFile(Constants::cleanedPlaylist);
+    std::ifstream readFile(appDataPathstr.toStdString()+"/cleanedplaylist.txt"); //fixed here on 03/24/2019
     std::ofstream outf(playlistpath);
     if (!readFile.is_open()) {
         std::cout << "exportPlaylistToWindows: The readFile did not open. Did you delete the active playlist?";
