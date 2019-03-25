@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -1599,6 +1599,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="factor8doubleSpinBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="minimum">
             <double>1.010000000000000</double>
            </property>
