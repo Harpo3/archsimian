@@ -678,8 +678,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                        QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
         ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
         ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
-        //ui->statusBar->addPermanentWidget(ui->progressBarPL);
-        //ui->progressBarPL->hide();
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
         ui->factor3horizontalSlider->setMinimum(10);
         ui->factor3horizontalSlider->setMaximum(120);
@@ -843,7 +841,6 @@ void ArchSimian::on_addsongsButton_released(){
     }
     songtext.close();
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
-    //double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                           QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
@@ -864,12 +861,6 @@ void ArchSimian::on_exportplaylistButton_clicked(){
 
 void ArchSimian::on_setlibraryButton_clicked(){
     QFileDialog setlibraryButton;
-    //    if( !setlibraryButton.exec() )
-    //    {
-    // The user pressed the cancel button so handle this accordingly
-    //        return;
-    //    }
-    //    else {
     setlibraryButton.setFileMode(QFileDialog::Directory);
     setlibraryButton.setOption(QFileDialog::ShowDirsOnly);
     s_musiclibrarydirname= QFileDialog::getExistingDirectory(
@@ -886,12 +877,6 @@ void ArchSimian::on_setlibraryButton_clicked(){
 
 void ArchSimian::on_setmmplButton_clicked(){
     QFileDialog setmmpldialog;
-    //       if( !setmmpldialog.exec() )
-    //        {
-    // The user pressed the cancel button so handle this accordingly
-    //           return;
-    //       }
-    //       else {
     setmmpldialog.setFileMode(QFileDialog::Directory);
     setmmpldialog.setOption(QFileDialog::ShowDirsOnly);
     const QString mmbackuppldirname=QFileDialog::getExistingDirectory(
@@ -905,12 +890,6 @@ void ArchSimian::on_setmmplButton_clicked(){
 
 void ArchSimian::on_setmmdbButton_clicked(){
     QFileDialog setmmdbdialog;
-    //       if( !setmmdbdialog.exec() )
-    //       {
-    // The user pressed the cancel button so handle this accordingly
-    //           return;
-    //        }
-    //       else {
     setmmdbdialog.setFileMode(QFileDialog::Directory);
     setmmdbdialog.setOption(QFileDialog::ShowDirsOnly);
     const QString mmbackupdbdirname=QFileDialog::getExistingDirectory(
@@ -941,8 +920,7 @@ void ArchSimian::on_getplaylistButton_clicked()
     if (s_includeAlbumVariety == true){
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
     }
-     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
-    //double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
+    ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
         s_uniqueCode1ArtistCount = 0;
