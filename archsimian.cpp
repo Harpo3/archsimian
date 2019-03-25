@@ -670,6 +670,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
         code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
     }
     if (s_bool_IsUserConfigSet == true){
         ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
@@ -836,7 +837,10 @@ void ArchSimian::on_addsongsButton_released(){
                                                s_ratingRatio7,s_ratingRatio8); // Recalc rating selection
         if (Constants::verbose == true) std::cout<< "ratingCodeSelected function in loop completed. Result: " << s_ratingNextTrack << std::endl;
     }
-    // After all tracks have been processed, update ui with information to user about tracks added to tplaylist
+     //After all tracks have been processed, update ui with information to user about tracks added to playlist
+    if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+    }
     songtext.close();
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     //double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
@@ -940,6 +944,14 @@ void ArchSimian::on_getplaylistButton_clicked()
      ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     //double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+    if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        s_uniqueCode1ArtistCount = 0;
+        s_code1PlaylistCount = 0;
+        s_lowestCode1Pos = 99999;
+        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+   }
+    ui->songsaddtextBrowser->setText("");
     ui->addsongsButton->setEnabled(1);
     ui->exportplaylistButton->setEnabled(1);
 }
