@@ -838,15 +838,17 @@ void ArchSimian::on_addsongsButton_released(){
     }
     // After all tracks have been processed, update ui with information to user about tracks added to tplaylist
     songtext.close();
-    ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
-    double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
-    ui->playlistdaysLabel->setText(tr("Current playlist days (based on est. listening rate): ") + QString::number(currplaylistdays,'g', 3));
+    ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
+    //double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
+    ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
+                                          QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
     QFile songtext1("songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
     QTextStream in(&songtext1);
-    ui->songsaddtextBrowser->setText(in.readAll()); 
+    ui->songsaddtextBrowser->setText(in.readAll());
+    ui->addsongsButton->setEnabled(1);
 }
 
 void ArchSimian::on_exportplaylistButton_clicked(){
@@ -935,7 +937,7 @@ void ArchSimian::on_getplaylistButton_clicked()
     if (s_includeAlbumVariety == true){
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
     }
-    ui->currentplsizeLabel->setText(tr("Current playlist size: ") + QString::number(s_playlistSize));
+     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     //double currplaylistdays = s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong);
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->addsongsButton->setEnabled(1);
@@ -1378,4 +1380,16 @@ void ArchSimian::on_mintrackseachspinBox_valueChanged(int arg1)
 {
  m_prefs.s_mintrackseach = arg1;
  ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
+}
+
+void ArchSimian::on_addsongsButton_clicked(bool checked) // change button state when tracks added is completed
+{
+    ui->addsongsButton->setEnabled(0);
+    ui->addtrksspinBox->setEnabled(0);
+    if (checked == 1){
+        ui->addsongsButton->isDown();
+        checked = 0;
+    }
+    ui->addsongsButton->setEnabled(1);
+    ui->addtrksspinBox->setEnabled(1);
 }
