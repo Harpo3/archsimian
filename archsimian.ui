@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -284,25 +284,25 @@
             <rect>
              <x>10</x>
              <y>70</y>
-             <width>141</width>
+             <width>181</width>
              <height>16</height>
             </rect>
            </property>
            <property name="text">
-            <string>Current playlist size:</string>
+            <string>Current playlist size is</string>
            </property>
           </widget>
           <widget class="QLabel" name="playlistdaysLabel">
            <property name="geometry">
             <rect>
-             <x>160</x>
+             <x>192</x>
              <y>70</y>
-             <width>321</width>
+             <width>231</width>
              <height>16</height>
             </rect>
            </property>
            <property name="text">
-            <string>Current playlist days (based on est. listening rate): </string>
+            <string>and playlist length in listening days is</string>
            </property>
           </widget>
           <widget class="QWidget" name="layoutWidget1">
@@ -374,7 +374,7 @@
                </palette>
               </property>
               <property name="text">
-               <string>Set repeat frequency for new tracks (rating code 1)</string>
+               <string>Set repeat freq for new tracks (code 1). </string>
               </property>
              </widget>
             </item>
@@ -418,7 +418,7 @@
                </palette>
               </property>
               <property name="text">
-               <string>New tracks qty:</string>
+               <string>New tracks qty not in playlist:</string>
               </property>
              </widget>
             </item>

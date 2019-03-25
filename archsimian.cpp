@@ -668,6 +668,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true))   {
         getExcludedArtists(s_playlistSize);
     }
+    if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+    }
     if (s_bool_IsUserConfigSet == true){
         ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
         ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
@@ -676,7 +679,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
         //ui->statusBar->addPermanentWidget(ui->progressBarPL);
         //ui->progressBarPL->hide();
-        ui->newtracksqtyLabel->setText(tr("New tracks qty: ") + QString::number(s_rCode1TotTrackQty));
+        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
         ui->factor3horizontalSlider->setMinimum(10);
         ui->factor3horizontalSlider->setMaximum(120);
         ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
@@ -693,6 +696,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
         ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                        QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+        ui->daystoaddLabel->setText(tr("Based on a daily listening rate of ") + QString::number(s_avgListeningRateInMins,'g', 3)
+                                    + tr(" minutes per day, tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
+        ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be ") +
+                                     QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3)+tr(" days."));
         ui->yearsradioButton->click();
         ui->playlistTab->setEnabled(1);
         ui->statisticsTab->setEnabled(1);
