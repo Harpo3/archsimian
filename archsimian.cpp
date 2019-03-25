@@ -700,6 +700,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                     + tr(" minutes per day, tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
         ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be ") +
                                      QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3)+tr(" days."));
+        ui->label_perc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)*100,'g', 3) + "%");
+        ui->label_perc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)*100,'g', 3) + "%");
+        ui->label_perc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)*100,'g', 3) + "%");
+        ui->label_perc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)*100,'g', 3) + "%");
+        ui->label_perc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)*100,'g', 3) + "%");
+        ui->label_perc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)*100,'g', 3) + "%");
         ui->yearsradioButton->click();
         ui->playlistTab->setEnabled(1);
         ui->statisticsTab->setEnabled(1);
