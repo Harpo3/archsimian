@@ -31,7 +31,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
-6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Select a playlist and restart the program. It will then process your MM.DB and launch with all of its features enabled.
+6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled. Play with the frequency tab settings to your liking (restart), then select a playlist and add some tracks and export the changes back to your playlist directory.
 
 7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, it exports the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist that can be imported into MediaMonkey (using the .mmip ImportM3U).
 
