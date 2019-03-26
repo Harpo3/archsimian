@@ -93,6 +93,8 @@ private slots:
 
     void on_actionOpen_Playlist_triggered();
 
+    void on_autosavecheckBox_stateChanged(int autosave);
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -114,6 +116,7 @@ private:
         QString s_WindowsDriveLetter;
         bool s_includeNewTracks;
         bool s_includeAlbumVariety;
+        bool s_noAutoSave;
         double s_daysTillRepeatCode3;
         double s_repeatFactorCode4;
         double s_repeatFactorCode5;

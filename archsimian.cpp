@@ -42,6 +42,7 @@ static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
 static bool s_includeNewTracks{true};
 static bool s_includeAlbumVariety{true};
+static bool s_noAutoSave{true};
 static int s_uniqueCode1ArtistCount{0};
 static int s_code1PlaylistCount{0};
 static int s_lowestCode1Pos{99999};
@@ -163,6 +164,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_mmPlaylistDir = m_prefs.mmPlaylistDir;
     s_includeNewTracks = m_prefs.s_includeNewTracks;
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
+    s_noAutoSave = m_prefs.s_noAutoSave;
     s_minalbums = m_prefs.s_minalbums;
     s_mintrackseach= m_prefs.s_mintrackseach;
     s_mintracks = m_prefs.s_mintracks;
@@ -728,6 +730,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->newtracksqtyLabel->setDisabled(0);
             ui->repeatfreqtxtLabel->setDisabled(0);
         }
+        if (m_prefs.s_noAutoSave == true){
+            ui->autosavecheckBox->setChecked(true);
+        }
+        if (m_prefs.s_noAutoSave == false){
+            ui->autosavecheckBox->setChecked(false);
+        }
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
         ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
@@ -1022,6 +1030,7 @@ void ArchSimian::loadSettings()
     m_prefs.mmPlaylistDir = settings.value("mmPlaylistDir", "").toString();
     m_prefs.s_includeNewTracks = settings.value("includeNewTracks", 0).toBool();
     m_prefs.s_includeAlbumVariety = settings.value("s_includeAlbumVariety", 0).toBool();
+    m_prefs.s_noAutoSave = settings.value("s_noAutoSave", 1).toBool();
     m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", 65).toDouble();
     m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", 2.7).toDouble();
     m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", 2.1).toDouble();
@@ -1045,6 +1054,7 @@ void ArchSimian::saveSettings()
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
     settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
+    settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);
     settings.setValue("s_includeAlbumVariety",m_prefs.s_includeAlbumVariety);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
     settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
@@ -1061,12 +1071,18 @@ void ArchSimian::saveSettings()
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
     event->ignore();
+    if (s_noAutoSave == 0){
+        saveSettings();
+        event->accept();
+    }
+    if (s_noAutoSave == 1){
     if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to settings before exit?", QMessageBox::Yes | QMessageBox::No))
     {
         saveSettings();
         event->accept();
     }
     event->accept();
+    }
 }
 
 void ArchSimian::on_daysradioButton_clicked()
@@ -1407,12 +1423,17 @@ void ArchSimian::on_actionExport_Playlist_triggered()
 
 void ArchSimian::on_actionExit_triggered()
 {
-
-    if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made before exit?", QMessageBox::Yes | QMessageBox::No))
-    {
+    if (s_noAutoSave == 0){
         saveSettings();
+       qApp->quit();
     }
-    qApp->quit();
+    if (s_noAutoSave == 1){
+        if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to settings before exit?", QMessageBox::Yes | QMessageBox::No))
+        {
+            saveSettings();
+        }
+        qApp->quit();
+    }
 }
 
 void ArchSimian::on_actionAbout_Qt_triggered()
@@ -1446,4 +1467,10 @@ void ArchSimian::on_actionAbout_triggered()
 void ArchSimian::on_actionOpen_Playlist_triggered()
 {
 ArchSimian::on_getplaylistButton_clicked();
+}
+
+void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
+{
+s_noAutoSave = autosave;
+m_prefs.s_noAutoSave = s_noAutoSave;
 }

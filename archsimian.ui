@@ -644,6 +644,19 @@
          <string>Enable album-level variety (slower)</string>
         </property>
        </widget>
+       <widget class="QCheckBox" name="autosavecheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>180</y>
+          <width>441</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Do not autosave settings on exit (recommended if changing settings)</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="statisticsTab">
        <attribute name="title">
