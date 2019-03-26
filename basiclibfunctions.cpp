@@ -731,7 +731,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
         }
     }
     artScreenTable.close(); // close ifstream file, leave vector trackCountMap open
-    std::ofstream totTrackCountList("tmpcount1.txt"); // tmp output file for writing vector
+    std::ofstream totTrackCountList(appDataPathstr.toStdString()+"/tmpcount1.txt"); // tmp output file for writing vector
     //iterate and output to temp txt file
     std::map<std::string, int>::iterator it = trackCountMap.begin();
     while(it != trackCountMap.end())
@@ -742,11 +742,11 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     totTrackCountList.close();
     std::vector <std::string> albIDVect;
     // add ostream for 2nd tmp file
-    std::ofstream dupAlbumIDList("tmpcount2.txt"); // tmp output file for writing vector
+    std::ofstream dupAlbumIDList(appDataPathstr.toStdString()+"/tmpcount2.txt"); // tmp output file for writing vector
     // Now, for each artist in the tmp file, iterate through the library file and push the artist and Album ID to a vector
     // including all the duplicate values for album ID
     std::string artist;
-    int new_artistCount = cstyleStringCount("tmpcount1.txt");
+    int new_artistCount = cstyleStringCount(appDataPathstr.toStdString()+"/tmpcount1.txt");
     // Two read files, first the library: minAlbumsScreenTable
     std::fstream minalbadj;
     minalbadj.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
@@ -755,10 +755,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::string minAlbumsScreen = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     // Then, the previous tmp file with the list of artists from the first screen: minAlbumsScreenTable1
     std::fstream totTrackCountList1;
-    totTrackCountList1.open ("tmpcount1.txt");
+    totTrackCountList1.open (appDataPathstr.toStdString()+"/tmpcount1.txt");
     if (totTrackCountList1.is_open()) {totTrackCountList1.close();}
     else {std::cout << "buildAlbumExclLibrary: Error opening tmpcount1.txt." << std::endl;}
-    std::string minAlbumsScreen1 = "tmpcount1.txt"; // now we can use it as input file
+    std::string minAlbumsScreen1 = appDataPathstr.toStdString()+"/tmpcount1.txt"; // now we can use it as input file
     std::ifstream minAlbumsScreenTable1(minAlbumsScreen1);
     if (!minAlbumsScreenTable1.is_open())
     {
@@ -812,10 +812,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     dupAlbumIDList.close();
     minAlbumsScreenTable1.close();
     std::vector<std::string> mymap;
-    std::string tmpfile = "tmpcount2.txt";
+    std::string tmpfile = appDataPathstr.toStdString()+"/tmpcount2.txt";
     std::string stra;
     std::ifstream mytmpfile(tmpfile);
-    std::ofstream tmp3{"tmpcount3.txt"};
+    std::ofstream tmp3{appDataPathstr.toStdString()+"/tmpcount3.txt"};
     while (std::getline(mytmpfile, stra))
     {
         // Line contains string of length > 0 then save it in multimap
@@ -830,10 +830,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
             tmp3 << elem.first << "," << elem.second << std::endl;}
     }
     tmp3.close();
-    std::string tmpfile1 = "tmpcount3.txt";
+    std::string tmpfile1 = appDataPathstr.toStdString()+"/tmpcount3.txt";
     std::string str1;
     std::ifstream mytmpfile1(tmpfile1);
-    std::ofstream tmp4{"tmpcount4.txt"};
+    std::ofstream tmp4{appDataPathstr.toStdString()+"/tmpcount4.txt"};
     while (std::getline(mytmpfile1, str1))
     {
         std::size_t found = str1.find_first_of(',');
@@ -842,7 +842,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     }
     tmp4.close();
     std::vector<std::string> mymap1;
-    std::string tmpfile2 = "tmpcount4.txt";
+    std::string tmpfile2 = appDataPathstr.toStdString()+"/tmpcount4.txt";
     std::string str2;
     std::ifstream mytmpfile2(tmpfile2);
     std::ofstream finallist {appDataPathstr.toStdString()+"/artistalbmexcls.txt"};
@@ -862,8 +862,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
         }
     }
     finallist.close();
-    remove("tmpcount1.txt");
-    remove("tmpcount2.txt");
-    remove("tmpcount3.txt");
-    remove("tmpcount4.txt");
+    mytmpfile.close();
+    mytmpfile2.close();
+    //removeAppData("tmpcount1.txt");
+    //removeAppData("tmpcount2.txt");
+    //removeAppData("tmpcount3.txt");
+    //removeAppData("tmpcount4.txt");
 }

@@ -787,8 +787,11 @@ void ArchSimian::on_addsongsButton_released(){
     //                                        "tracks requested have been processed. This can take some "
      //                                       "time...",5);
     int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)
-    remove ("songtext.txt");
-    std::ofstream songtext("songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
+    std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
+    ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    //removeAppData ("songtext.txt");
+    std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (ui display)
     // Second, determine the rating for the track selection
     if (Constants::verbose == true) std::cout << "Running ratingCodeSelected function before loop."<< std::endl;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
@@ -855,7 +858,7 @@ void ArchSimian::on_addsongsButton_released(){
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                           QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
-    QFile songtext1("songtext.txt");
+    QFile songtext1(appDataPathstr+"/songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
     QTextStream in(&songtext1);
