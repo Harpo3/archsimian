@@ -204,6 +204,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->albumscheckBox->setChecked(true);
             ui->mainQTabWidget->setTabEnabled(4, true);
         }
+        ui->menuBar->setDisabled(0);
         ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
         ui->setlibraryButton->setEnabled(true);
         ui->setmmpllabel->setText(QString(s_defaultPlaylist));
@@ -211,8 +212,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmdblabel->setText(s_mmBackupDBDir);
         ui->setmmpllabel->setText(s_mmPlaylistDir);
         ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
-        ui->instructionlabel->setText(tr("**** NOTE: If any of the five variables on this tab"
-                                         " are changed, you need to exit and restart the program before the changes will be recognized for adding new songs. ***"));
+        ui->instructionlabel->setText(tr("**** NOTE: If any of the above five variables on this tab"
+                                         " are changed, you need to exit, save settings, and restart the program before the changes will work with adding new songs. ***"));
         if (s_defaultPlaylist == ""){
             ui->setgetplaylistLabel->setText("  ****** No playlist has been selected ******");
             ui->addsongsButton->setEnabled(0);
@@ -242,6 +243,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmplButton->setEnabled(true);
         ui->setmmdblabel->setText(tr(""));
         ui->setmmdbButton->setEnabled(true);
+        ui->menuBar->setDisabled(1);
+        ui->autosavecheckBox->setChecked(true);
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
         ui->mainQTabWidget->setCurrentIndex(1);
         ui->setlibrarylabel->setText(tr("Set the home directory (top level) of the music library and store in user settings."));
@@ -670,7 +673,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((s_bool_PlaylistExist == true)&&(s_bool_IsUserConfigSet == true))   {
         getExcludedArtists(s_playlistSize);
     }
-    if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+    if ((s_includeNewTracks == true && s_bool_PlaylistExist == true)){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
         code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
     }
@@ -1023,7 +1026,7 @@ void ArchSimian::loadSettings()
 {
     QSettings settings;
     m_prefs.repeatFreqCode1 = settings.value("repeatFreqCode1", 20).toInt();
-    m_prefs.tracksToAdd = settings.value("tracksToAdd", 50).toInt();
+    m_prefs.tracksToAdd = settings.value("tracksToAdd", 10).toInt();
     m_prefs.defaultPlaylist = settings.value("defaultPlaylist", "").toString();
     m_prefs.musicLibraryDir = settings.value("musicLibraryDir", "").toString();
     m_prefs.mmBackupDBDir = settings.value("mmBackupDBDir", "").toString();
