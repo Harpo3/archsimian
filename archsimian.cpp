@@ -910,28 +910,33 @@ void ArchSimian::on_getplaylistButton_clicked()
                 "Select playlist for which you will add tracks",
                 QString(s_mmPlaylistDir),//default dir for playlists
                 "playlists(.m3u) (*.m3u)");
-    m_prefs.defaultPlaylist = selectedplaylist;
-    s_defaultPlaylist = m_prefs.defaultPlaylist;
-    ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
-    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
-    s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-    s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
-    getExcludedArtists(s_playlistSize);
-    if (s_includeAlbumVariety == true){
-        buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
-    }
-    ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
-    ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
-        s_uniqueCode1ArtistCount = 0;
-        s_code1PlaylistCount = 0;
-        s_lowestCode1Pos = 99999;
-        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
-        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
-   }
-    ui->songsaddtextBrowser->setText("");
-    ui->addsongsButton->setEnabled(1);
-    ui->exportplaylistButton->setEnabled(1);
+
+        if (selectedplaylist.size() > 0)
+        {
+        m_prefs.defaultPlaylist = selectedplaylist;
+        s_defaultPlaylist = m_prefs.defaultPlaylist;
+        ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
+        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+        s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+        getExcludedArtists(s_playlistSize);
+        if (s_includeAlbumVariety == true){
+            buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
+        }
+        ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
+        ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+        if (s_includeNewTracks == true){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+            s_uniqueCode1ArtistCount = 0;
+            s_code1PlaylistCount = 0;
+            s_lowestCode1Pos = 99999;
+            code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+            ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+        }
+        ui->songsaddtextBrowser->setText("");
+        ui->addsongsButton->setEnabled(1);
+        ui->exportplaylistButton->setEnabled(1);
+        }
+
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
@@ -1055,7 +1060,12 @@ void ArchSimian::saveSettings()
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
-    saveSettings();
+    event->ignore();
+    if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to settings before exit?", QMessageBox::Yes | QMessageBox::No))
+    {
+        saveSettings();
+        event->accept();
+    }
     event->accept();
 }
 
@@ -1382,4 +1392,58 @@ void ArchSimian::on_addsongsButton_clicked(bool checked) // change button state 
     }
     ui->addsongsButton->setEnabled(1);
     ui->addtrksspinBox->setEnabled(1);
+}
+
+
+
+void ArchSimian::on_actionExport_Playlist_triggered()
+{
+    int s_musicdirlength{};
+    s_musicdirlength = musicLibraryDirLen(s_musiclibrarydirname);
+    exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_defaultPlaylist,  s_winDriveLtr,  s_musiclibrarydirname);
+    ui->statusBar->showMessage("Replaced Windows playlist with Archsimian-modified playlist",50000);
+}
+
+
+void ArchSimian::on_actionExit_triggered()
+{
+
+    if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made before exit?", QMessageBox::Yes | QMessageBox::No))
+    {
+        saveSettings();
+    }
+    qApp->quit();
+}
+
+void ArchSimian::on_actionAbout_Qt_triggered()
+{
+ QApplication::aboutQt();
+}
+
+void ArchSimian::on_actionSave_Settings_triggered()
+{
+    saveSettings();
+    ui->statusBar->showMessage("Saved user settings",50000);
+}
+
+void ArchSimian::on_actionAbout_triggered()
+{
+    QMessageBox::about(this,tr("ArchSimian"),tr("This program is free software: you can redistribute it and/or modify"
+                      " it under the terms of the GNU General Public License as published by"
+               " the Free Software Foundation, either version 3 of the License, or"
+               " (at your option) any later version.\n"
+               "\n"
+               "This program is distributed in the hope that it will be useful,"
+               " but WITHOUT ANY WARRANTY; without even the implied warranty of"
+               " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
+               " GNU General Public License for more details.\n"
+               "\n"
+               "You should have received a copy of the GNU General Public License"
+               " along with this program. If not, see https://www.gnu.org/licenses/"));
+    //aboutmsg->show();
+}
+
+void ArchSimian::on_actionOpen_Playlist_triggered()
+{
+ArchSimian::on_getplaylistButton_clicked();
 }

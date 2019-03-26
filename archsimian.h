@@ -3,8 +3,11 @@
 
 #include <QMainWindow>
 
+
 namespace Ui {
 class ArchSimian;
+class QLabel;
+class QMenu;
 }
 
 class ArchSimian : public QMainWindow
@@ -14,6 +17,9 @@ class ArchSimian : public QMainWindow
 
 public:
     explicit ArchSimian(QWidget *parent = nullptr);
+
+
+
 
 //    ~ArchSimian();
 
@@ -74,12 +80,27 @@ private slots:
 
     void on_addsongsButton_clicked(bool checked);
 
+    void on_actionExport_Playlist_triggered();
+
+    void on_actionExit_triggered();
+
+
+    void on_actionAbout_Qt_triggered();
+
+    void on_actionSave_Settings_triggered();
+
+    void on_actionAbout_triggered();
+
+    void on_actionOpen_Playlist_triggered();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
 
+
 public:
     void closeEvent(QCloseEvent *event);
+
 
 private:
     struct SPreferences
@@ -109,7 +130,8 @@ private:
     void saveSettings();
 
     SPreferences m_prefs;
+    };
 
-};
+
 
 #endif // ARCHSIMIAN_H
