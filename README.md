@@ -61,6 +61,8 @@ Also, you can enable the album-variety feature. When enabled, you will hear a tr
 
 Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
 
+If you have enabled the 'include new tracks' feature, you may get artist repeats more frequently. LEt's say you set the repeat interval for new tracks at 10. Every ten tracks a new song will be added. If there is more than one artist who has new tracks, the last artist selected will not be repeated for the next new tracks, but still, under this approach you could hear the same artist every 20 tracks. if the setting is 10.
+
 <b>Minimum Computer Requirements:</b>
 
 8GB of RAM (You will need this much if you need to run KDE and the Windows VirtualMachine (VM) smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE, but if you do not use the VM, 4GB is enough.
