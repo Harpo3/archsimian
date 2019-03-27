@@ -3,7 +3,7 @@ You worked hard to build a large music library (2,000+ rated tracks), so make th
 <img src="http://i.imgur.com/r7WxYoa.png..." data-canonical-src="http://i.imgur.com/r7WxYoa.png" width="502" height="600" />
 <p>You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
 
-For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different artists. It is up to you.
+For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different but similar artists and you choose to treat them as one artist. It is up to you.
 
 Users import a playlist from MM4, add tracks using ArchSimian, then export the improved playlist back into MM4 for use in Windows (and to sync with mobile devices using the MM4 for Android App). 
 
@@ -31,7 +31,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
-6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Select a playlist and restart the program. It will then process your MM.DB and launch with all of its features enabled.
+6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled. Play with the frequency tab settings to your liking (restart), then select a playlist and add some tracks and export the changes back to your playlist directory.
 
 7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, it exports the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist that can be imported into MediaMonkey (using the .mmip ImportM3U).
 
@@ -60,6 +60,8 @@ For artists with many rated songs, the “availability” of that artist may be 
 Also, you can enable the album-variety feature. When enabled, you will hear a track from a different album than the one last played of the artist, and the criteria for applying the feature can be set by the user.  
 
 Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
+
+If you have enabled the 'include new tracks' feature, you may get artist repeats more frequently. LEt's say you set the repeat interval for new tracks at 10. Every ten tracks a new song will be added. If there is more than one artist who has new tracks, the last artist selected will not be repeated for the next new tracks, but still, under this approach you could hear the same artist every 20 tracks. if the setting is 10.
 
 <b>Minimum Computer Requirements:</b>
 
