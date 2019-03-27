@@ -54,7 +54,7 @@ FORMS += \
 #else: unix:!android: target.path = /opt/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
 
-target.path = /usr/local/bin
+target.path = /usr/bin
 INSTALLS += target
 
 RESOURCES += \
