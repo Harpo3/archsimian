@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = archsimian-git
+TARGET = archsimian
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -54,7 +54,7 @@ FORMS += \
 #else: unix:!android: target.path = /opt/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
 
-target.path = /usr
+target.path = /usr/bin
 INSTALLS += target
 
 RESOURCES += \
