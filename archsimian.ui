@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -1809,7 +1809,8 @@
          </rect>
         </property>
         <property name="text">
-         <string>Album-level variety is enabled.  NOTE: This feature does not apply to any rating code 1 selections if 'Include new tracks' is enabled..</string>
+         <string>Album-level variety is enabled.  NOTE: This feature does not apply to  
+new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
        </widget>
        <widget class="QFrame" name="frame_3">
@@ -1929,11 +1930,6 @@
         </property>
        </widget>
       </widget>
-      <widget class="QWidget" name="tab_6">
-       <attribute name="title">
-        <string>Page</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -2030,18 +2026,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>factor3horizontalSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>factor4doubleSpinBox</receiver>
-   <slot>repaint()</slot>
+   <sender>addsongsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>songsaddtextBrowser</receiver>
+   <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>317</x>
-     <y>149</y>
+     <x>78</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>282</x>
-     <y>181</y>
+     <x>150</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -2064,22 +2060,6 @@
   <connection>
    <sender>addsongsButton</sender>
    <signal>clicked()</signal>
-   <receiver>songsaddtextBrowser</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>78</x>
-     <y>138</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>150</x>
-     <y>413</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>addsongsButton</sender>
-   <signal>clicked()</signal>
    <receiver>statusBar</receiver>
    <slot>update()</slot>
    <hints>
@@ -2090,6 +2070,22 @@
     <hint type="destinationlabel">
      <x>358</x>
      <y>667</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>factor3horizontalSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>factor4doubleSpinBox</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>149</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>282</x>
+     <y>181</y>
     </hint>
    </hints>
   </connection>

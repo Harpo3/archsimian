@@ -218,7 +218,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->setgetplaylistLabel->setText("  ****** No playlist has been selected ******");
             ui->addsongsButton->setEnabled(0);
             ui->exportplaylistButton->setEnabled(0);
-
         }
         ui->setmmdbButton->setEnabled(true);
 
@@ -727,7 +726,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->repeatFreq1SpinBox->setEnabled(0);
             ui->newtracksqtyLabel->setDisabled(1);
             ui->repeatfreqtxtLabel->setDisabled(1);
-
         }
         if (m_prefs.s_includeNewTracks == true){
             ui->repeatFreq1SpinBox->setEnabled(1);
@@ -745,7 +743,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
         ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
         ui->mintrackseachspinBox->setValue(m_prefs.s_mintrackseach);
-
         ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
         ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                        ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
@@ -759,7 +756,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)*100,'g', 3) + "%");
         ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)*100,'g', 3) + "%");
         ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)*100,'g', 3) + "%");
-
     if (s_bool_IsUserConfigSet == false){
         ui->mainQTabWidget->setTabEnabled(0, false);
         ui->mainQTabWidget->setTabEnabled(2, false);
