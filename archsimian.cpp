@@ -377,6 +377,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 _exit(1);
             }
             getLibrary(s_musiclibrarydirname); // get songs table from MM.DB
+            removeSQLFile();
         }
     }
     s_bool_CleanLibExist = doesFileExist (cleanLibFile);
