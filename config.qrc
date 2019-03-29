@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/&lt;qresource prefix=&quot;/&quot;>">
-        <file>exportMMTable.sql</file>
-        <file>archsimian.conf</file>
-    </qresource>
-</RCC>
