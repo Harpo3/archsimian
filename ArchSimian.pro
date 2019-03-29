@@ -63,7 +63,3 @@ INSTALLS += target
 
 RESOURCES += \
     systray.qrc \
-
-DISTFILES += \
-    configure.ac \
-    Makefile.am
