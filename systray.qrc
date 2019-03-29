@@ -1,15 +1,15 @@
 <RCC>
     <qresource prefix="/&lt;qresource prefix=&quot;/&quot;>">
-        <file>fouronehalf.png</file>
-        <file>one.png</file>
-        <file>oneonehalf.png</file>
-        <file>two.png</file>
-        <file>twoonehalf.png</file>
-        <file>three.png</file>
-        <file>threeonehalf.png</file>
-        <file>four.png</file>
-        <file>five.png</file>
-        <file>as1.png</file>
+        <file>images/fouronehalf.png</file>
+        <file>images/one.png</file>
+        <file>images/oneonehalf.png</file>
+        <file>images/two.png</file>
+        <file>images/twoonehalf.png</file>
+        <file>images/three.png</file>
+        <file>images/threeonehalf.png</file>
+        <file>images/four.png</file>
+        <file>images/five.png</file>
+        <file>images/as1.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -25,29 +25,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    main.cpp \
-    archsimian.cpp \
-    dependents.cpp \
-    lastplayeddays.cpp \
-    runbashapp.cpp \
-    getplaylist.cpp \
-    writesqlfile.cpp \
-    basiclibfunctions.cpp \
-    playlistfunctions.cpp
+    src/archsimian.cpp \
+    src/basiclibfunctions.cpp \
+    src/dependents.cpp \
+    src/getplaylist.cpp \
+    src/lastplayeddays.cpp \
+    src/main.cpp \
+    src/playlistfunctions.cpp \
+    src/runbashapp.cpp \
+    src/writesqlfile.cpp
 
 HEADERS += \
-    archsimian.h \
-    dependents.h \
-    lastplayeddays.h \
-    constants.h \
-    runbashapp.h \
-    getplaylist.h \
-    writesqlfile.h \
-    playlistfunctions.h \
-    basiclibfunctions.h
+    src/archsimian.h \
+    src/basiclibfunctions.h \
+    src/constants.h \
+    src/dependents.h \
+    src/getplaylist.h \
+    src/lastplayeddays.h \
+    src/playlistfunctions.h \
+    src/runbashapp.h \
+    src/writesqlfile.h
 
 FORMS += \
     archsimian.ui
+
+INCLUDEPATH += /src
+               /images
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin
