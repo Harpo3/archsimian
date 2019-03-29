@@ -33,7 +33,8 @@ SOURCES += \
     src/main.cpp \
     src/playlistfunctions.cpp \
     src/runbashapp.cpp \
-    src/writesqlfile.cpp
+    src/writesqlfile.cpp \
+    src/getartistexcludes.cpp
 
 HEADERS += \
     src/archsimian.h \
