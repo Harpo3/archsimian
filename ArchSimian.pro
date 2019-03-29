@@ -48,7 +48,7 @@ HEADERS += \
     src/writesqlfile.h
 
 FORMS += \
-    archsimian.ui
+    src/archsimian.ui
 
 INCLUDEPATH += /src
                /images
