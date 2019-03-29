@@ -1,8 +1,5 @@
 <RCC>
     <qresource prefix="/&lt;qresource prefix=&quot;/&quot;>">
-        <file>bad.png</file>
-        <file>heart.png</file>
-        <file>trash.png</file>
         <file>fouronehalf.png</file>
         <file>one.png</file>
         <file>oneonehalf.png</file>
