@@ -2,7 +2,7 @@
 #include <QDir>
 #include <iostream>
 #include <fstream>
-#include <constants.h>
+#include "constants.h"
 #include <stdio.h>
 
 void writeSQLFile(){
