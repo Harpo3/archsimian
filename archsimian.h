@@ -95,6 +95,8 @@ private slots:
 
     void on_autosavecheckBox_stateChanged(int autosave);
 
+    void on_disablenotecheckBox_stateChanged(int disableNote);
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -117,6 +119,7 @@ private:
         bool s_includeNewTracks;
         bool s_includeAlbumVariety;
         bool s_noAutoSave;
+        bool s_disableNotificationAddTracks;
         double s_daysTillRepeatCode3;
         double s_repeatFactorCode4;
         double s_repeatFactorCode5;

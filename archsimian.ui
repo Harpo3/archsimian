@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -656,6 +656,19 @@
         <property name="text">
          <string>Prompt to manually save settings on exit [turns off autosave]
  **Recommended when changing frequency settings**</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="disablenotecheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>380</y>
+          <width>421</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Disable notification when adding a large quantity of tracks (&gt;49)</string>
         </property>
        </widget>
       </widget>

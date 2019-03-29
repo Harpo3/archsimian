@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include <QPalette>
 #include <QStandardPaths>
+#include <QMessageBox>
 #include <fstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -43,6 +44,7 @@ static bool s_bool_ExcludedArtistsProcessed{false};
 static bool s_includeNewTracks{true};
 static bool s_includeAlbumVariety{true};
 static bool s_noAutoSave{true};
+static bool s_disableNotificationAddTracks{false};
 static int s_uniqueCode1ArtistCount{0};
 static int s_code1PlaylistCount{0};
 static int s_lowestCode1Pos{99999};
@@ -165,6 +167,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_includeNewTracks = m_prefs.s_includeNewTracks;
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
     s_noAutoSave = m_prefs.s_noAutoSave;
+    s_disableNotificationAddTracks = m_prefs.s_disableNotificationAddTracks;
     s_minalbums = m_prefs.s_minalbums;
     s_mintrackseach= m_prefs.s_mintrackseach;
     s_mintracks = m_prefs.s_mintracks;
@@ -319,9 +322,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (s_bool_MMdbUpdated == true) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
             // If result is 1, removeAppData ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
         {
-            KDEmessage("ArchSimian Library Update Notification","A new MediaMonkey database backup was "
-                                                                "identified...updating the ArchSimian "
-                                                                "database. The program will launch when completed...",20);
+            QMessageBox msgBox;
+            msgBox.setText("ArchSimian Database Update: A new MediaMonkey database backup has been "
+                                                                 "identified. Updating ArchSimian."
+                                                                 " The program window will appear when completed.");
+            msgBox.exec();
+            //KDEmessage("ArchSimian Library Update Notification","A new MediaMonkey database backup was "
+              //                                                  "identified...updating the ArchSimian "
+                //                                                "database. The program will launch when completed...",20);
             removeAppData("ratedabbr.txt");
             s_bool_RatedAbbrExist = false;
             removeAppData("ratedabbr2.txt");
@@ -779,11 +787,17 @@ ArchSimian::ArchSimian(QWidget *parent) :
 void ArchSimian::on_addsongsButton_released(){
     if (Constants::verbose == true) std::cout << "Starting addSongs function." << std::endl;
     // First set messages and feedback to user during process
+
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-    //KDEmessage("ArchSimian Playlist Update","The file panel will fill once all  "
-    //                                        "tracks requested have been processed. This can take some "
-     //                                       "time...",5);
-    int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)
+    int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)    
+    if (numTracks > 49) {
+        if (s_disableNotificationAddTracks == false){
+        QMessageBox msgBox;
+        QString msgboxtxt = "This can take some time since you are adding " + QString::number(numTracks) + " tracks.";
+        msgBox.setText(msgboxtxt);
+        msgBox.exec();
+        }
+    }
     std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
@@ -1034,6 +1048,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_includeNewTracks = settings.value("includeNewTracks", 0).toBool();
     m_prefs.s_includeAlbumVariety = settings.value("s_includeAlbumVariety", 0).toBool();
     m_prefs.s_noAutoSave = settings.value("s_noAutoSave", 1).toBool();
+    m_prefs.s_disableNotificationAddTracks = settings.value("s_disableNotificationAddTracks", 0).toBool();
     m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", 65).toDouble();
     m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", 2.7).toDouble();
     m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", 2.1).toDouble();
@@ -1057,7 +1072,8 @@ void ArchSimian::saveSettings()
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
     settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
-    settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);
+    settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);    
+    settings.setValue("s_disableNotificationAddTracks",m_prefs.s_disableNotificationAddTracks);
     settings.setValue("s_includeAlbumVariety",m_prefs.s_includeAlbumVariety);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
     settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
@@ -1475,6 +1491,13 @@ ArchSimian::on_getplaylistButton_clicked();
 
 void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
 {
-s_noAutoSave = autosave;
-m_prefs.s_noAutoSave = s_noAutoSave;
+    s_noAutoSave = autosave;
+    m_prefs.s_noAutoSave = s_noAutoSave;
+}
+
+void ArchSimian::on_disablenotecheckBox_stateChanged(int disableNote)
+{
+    s_disableNotificationAddTracks = disableNote;
+    m_prefs.s_disableNotificationAddTracks = disableNote;
+    QWidget::repaint();
 }
