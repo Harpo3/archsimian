@@ -62,4 +62,4 @@ target.path = $$[QT_INSTALL_BINS]
 INSTALLS += target
 
 RESOURCES += \
-    systray.qrc \
+    systray.qrc \    

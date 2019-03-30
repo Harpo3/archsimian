@@ -20,8 +20,8 @@
    <string extracomment="Playlist Creator">ArchSimian</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="systray.qrc">
-    <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/as1.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/as1.png</iconset>
+   <iconset resource="../systray.qrc">
+    <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/as1.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/as1.png</iconset>
   </property>
   <property name="iconSize">
    <size>
@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -992,7 +992,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/five.png</pixmap>
+          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/five.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1017,7 +1017,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/four.png</pixmap>
+          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/four.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1042,7 +1042,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/threeonehalf.png</pixmap>
+          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/threeonehalf.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1067,7 +1067,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/three.png</pixmap>
+          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/three.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1092,7 +1092,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/twoonehalf.png</pixmap>
+          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/twoonehalf.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1117,7 +1117,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/two.png</pixmap>
+          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/two.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1348,7 +1348,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/five.png</pixmap>
+            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/five.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1367,7 +1367,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/four.png</pixmap>
+            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/four.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1386,7 +1386,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/threeonehalf.png</pixmap>
+            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/threeonehalf.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1405,7 +1405,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/three.png</pixmap>
+            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/three.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1424,7 +1424,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/twoonehalf.png</pixmap>
+            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/twoonehalf.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -1443,7 +1443,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/two.png</pixmap>
+            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/two.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -2019,7 +2019,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="systray.qrc"/>
+  <include location="../systray.qrc"/>
  </resources>
  <connections>
   <connection>
