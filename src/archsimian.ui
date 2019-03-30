@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -992,7 +992,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/five.png</pixmap>
+          <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/five.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1017,7 +1017,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/four.png</pixmap>
+          <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/four.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1042,7 +1042,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/threeonehalf.png</pixmap>
+          <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/threeonehalf.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1067,7 +1067,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/three.png</pixmap>
+          <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/three.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1092,7 +1092,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/twoonehalf.png</pixmap>
+          <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/twoonehalf.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -1117,7 +1117,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/&lt;qresource prefix=&quot;/&quot;&gt;/two.png</pixmap>
+          <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/two.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
