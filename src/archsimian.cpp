@@ -215,8 +215,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmdblabel->setText(s_mmBackupDBDir);
         ui->setmmpllabel->setText(s_mmPlaylistDir);
         ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
-        ui->instructionlabel->setText(tr("**** NOTE: If any of the above five variables on this tab"
-                                         " are changed, you need to exit, save settings, and restart the program before the changes will work with adding new songs. ***"));
+        ui->instructionlabel->setText(tr("*"));
         if (s_defaultPlaylist == ""){
             ui->setgetplaylistLabel->setText("  ****** No playlist has been selected ******");
             ui->addsongsButton->setEnabled(0);
@@ -252,11 +251,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setlibrarylabel->setText(tr("Set the home directory (top level) of the music library and store in user settings."));
         ui->setmmpllabel->setText(tr("Select the shared Windows directory where you store your m3u playlists."));
         ui->setmmdblabel->setText(tr("Select the shared Windows directory where you stored the MediaMonkey database (MM.DB) backup file."));
-        ui->instructionlabel->setText(tr("ArchSimian Setup: (1) identify the location where your music library is stored, then "
-                                         "(2) set the locations where you did backups for your M3U playlist, and (3) set the locations"
-                                         " where you did backup of the MM.DB file. If desired, (4) check whether to enable new tracks, "
-                                         "and (5) whether to enable album-level variety. **** NOTE: After any of these five variables "
-                                         "are set or changed, you need to exit and restart the program.***"));
+        ui->instructionlabel->setText(tr("ArchSimian Setup: \n(1) identify the location where your music library is stored, then "
+                                         "\n(2) set the locations where you did backups for your M3U playlist, and \n(3) set the locations"
+                                         " where you did backup of the MM.DB file. If desired, \n(4) check whether to enable new tracks, "
+                                         "and \n(5) whether to enable album-level variety. \n(6)Restart the program."));
     }
 
     // Step 2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
@@ -1470,7 +1468,8 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("This program is free software: you can redistribute it and/or modify"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.0-beta.17"
+               "\n\nThis program is free software: you can redistribute it and/or modify"
                " it under the terms of the GNU General Public License as published by"
                " the Free Software Foundation, either version 3 of the License, or"
                " (at your option) any later version.\n"

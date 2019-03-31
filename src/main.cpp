@@ -20,7 +20,7 @@ int main(int argc,char* argv[])
         }
         QString mydirpath = appDataPath.path();
         std::string convertStdPath = mydirpath.toStdString();
-        std::cout <<convertStdPath<< std::endl;
+        //std::cout <<convertStdPath<< std::endl;
         ArchSimian guiWindow;
         guiWindow.show();   // This launches the user interface (UI)
         mainapp.exec();

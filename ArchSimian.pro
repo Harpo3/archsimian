@@ -10,6 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = archsimian
 TEMPLATE = app
+VERSION = v.1.0-beta.17
+DEFINES += APP_VERSION=$$VERSION
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings

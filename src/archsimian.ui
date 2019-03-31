@@ -55,7 +55,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -458,133 +458,13 @@
        <attribute name="title">
         <string>&amp;Settings</string>
        </attribute>
-       <widget class="QPushButton" name="setlibraryButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>121</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select only the top directory. All music found under the top directory will be found.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="toolTipDuration">
-         <number>-1</number>
-        </property>
-        <property name="text">
-         <string>Music library location</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="setlibrarylabel">
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>10</y>
-          <width>341</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>Set the home directory (top level) of the music library and store in user settings.</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="setmmplButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>121</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;It is best to use a shared directory (between Linux and Windows) to store your Windows-format playlists. When you revise them here, the file in the shared directory will be overwritten, but the file paths will still have the Windows filepath format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="toolTipDuration">
-         <number>-1</number>
-        </property>
-        <property name="statusTip">
-         <string/>
-        </property>
-        <property name="whatsThis">
-         <string/>
-        </property>
-        <property name="text">
-         <string>MM m3u location</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="setmmpllabel">
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>60</y>
-          <width>331</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select the shared Windows directory where you stored the backup playlists from MediaMonkey</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="setmmdbButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>100</y>
-          <width>121</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Do not select the actual MM.DB file in the Windows program directory for MediaMonkey. Create a backup in another directory and select that as this location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>MM.db location</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="setmmdblabel">
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>100</y>
-          <width>331</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select the shared Windows directory where you stored the MediaMonkey database backup file</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
        <widget class="QLabel" name="instructionlabel">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>190</y>
+          <x>0</x>
+          <y>420</y>
           <width>451</width>
-          <height>121</height>
+          <height>141</height>
          </rect>
         </property>
         <property name="toolTip">
@@ -594,7 +474,8 @@
          <number>15</number>
         </property>
         <property name="text">
-         <string>Welcome to ArchSimian! The program was created to improve the &quot;primary&quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. Use the frequency tab to set your time preferences using the statistics found in the statistics tab. Then use the playlist tab to add tracks to the playlist using the settings specified.</string>
+         <string>Welcome to ArchSimian! The program was created to improve the &quot;primary&quot; playlist 
+you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. Use the frequency tab to set your time preferences using the statistics found in the statistics tab. Then use the playlist tab to add tracks to the playlist using the settings specified.</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>
@@ -612,11 +493,14 @@
           <height>21</height>
          </rect>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Any tracks in the library rated as 1 star are treated as new and unrated. Set frequency in the Playlist tab if this is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Include new tracks (Code 1) that need to be rated (slower)</string>
+         <string>Include new tracks (Code 1) not yet rated (requires restart)</string>
         </property>
         <property name="checked">
          <bool>false</bool>
@@ -626,10 +510,13 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>160</y>
+          <y>170</y>
           <width>401</width>
           <height>21</height>
          </rect>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables the tab 'Albums' and adds album-level variety to playlist selections.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -641,35 +528,267 @@
          <string extracomment="Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab">Enables the tab 'Albums' and adds album-level variety to playlist selections. You may need to restart to enable tab</string>
         </property>
         <property name="text">
-         <string>Enable album-level variety (slower)</string>
+         <string>Enable album-level variety (requires restart)</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="autosavecheckBox">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>330</y>
+          <y>190</y>
           <width>441</width>
           <height>41</height>
          </rect>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
         <property name="text">
-         <string>Prompt to manually save settings on exit [turns off autosave]
- **Recommended when changing frequency settings**</string>
+         <string>Prompt to manually save user preferences on exit (turns off autosave)
+ **Recommended when adjusting settings on the Frequency tab**</string>
         </property>
        </widget>
        <widget class="QCheckBox" name="disablenotecheckBox">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>380</y>
+          <y>240</y>
           <width>421</width>
           <height>21</height>
          </rect>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
         <property name="text">
          <string>Disable notification when adding a large quantity of tracks (&gt;49)</string>
         </property>
+       </widget>
+       <widget class="QSplitter" name="splitter">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>471</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>315</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="handleWidth">
+         <number>16</number>
+        </property>
+        <widget class="QPushButton" name="setlibraryButton">
+         <property name="sizeIncrement">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select only the top directory. All music found under the top directory will be found.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="toolTipDuration">
+          <number>-1</number>
+         </property>
+         <property name="text">
+          <string>Music library location</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="setlibrarylabel">
+         <property name="minimumSize">
+          <size>
+           <width>330</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Set the home directory (top level) of the music library and store in user settings.</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QSplitter" name="splitter_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>461</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>315</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="handleWidth">
+         <number>16</number>
+        </property>
+        <widget class="QPushButton" name="setmmplButton">
+         <property name="minimumSize">
+          <size>
+           <width>124</width>
+           <height>34</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;It is best to use a shared directory (between Linux and Windows) to store your Windows-format playlists. When you revise them here, the file in the shared directory will be overwritten, but the file paths will still have the Windows filepath format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="toolTipDuration">
+          <number>-1</number>
+         </property>
+         <property name="statusTip">
+          <string/>
+         </property>
+         <property name="whatsThis">
+          <string/>
+         </property>
+         <property name="text">
+          <string>MM m3u location</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="setmmpllabel">
+         <property name="minimumSize">
+          <size>
+           <width>330</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Select the shared Windows directory where you stored the backup playlists from MediaMonkey</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QSplitter" name="splitter_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>100</y>
+          <width>461</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>330</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="handleWidth">
+         <number>11</number>
+        </property>
+        <widget class="QPushButton" name="setmmdbButton">
+         <property name="minimumSize">
+          <size>
+           <width>124</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Do not select the actual MM.DB file in the Windows program directory for MediaMonkey. Create a backup in another directory and select that as the location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>MM.db location</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="setmmdblabel">
+         <property name="minimumSize">
+          <size>
+           <width>330</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Select the shared Windows directory where you stored the 
+MediaMonkey database backup file</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QSplitter" name="splitter_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>270</y>
+          <width>451</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="handleWidth">
+         <number>16</number>
+        </property>
+        <widget class="QPushButton" name="resetpushButton">
+         <property name="minimumSize">
+          <size>
+           <width>8</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>42</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="text">
+          <string>Reset</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Restore default settings. Erases all user preferences except file and 
+directory location settings (requires restart)</string>
+         </property>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="statisticsTab">
@@ -1966,7 +2085,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
      <string>File</string>
     </property>
     <addaction name="actionOpen_Playlist"/>
-    <addaction name="actionSave_Settings"/>
     <addaction name="actionExport_Playlist"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -1979,7 +2097,14 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionSave_Settings"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -1987,8 +2112,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    <property name="text">
     <string>Open Playlist</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
-  <action name="actionSave_Settings">
+  <action name="actionSave_Settings3">
    <property name="text">
     <string>Save Settings</string>
    </property>
@@ -1998,12 +2126,18 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   </action>
   <action name="actionExport_Playlist">
    <property name="text">
-    <string>Export Playlist</string>
+    <string>Save (Export) Playlist</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -2016,8 +2150,45 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <string>About Qt</string>
    </property>
   </action>
+  <action name="actionSave_Settings">
+   <property name="text">
+    <string>Save User Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>getplaylistButton</tabstop>
+  <tabstop>addsongsButton</tabstop>
+  <tabstop>addtrksspinBox</tabstop>
+  <tabstop>exportplaylistButton</tabstop>
+  <tabstop>repeatFreq1SpinBox</tabstop>
+  <tabstop>songsaddtextBrowser</tabstop>
+  <tabstop>setlibraryButton</tabstop>
+  <tabstop>setmmplButton</tabstop>
+  <tabstop>setmmdbButton</tabstop>
+  <tabstop>InclNewcheckbox</tabstop>
+  <tabstop>albumscheckBox</tabstop>
+  <tabstop>autosavecheckBox</tabstop>
+  <tabstop>disablenotecheckBox</tabstop>
+  <tabstop>resetpushButton</tabstop>
+  <tabstop>daysradioButton</tabstop>
+  <tabstop>weeksradioButton</tabstop>
+  <tabstop>monthsradioButton</tabstop>
+  <tabstop>yearsradioButton</tabstop>
+  <tabstop>factor3horizontalSlider</tabstop>
+  <tabstop>factor4doubleSpinBox</tabstop>
+  <tabstop>factor5doubleSpinBox</tabstop>
+  <tabstop>factor6doubleSpinBox</tabstop>
+  <tabstop>factor7doubleSpinBox</tabstop>
+  <tabstop>factor8doubleSpinBox</tabstop>
+  <tabstop>minalbumsspinBox</tabstop>
+  <tabstop>mintracksspinBox</tabstop>
+  <tabstop>mintrackseachspinBox</tabstop>
+ </tabstops>
  <resources>
   <include location="../systray.qrc"/>
  </resources>
