@@ -1,4 +1,5 @@
 #include <QStandardPaths>
+#include <QMessageBox>
 #include <QDir>
 #include <QString>
 #include <vector>
@@ -10,6 +11,7 @@
 #include <map>
 #include <iterator>
 #include <sys/stat.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "constants.h"
 #include "lastplayeddays.h"
@@ -26,7 +28,15 @@ typedef std::vector<StringVector> StringVector2D;
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
-
+int countBlankChars(std::string input)
+{
+    int spaces = 0;
+    int totalchars = input.length();
+    for (int i = 0; i< totalchars; ++i){
+        if (isspace(input[i]))
+            ++spaces;}
+        return spaces;
+}
 
 StringVector2D readDSV(std::string filename)
 {
@@ -216,6 +226,23 @@ void getLibrary(const QString &s_musiclibrarydirname)
         }
         dirPathTokens.at(0) = s_musiclibrarydirname.toStdString();
         songPath1 = getChgdDirStr(dirPathTokens,songPath1,s_musiclibrarydirname);
+        //
+        // Test code - cout for dir path str
+        //        
+        int zeroCount = countBlankChars(songPath1);
+        if (zeroCount > 0){
+            QMessageBox msgBox;
+            QString pathstr = QString::fromStdString(songPath1);
+            msgBox.setText("ERROR: ArchSimian getLibrary Function - File path for: " + pathstr + " contains spaces. Use MediaMonkey to auto-organize"
+                                                                                                 " and ensure this and all filenames do not have spaces. "
+                                                                                                 "See README file. Exiting.");
+            msgBox.exec();
+            removeAppData ("libtable.dsv");
+            removeAppData ("cleanlib.dsv");
+            exit(1);
+        }
+        //
+        //
         tokens.at(8) = songPath1;
         dirPathTokens.shrink_to_fit();
 

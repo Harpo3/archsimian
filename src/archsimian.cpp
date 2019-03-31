@@ -386,7 +386,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
     s_bool_CleanLibExist = doesFileExist (cleanLibFile);
-    if (s_bool_CleanLibExist == true) {removeAppData ("libtable.dsv");}
+    if (s_bool_CleanLibExist == true) {std::cout<<"Line 389 archsimian.cpp for remove libtable.dsv"<<std::endl;}//{removeAppData ("libtable.dsv");}
     else {
         std::cout << "Step 6. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
         s_bool_CleanLibExist = false;
