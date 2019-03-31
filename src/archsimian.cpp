@@ -215,7 +215,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmdblabel->setText(s_mmBackupDBDir);
         ui->setmmpllabel->setText(s_mmPlaylistDir);
         ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
-        ui->instructionlabel->setText(tr("*"));
+        ui->instructionlabel->setText(tr(""));
         if (s_defaultPlaylist == ""){
             ui->setgetplaylistLabel->setText("  ****** No playlist has been selected ******");
             ui->addsongsButton->setEnabled(0);
@@ -251,10 +251,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setlibrarylabel->setText(tr("Set the home directory (top level) of the music library and store in user settings."));
         ui->setmmpllabel->setText(tr("Select the shared Windows directory where you store your m3u playlists."));
         ui->setmmdblabel->setText(tr("Select the shared Windows directory where you stored the MediaMonkey database (MM.DB) backup file."));
-        ui->instructionlabel->setText(tr("ArchSimian Setup: \n(1) identify the location where your music library is stored, then "
-                                         "\n(2) set the locations where you did backups for your M3U playlist, and \n(3) set the locations"
-                                         " where you did backup of the MM.DB file. If desired, \n(4) check whether to enable new tracks, "
-                                         "and \n(5) whether to enable album-level variety. \n(6)Restart the program."));
+        ui->instructionlabel->setText(tr("ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the "
+                                         "location where you did backups for your M3U playlist \n(3) Set the location where you did backup "
+                                         "of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level "
+                                         "variety. \n(6) Restart the program."));
     }
 
     // Step 2. Determine if MM.DB database file exists: Run doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
@@ -788,7 +788,7 @@ void ArchSimian::on_addsongsButton_released(){
 
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)    
-    if (numTracks > 49) {
+    if (numTracks > 29) {
         if (s_disableNotificationAddTracks == false){
         QMessageBox msgBox;
         QString msgboxtxt = "This can take some time since you are adding " + QString::number(numTracks) + " tracks.";
@@ -1026,6 +1026,10 @@ void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
                                 + tr(" minutes per day, tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
     ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be ") +
                                  QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3)+tr(" days."));
+    if (s_numTracks > 29){
+        s_disableNotificationAddTracks = false;
+        m_prefs.s_disableNotificationAddTracks = s_disableNotificationAddTracks;
+    }
 }
 
 void ArchSimian::on_repeatFreq1SpinBox_valueChanged(int myvalue)
@@ -1499,4 +1503,31 @@ void ArchSimian::on_disablenotecheckBox_stateChanged(int disableNote)
     s_disableNotificationAddTracks = disableNote;
     m_prefs.s_disableNotificationAddTracks = disableNote;
     QWidget::repaint();
+}
+
+void ArchSimian::on_resetpushButton_released()
+{
+    if (QMessageBox::Yes == QMessageBox::question(this, "Reset Confirmation", "Are you sure you want to reset "
+                                                  "all of your preferences and exit the program?", QMessageBox::Yes | QMessageBox::No))
+    {
+        m_prefs.repeatFreqCode1 = 20;
+        m_prefs.tracksToAdd = 10;
+        m_prefs.defaultPlaylist = "";
+        m_prefs.s_includeNewTracks = 0;
+        m_prefs.s_includeAlbumVariety =  0;
+        m_prefs.s_noAutoSave = 1;
+        m_prefs.s_disableNotificationAddTracks = 0;
+        m_prefs.s_daysTillRepeatCode3 = 65;
+        m_prefs.s_repeatFactorCode4 = 2.7;
+        m_prefs.s_repeatFactorCode5 = 2.1;
+        m_prefs.s_repeatFactorCode6 = 2.2;
+        m_prefs.s_repeatFactorCode7 = 1.6;
+        m_prefs.s_repeatFactorCode8 = 1.4;
+        m_prefs.s_WindowsDriveLetter = "";
+        m_prefs.s_minalbums = 2;
+        m_prefs.s_mintrackseach = 4;
+        m_prefs.s_mintracks = 8;
+        saveSettings();
+        qApp->quit();
+    }
 }

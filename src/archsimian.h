@@ -97,6 +97,8 @@ private slots:
 
     void on_disablenotecheckBox_stateChanged(int disableNote);
 
+    void on_resetpushButton_released();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
