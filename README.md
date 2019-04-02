@@ -63,17 +63,17 @@ Replay intervals – you can set the planned time between repeats based on ratin
 
 If you have enabled the 'include new tracks' feature, you may get artist repeats more frequently. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. If there is more than one artist who has new tracks, then the last new artist selected will not be selected for the next new track. So, you could hear the same artist after 20 tracks if the setting is 10 and there is more than one artist with new tracks.
 
-<b>Minimum Computer Requirements:</b>
+<b>Hardware and Software Requirements:</b>
 
-8GB of RAM (You will need this much if you need to run KDE and the Windows VirtualMachine (VM) smoothly. Less might work with a lighter DE (but no guarantees). Less will than 8 will be very choppy with RAM-hungry KDE, but if you do not use the VM, 4GB is enough.
+If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly. Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
 
-If you do use the VM, a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
+If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
 A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
 
 MediaMonkey4 Gold for Windows 
 
-(Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
+Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
 
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
