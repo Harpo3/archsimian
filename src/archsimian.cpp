@@ -296,7 +296,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             {
                 cleanLibFilesize = file.tellg();
                 if (Constants::verbose == true) std::cout << "Step 3. cleanLibFilesize result: " <<cleanLibFilesize  << std::endl;
-                memblock = new char [cleanLibFilesize];
+                memblock = new char [static_cast<unsigned long>(cleanLibFilesize)];
                 file.seekg (0, std::ios::beg);
                 file.read (memblock, cleanLibFilesize);
                 file.close();
@@ -535,7 +535,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             if (file.is_open())
             {
                 artsistAdjsize = file.tellg();
-                memblock = new char [artsistAdjsize];
+                memblock = new char [static_cast<unsigned long>(artsistAdjsize)];
                 file.seekg (0, std::ios::beg);
                 file.read (memblock, artsistAdjsize);
                 file.close();
@@ -555,7 +555,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                     if (file.is_open())
                     {
                         ratedabbrsize = file.tellg();
-                        memblock = new char [ratedabbrsize];
+                        memblock = new char [static_cast<unsigned long>(ratedabbrsize)];
                         file.seekg (0, std::ios::beg);
                         file.read (memblock, ratedabbrsize);
                         file.close();
@@ -1450,8 +1450,8 @@ void ArchSimian::on_actionExit_triggered()
        qApp->quit();
     }
     if (s_noAutoSave == 1){
-        if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to "
-                                                      "settings before exit?", QMessageBox::Yes | QMessageBox::No))
+        if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes to "
+                                                      "the configuration settings before quitting?", QMessageBox::Yes | QMessageBox::No))
         {
             saveSettings();
         }
@@ -1472,7 +1472,7 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.0-beta.17"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.0-beta.18"
                "\n\nThis program is free software: you can redistribute it and/or modify"
                " it under the terms of the GNU General Public License as published by"
                " the Free Software Foundation, either version 3 of the License, or"

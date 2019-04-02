@@ -31,8 +31,8 @@ using StringVector2D = std::vector<StringVector>;
 int countBlankChars(std::string input)
 {
     int spaces = 0;
-    int totalchars = input.length();
-    for (int i = 0; i< totalchars; ++i){
+    unsigned long totalchars = input.length();
+    for (unsigned long i = 0; i< totalchars; ++i){
         if (isspace(input[i]))
             ++spaces;}
         return spaces;
@@ -891,8 +891,4 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     finallist.close();
     mytmpfile.close();
     mytmpfile2.close();
-    //removeAppData("tmpcount1.txt");
-    //removeAppData("tmpcount2.txt");
-    //removeAppData("tmpcount3.txt");
-    //removeAppData("tmpcount4.txt");
 }

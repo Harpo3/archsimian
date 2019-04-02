@@ -78,6 +78,3 @@ double getNewRandomLPDate (double x)
     }
     return x;    // Return the variable's value generated from either the "if" or the "else" statement
 }
-//Later, add another if statement in this else section. It will set unplayed tracks to a lastplayed date
-// of currDate (today), thereby excluding unplayed tracks from playlist inclusion.
-// User selection (create bool for include recent unrated tracks or not) will determine whether recent unrated tracks are included.

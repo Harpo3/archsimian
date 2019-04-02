@@ -157,7 +157,7 @@ void getExcludedArtists(const int &s_playlistSize)
     new_histvect.reserve(50000);
     new_histvect = histvect;
     for (std::size_t i = 0 ;  i < new_histvect.size(); i++){ // write new vector to "playlistposlist.txt"
-        playlistPosList << new_histvect[i] << "," << i + 1 + s_playlistSize << "\n";
+        playlistPosList << new_histvect[i] << "," << i + 1 + static_cast<unsigned long>(s_playlistSize) << "\n";
     }
     playlistPosList.close();
     // Calculate the extended playlist to find infrequent artists played within their interval value (ex. postion 452 and interval 487)
@@ -180,7 +180,7 @@ void getExcludedArtists(const int &s_playlistSize)
     std::vector<std::string>::iterator ip;
     std::sort (fsexclvec.begin(), fsexclvec.end());
     std::size_t myvecsz = fsexclvec.size();
-    ip = std::unique(fsexclvec.begin(), fsexclvec.begin() + myvecsz); // 500 here is max number of unique artists - need to set variable
+    ip = std::unique(fsexclvec.begin(), fsexclvec.begin() + static_cast<char32_t>(myvecsz)); // 500 here is max number of unique artists - need to set variable
     fsexclvec.resize(std::distance(fsexclvec.begin(), ip));
     for (ip = fsexclvec.begin(); ip != fsexclvec.end(); ++ip) {
         artistExcList << *ip << "\n";
@@ -417,7 +417,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt3, vrt4, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        if (Constants::verbose == true) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;;
+        if (Constants::verbose == true) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
