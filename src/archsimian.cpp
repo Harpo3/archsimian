@@ -14,10 +14,15 @@
 #include "constants.h"
 #include "ui_archsimian.h"
 #include "dependents.h"
+#include "getartistexcludes.h"
 #include "getplaylist.h"
 #include "writesqlfile.h"
 #include "basiclibfunctions.h"
 #include "playlistfunctions.h"
+#include "buildalbumexcllibrary.h"
+#include "getartistadjustedcount.h"
+#include "code1.h"
+#include "albumidandselect.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -222,9 +227,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->exportplaylistButton->setEnabled(0);
         }
         ui->setmmdbButton->setEnabled(true);
-
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
-
         //bool needUpdate = getMMdbDate(); // function getMMdbDate() is from dependents.cpp
         if (Constants::verbose == true) std::cout << "Step 1. Checking getMMdbDate(): "<<needUpdate<<std::endl;
         if (needUpdate == 0)
@@ -602,14 +605,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
     // a modified database with only rated tracks and which include artist intervals calculated for each: If user configuration exists,
     // MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist,
-    // s_bool_dbStatsCalculated, bool10 are all true), run function buildDB() to create a modified database file with rated tracks
+    // s_bool_dbStatsCalculated, bool10 are all true), run function getSubset() to create a modified database file with rated tracks
     // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist)
 
     if ((s_bool_IsUserConfigSet == true) && (s_bool_MMdbExist == true) && (s_bool_CleanLibExist == true)  && (s_bool_dbStatsCalculated == true)
             && (s_bool_artistsadjExist == true) && (s_bool_RatedAbbrExist == false)) {
-        buildDB();
+        getSubset();
         s_bool_RatedAbbrExist = doesFileExist (appDataPathstr.toStdString()+"/ratedabbr.txt");
-        if (s_bool_RatedAbbrExist == false)  {std::cout << "Step 8. Something went wrong at the function buildDB(). ratedabbr.txt not created." << std::endl;}
+        if (s_bool_RatedAbbrExist == false)  {std::cout << "Step 8. Something went wrong at the function getSubset(). ratedabbr.txt not created." << std::endl;}
         if ((s_bool_RatedAbbrExist == true)&&(Constants::verbose == true)){std::cout << "Step 8. ratedabbr.txt was created." << std::endl;}
     }
     if ((Constants::verbose == true)&& (s_bool_RatedAbbrExist == true)&&(s_bool_IsUserConfigSet == true)){std::cout

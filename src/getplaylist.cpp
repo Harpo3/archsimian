@@ -7,60 +7,18 @@
 #include <QDir>
 #include <iostream>
 #include "constants.h"
+#include "utilities.h"
 
 int musicLibraryDirLen(QString &s_musiclibrarydirname)
 {
 static std::string musicLibraryDir = s_musiclibrarydirname.toStdString(); // in main prgm, need to fix with QSettings variable
-// std::string str = "anyString";
- unsigned long cnt = 0;
+unsigned long cnt = 0;
  for(size_t i=0; musicLibraryDir[i]; i++)
     cnt++;
  return int(cnt);
 }
 
-std::istream& safeGetline(std::istream& is, std::string& t){
-    t.clear();
-    // The characters in the stream are read one-by-one using a std::streambuf.
-    // That is faster than reading them one-by-one using the std::istream.
-    // Code that uses streambuf this way must be guarded by a sentry object.
-    // The sentry object performs various tasks,
-    // such as thread synchronization and updating the stream state.
-    std::istream::sentry se(is, true);
-    std::streambuf* sb = is.rdbuf();
-    for(;;) {
-        int c = sb->sbumpc();
-        switch (c) {
-        case '\n':
-            return is;
-        case '\r':
-            if(sb->sgetc() == '\n')
-                sb->sbumpc();
-            return is;
-        case std::streambuf::traits_type::eof():
-            // Also handle the case when the last line has no line ending
-            if(t.empty())
-                is.setstate(std::ios::eofbit);
-            return is;
-        default:
 
-            t += static_cast<char>(c);
-        }
-    }
-}
-
-int cstyleStringCount(std::string path){
-    std::ifstream ifs(path.c_str());
-    if(!ifs) {
-        std::cout << "Failed to open the file." << std::endl;
-        return EXIT_FAILURE;
-    }
-    int n = 0;
-    std::string t;
-    while(!safeGetline(ifs, t).eof())
-        ++n;
-    //std::cout << "The file contains " << n << " lines." << std::endl;
-    return n;
-}
 
 void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
@@ -114,9 +72,8 @@ void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QS
     static std::string playlistpath = s_defaultPlaylist.toStdString();
     static std::string playlistdirname = s_mmPlaylistDir.toStdString();
     static std::string musicLibraryDir=s_musiclibrarydirname.toStdString();
-    std::string winDriveLtr = s_winDriveLtr.toStdString(); // in main prgm, need to fix with QSettings variable
-    //std::string cleanedPlaylist{Constants::cleanedPlaylist}; // in main prgm, instead reference Constants::cleanedPlaylist
-    std::ifstream readFile(appDataPathstr.toStdString()+"/cleanedplaylist.txt"); //fixed here on 03/24/2019
+    std::string winDriveLtr = s_winDriveLtr.toStdString();
+    std::ifstream readFile(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     std::ofstream outf(playlistpath);
     if (!readFile.is_open()) {
         std::cout << "exportPlaylistToWindows: The readFile did not open. Did you delete the active playlist?";

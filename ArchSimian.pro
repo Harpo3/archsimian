@@ -27,26 +27,35 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    src/albumidandselect.cpp \
     src/archsimian.cpp \
     src/basiclibfunctions.cpp \
+    src/buildalbumexcllibrary.cpp \
+    src/code1.cpp \
     src/dependents.cpp \
+    src/getartistadjustedcount.cpp \
     src/getplaylist.cpp \
     src/lastplayeddays.cpp \
     src/main.cpp \
     src/playlistfunctions.cpp \
-    src/runbashapp.cpp \
+    src/utilities.cpp \
     src/writesqlfile.cpp \
     src/getartistexcludes.cpp
 
 HEADERS += \
+    src/albumidandselect.h \
     src/archsimian.h \
     src/basiclibfunctions.h \
+    src/buildalbumexcllibrary.h \
+    src/code1.h \
     src/constants.h \
     src/dependents.h \
+    src/getartistadjustedcount.h \
+    src/getartistexcludes.h \
     src/getplaylist.h \
     src/lastplayeddays.h \
     src/playlistfunctions.h \
-    src/runbashapp.h \
+    src/utilities.h \
     src/writesqlfile.h
 
 FORMS += \
