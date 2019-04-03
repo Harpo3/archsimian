@@ -18,8 +18,6 @@ unsigned long cnt = 0;
  return int(cnt);
 }
 
-
-
 void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();

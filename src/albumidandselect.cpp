@@ -39,11 +39,11 @@ void getAlbumIDs(){
         std::fstream filestrinterval;
         filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
         if (filestrinterval.is_open()) {filestrinterval.close();}
-        else {std::cout << "getAlbumIDs: Error opening ratedabbr2.txt file (783)." << std::endl;}
+        else {std::cout << "getAlbumIDs: Error opening ratedabbr2.txt file (42)." << std::endl;}
         std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt";
         std::ifstream ratedSongsTable(ratedlibrary);
         if (!ratedSongsTable.is_open()) {
-            std::cout << "getAlbumIDs: Error opening ratedabbr2.txt (787)." << std::endl;
+            std::cout << "getAlbumIDs: Error opening ratedabbr2.txt (46)." << std::endl;
             std::exit(EXIT_FAILURE);
         }
         // set variables used to compare element values in ratedabbr2 against this str1

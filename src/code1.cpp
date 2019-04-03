@@ -57,8 +57,8 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
         }
     }
 }
-// Function used to select a rating code 1 track
 
+// Function used to select a rating code 1 track
 void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::string returntrack;

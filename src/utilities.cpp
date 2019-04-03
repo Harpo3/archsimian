@@ -32,7 +32,6 @@ StringVector2D readDSV(std::string filename)
     char separator = '^';
     StringVector2D result;
     std::string row, item;
-
     std::ifstream in(filename);
     while(getline(in,row))
     {

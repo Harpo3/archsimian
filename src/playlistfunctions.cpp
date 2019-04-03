@@ -452,7 +452,3 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
 }
-
-
-
-

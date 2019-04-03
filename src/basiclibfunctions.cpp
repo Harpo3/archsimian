@@ -371,5 +371,3 @@ void getSubset()
     ratedabbrvect.shrink_to_fit();
     if (Constants::verbose == true) std::cout << "...finished!" << std::endl;
 }
-
-

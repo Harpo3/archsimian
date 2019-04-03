@@ -29,7 +29,6 @@ void findDuplicates(std::vector<T> & vecOfElements, std::map<T, int> & countMap)
     }
 }
 
-
 // Function to identify which albums should be excluded based on the album of the last track played for each artist meeting the user criteria selected
 void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, const int &s_mintracks)
 {

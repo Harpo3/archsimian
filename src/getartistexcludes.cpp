@@ -57,6 +57,7 @@ void getArtistExcludes()
     playlistPosList.close();
 }
 
+// Function to create the artistexcludes file
 void getExcludedArtists(const int &s_playlistSize)
 {
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
