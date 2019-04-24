@@ -18,14 +18,14 @@ void writeSQLFile(){
                      "Conductor,Remixer,InvolvedPeople,GroupDesc,OrigYear,Tempo,"
                      "Mood,Occasion,Quality,SkipCount FROM songs"};
     const std::string sqlpathdirname = getenv("HOME");
-    std::ofstream sqlfile(sqlpathdirname + Constants::sqlFileName); // exportMMTable.sql
+    std::ofstream sqlfile(sqlpathdirname + Constants::kSqlFileName); // exportMMTable.sql
     sqlfile << str1 << "\n";
     sqlfile << str2 << "\n";
     sqlfile << str3 << "\n";
     sqlfile << str4 << "\n";
     sqlfile << str5 << "\n";
     sqlfile.close();
-    std::string sqlfile2(sqlpathdirname + Constants::sqlFileName);
+    std::string sqlfile2(sqlpathdirname + Constants::kSqlFileName);
     std::ifstream sqlfile3;
     sqlfile3.open(sqlfile2.c_str());
     if (sqlfile3.is_open()) {sqlfile3.close();}
@@ -34,7 +34,7 @@ void writeSQLFile(){
 
 void removeSQLFile(){
     const std::string sqlpathdirname = getenv("HOME");
-    std::string sqlfile(sqlpathdirname + Constants::sqlFileName);
+    std::string sqlfile(sqlpathdirname + Constants::kSqlFileName);
     std::cout << "SQL file location " <<sqlfile<< std::endl;
     remove (sqlfile.c_str());// remove exportMMTable.sql from home directory
     if( remove( sqlfile.c_str() ) != 0 )

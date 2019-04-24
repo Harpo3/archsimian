@@ -111,26 +111,26 @@ public:
 private:
     struct SPreferences
     {
-        int repeatFreqCode1;
-        int tracksToAdd;
-        QString defaultPlaylist;
-        QString musicLibraryDir;
-        QString mmBackupDBDir;
-        QString mmPlaylistDir;
-        QString s_WindowsDriveLetter;
-        bool s_includeNewTracks;
-        bool s_includeAlbumVariety;
-        bool s_noAutoSave;
-        bool s_disableNotificationAddTracks;
-        double s_daysTillRepeatCode3;
-        double s_repeatFactorCode4;
-        double s_repeatFactorCode5;
-        double s_repeatFactorCode6;
-        double s_repeatFactorCode7;
-        double s_repeatFactorCode8;
-        int s_minalbums;
-        int s_mintrackseach;
-        int s_mintracks;
+        int repeatFreqCode1{};
+        int tracksToAdd{};
+        QString defaultPlaylist{};
+        QString musicLibraryDir{};
+        QString mmBackupDBDir{};
+        QString mmPlaylistDir{};
+        QString s_WindowsDriveLetter{};
+        bool s_includeNewTracks{};
+        bool s_includeAlbumVariety{};
+        bool s_noAutoSave{};
+        bool s_disableNotificationAddTracks{};
+        double s_daysTillRepeatCode3{};
+        double s_repeatFactorCode4{};
+        double s_repeatFactorCode5{};
+        double s_repeatFactorCode6{};
+        double s_repeatFactorCode7{};
+        double s_repeatFactorCode8{};
+        int s_minalbums{};
+        int s_mintrackseach{};
+        int s_mintracks{};
 
     };
 

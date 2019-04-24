@@ -24,7 +24,7 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
     std::string convertStd2 = appDataPathstr.toStdString()+"/cleanlib.dsv";
     existResult = doesFileExist(convertStd2);// See inline function at top
     if (Constants::kVerbose) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
-    if (!existResult) {refreshNeededResult = 1;}
+    if (!existResult) {refreshNeededResult = true;}
     // If the lib file exists, Get the epoch date for the MM.DB file and see which file is older
     if (existResult){
         std::string mmdbdir = s_mmBackupDBDir.toStdString();
@@ -172,7 +172,7 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
     double currDate = std::chrono::duration_cast<std::chrono::seconds>
             (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
     // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569  43441.4712847 43440.4712847
-    double currSQLDate = (currDate / 86400) + 25569;        // This will go to lastplayed .cpp and .h
+    double currSQLDate = (currDate / Constants::kEpochConv2) + Constants::kEpochConv1;        // This will go to lastplayed .cpp and .h
     if (!primarySongsTable.is_open())
     {
         std::exit(EXIT_FAILURE);
@@ -210,7 +210,7 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
                         ++*_sSQL20DayTracksTot;}
                     if (tempLastPlayedDate <= (currSQLDate - 21) && (tempLastPlayedDate > (currSQLDate - 30.9999)))
                     {int timeint = std::stoi(tempTokenTrackTime);
-                        *_sSQL30TotTimeListened = *_sSQL30TotTimeListened + timeint                                ;
+                        *_sSQL30TotTimeListened = *_sSQL30TotTimeListened + timeint;
                         ++*_sSQL30DayTracksTot;}
                     if (tempLastPlayedDate <= (currSQLDate - 31) && (tempLastPlayedDate > (currSQLDate - 40.9999)))
                     {int timeint = std::stoi(tempTokenTrackTime);

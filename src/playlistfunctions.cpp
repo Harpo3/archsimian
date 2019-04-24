@@ -119,13 +119,13 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         }
     }
     if (Constants::kVerbose) {
-    std::cout << "totalPLTime3 is: " <<totalPLTime3/1000 << std::endl;
-    std::cout << "totalPLTime4 is: " <<totalPLTime4/1000 << std::endl;
-    std::cout << "totalPLTime5 is: " <<totalPLTime5/1000 << std::endl;
-    std::cout << "totalPLTime6 is: " <<totalPLTime6/1000 << std::endl;
-    std::cout << "totalPLTime7 is: " <<totalPLTime7/1000 << std::endl;
-    std::cout << "totalPLTime8 is: " <<totalPLTime8/1000 << std::endl;
-    std::cout << "totalPlaylistTime is: " <<totalPlaylistTime/1000 << std::endl;
+    std::cout << "totalPLTime3 is: " <<totalPLTime3/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
+    std::cout << "totalPLTime4 is: " <<totalPLTime4/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
+    std::cout << "totalPLTime5 is: " <<totalPLTime5/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
+    std::cout << "totalPLTime6 is: " <<totalPLTime6/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
+    std::cout << "totalPLTime7 is: " <<totalPLTime7/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
+    std::cout << "totalPLTime8 is: " <<totalPLTime8/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
+    std::cout << "totalPlaylistTime is: " <<totalPlaylistTime/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
     }
 
     //Calculate time ratio for each rating code by dividing each by the total playlist time.

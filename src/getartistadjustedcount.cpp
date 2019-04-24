@@ -167,7 +167,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
                 // Increment to the next column of row in cleanlib.dsv
                 ++ tokenCount;
             }
-            continue; // Resume cleanlib.dsv next row, beginning with Col 0
+            //continue; // Resume cleanlib.dsv next row, beginning with Col 0
         }
         // Completed all rows of cleanlib.dsv
         double s_totalAdjRatedQty = (*_syrsTillRepeatCode3factor * *_srCode3TotTrackQty)+(*_syrsTillRepeatCode4factor * *_srCode4TotTrackQty)

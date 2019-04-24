@@ -21,10 +21,10 @@ const int kLowerRndBound{30};
 const int kUpperRndBound{500};
 
 // Constant used to standardize the user configuration file name for Arch
-const char userFileName[16]{"archsimian.conf"};  // user configuration and preferences filename
-const char sqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that the MM.DB Songs table can be exported
-const char cleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
-const char cleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
+const char kUserFileName[16]{"archsimian.conf"};  // user configuration and preferences filename
+const char kSqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that the MM.DB Songs table can be exported
+const char kCleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
+const char kCleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
 
 // Constant used to set the maximum size of a playlist
 
@@ -49,9 +49,18 @@ const int kUserDefaultMinalbums{2};
 const int kUserDefaultMintrackseach{4};
 const int kUserDefaultMintracks{8};
 
+// Calendar and time-related constants
+const int kDaysInYear{365};
+const int kMonthsInYear{12};
+const int kWeeksInYear{52};
+const long kMilSecsToMinsFactor{60000};
+const int kMinsToHoursFactor{60};
+const int kConvertDecimalToPercentDisplay{100};
+const int kDaysPerListeningPeriod{10};
+
 
 // Constant to turn on or off troubleshooting feedback in console
-const bool kVerbose{false};
+const bool kVerbose{true};
 
 }
 #endif // CONSTANTS_H
