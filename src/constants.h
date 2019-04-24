@@ -26,9 +26,11 @@ const char kSqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that t
 const char kCleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
 const char kCleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
 
-// Constant used to set the maximum size of a playlist
+// Constants used to set the maximum size of a playlist or max Code1 position
 
-//const int finalplaylistPos{99999};
+const int kMaxFinalPlaylistPos{99999};
+const int kMaxLowestCode1Pos{99999};
+const int kMaxHighestCode1Pos{99999};
 
 // Constants to set user-configurable default settings
 const int kUserDefaultRepeatFreqCode1{20};
@@ -53,10 +55,63 @@ const int kUserDefaultMintracks{8};
 const int kDaysInYear{365};
 const int kMonthsInYear{12};
 const int kWeeksInYear{52};
-const long kMilSecsToMinsFactor{60000};
+const int kMilSecsToMinsFactor{60000};
 const int kMinsToHoursFactor{60};
 const int kConvertDecimalToPercentDisplay{100};
+
+// Constants for evaluating average listening time
 const int kDaysPerListeningPeriod{10};
+const double kUpperBoundPeriod1{10.9999};
+const int kLowerBoundPeriod2{11};
+const double kUpperBoundPeriod2{20.9999};
+const int kLowerBoundPeriod3{21};
+const double kUpperBoundPeriod3{30.9999};
+const int kLowerBoundPeriod4{31};
+const double kUpperBoundPeriod4{40.9999};
+const int kLowerBoundPeriod5{41};
+const double kUpperBoundPeriod5{50.9999};
+const int kLowerBoundPeriod6{51};
+const double kUpperBoundPeriod6{60.9999};
+
+// Constants for identifying column number in database (DSV, CSV) files
+const int kColumn0{0};
+const int kColumn1{1};
+const int kColumn2{2};
+const int kColumn3{3};
+const int kColumn4{4};
+const int kColumn5{5};
+const int kColumn6{6};
+const int kColumn7{7};
+const int kColumn8{8};
+const int kColumn9{9};
+const int kColumn10{10};
+const int kColumn11{11};
+const int kColumn12{12};
+const int kColumn13{13};
+const int kColumn14{14};
+const int kColumn15{15};
+const int kColumn16{16};
+const int kColumn17{17};
+const int kColumn18{18};
+const int kColumn19{19};
+const int kColumn20{20};
+const int kColumn21{21};
+const int kColumn22{22};
+const int kColumn23{23};
+const int kColumn24{24};
+const int kColumn25{25};
+const int kColumn26{26};
+const int kColumn27{27};
+const int kColumn28{28};
+const int kColumn29{29};
+const int kColumn30{30};
+const int kColumn31{31};
+const int kColumn32{32};
+const int kColumn33{33};
+const int kColumn34{34};
+const int kColumn35{35};
+const int kColumn36{36};
+
 
 
 // Constant to turn on or off troubleshooting feedback in console

@@ -31,7 +31,8 @@ StringVector2D readDSV(const std::string& filename)
 {
     char separator = '^';
     StringVector2D result;
-    std::string row, item;
+    std::string row;
+    std::string item;
     std::ifstream in(filename);
     while(getline(in,row))
     {
@@ -75,8 +76,8 @@ bool stringMatch(std::string s1, std::string s2)
     bool x{false};
     trim_cruft(s1);
     trim_cruft(s2);
-    if(s1 != s2)x = false;
-    else x = true;
+    if(s1 == s2)x = true;
+    //else x = true;
     return x;
 }
 

@@ -49,7 +49,7 @@ void getAlbumIDs(){
             std::exit(EXIT_FAILURE);
         }
         // set variables used to compare element values in ratedabbr2 against this str1
-        int finalplaylistPos{99999};
+        int finalplaylistPos = Constants::kMaxFinalPlaylistPos;
         int finaltokenLTP{0};
         std::string finalAlbumID{"0"};
         while (std::getline(ratedSongsTable, str2)) {  // Declare variables applicable to all rows
@@ -58,15 +58,15 @@ void getAlbumIDs(){
             int tokenCount{0}; //token count is the number of delimiter characters within str
             while (std::getline(iss, token, ',')) {
                 // TOKEN PROCESSING - COL 0
-                if ((tokenCount == 0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
+                if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
                 // TOKEN PROCESSING - COL 1
-                if (tokenCount == 1) {ratingCode = token;}// store rating variable
+                if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
                 // TOKEN PROCESSING - COL 2
-                if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+                if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
                 // TOKEN PROCESSING - COL 6
-                if (tokenCount == 6) {albumID = token;} // store album ID variable
+                if (tokenCount == Constants::kColumn6) {albumID = token;} // store album ID variable
                 // TOKEN PROCESSING - COL 7
-                if (tokenCount == 7)  {
+                if (tokenCount == Constants::kColumn7)  {
                     if (token != "0"){
                         int tmpint = std::stoi(token);
                         if (finalplaylistPos > tmpint){playlistPos = token;}
@@ -90,7 +90,7 @@ void getAlbumIDs(){
             if ((playlistPos == "0") && (foundmatch == 1)){
                 // if the matched artist is not in the playlist or extended count, check last time played if playlist position is zero
                 int tmpltp = std::stoi(tokenLTP);
-                if ((finaltokenLTP < tmpltp) && (finalplaylistPos == 99999)) {
+                if ((finaltokenLTP < tmpltp) && (finalplaylistPos == Constants::kMaxFinalPlaylistPos)) {
                     finaltokenLTP = tmpltp; // update finalLTP if greater than existing finalLTP
                     finalAlbumID = albumID; // save albumID only if not already found in playlist
                 }

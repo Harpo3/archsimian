@@ -15,7 +15,7 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
     std::string str; // store the string for ratedabbr2.txt
     std::string ratingCode;
     std::string playlistPos;
-    int posint{99999};
+    int posint{Constants::kMaxHighestCode1Pos};
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
@@ -32,11 +32,11 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
         int tokenCount{0}; //token count is the number of delimiter characters within str
         while (std::getline(iss, token, ',')) {
             // TOKEN PROCESSING - COL 1
-            if (tokenCount == 1) {ratingCode = token;}// store rating variable
+            if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
             // TOKEN PROCESSING - COL 2
-            if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+            if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
             // TOKEN PROCESSING - COL 7
-            if (tokenCount == 7)  {
+            if (tokenCount == Constants::kColumn7)  {
                 playlistPos = token;
                 if ((ratingCode == "1") && (playlistPos != "0")){
                     ++*_scode1PlaylistCount;
@@ -88,17 +88,17 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ',')) {
             // TOKEN PROCESSING - COL 0
-            if ((tokenCount == 0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
+            if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
             // TOKEN PROCESSING - COL 1
-            if (tokenCount == 1) {ratingCode = token;}// store rating variable
+            if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
             // TOKEN PROCESSING - COL 2
-            if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+            if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
             // TOKEN PROCESSING - COL 3
-            if (tokenCount == 3) {songPath = token;}// store song path variable
+            if (tokenCount == Constants::kColumn3) {songPath = token;}// store song path variable
             // TOKEN PROCESSING - COL 6
-            if (tokenCount == 6) {albumID = token;}// store album ID variable
+            if (tokenCount == Constants::kColumn6) {albumID = token;}// store album ID variable
             // TOKEN PROCESSING - COL 7
-            if (tokenCount == 7)  {playlistPos = token;}
+            if (tokenCount == Constants::kColumn7)  {playlistPos = token;}
             ++ tokenCount;
         }
         if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1))  // if a code 1 track is not

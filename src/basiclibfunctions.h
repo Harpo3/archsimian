@@ -4,9 +4,9 @@
 #include <QString>
 
 
-void removeAppData(std::string str);
+//void removeAppData(std::string str);
 bool recentlyUpdated(const QString &s_mmBackupDBDir);
-std::string removeSpaces(std::string str);
+//std::string removeSpaces(std::string str);
 void getLibrary(const QString &s_musiclibrarydirname);
 void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1TotTrackQty,int *_srCode1MsTotTime,
                  int *_srCode3TotTrackQty,int *_srCode3MsTotTime,int *_srCode4TotTrackQty,int *_srCode4MsTotTime,

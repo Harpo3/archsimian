@@ -77,7 +77,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ',')) {
             // TOKEN PROCESSING - COL 1
-            if (tokenCount == 1)  {
+            if (tokenCount == Constants::kColumn1)  {
                 selectedRatingCode = token;
                 //if (selectedPlaylistPosition == "1") {codeForPos1 = selectedRatingCode;
                 //std::cout << "selectedPlaylistPosition 1 should be: "<< str <<" rating: " <<token << std::endl;
@@ -87,10 +87,10 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
                // }
             }
             // TOKEN PROCESSING - COL 4
-            if (tokenCount == 4)  {selectedSongLength = std::atof(token.c_str());
+            if (tokenCount == Constants::kColumn4)  {selectedSongLength = std::atof(token.c_str());
             }
             // TOKEN PROCESSING - COL 7
-            if (tokenCount == 7)  {
+            if (tokenCount == Constants::kColumn7)  {
                 selectedPlaylistPosition = token;
                 if (token == "1") {
                     codeForPos1 = selectedRatingCode;
@@ -360,21 +360,21 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ',')) {
             // TOKEN PROCESSING - COL 0
-            if ((tokenCount == 0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
+            if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
             // TOKEN PROCESSING - COL 1
-            if (tokenCount == 1) {ratingCode = token;}// store rating variable
+            if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
             // TOKEN PROCESSING - COL 2
-            if (tokenCount == 2) {selectedArtistToken = token;} //Selected artist token
+            if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
             // TOKEN PROCESSING - COL 3
-            if (tokenCount == 3) {songPath = token;}// store song path variable
+            if (tokenCount == Constants::kColumn3) {songPath = token;}// store song path variable
             // TOKEN PROCESSING - COL 4
-            if (tokenCount == 4) {songLengtha = token;} //just added
+            if (tokenCount == Constants::kColumn4) {songLengtha = token;} //just added
             // TOKEN PROCESSING - COL 5
-            if (tokenCount == 5) {artistIntervala = token;} //just added
+            if (tokenCount == Constants::kColumn5) {artistIntervala = token;} //just added
             // TOKEN PROCESSING - COL 6
-            if (tokenCount == 6) {albumID = token;} //just added
+            if (tokenCount == Constants::kColumn6) {albumID = token;} //just added
             // TOKEN PROCESSING - COL 7
-            if (tokenCount == 7)  {playlistPos = token;}
+            if (tokenCount == Constants::kColumn7)  {playlistPos = token;}
             ++ tokenCount;
         }
         if (playlistPos == "0") {notInPlaylist = true;} // Set variable to check whether item is or is not in the playlist

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include "utilities.h"
+#include"constants.h"
 
 template <typename T>
 void findDuplicates(std::vector<T> & vecOfElements, std::map<T, int> & countMap)
@@ -53,9 +54,9 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::string selectedArtistToken; // Artist variable from artScreenTable [0]
     std::string totalTracksToken; // Total tracks count variable from artScreenTable [1]
     while (getline(artScreenTable,artScreenLine)){
-        for(size_t i = 0; i < artAdjVec1.size(); i++){ // read each row element into the variables needed
-            selectedArtistToken = artAdjVec1[i][0];
-            totalTracksToken = artAdjVec1[i][1];
+        for(auto & i : artAdjVec1){ // read each row element into the variables needed
+            selectedArtistToken = i[0];
+            totalTracksToken = i[1];
             int tmpttt = std::stoi(totalTracksToken);
             if (tmpttt >= s_mintracks) {
                 trackCountMap.insert(std::make_pair(selectedArtistToken,tmpttt));
@@ -65,7 +66,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     artScreenTable.close(); // close ifstream file, leave vector trackCountMap open
     std::ofstream totTrackCountList(appDataPathstr.toStdString()+"/tmpcount1.txt"); // tmp output file for writing vector
     //iterate and output to temp txt file
-    std::map<std::string, int>::iterator it = trackCountMap.begin();
+    auto it = trackCountMap.begin();
     while(it != trackCountMap.end())
     {
         totTrackCountList<<it->first<<std::endl;
@@ -122,9 +123,9 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
             std::getline(minAlbumsScreenTable, str1);
             int tokenCount1{0};
             while (std::getline(iss1, token1, '^')) { // Inner loop: iterate through each column (token) of row
-                if (tokenCount1 == 2) {AlbumIDToken = token1;}
-                if (tokenCount1 == 19) {selectedArtistAlbToken = token1;}
-                if (tokenCount1 == 29) {ratingCodeToken = token1;}
+                if (tokenCount1 == Constants::kColumn2) {AlbumIDToken = token1;}
+                if (tokenCount1 == Constants::kColumn19) {selectedArtistAlbToken = token1;}
+                if (tokenCount1 == Constants::kColumn29) {ratingCodeToken = token1;}
                 ++tokenCount1;
             }
             trim_cruft(selectedArtistAlbToken);
@@ -138,8 +139,8 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
         minAlbumsScreenTable.close();
     }
     // write vector to 2nd tmp file
-    for (std::size_t i = 0 ;  i < albIDVect.size(); i++){
-        dupAlbumIDList << albIDVect[i] << "\n";}
+    for (const auto & i : albIDVect){
+        dupAlbumIDList << i << "\n";}
     // close two read files after 2nd tmp file is written
     dupAlbumIDList.close();
     minAlbumsScreenTable1.close();

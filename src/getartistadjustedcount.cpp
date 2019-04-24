@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include "utilities.h"
+#include "constants.h"
 
 // Function to adjust the number of tracks of each artist by weighting them using the assigned ratings of each track
 void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
@@ -40,9 +41,9 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         while (std::getline(iss, token, '^'))
         {
             // TOKEN PROCESSING - COL 19
-            if (tokenCount == 19)  {selectedArtistToken = token;}//  artist grouping
+            if (tokenCount == Constants::kColumn19)  {selectedArtistToken = token;}//  artist grouping
             // TOKEN PROCESSING - COL 29
-            if ((tokenCount == 29) && (token != "0")) {ratingCode = true;}// if custom artist grouping is selected use this code
+            if ((tokenCount == Constants::kColumn29) && (token != "0")) {ratingCode = true;}// if custom artist grouping is selected use this code
             ++ tokenCount;
         }
         if (ratingCode) {outartists << selectedArtistToken << "\n"; }// Write artist to clean file if rated
@@ -113,10 +114,10 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         {
             countdown = currentArtistCount + 1;
             // TOKEN PROCESSING - COL 0
-            if (tokenArtistsCount == 0) {currentArtist = tokenArtist;}
+            if (tokenArtistsCount == Constants::kColumn0) {currentArtist = tokenArtist;}
             //std::cout << "Current artist from artists.txt is " << currentArtist << std::endl;
             // TOKEN PROCESSING - COL 1
-            if (tokenArtistsCount == 1) {currentArtistCount = std::stoi(tokenArtist);}
+            if (tokenArtistsCount == Constants::kColumn1) {currentArtistCount = std::stoi(tokenArtist);}
             ++tokenArtistsCount;
         }
         countdown = currentArtistCount;
@@ -141,7 +142,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
             while (std::getline(iss, token, '^'))
             {
                 // TOKEN PROCESSING - COL 19  artist token
-                if (tokenCount == 19)  {
+                if (tokenCount == Constants::kColumn19)  {
                     selectedArtistToken = token;
                     if (currentArtist == selectedArtistToken) {
                         //set temp variable to check when the rating token is checked next
@@ -150,7 +151,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
                     }
                 }
                 // TOKEN PROCESSING - COL 29 get rating and store for current row
-                if (tokenCount == 29) {
+                if (tokenCount == Constants::kColumn29) {
                     if (artistMatch == 1) {
                         selectedRating = token;
                         // Now evaluate the rating using factors and calculate adjusted track value

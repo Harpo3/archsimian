@@ -86,7 +86,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
         // Within tokens vector, open dirPathTokens vector to tokenize dir path of tokens[8] using '\' as delimiter
         // then redefine tokens[8] with the corrected path
         std::string songPath1;
-        songPath1 = tokens[8];        
+        songPath1 = tokens[Constants::kColumn8];
         std::istringstream iss2(songPath1);
         std::stringstream check2(songPath1);// stringstream for parsing \ delimiter of dir path
         std::string intermediate2; // intermediate value for parsing \ delimiter of dir path
@@ -94,7 +94,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
         {
             dirPathTokens.push_back(intermediate2);
         }
-        dirPathTokens.at(0) = s_musiclibrarydirname.toStdString();
+        dirPathTokens.at(Constants::kColumn0) = s_musiclibrarydirname.toStdString();
         songPath1 = getChgdDirStr(dirPathTokens,songPath1,s_musiclibrarydirname);        
         int zeroCount = countBlankChars(songPath1); // run function to identify any paths that have blank spaces
         if (zeroCount > 0){
@@ -108,24 +108,24 @@ void getLibrary(const QString &s_musiclibrarydirname)
             removeAppData ("cleanlib.dsv");
             exit(1);
         }
-        tokens.at(8) = songPath1;
+        tokens.at(Constants::kColumn8) = songPath1;
         dirPathTokens.shrink_to_fit();
         //Adds a calculated rating code to Col 29 if Col 29 does not have a rating code already
-        if (tokens[29].empty()) {
+        if (tokens[Constants::kColumn29].empty()) {
             std::string newstr;
-            if (tokens[13] == "100") newstr = "3";
-            if ((tokens[13] == "90") || (tokens[13] == "80")) newstr = "4";
-            if (tokens[13] == "70") newstr = "5";
-            if (tokens[13] == "60") newstr = "6";
-            if (tokens[13] == "50") newstr = "7";
-            if ((tokens[13] == "30") || (tokens[13] == "40")) newstr = "8";
-            if (tokens[13] == "20") newstr = "1";
-            if (tokens[13] == "10") newstr = "0";
-            if (tokens[13] == "0") newstr = "0";
-            if (tokens[13].empty()) newstr = "0";
-            tokens.at(29) = newstr;
+            if (tokens[Constants::kColumn13] == "100") newstr = "3";
+            if ((tokens[Constants::kColumn13] == "90") || (tokens[Constants::kColumn13] == "80")) newstr = "4";
+            if (tokens[Constants::kColumn13] == "70") newstr = "5";
+            if (tokens[Constants::kColumn13] == "60") newstr = "6";
+            if (tokens[Constants::kColumn13] == "50") newstr = "7";
+            if ((tokens[Constants::kColumn13] == "30") || (tokens[Constants::kColumn13] == "40")) newstr = "8";
+            if (tokens[Constants::kColumn13] == "20") newstr = "1";
+            if (tokens[Constants::kColumn13] == "10") newstr = "0";
+            if (tokens[Constants::kColumn13] == "0") newstr = "0";
+            if (tokens[Constants::kColumn13].empty()) newstr = "0";
+            tokens.at(Constants::kColumn29) = newstr;
         }
-        if ((tokens[13] != "0") && ((tokens[17] == "0.0")||(tokens[17] == "0"))){
+        if ((tokens[13] != "0") && ((tokens[Constants::kColumn17] == "0.0")||(tokens[Constants::kColumn17] == "0"))){
             // generate a random lastplayed date if its current
             //  value is "0" unless track has a zero star rating
             // Process a function to generate a random date 30-500 days ago then save to a string
@@ -137,12 +137,12 @@ void getLibrary(const QString &s_musiclibrarydirname)
             {std::cout << "getLibrary: Error obtaining random number." << std::endl;}
             intconvert = int (rndresult); // convert the random number to an integer
             strrandom = std::to_string(intconvert); // convert the integer to string
-            tokens.at(17) = strrandom;
+            tokens.at(Constants::kColumn17) = strrandom;
         }
         //Adds artist (without any spaces) to Col 19 if Col 19 does not have a custom value already
-        if ((tokens[13] != "0") && (tokens[19].empty())) {
-            tokens.at(19) = tokens[1];
-            tokens.at(19) = removeSpaces(tokens[19]);
+        if ((tokens[Constants::kColumn13] != "0") && (tokens[Constants::kColumn19].empty())) {
+            tokens.at(Constants::kColumn19) = tokens[1];
+            tokens.at(Constants::kColumn19) = removeSpaces(tokens[Constants::kColumn19]);
         }
         str = getChgdDSVStr(tokens,str);
         outf << str << "\n"; // The string is valid, write to clean file
@@ -167,7 +167,7 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
     filestr1.open (combinedPath);
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getDBStats: Error opening cleanlib.dsv file." << std::endl;}
-    std::string databaseFile = combinedPath; // now we can use it as input file
+    const std::string &databaseFile = combinedPath; // now we can use it as input file
     std::ifstream primarySongsTable(databaseFile);
     double currDate = std::chrono::duration_cast<std::chrono::seconds>
             (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
@@ -189,38 +189,38 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
         int tokenCount{0};
         while (std::getline(iss, token, '^')) { // Inner loop: iterate through each column (token) of row
             // Store the time in milliseconds (col 12) in tempTokenTrackTime text variable
-            if (tokenCount == 12) {tempTokenTrackTime = token;}
+            if (tokenCount == Constants::kColumn12) {tempTokenTrackTime = token;}
             // Store the lastplayed date string tempTokenLastPlayedTime text variable
-            if (tokenCount == 17) {tempTokenLastPlayedTime = token;}
+            if (tokenCount == Constants::kColumn17) {tempTokenLastPlayedTime = token;}
             // TOKEN PROCESSING - COL 17
-            // Collect lastplayed stats to compute avg listening time
+            // Collect lastplayed stats to compute avg listening time for six 10-day evaluation periods
             double tempLastPlayedDate{0.0};
             std::string strrandom;
-            if (tokenCount == 17) {
+            if (tokenCount == Constants::kColumn17) {
                 tempLastPlayedDate = std::atof(token.c_str());
-                if (tempLastPlayedDate > (currSQLDate - 60.9999))
+                if (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod6))
                 {
-                    if (tempLastPlayedDate > (currSQLDate - 10.9999))
+                    if (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod1))
                     {int timeint = std::stoi(tempTokenTrackTime);
                         *_sSQL10TotTimeListened = *_sSQL10TotTimeListened + timeint;
                         ++*_sSQL10DayTracksTot;}
-                    if (tempLastPlayedDate <= (currSQLDate - 11) && (tempLastPlayedDate > (currSQLDate - 20.9999)))
+                    if (tempLastPlayedDate <= (currSQLDate - Constants::kLowerBoundPeriod2) && (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod2)))
                     {int timeint = std::stoi(tempTokenTrackTime);
                         *_sSQL20TotTimeListened = *_sSQL20TotTimeListened + timeint;
                         ++*_sSQL20DayTracksTot;}
-                    if (tempLastPlayedDate <= (currSQLDate - 21) && (tempLastPlayedDate > (currSQLDate - 30.9999)))
+                    if (tempLastPlayedDate <= (currSQLDate - Constants::kLowerBoundPeriod3) && (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod3)))
                     {int timeint = std::stoi(tempTokenTrackTime);
                         *_sSQL30TotTimeListened = *_sSQL30TotTimeListened + timeint;
                         ++*_sSQL30DayTracksTot;}
-                    if (tempLastPlayedDate <= (currSQLDate - 31) && (tempLastPlayedDate > (currSQLDate - 40.9999)))
+                    if (tempLastPlayedDate <= (currSQLDate - Constants::kLowerBoundPeriod4) && (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod4)))
                     {int timeint = std::stoi(tempTokenTrackTime);
                         *_sSQL40TotTimeListened = *_sSQL40TotTimeListened + timeint;
                         ++*_sSQL40DayTracksTot;}
-                    if (tempLastPlayedDate <= (currSQLDate - 41) && (tempLastPlayedDate > (currSQLDate - 50.9999)))
+                    if (tempLastPlayedDate <= (currSQLDate - Constants::kLowerBoundPeriod5) && (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod5)))
                     {int timeint = std::stoi(tempTokenTrackTime);
                         *_sSQL50TotTimeListened = *_sSQL50TotTimeListened + timeint;
                         ++*_sSQL50DayTracksTot;}
-                    if (tempLastPlayedDate <= (currSQLDate - 51) && (tempLastPlayedDate > (currSQLDate - 60.9999)))
+                    if (tempLastPlayedDate <= (currSQLDate - Constants::kLowerBoundPeriod6) && (tempLastPlayedDate > (currSQLDate - Constants::kUpperBoundPeriod6)))
                     {int timeint = std::stoi(tempTokenTrackTime);
                         *_sSQL60TotTimeListened = *_sSQL60TotTimeListened + timeint;
                         ++*_sSQL60DayTracksTot;}
@@ -231,42 +231,42 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
             // then used to increment the song quantity and song time accordingly
             // Cols 12 and 29 are for song time and GroupDesc (rating code)
             // Collect statistical data for times and qtys of each rating category
-            if (tokenCount == 29 && token == "0") {
+            if (tokenCount == Constants::kColumn29 && token == "0") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode0MsTotTime = *_srCode0MsTotTime + timeint;
                 ++*_srCode0TotTrackQty;
             }
-            if (tokenCount == 29 && token == "1") {
+            if (tokenCount == Constants::kColumn29 && token == "1") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode1MsTotTime = *_srCode1MsTotTime + timeint;
                 ++*_srCode1TotTrackQty;
             }
-            if (tokenCount == 29 && token == "3") {
+            if (tokenCount == Constants::kColumn29 && token == "3") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode3MsTotTime = *_srCode3MsTotTime + timeint;
                 ++*_srCode3TotTrackQty;
             }
-            if (tokenCount == 29 && token == "4") {
+            if (tokenCount == Constants::kColumn29 && token == "4") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode4MsTotTime = *_srCode4MsTotTime + timeint;
                 ++*_srCode4TotTrackQty;
             }
-            if (tokenCount == 29 && token == "5") {
+            if (tokenCount == Constants::kColumn29 && token == "5") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode5MsTotTime = *_srCode5MsTotTime + timeint;
                 ++*_srCode5TotTrackQty;
             }
-            if (tokenCount == 29 && token == "6") {
+            if (tokenCount == Constants::kColumn29 && token == "6") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode6MsTotTime = *_srCode6MsTotTime + timeint;
                 ++*_srCode6TotTrackQty;
             }
-            if (tokenCount == 29 && token == "7") {
+            if (tokenCount == Constants::kColumn29 && token == "7") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode7MsTotTime = *_srCode7MsTotTime + timeint;
                 ++*_srCode7TotTrackQty;
             }
-            if (tokenCount == 29 && token == "8") {
+            if (tokenCount == Constants::kColumn29 && token == "8") {
                 int timeint = std::stoi(tempTokenTrackTime);
                 *_srCode8MsTotTime = *_srCode8MsTotTime + timeint;
                 ++*_srCode8TotTrackQty;
@@ -325,27 +325,27 @@ void getSubset()
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^')) {
             // TOKEN PROCESSING - COL 2
-            if (tokenCount == 2){albumID = token;} // store albumID variable
+            if (tokenCount == Constants::kColumn2){albumID = token;} // store albumID variable
             // TOKEN PROCESSING - COL 8
-            if (tokenCount == 8){songPath = token;} // store song path variable
+            if (tokenCount == Constants::kColumn8){songPath = token;} // store song path variable
             // TOKEN PROCESSING - COL 12
-            if (tokenCount == 12){songLength = token;} // store song length variable
+            if (tokenCount == Constants::kColumn12){songLength = token;} // store song length variable
             // TOKEN PROCESSING - COL 13
-            if (tokenCount == 13){popmRating = token;} // store song length variable
+            if (tokenCount == Constants::kColumn13){popmRating = token;} // store song length variable
             // TOKEN PROCESSING - COL 17
-            if ((tokenCount == 17) && (popmRating != "0") && (token != "0")){tokenLTP = token;} // store LastPlayedDate in SQL Time
+            if ((tokenCount == Constants::kColumn17) && (popmRating != "0") && (token != "0")){tokenLTP = token;} // store LastPlayedDate in SQL Time
             // TOKEN PROCESSING - COL 19
-            if (tokenCount == 19) {selectedArtistToken = token;}// artist
+            if (tokenCount == Constants::kColumn19) {selectedArtistToken = token;}// artist
             // TOKEN PROCESSING - COL 29
-            if (tokenCount == 29){ratingCode = token;} // store rating variable
+            if (tokenCount == Constants::kColumn29){ratingCode = token;} // store rating variable
             // TOKEN PROCESSING - Artist Interval
             // Using 2D vector using artistIntervalVec, assign interval of artist matching
             // selectedArtistToken to s_artistInterval variable
             std::string artistsadjartGp;
-            for(size_t i = 0; i < artistIntervalVec.size(); i++){
-                artistsadjartGp = artistIntervalVec[i][0];
+            for(auto & i:artistIntervalVec){
+                artistsadjartGp = i[0];
                 if (artistsadjartGp == selectedArtistToken){
-                    s_artistInterval = artistIntervalVec[i][4];
+                    s_artistInterval = i[4];
                 }
             }
             // TOKEN PROCESSING - Playlist Position: assign playlist position of 0. See ratedabbrvect.push_back below
@@ -364,8 +364,8 @@ void getSubset()
     ratedabbrvect.shrink_to_fit();
     if (Constants::kVerbose) std::cout << "Do final sort of ratedabbrvect and write to file." << std::endl;
     std::sort (ratedabbrvect.begin(), ratedabbrvect.end());
-    for (std::size_t i = 0 ;  i < ratedabbrvect.size(); i++){
-        ratedabbr << ratedabbrvect[i] << "\n";}
+    for (const auto & i : ratedabbrvect){
+        ratedabbr << i << "\n";}
     primarySongsTable.close(); // Close cleanlib and vectors
     ratedabbr.close();
     ratedabbrvect.shrink_to_fit();

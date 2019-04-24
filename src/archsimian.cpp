@@ -13,6 +13,7 @@
 #include "archsimian.h"
 #include "constants.h"
 #include "ui_archsimian.h"
+#include "utilities.h"
 #include "dependents.h"
 #include "getartistexcludes.h"
 #include "getplaylist.h"
@@ -52,10 +53,10 @@ static bool s_noAutoSave{true};
 static bool s_disableNotificationAddTracks{false};
 static int s_uniqueCode1ArtistCount{0};
 static int s_code1PlaylistCount{0};
-static int s_lowestCode1Pos{99999};
-static std::string s_artistLastCode1{""};
-static std::string s_selectedCode1Path{""};
-static std::string s_selectedTrackPath{""};
+static int s_lowestCode1Pos{Constants::kMaxLowestCode1Pos};
+static std::string s_artistLastCode1;
+static std::string s_selectedCode1Path;
+static std::string s_selectedTrackPath;
 
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
@@ -633,7 +634,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (!s_bool_PlaylistExist){
             if (Constants::kVerbose){std::cout << "Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
             std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
-            if (s_selectedplaylist != "") {
+            if (!s_selectedplaylist.empty()) {
                 s_bool_PlaylistSelected = true;
                 if (Constants::kVerbose){std::cout << "Step 9. Playlist found in user config." << std::endl;}
             }
@@ -817,7 +818,7 @@ void ArchSimian::on_addsongsButton_released(){
         if (Constants::kVerbose) std::cout << "Top of Loop. Count: " <<i<< std::endl;
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
-        s_lowestCode1Pos = 99999;
+        s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
         s_selectedCode1Path = "";
         s_selectedTrackPath = "";
         if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
@@ -957,7 +958,7 @@ void ArchSimian::on_getplaylistButton_clicked()
         if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
             s_uniqueCode1ArtistCount = 0;
             s_code1PlaylistCount = 0;
-            s_lowestCode1Pos = 99999;
+            s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
             code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
             ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
         }
@@ -1384,7 +1385,7 @@ void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
     ui->repeatfreqtxtLabel->setDisabled(false);
     QWidget::repaint();
     }
-    if (ui->InclNewcheckbox->checkState() == false){
+    if (!static_cast<bool>(ui->InclNewcheckbox->checkState())){
     ui->repeatFreq1SpinBox->setEnabled(false);
     ui->newtracksqtyLabel->setDisabled(true);
     ui->repeatfreqtxtLabel->setDisabled(true);
@@ -1430,7 +1431,7 @@ void ArchSimian::on_addsongsButton_clicked(bool checked) // change button state 
 {
     ui->addsongsButton->setEnabled(false);
     ui->addtrksspinBox->setEnabled(false);
-    if (checked == true){
+    if (checked){
         ui->addsongsButton->isDown();
         checked = false;
     }
