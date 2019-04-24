@@ -435,9 +435,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_totHrsLast60Days = s_SQL10TotTimeListened + s_SQL20TotTimeListened + s_SQL30TotTimeListened + s_SQL40TotTimeListened
                 + s_SQL50TotTimeListened + s_SQL60TotTimeListened; //Total listened hours in the last 60 days
         // User listening rate weighted avg calculated using the six 10-day periods, and applying sum-of-the-digits for weighting
-        s_listeningRate = ((s_SQL10TotTimeListened/Constants::kDaysPerListeningPeriod)*0.3) + ((s_SQL20TotTimeListened/Constants::kDaysPerListeningPeriod)*0.25)
-                + ((s_SQL30TotTimeListened/Constants::kDaysPerListeningPeriod)*0.2) + ((s_SQL40TotTimeListened/Constants::kDaysPerListeningPeriod)*0.15) +
-                ((s_SQL50TotTimeListened/Constants::kDaysPerListeningPeriod)*0.1) + ((s_SQL60TotTimeListened/Constants::kDaysPerListeningPeriod)*0.05);
+        s_listeningRate = ((s_SQL10TotTimeListened/Constants::kDaysPerListeningPeriod)*Constants::kSumOfTheYearDigitsPeriod1) +
+                ((s_SQL20TotTimeListened/Constants::kDaysPerListeningPeriod)*Constants::kSumOfTheYearDigitsPeriod2)
+                + ((s_SQL30TotTimeListened/Constants::kDaysPerListeningPeriod)*Constants::kSumOfTheYearDigitsPeriod3) +
+                ((s_SQL40TotTimeListened/Constants::kDaysPerListeningPeriod)*Constants::kSumOfTheYearDigitsPeriod4) +
+                ((s_SQL50TotTimeListened/Constants::kDaysPerListeningPeriod)*Constants::kSumOfTheYearDigitsPeriod5) +
+                ((s_SQL60TotTimeListened/Constants::kDaysPerListeningPeriod)*Constants::kSumOfTheYearDigitsPeriod6);
         s_adjHoursCode3 = (1 / s_yrsTillRepeatCode3) * s_rCode3TotTime;
         s_adjHoursCode4 = (1 / s_yrsTillRepeatCode4) * s_rCode4TotTime;
         s_adjHoursCode5 = (1 / s_yrsTillRepeatCode5) * s_rCode5TotTime;
@@ -451,11 +454,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_ratingRatio6 = s_adjHoursCode6 / s_totAdjHours;
         s_ratingRatio7 = s_adjHoursCode7 / s_totAdjHours;
         s_ratingRatio8 = s_adjHoursCode8 / s_totAdjHours;
-        s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / 0.002739762; // fraction for one day (1/365)
+        s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / Constants::kFractionOneDay; // fraction for one day (1/365)
         s_totalRatedTime = s_rCode1TotTime + s_rCode3TotTime + s_rCode4TotTime + s_rCode5TotTime + s_rCode6TotTime +
                 s_rCode7TotTime + s_rCode8TotTime;
-        s_AvgMinsPerSong = (s_totalRatedTime / s_totalRatedQty) * 60;
-        s_avgListeningRateInMins = s_listeningRate * 60;
+        s_AvgMinsPerSong = (s_totalRatedTime / s_totalRatedQty) * Constants::kSecondsToMins;
+        s_avgListeningRateInMins = s_listeningRate * Constants::kSecondsToMins;
         s_SequentialTrackLimit = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * s_DaysBeforeRepeatCode3);
         s_totalAdjRatedQty = (s_yrsTillRepeatCode3factor * s_rCode3TotTrackQty)+(s_yrsTillRepeatCode4factor * s_rCode4TotTrackQty)
                 + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
@@ -696,8 +699,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->repeatFreq1SpinBox->setValue(m_prefs.repeatFreqCode1);
         ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
-        ui->factor3horizontalSlider->setMinimum(10);
-        ui->factor3horizontalSlider->setMaximum(120);
+        ui->factor3horizontalSlider->setMinimum(Constants::kRatingCode3MinDays);
+        ui->factor3horizontalSlider->setMaximum(Constants::kRatingCode3MaxDays);
         ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
         ui->factor3IntTxtLabel->setNum(s_daysTillRepeatCode3);
         ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
@@ -794,7 +797,7 @@ void ArchSimian::on_addsongsButton_released(){
 
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)    
-    if (numTracks > 29) {
+    if (numTracks > Constants::kNotifyTrackThreshold) {
         if (!s_disableNotificationAddTracks){
         QMessageBox msgBox;
         QString msgboxtxt = "This can take some time since you are adding " + QString::number(numTracks) + " tracks.";
@@ -1033,7 +1036,7 @@ void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
                                 + tr(" minutes per day, tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
     ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be ") +
                                  QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3)+tr(" days."));
-    if (s_numTracks > 29){
+    if (s_numTracks > Constants::kNotifyTrackThreshold){
         s_disableNotificationAddTracks = false;
         m_prefs.s_disableNotificationAddTracks = s_disableNotificationAddTracks;
     }

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include "utilities.h"
+#include "constants.h"
 #include <set>
 
 
@@ -49,9 +50,9 @@ void getArtistExcludes()
         playlistPosition = "0";
     }
     std::sort (plvect.begin(), plvect.end());
-    for(unsigned long i = 0; i < plvect.size() ; i++)
+    for(const auto & i : plvect)
     {
-        playlistPosList << plvect.at(i) << "\n";
+        playlistPosList << i << "\n";
     }
     plvect.shrink_to_fit();
     ratedSongsTable.close(); // Close ratedabbr.txt and output file
@@ -112,14 +113,14 @@ void getExcludedArtists(const int &s_playlistSize)
         std::string artistinvec;
         txtPos = std::to_string(s_playlistPosition);
         //std::cout << " PL POS: "<<s_playlistPosition  << " " << song <<std::endl;
-        for(size_t i = 0; i < ratedabbrVec.size(); i++){ // read each row element into the variables needed
-            tokenLTP = ratedabbrVec[i][0];
-            ratingCode = ratedabbrVec[i][1];
-            selectedArtistToken = ratedabbrVec[i][2];
-            pathinlib = ratedabbrVec[i][3];
-            songLength = ratedabbrVec[i][4];
-            artistInterval = ratedabbrVec[i][5];
-            albumID = ratedabbrVec[i][6];
+        for(auto & i : ratedabbrVec){ // read each row element into the variables needed
+            tokenLTP = i[Constants::kColumn0];
+            ratingCode = i[Constants::kColumn1];
+            selectedArtistToken = i[Constants::kColumn2];
+            pathinlib = i[Constants::kColumn3];
+            songLength = i[Constants::kColumn4];
+            artistInterval = i[Constants::kColumn5];
+            albumID = i[Constants::kColumn6];
             trim_cruft(pathinlib);
             trim_cruft(song);
             pathinlib.compare(song);
@@ -133,8 +134,8 @@ void getExcludedArtists(const int &s_playlistSize)
             // playlist position number
             if (song == pathinlib){
                 for(int j=0;j<20;j++){
-                    ratedabbrVec[i].pop_back();
-                    ratedabbrVec[i].emplace_back(txtPos);
+                    i.pop_back();
+                    i.emplace_back(txtPos);
                 }
             }
             if (song == pathinlib){
@@ -177,13 +178,13 @@ void getExcludedArtists(const int &s_playlistSize)
     // Calculate the extended playlist to find infrequent artists played within their interval value (ex. postion 452 and interval 487)
     std::ofstream artistExcList(appDataPathstr.toStdString()+"/artistexcludes.txt"); // output file for writing final exclude list
     StringVector2D finalhistvec = readCSV(appDataPathstr.toStdString()+"/playlistposlist.txt"); // open "playlistposlist.txt" as 2D vector finalhistvec
-    for (std::size_t i = 0 ;  i < finalhistvec.size(); i++){
+    for (auto & i : finalhistvec){
         for(int j=0;j<6;j++){
-            //std::cout << finalhistvec[i][4] << ", " <<finalhistvec[i][5] << std::endl;
-            if (std::stoi(finalhistvec[i][4]) > std::stoi(finalhistvec[i][5])){ // if playlist pos [6] is less than interval [5],
+            //std::cout << i[4] << ", " <<finalhistvec[i][5] << std::endl;
+            if (std::stoi(i[4]) > std::stoi(i[5])){ // if playlist pos [6] is less than interval [5],
                 //artistExcList << finalhistvec[i][1] << std::endl;
                 //std::cout << finalhistvec[i][1] << ", "<< finalhistvec[i][4] << ", " <<finalhistvec[i][5]<< std::endl;
-                artistExcludesVec.push_back(finalhistvec[i][1]); // then pushback artist (finalhistvec[i][1]) to artistExcludesVec
+                artistExcludesVec.push_back(i[1]); // then pushback artist (finalhistvec[i][1]) to artistExcludesVec
             }
         }
     }

@@ -50,7 +50,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double totalPLTime5{0};
     double totalPLTime6{0};
     double totalPLTime7{0};
-    double totalPLTime8{0};
+    double totalPLTime8{0};    
     // Iterate through ratedabbr2.txt and increment the time for each rating code and total for playlist
     // COL 4 - SongLength
     // COL 1 - PlaylistPosition
@@ -184,130 +184,137 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         }
     }
     // Determine whether a code of 7 or 8 was added in either of the last two tracks
-    if ((codeForPos1 == "7") || (codeForPos1 == "8") || (codeForPos2 == "7") || (codeForPos2 == "8")) {
-        exclude7and8 = true;
-    }
-    else {exclude7and8 = false;}
+    exclude7and8 = (codeForPos1 == "7") || (codeForPos1 == "8") || (codeForPos2 == "7") || (codeForPos2 == "8");
     //
     // Condition 1
     // If both of the last two tracks was a code 7 or 8 (should not occur), exclude from consideration
     if (((codeForPos1=="7") || (codeForPos1=="8")) && ((codeForPos2 == "7") || (codeForPos2 =="8"))) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 4);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 1. Evaluating codes 3, 4, 5, 6." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
     }
     // Condition 1a
     // If the last track was either a code 7 or 8, exclude 7 and 8 from consideration
     if ((codeForPos1=="7") || (codeForPos1=="8")) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 4);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 1a. Evaluating codes 3, 4, 5, 6." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
     }
     // Condition 2
     // If the second to last track was a code 7 or 8, and last track was a 3, exclude from consideration
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="3")) {
         double a_variances[] = {vrt4, vrt5, vrt6};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 3);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 2. Evaluating codes 4, 5, 6." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
     }
     // Condition 3
     // If the second to last track was a code 7 or 8, and last track was a 4, exclude from consideration
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  &&  (codeForPos1=="4")) {
         double a_variances[] = {vrt3, vrt5, vrt6};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 3);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 3. Evaluating codes 3, 5, 6." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
     }
     // Condition 4
     // If the second to last track was a code 7 or 8, and last track was a 5, exclude from consideration
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="5")) {
         double a_variances[] = {vrt3, vrt4, vrt6};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 3);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
     }
     // Condition 5
     // If the second to last track was a code 7 or 8, and last track was a 6, exclude from consideration
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="6")) {
         double a_variances[] = {vrt3, vrt4, vrt5};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 3);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 5. Evaluating codes 3, 4, 5." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
     }
     // Condition 6
     // If neither of the last two tracks was a code 7 or 8, and last track was a 3, exclude from consideration
     if ((!exclude7and8) && (codeForPos1=="3")) {
         double a_variances[] = {vrt4, vrt5, vrt6, vrt7, vrt8};
+        int avarcount = sizeof(a_variances);
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 5);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 6. Evaluating codes 4, 5, 6, 7, 8." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
-        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = 7;}
-        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = 8;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
+        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = Constants::kRatingCode7;}
+        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = Constants::kRatingCode8;}
     }
     // Condition 7
     // If neither of the last two tracks was a code 7 or 8, and last track was a 4, exclude from consideration
     if ((!exclude7and8) && (codeForPos1=="4")) {
         double a_variances[] = {vrt3, vrt5, vrt6, vrt7, vrt8};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 5);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 7. Evaluating codes 3, 5, 6, 7, 8." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
-        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = 7;}
-        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = 8;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
+        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = Constants::kRatingCode7;}
+        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = Constants::kRatingCode8;}
     }
     // Condition 8
     // If neither of the last two tracks was a code 7 or 8, and last track was a 5, exclude from consideration
     if ((!exclude7and8) && (codeForPos1=="5")) {
         double a_variances[] = {vrt3, vrt4, vrt6, vrt7, vrt8};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 5);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 8. Evaluating codes 3, 4, 6, 7, 8." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
-        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = 7;}
-        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = 8;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = Constants::kRatingCode6;}
+        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = Constants::kRatingCode7;}
+        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = Constants::kRatingCode8;}
     }
     // Condition 9
     // If neither of the last two tracks was a code 7 or 8, and last track was a 6, exclude from consideration
     if ((!exclude7and8) && (codeForPos1=="6")) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt7, vrt8};
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + 5);
+        int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + avarcount);
         if (Constants::kVerbose) std::cout << "Condition 9. Evaluating codes 3, 4, 5, 7, 8." << std::endl;
-        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
-        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
-        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
-        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = 7;}
-        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = 8;}
+        if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
+        if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
+        if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
+        if (isEqual(*maxVariance,varianceRatioTime7)== 1) {x = Constants::kRatingCode7;}
+        if (isEqual(*maxVariance,varianceRatioTime8)== 1) {x = Constants::kRatingCode8;}
     }
     ratedSongsTable.close();
     return x;

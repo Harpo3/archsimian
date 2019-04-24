@@ -32,6 +32,10 @@ const int kMaxFinalPlaylistPos{99999};
 const int kMaxLowestCode1Pos{99999};
 const int kMaxHighestCode1Pos{99999};
 
+// Constant for number tracks to add before notifying user of delay in processing
+const int kNotifyTrackThreshold{29};
+
+
 // Constants to set user-configurable default settings
 const int kUserDefaultRepeatFreqCode1{20};
 const int kUserDefaultTracksToAdd{10};
@@ -51,6 +55,10 @@ const int kUserDefaultMinalbums{2};
 const int kUserDefaultMintrackseach{4};
 const int kUserDefaultMintracks{8};
 
+// Constants for bound limits for setting by user in ui
+const int kRatingCode3MinDays{10};
+const int kRatingCode3MaxDays{120};
+
 // Calendar and time-related constants
 const int kDaysInYear{365};
 const int kMonthsInYear{12};
@@ -58,6 +66,8 @@ const int kWeeksInYear{52};
 const int kMilSecsToMinsFactor{60000};
 const int kMinsToHoursFactor{60};
 const int kConvertDecimalToPercentDisplay{100};
+const double kFractionOneDay{0.002739762};
+const int kSecondsToMins{60};
 
 // Constants for evaluating average listening time
 const int kDaysPerListeningPeriod{10};
@@ -72,6 +82,12 @@ const int kLowerBoundPeriod5{41};
 const double kUpperBoundPeriod5{50.9999};
 const int kLowerBoundPeriod6{51};
 const double kUpperBoundPeriod6{60.9999};
+const double kSumOfTheYearDigitsPeriod1{0.3};
+const double kSumOfTheYearDigitsPeriod2{0.25};
+const double kSumOfTheYearDigitsPeriod3{0.2};
+const double kSumOfTheYearDigitsPeriod4{0.15};
+const double kSumOfTheYearDigitsPeriod5{0.1};
+const double kSumOfTheYearDigitsPeriod6{0.05};
 
 // Constants for identifying column number in database (DSV, CSV) files
 const int kColumn0{0};
@@ -112,10 +128,19 @@ const int kColumn34{34};
 const int kColumn35{35};
 const int kColumn36{36};
 
+// Constants for rating codes
+const int kRatingCode1{1};
+const int kRatingCode3{3};
+const int kRatingCode4{4};
+const int kRatingCode5{5};
+const int kRatingCode6{6};
+const int kRatingCode7{7};
+const int kRatingCode8{8};
+
 
 
 // Constant to turn on or off troubleshooting feedback in console
-const bool kVerbose{true};
+const bool kVerbose{false};
 
 }
 #endif // CONSTANTS_H

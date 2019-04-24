@@ -87,7 +87,7 @@ bool matchLineinIfstream(std::ifstream & stream, std::string str) {
     bool x{false};
     while (getline(stream, line)) {
         x = stringMatch(line,str);
-        if (x == true) break;
+        if (x) break;
     }
     return x;
 }
@@ -102,8 +102,8 @@ std::string removeSpaces(std::string str)
 // Function to return a vector as a single DSV string with carat delimiter
 std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgdString) {
     std::ostringstream oschgdString;
-    for (unsigned long i = 0; i < input.size(); i++) {
-        oschgdString << input.at(i) << '^';
+    for (const auto & i : input) {
+        oschgdString << i << '^';
     }
     chgdString = oschgdString.str();
     return chgdString;
