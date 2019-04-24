@@ -12,36 +12,36 @@
 #include "utilities.h"
 
 inline bool doesFileExist (const std::string& name) {
-    struct stat buffer;
+    struct stat buffer{};
     return (stat (name.c_str(), &buffer) == 0);
 }
 
 bool recentlyUpdated(const QString &s_mmBackupDBDir)
 {
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-    bool existResult{0};
-    bool refreshNeededResult{0};
+    bool existResult{false};
+    bool refreshNeededResult{false};
     std::string convertStd2 = appDataPathstr.toStdString()+"/cleanlib.dsv";
     existResult = doesFileExist(convertStd2);// See inline function at top
-    if (Constants::verbose == true) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
-    if (existResult == 0) {refreshNeededResult = 1;}
+    if (Constants::kVerbose) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
+    if (!existResult) {refreshNeededResult = 1;}
     // If the lib file exists, Get the epoch date for the MM.DB file and see which file is older
-    if (existResult == 1){
+    if (existResult){
         std::string mmdbdir = s_mmBackupDBDir.toStdString();
         std::string mmpath = mmdbdir + "/MM.DB";
-        struct stat stbuf1;
+        struct stat stbuf1{};
         stat(mmpath.c_str(), &stbuf1);
         localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want        
-        if (Constants::verbose == true) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;        
-        struct stat stbuf2; // Now get the date for the cleanlib.csv file
+        if (Constants::kVerbose) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;        
+        struct stat stbuf2{}; // Now get the date for the cleanlib.csv file
         std::string mmpath99 = appDataPathstr.toStdString()+"/cleanlib.dsv";
         stat(mmpath99.c_str(), &stbuf2);
         localtime(&stbuf2.st_mtime);        
-        if (Constants::verbose == true) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;
+        if (Constants::kVerbose) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;
         double dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
         if (dateResult > 0) {
-            refreshNeededResult = 1;
-            if (Constants::verbose == true) std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
+            refreshNeededResult = true;
+            if (Constants::kVerbose) std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
         }
         // If the result is negative, then MM4 has not been updated since the program library was last refreshed. No update is necessary.
         // If positive, need to refresh all library data.
@@ -111,7 +111,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
         tokens.at(8) = songPath1;
         dirPathTokens.shrink_to_fit();
         //Adds a calculated rating code to Col 29 if Col 29 does not have a rating code already
-        if (tokens[29] == "") {
+        if (tokens[29].empty()) {
             std::string newstr;
             if (tokens[13] == "100") newstr = "3";
             if ((tokens[13] == "90") || (tokens[13] == "80")) newstr = "4";
@@ -122,7 +122,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
             if (tokens[13] == "20") newstr = "1";
             if (tokens[13] == "10") newstr = "0";
             if (tokens[13] == "0") newstr = "0";
-            if (tokens[13] == "") newstr = "0";
+            if (tokens[13].empty()) newstr = "0";
             tokens.at(29) = newstr;
         }
         if ((tokens[13] != "0") && ((tokens[17] == "0.0")||(tokens[17] == "0"))){
@@ -140,7 +140,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
             tokens.at(17) = strrandom;
         }
         //Adds artist (without any spaces) to Col 19 if Col 19 does not have a custom value already
-        if ((tokens[13] != "0") && (tokens[19] == "")) {
+        if ((tokens[13] != "0") && (tokens[19].empty())) {
             tokens.at(19) = tokens[1];
             tokens.at(19) = removeSpaces(tokens[19]);
         }
@@ -283,7 +283,7 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
 // Function to create the file ratedabbr.txt which adds artist intervals, and which will then be used for track selection functions
 void getSubset()
 {
-    if (Constants::verbose == true) std::cout << "Building the Archsimian database with artist intervals calculated....";
+    if (Constants::kVerbose) std::cout << "Building the Archsimian database with artist intervals calculated....";
         QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();    
     std::ofstream ratedabbr(appDataPathstr.toStdString()+"/ratedabbr.txt"); // output file for subset table
     std::fstream filestrinterval;
@@ -313,7 +313,7 @@ void getSubset()
     //std::cout << "Starting getline to read artistsadj.txt file into artistsadjVec." << std::endl;
     std::vector<std::string>ratedabbrvect;
     //ratedabbrvect.reserve(20000);
-    if (Constants::verbose == true) std::cout << "................" << std::endl;
+    if (Constants::kVerbose) std::cout << "................" << std::endl;
     // Outer loop: iterate through ratedSongsTable in the file "ratedlib.dsv"
     // Need to store col values for song path (8), LastPlayedDate (17), playlist position (will be obtained from cleanedplaylist), artist (19),
     // rating (29); artist interval will be obtained from artistsadj.txt
@@ -362,12 +362,12 @@ void getSubset()
         }
     }
     ratedabbrvect.shrink_to_fit();
-    if (Constants::verbose == true) std::cout << "Do final sort of ratedabbrvect and write to file." << std::endl;
+    if (Constants::kVerbose) std::cout << "Do final sort of ratedabbrvect and write to file." << std::endl;
     std::sort (ratedabbrvect.begin(), ratedabbrvect.end());
     for (std::size_t i = 0 ;  i < ratedabbrvect.size(); i++){
         ratedabbr << ratedabbrvect[i] << "\n";}
     primarySongsTable.close(); // Close cleanlib and vectors
     ratedabbr.close();
     ratedabbrvect.shrink_to_fit();
-    if (Constants::verbose == true) std::cout << "...finished!" << std::endl;
+    if (Constants::kVerbose) std::cout << "...finished!" << std::endl;
 }

@@ -5,6 +5,8 @@
 #include <sstream>
 #include <iostream>
 #include "utilities.h"
+#include "constants.h"
+
 
 /*
 This function runs after the function ratingCodeSelected, if enabled by the user.
@@ -13,7 +15,7 @@ for each artist in the artistalbmexcls.txt file. Sends the IDs to a text file ex
 */
 
 void getAlbumIDs(){
-    //if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
+    //if (Constants::kVerbose) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::fstream filestrartists;
     filestrartists.open (appDataPathstr.toStdString()+"/selalbmexcl.txt");
@@ -47,9 +49,9 @@ void getAlbumIDs(){
             std::exit(EXIT_FAILURE);
         }
         // set variables used to compare element values in ratedabbr2 against this str1
-        int finalplaylistPos = 99999;
-        int finaltokenLTP = 0;
-        std::string finalAlbumID = "0";
+        int finalplaylistPos{99999};
+        int finaltokenLTP{0};
+        std::string finalAlbumID{"0"};
         while (std::getline(ratedSongsTable, str2)) {  // Declare variables applicable to all rows
             std::istringstream iss(str2); // str is the string of each row
             std::string token; // token is the contents of each column of data
@@ -74,12 +76,13 @@ void getAlbumIDs(){
                 }
                 ++ tokenCount;
             }
-            bool foundmatch{0};
+            int foundmatch{0};
+            int tmppos{0};
             foundmatch = stringMatch(selectedArtistToken, str1);// Check whether the artist in ratedabbr2 matches artist in selalbmexcl.txt
             if ((playlistPos != "0") && (foundmatch == 1)){// If the artist matches, get lowest playlist position and save albumID associated with it
                 // if the matched artist is in the playlist or extended count, get lowest playlist position
                 tokenLTP = "0"; // reset lasttime played when/if playlist entry found
-                int tmppos= std::stoi(playlistPos);
+                tmppos = std::stoi(playlistPos);
                 finalplaylistPos = tmppos;
                 finalAlbumID = albumID;
             }
@@ -131,7 +134,7 @@ void getTrimArtAlbmList(){
             std::cout << "getArtCompare: Error opening artistexcludes.txt." << std::endl;
             std::exit(EXIT_FAILURE);
         }
-        bool foundmatch{0};
+        int foundmatch{0};
         foundmatch = matchLineinIfstream(artistTable2, str1);
         artistTable2.close();
         if (foundmatch == 0)

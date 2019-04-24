@@ -4,14 +4,14 @@
 #include <vector>
 #include <map>
 
-typedef std::vector<std::string> StringVector;
-typedef std::vector<StringVector> StringVector2D;
+//typedef std::vector<std::string> StringVector;
+//typedef std::vector<StringVector> StringVector2D;
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
 int countBlankChars(std::string input);
-StringVector2D readDSV(std::string filename);
-StringVector2D readCSV(std::string filename);
+StringVector2D readDSV(const std::string& filename);
+StringVector2D readCSV(const std::string& filename);
 void trim_cruft(std::string& buffer);
 bool stringMatch(std::string s1, std::string s2);
 bool matchLineinIfstream(std::ifstream & stream, std::string str);

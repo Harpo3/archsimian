@@ -8,10 +8,10 @@
 #include "utilities.h"
 
 // Function to adjust the number of tracks of each artist by weighting them using the assigned ratings of each track
-void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTillRepeatCode4factor,double *_syrsTillRepeatCode5factor,
-                            double *_syrsTillRepeatCode6factor,double *_syrsTillRepeatCode7factor,double *_syrsTillRepeatCode8factor,
-                            int *_srCode3TotTrackQty,int *_srCode4TotTrackQty,int *_srCode5TotTrackQty,
-                            int *_srCode6TotTrackQty,int *_srCode7TotTrackQty,int *_srCode8TotTrackQty)
+void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
+                            const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
+                            const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
+                            const int *_srCode6TotTrackQty,const int *_srCode7TotTrackQty,const int *_srCode8TotTrackQty)
 {
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
@@ -45,7 +45,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
             if ((tokenCount == 29) && (token != "0")) {ratingCode = true;}// if custom artist grouping is selected use this code
             ++ tokenCount;
         }
-        if (ratingCode == true) {outartists << selectedArtistToken << "\n"; }// Write artist to clean file if rated
+        if (ratingCode) {outartists << selectedArtistToken << "\n"; }// Write artist to clean file if rated
     }
     SongsTable.close();    // Close files opened for reading and writing. SongsTable will be reopened shortly as cleanlibSongsTable2
     outartists.close();
@@ -61,7 +61,7 @@ void getArtistAdjustedCount(double *_syrsTillRepeatCode3factor,double *_syrsTill
     for (auto & elem : artists)  // Iterate over the vector and store the frequency of each element in map
     {
         auto result = countMap.insert(std::pair<std::string, int>(elem, 1));
-        if (result.second == false)
+        if (!result.second)
             result.first->second++;
     }
     // Iterate over the map

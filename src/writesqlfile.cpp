@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include "constants.h"
-#include <stdio.h>
+#include <cstdio>
 
 void writeSQLFile(){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();

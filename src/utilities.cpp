@@ -7,13 +7,13 @@
 #include <iostream>
 #include <sys/stat.h>
 
-typedef std::vector<std::string> StringVector;
-typedef std::vector<StringVector> StringVector2D;
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
+//using StringVector = std::vector<std::string>;
+//using StringVector2D = std::vector<StringVector>;
 
 inline bool doesFileExist (const std::string& name) {
-    struct stat buffer;
+    struct stat buffer{};
     return (stat (name.c_str(), &buffer) == 0);
 }
 
@@ -27,7 +27,7 @@ int countBlankChars(std::string input)
         return spaces;
 }
 
-StringVector2D readDSV(std::string filename)
+StringVector2D readDSV(const std::string& filename)
 {
     char separator = '^';
     StringVector2D result;
@@ -44,11 +44,13 @@ StringVector2D readDSV(std::string filename)
     return result;
 }
 
-StringVector2D readCSV(std::string filename)
+StringVector2D readCSV(const std::string& filename)
 {
     char separator = ',';
     StringVector2D result;
-    std::string row, item;
+    std::string row;
+    std::string item;
+
     std::ifstream in(filename);
     while(getline(in,row))
     {
@@ -70,21 +72,21 @@ void trim_cruft(std::string& buffer)
 // Compares two strings and returns bool for match result
 bool stringMatch(std::string s1, std::string s2)
 {
-    bool x{0};
+    bool x{false};
     trim_cruft(s1);
     trim_cruft(s2);
-    if(s1 != s2)x = 0;
-    else x = 1;
+    if(s1 != s2)x = false;
+    else x = true;
     return x;
 }
 
 // Looks for str in ifstream and returns a bool for match result
 bool matchLineinIfstream(std::ifstream & stream, std::string str) {
     std::string line;
-    bool x{0};
+    bool x{false};
     while (getline(stream, line)) {
         x = stringMatch(line,str);
-        if (x == 1) break;
+        if (x == true) break;
     }
     return x;
 }

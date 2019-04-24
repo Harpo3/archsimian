@@ -1,8 +1,8 @@
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <iostream>
-#include <time.h>
-#include <stdio.h>
+#include <ctime>
+#include <cstdio>
 #include <iomanip>
 #include "constants.h"
 #include <random> // for std::mt19937

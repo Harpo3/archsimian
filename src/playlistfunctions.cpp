@@ -18,14 +18,14 @@ inline bool isEqual(double x, double y){
 int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
                        double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8){
     //Lookup the rating codes for last two tracks on the playlist;
-    if (Constants::verbose == true) std::cout << "ratingCodeSelected function started." << std::endl;
+    if (Constants::kVerbose) std::cout << "ratingCodeSelected function started." << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
 
     int x = 0; // variable to return the rating code to be used for the next track selection
     //bool isRating1Qty = (s_rCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
    // int rating1PosCount{0};
     //std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
-   // if (isRating1Qty == true) //Before going to logic for other rating codes, determine whether to select rating code 1
+   // if (isRating1Qty) //Before going to logic for other rating codes, determine whether to select rating code 1
     //{
         // check if rating 1 total in playlist is equal to *_srCode1TotTrackQty; if true
         // set isRating1Qty to false and continue function
@@ -94,15 +94,15 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
                 selectedPlaylistPosition = token;
                 if (token == "1") {
                     codeForPos1 = selectedRatingCode;
-                    if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 1 is: "<< str << std::endl;
+                    if (Constants::kVerbose)std::cout << "selectedPlaylistPosition 1 is: "<< str << std::endl;
                 }
                 if (token == "2") {
                     codeForPos2 = selectedRatingCode;
-                    if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 2 is: "<< str << std::endl;
+                    if (Constants::kVerbose)std::cout << "selectedPlaylistPosition 2 is: "<< str << std::endl;
                 }
                 if (token == "3") { // this is used as needed to replace rating code 1
                     codeForPos3 = selectedRatingCode;
-                    if (Constants::verbose == true)std::cout << "selectedPlaylistPosition 3 is: "<< str << std::endl;
+                    if (Constants::kVerbose)std::cout << "selectedPlaylistPosition 3 is: "<< str << std::endl;
                 }                
             }
             ++ tokenCount;
@@ -118,7 +118,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
             if (selectedRatingCode == "8") {totalPLTime8 = totalPLTime8 + selectedSongLength;}
         }
     }
-    if (Constants::verbose == true) {
+    if (Constants::kVerbose) {
     std::cout << "totalPLTime3 is: " <<totalPLTime3/1000 << std::endl;
     std::cout << "totalPLTime4 is: " <<totalPLTime4/1000 << std::endl;
     std::cout << "totalPLTime5 is: " <<totalPLTime5/1000 << std::endl;
@@ -136,7 +136,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double ratioTime6 = totalPLTime6 / totalPlaylistTime;
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
-    if (Constants::verbose == true) {
+    if (Constants::kVerbose) {
     std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_ratingRatio3 << std::endl;
     std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_ratingRatio4<< std::endl;
     std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << s_ratingRatio5<< std::endl;
@@ -152,7 +152,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double varianceRatioTime6 = (s_ratingRatio6 - ratioTime6) / s_ratingRatio6;
     double varianceRatioTime7 = (s_ratingRatio7 - ratioTime7) / s_ratingRatio7;
     double varianceRatioTime8 = (s_ratingRatio8 - ratioTime8) / s_ratingRatio8;
-    if (Constants::verbose == true) {
+    if (Constants::kVerbose) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
     std::cout << "varianceRatioTime5 is: " << varianceRatioTime5 << std::endl;
@@ -195,7 +195,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 4);
-        if (Constants::verbose == true) std::cout << "Condition 1. Evaluating codes 3, 4, 5, 6." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 1. Evaluating codes 3, 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -207,7 +207,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 4);
-        if (Constants::verbose == true) std::cout << "Condition 1a. Evaluating codes 3, 4, 5, 6." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 1a. Evaluating codes 3, 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -219,7 +219,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt4, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        if (Constants::verbose == true) std::cout << "Condition 2. Evaluating codes 4, 5, 6." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 2. Evaluating codes 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -230,7 +230,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt3, vrt5, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        if (Constants::verbose == true) std::cout << "Condition 3. Evaluating codes 3, 5, 6." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 3. Evaluating codes 3, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -241,7 +241,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt3, vrt4, vrt6};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        if (Constants::verbose == true) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -252,18 +252,18 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         double a_variances[] = {vrt3, vrt4, vrt5};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 3);
-        if (Constants::verbose == true) std::cout << "Condition 5. Evaluating codes 3, 4, 5." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 5. Evaluating codes 3, 4, 5." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
     }
     // Condition 6
     // If neither of the last two tracks was a code 7 or 8, and last track was a 3, exclude from consideration
-    if ((exclude7and8==false) && (codeForPos1=="3")) {
+    if ((!exclude7and8) && (codeForPos1=="3")) {
         double a_variances[] = {vrt4, vrt5, vrt6, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        if (Constants::verbose == true) std::cout << "Condition 6. Evaluating codes 4, 5, 6, 7, 8." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 6. Evaluating codes 4, 5, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -272,11 +272,11 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     }
     // Condition 7
     // If neither of the last two tracks was a code 7 or 8, and last track was a 4, exclude from consideration
-    if ((exclude7and8==false) && (codeForPos1=="4")) {
+    if ((!exclude7and8) && (codeForPos1=="4")) {
         double a_variances[] = {vrt3, vrt5, vrt6, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        if (Constants::verbose == true) std::cout << "Condition 7. Evaluating codes 3, 5, 6, 7, 8." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 7. Evaluating codes 3, 5, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -285,11 +285,11 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     }
     // Condition 8
     // If neither of the last two tracks was a code 7 or 8, and last track was a 5, exclude from consideration
-    if ((exclude7and8==false) && (codeForPos1=="5")) {
+    if ((!exclude7and8) && (codeForPos1=="5")) {
         double a_variances[] = {vrt3, vrt4, vrt6, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        if (Constants::verbose == true) std::cout << "Condition 8. Evaluating codes 3, 4, 6, 7, 8." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 8. Evaluating codes 3, 4, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime6)== 1) {x = 6;}
@@ -298,11 +298,11 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     }
     // Condition 9
     // If neither of the last two tracks was a code 7 or 8, and last track was a 6, exclude from consideration
-    if ((exclude7and8==false) && (codeForPos1=="6")) {
+    if ((!exclude7and8) && (codeForPos1=="6")) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt7, vrt8};
         double* maxVariance;
         maxVariance = std::max_element(a_variances, a_variances + 5);
-        if (Constants::verbose == true) std::cout << "Condition 9. Evaluating codes 3, 4, 5, 7, 8." << std::endl;
+        if (Constants::kVerbose) std::cout << "Condition 9. Evaluating codes 3, 4, 5, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = 3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = 4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = 5;}
@@ -321,7 +321,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
 
 std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath, bool &s_includeAlbumVariety){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-    if (Constants::verbose == true) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
+    if (Constants::kVerbose) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
@@ -335,7 +335,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::string str1; // store the string for ratedabbr2.txt
     std::string str2; // store the string for artistexcludes.txt
     std::string str3; // store the string for finalids.txt
-    bool notInPlaylist{0};
+    bool notInPlaylist{false};
     std::string currentArtistInterval; // token is the contents of each column of data
     std::string currentArtist; // Artist variable from
     std::string tokenLTP;
@@ -351,7 +351,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     static bool s_excludeMatch2{false};
     std::vector<std::string>finaltracksvect; // New vector to store final selections
     finaltracksvect.reserve(10000);
-    if (Constants::verbose == true) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
+    if (Constants::kVerbose) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"    
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
         std::istringstream iss(str1); // str is the string of each row
@@ -377,10 +377,10 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             if (tokenCount == 7)  {playlistPos = token;}
             ++ tokenCount;
         }
-        if (playlistPos == "0") {notInPlaylist = 1;} // Set variable to check whether item is or is not in the playlist
-        else {notInPlaylist = 0;} // Set variable to check whether item is or is not in the playlist
+        if (playlistPos == "0") {notInPlaylist = true;} // Set variable to check whether item is or is not in the playlist
+        else {notInPlaylist = false;} // Set variable to check whether item is or is not in the playlist
         if (notInPlaylist == 0) {continue;} // If item is already on the playlist, continue to next str1
-        else if (ratingCode != std::to_string(s_ratingNextTrack)) {continue;} // If item does not have the rating selected, continue to next str1
+        if (ratingCode != std::to_string(s_ratingNextTrack)) {continue;} // If item does not have the rating selected, continue to next str1
         /*
          If str1 has not yet been skipped, a track has been found with the rating selected and is not yet been placed on the playlist
          Now, open an inner loop and iterate through artistexcludes.txt, comparing each 'exclude' entry against the artist token.
@@ -401,7 +401,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
         while (std::getline(artexcludes, str2)) {
             if (std::string(str2) == selectedArtistToken) {s_excludeMatch = true;} // If excluded artist found, set bool to true
         }
-        if (s_excludeMatch == true){
+        if (s_excludeMatch){
             artexcludes.close();
             continue;} // if an excluded artist is found continue to next str1
         artexcludes.close();
@@ -410,7 +410,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
            finalids.txt (which contains the album IDs which are to be excluded) and compare each ID to the str1 albumID token.
            Continue to next str1 if a match found (meaning it identifies an excluded album ID).
         */
-        if (s_includeAlbumVariety == true){
+        if (s_includeAlbumVariety){
             QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
@@ -430,25 +430,25 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
                     s_excludeMatch2 = true; // If excluded album found, set bool to true                    
                 }                
             }
-            if (s_excludeMatch2 == true){
+            if (s_excludeMatch2){
                 artalbexcludes.close();
                 continue;}// if an excluded artist is found continue to next str1
             artalbexcludes.close();
         }
         finaltracksvect.push_back(tokenLTP+","+songPath); // If not skipped by now, add the track to the final list
-        continue; // end of the str1 while block, continue to next str1
+        // end of the str1 while block, continue to next str1
     }
     ratedSongsTable.close();
     std::sort (finaltracksvect.begin(), finaltracksvect.end()); // sorts vector by LTP so the oldest track is first
     std::string fullstring = finaltracksvect.front(); // Saves the first item in vector to a variable
     std::vector<std::string> splittedStrings = split(fullstring, ','); // Function splits the variable and leaves the track path only
     *s_selectedTrackPath = splittedStrings[1];
-    if (Constants::verbose == true) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
+    if (Constants::kVerbose) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
     std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
     playlist.close();    
     std::string selectedTrackPathshort;
-    if (Constants::verbose == true) std::cout << "selectTrack function: Track selected (non-code-1): " << *s_selectedTrackPath  << std::endl;
+    if (Constants::kVerbose) std::cout << "selectTrack function: Track selected (non-code-1): " << *s_selectedTrackPath  << std::endl;
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
 }

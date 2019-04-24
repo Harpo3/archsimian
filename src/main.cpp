@@ -9,8 +9,8 @@
 int main(int argc,char* argv[])
 {
         QApplication mainapp(argc, argv);        
-        mainapp.setOrganizationName("archsimian");
-        mainapp.setApplicationName("archsimian");
+        QApplication::setOrganizationName("archsimian");
+        QApplication::setApplicationName("archsimian");
 
         QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
         QDir appDataPath = appDataPathstr;
@@ -23,6 +23,6 @@ int main(int argc,char* argv[])
         //std::cout <<convertStdPath<< std::endl;
         ArchSimian guiWindow;
         guiWindow.show();   // This launches the user interface (UI)
-        mainapp.exec();
+        QApplication::exec();
     return 0;
 }

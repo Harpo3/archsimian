@@ -6,8 +6,8 @@
 
 namespace Ui {
 class ArchSimian;
-class QLabel;
-class QMenu;
+//class QLabel;
+//class QMenu;
 }
 
 class ArchSimian : public QMainWindow
@@ -105,7 +105,7 @@ private:
 
 
 public:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 
 private:

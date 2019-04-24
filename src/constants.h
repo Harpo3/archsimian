@@ -26,8 +26,32 @@ const char sqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that th
 const char cleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
 const char cleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
 
+// Constant used to set the maximum size of a playlist
+
+//const int finalplaylistPos{99999};
+
+// Constants to set user-configurable default settings
+const int kUserDefaultRepeatFreqCode1{20};
+const int kUserDefaultTracksToAdd{10};
+const QString kUserDefaultDefaultPlaylist{};
+const bool kUserDefaultIncludeNewTracks{false};
+const bool kUserDefaultIncludeAlbumVariety{false};
+const bool kUserDefaultNoAutoSave{true};
+const bool kUserDefaultDisableNotificationAddTracks{false};
+const double kUserDefaultDaysTillRepeatCode3{65};
+const double kUserDefaultRepeatFactorCode4{2.7};
+const double kUserDefaultRepeatFactorCode5{2.1};
+const double kUserDefaultRepeatFactorCode6{2.2};
+const double kUserDefaultRepeatFactorCode7{1.6};
+const double kUserDefaultRepeatFactorCode8{1.4};
+const QString kUserDefaultWindowsDriveLetter{};
+const int kUserDefaultMinalbums{2};
+const int kUserDefaultMintrackseach{4};
+const int kUserDefaultMintracks{8};
+
+
 // Constant to turn on or off troubleshooting feedback in console
-const bool verbose{false};
+const bool kVerbose{false};
 
 }
 #endif // CONSTANTS_H

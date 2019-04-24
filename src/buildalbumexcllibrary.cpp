@@ -16,7 +16,7 @@ void findDuplicates(std::vector<T> & vecOfElements, std::map<T, int> & countMap)
     for (auto & elem : vecOfElements)
     {
         auto result = countMap.insert(std::pair<std::string, int>(elem, 1));
-        if (result.second == false)
+        if (!result.second)
             result.first->second++;
     }
     // Remove the elements from Map which has 1 frequency count
@@ -151,7 +151,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     while (std::getline(mytmpfile, stra))
     {
         // Line contains string of length > 0 then save it in multimap
-        if(stra.size() > 0)
+        if(!stra.empty())
             mymap.push_back(stra);
     }
     std::map<std::string, int> duplicateElements;
@@ -180,7 +180,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     while (std::getline(mytmpfile2, str2))
     {
         // Line contains string of length > 0 then save it in multimap
-        if(str2.size() > 0){
+        if(!str2.empty()){
             mymap1.push_back(str2);
             //std::cout << str2 << std::endl;
         }
