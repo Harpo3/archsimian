@@ -191,8 +191,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if (((codeForPos1=="7") || (codeForPos1=="8")) && ((codeForPos2 == "7") || (codeForPos2 =="8"))) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 4);
         if (Constants::kVerbose) std::cout << "Condition 1. Evaluating codes 3, 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
@@ -204,8 +204,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if ((codeForPos1=="7") || (codeForPos1=="8")) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt6};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 4);
         if (Constants::kVerbose) std::cout << "Condition 1a. Evaluating codes 3, 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
@@ -217,8 +217,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="3")) {
         double a_variances[] = {vrt4, vrt5, vrt6};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 3);
         if (Constants::kVerbose) std::cout << "Condition 2. Evaluating codes 4, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
@@ -229,8 +229,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  &&  (codeForPos1=="4")) {
         double a_variances[] = {vrt3, vrt5, vrt6};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 3);
         if (Constants::kVerbose) std::cout << "Condition 3. Evaluating codes 3, 5, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
@@ -241,8 +241,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="5")) {
         double a_variances[] = {vrt3, vrt4, vrt6};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 3);
         if (Constants::kVerbose) std::cout << "Condition 4. Evaluating codes 3, 4, 6." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
@@ -253,8 +253,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if (((codeForPos2 == "7") || (codeForPos2 =="8"))  && (codeForPos1=="6")) {
         double a_variances[] = {vrt3, vrt4, vrt5};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 3);
         if (Constants::kVerbose) std::cout << "Condition 5. Evaluating codes 3, 4, 5." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
@@ -264,9 +264,9 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     // If neither of the last two tracks was a code 7 or 8, and last track was a 3, exclude from consideration
     if ((!exclude7and8) && (codeForPos1=="3")) {
         double a_variances[] = {vrt4, vrt5, vrt6, vrt7, vrt8};
-        int avarcount = sizeof(a_variances);
+       // int avarcount = sizeof(a_variances);
         double* maxVariance;
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        maxVariance = std::max_element(a_variances, a_variances + 5);
         if (Constants::kVerbose) std::cout << "Condition 6. Evaluating codes 4, 5, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
@@ -279,8 +279,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if ((!exclude7and8) && (codeForPos1=="4")) {
         double a_variances[] = {vrt3, vrt5, vrt6, vrt7, vrt8};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 5);
         if (Constants::kVerbose) std::cout << "Condition 7. Evaluating codes 3, 5, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime5)== 1) {x = Constants::kRatingCode5;}
@@ -293,8 +293,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if ((!exclude7and8) && (codeForPos1=="5")) {
         double a_variances[] = {vrt3, vrt4, vrt6, vrt7, vrt8};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 5);
         if (Constants::kVerbose) std::cout << "Condition 8. Evaluating codes 3, 4, 6, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
@@ -307,8 +307,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if ((!exclude7and8) && (codeForPos1=="6")) {
         double a_variances[] = {vrt3, vrt4, vrt5, vrt7, vrt8};
         double* maxVariance;
-        int avarcount = sizeof(a_variances);
-        maxVariance = std::max_element(a_variances, a_variances + avarcount);
+        //int avarcount = sizeof(a_variances);
+        maxVariance = std::max_element(a_variances, a_variances + 5);
         if (Constants::kVerbose) std::cout << "Condition 9. Evaluating codes 3, 4, 5, 7, 8." << std::endl;
         if (isEqual(*maxVariance,varianceRatioTime3)== 1) {x = Constants::kRatingCode3;}
         if (isEqual(*maxVariance,varianceRatioTime4)== 1) {x = Constants::kRatingCode4;}
