@@ -40,9 +40,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^'))
         {
-            // TOKEN PROCESSING - COL 19
             if (tokenCount == Constants::kColumn19)  {selectedArtistToken = token;}//  artist grouping
-            // TOKEN PROCESSING - COL 29
             if ((tokenCount == Constants::kColumn29) && (token != "0")) {ratingCode = true;}// if custom artist grouping is selected use this code
             ++ tokenCount;
         }
@@ -113,10 +111,8 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         while (std::getline(issArtists, tokenArtist, ','))
         {
             countdown = currentArtistCount + 1;
-            // TOKEN PROCESSING - COL 0
             if (tokenArtistsCount == Constants::kColumn0) {currentArtist = tokenArtist;}
             //std::cout << "Current artist from artists.txt is " << currentArtist << std::endl;
-            // TOKEN PROCESSING - COL 1
             if (tokenArtistsCount == Constants::kColumn1) {currentArtistCount = std::stoi(tokenArtist);}
             ++tokenArtistsCount;
         }
@@ -141,7 +137,6 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
             // Inner loop within second loop: iterate through each column (token) of row to find and match artist
             while (std::getline(iss, token, '^'))
             {
-                // TOKEN PROCESSING - COL 19  artist token
                 if (tokenCount == Constants::kColumn19)  {
                     selectedArtistToken = token;
                     if (currentArtist == selectedArtistToken) {
@@ -150,7 +145,6 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
                         -- countdown;
                     }
                 }
-                // TOKEN PROCESSING - COL 29 get rating and store for current row
                 if (tokenCount == Constants::kColumn29) {
                     if (artistMatch == 1) {
                         selectedRating = token;

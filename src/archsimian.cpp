@@ -969,7 +969,6 @@ void ArchSimian::on_getplaylistButton_clicked()
         ui->addsongsButton->setEnabled(true);
         ui->exportplaylistButton->setEnabled(true);
         }
-
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
@@ -1441,8 +1440,6 @@ void ArchSimian::on_addsongsButton_clicked(bool checked) // change button state 
     ui->addsongsButton->setEnabled(true);
     ui->addtrksspinBox->setEnabled(true);
 }
-
-
 
 void ArchSimian::on_actionExport_Playlist_triggered()
 {

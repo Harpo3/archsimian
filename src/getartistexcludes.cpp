@@ -38,15 +38,16 @@ void getArtistExcludes()
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ','))
         {
-            // TOKEN PROCESSING - COL 1
             if ((tokenCount == 1) && (token != "0"))
             {playlistPosition = token;} // playlist position, exclude if not in playlist
-            // TOKEN PROCESSING - COL 3
             if (tokenCount == 3)  {selectedArtistToken = token;}//  artist is selected
             ++ tokenCount;
         }
-        if ((playlistPosition != "0") && (playlistPosition != "Custom1")){plvect.push_back(selectedArtistToken+','+playlistPosition);}
-
+        if ((playlistPosition != "0") && (playlistPosition != "Custom1")){
+            std::string commatxt{","};
+            std::string vectorstring;
+            vectorstring.append(selectedArtistToken).append(commatxt).append(playlistPosition);
+            plvect.push_back(vectorstring);}
         playlistPosition = "0";
     }
     std::sort (plvect.begin(), plvect.end());
@@ -127,7 +128,11 @@ void getExcludedArtists(const int &s_playlistSize)
             // histvect - if path in vector row does not match a playlist entry, push to extended
             // play history vector
             if ((song != pathinlib) && (songCount == 1)){
-                histvect.push_back(tokenLTP+","+selectedArtistToken+","+songLength+","+ratingCode+","+artistInterval+","+albumID);
+                std::string commatxt{","};
+                std::string vectorstring;
+                vectorstring.append(tokenLTP).append(commatxt).append(selectedArtistToken).append(commatxt).append(songLength)
+                        .append(commatxt).append(ratingCode).append(commatxt).append(artistInterval).append(commatxt).append(albumID);
+                histvect.push_back(vectorstring);
                 continue;
             }
             // ratedabbrVec - if path in vector row matches a playlist entry, remove zero from col 7 and emplace
@@ -151,10 +156,6 @@ void getExcludedArtists(const int &s_playlistSize)
 
     std::string strbuild;
     std::sort (ratedabbrVec.begin(), ratedabbrVec.end());
-    //
-    // add code here to populate excludedartists vector using col 6 of ratedabbrVec
-    // for playlist positions emplaced from playlist, and extended positions emplaced by histvect
-    //
 
     // Writes a 2D vector of strings to a file, each row with comma separated values
     // This file (ratedabbr2.txt) will be later used to select next track for playlist (total rating times, and current playlist position)

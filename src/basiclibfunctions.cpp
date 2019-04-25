@@ -192,7 +192,6 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
             if (tokenCount == Constants::kColumn12) {tempTokenTrackTime = token;}
             // Store the lastplayed date string tempTokenLastPlayedTime text variable
             if (tokenCount == Constants::kColumn17) {tempTokenLastPlayedTime = token;}
-            // TOKEN PROCESSING - COL 17
             // Collect lastplayed stats to compute avg listening time for six 10-day evaluation periods
             double tempLastPlayedDate{0.0};
             std::string strrandom;
@@ -226,7 +225,6 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
                         ++*_sSQL60DayTracksTot;}
                 }
             }
-            // TOKEN PROCESSING - COLS 12, 29
             // Then, check the current line for the GroupDesc (rating code, col 29), which is
             // then used to increment the song quantity and song time accordingly
             // Cols 12 and 29 are for song time and GroupDesc (rating code)
@@ -324,21 +322,13 @@ void getSubset()
         //std::cout << "While iterating lines from cleanlib.dsv into vector ratedabbrvect, start token loop." << std::endl;
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^')) {
-            // TOKEN PROCESSING - COL 2
             if (tokenCount == Constants::kColumn2){albumID = token;} // store albumID variable
-            // TOKEN PROCESSING - COL 8
             if (tokenCount == Constants::kColumn8){songPath = token;} // store song path variable
-            // TOKEN PROCESSING - COL 12
             if (tokenCount == Constants::kColumn12){songLength = token;} // store song length variable
-            // TOKEN PROCESSING - COL 13
             if (tokenCount == Constants::kColumn13){popmRating = token;} // store song length variable
-            // TOKEN PROCESSING - COL 17
             if ((tokenCount == Constants::kColumn17) && (popmRating != "0") && (token != "0")){tokenLTP = token;} // store LastPlayedDate in SQL Time
-            // TOKEN PROCESSING - COL 19
             if (tokenCount == Constants::kColumn19) {selectedArtistToken = token;}// artist
-            // TOKEN PROCESSING - COL 29
             if (tokenCount == Constants::kColumn29){ratingCode = token;} // store rating variable
-            // TOKEN PROCESSING - Artist Interval
             // Using 2D vector using artistIntervalVec, assign interval of artist matching
             // selectedArtistToken to s_artistInterval variable
             std::string artistsadjartGp;
@@ -355,9 +345,14 @@ void getSubset()
         // Write lasttimeplayed, rating code, artist, songpath, songlength, repeat interval, and playlist position of zero to
         // the output file if not currently the header row, and is a rated track
         if (ratingCode != "0"){
-            //std::cout << "Processing rated string #: " <<ratedabbrvect.size() << "." << "\n";
+            //std::cout << "Processing rated string #: " <<ratedabbrvect.size() << "." << "\n";            
             if ((selectedArtistToken != "Custom2") && (selectedArtistToken != "Artist")){
-                ratedabbrvect.push_back(tokenLTP+","+ratingCode+","+selectedArtistToken+","+songPath+","+songLength+","+s_artistInterval+","+albumID+",0");
+                std::string commatxt{","};
+                std::string endval{",0"};
+                std::string vectorstring;
+                vectorstring.append(tokenLTP).append(commatxt).append(ratingCode).append(commatxt).append(selectedArtistToken).append(commatxt)
+                        .append(songPath).append(commatxt).append(songLength).append(commatxt).append(s_artistInterval).append(commatxt).append(albumID).append(endval);
+                ratedabbrvect.push_back(vectorstring);
             }
         }
     }

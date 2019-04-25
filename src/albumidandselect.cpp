@@ -7,7 +7,6 @@
 #include "utilities.h"
 #include "constants.h"
 
-
 /*
 This function runs after the function ratingCodeSelected, if enabled by the user.
 Iterate through tracks in ratedabbr2.txt starting from oldest playlist position to newest
@@ -57,15 +56,10 @@ void getAlbumIDs(){
             std::string token; // token is the contents of each column of data
             int tokenCount{0}; //token count is the number of delimiter characters within str
             while (std::getline(iss, token, ',')) {
-                // TOKEN PROCESSING - COL 0
                 if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
-                // TOKEN PROCESSING - COL 1
                 if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
-                // TOKEN PROCESSING - COL 2
                 if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
-                // TOKEN PROCESSING - COL 6
                 if (tokenCount == Constants::kColumn6) {albumID = token;} // store album ID variable
-                // TOKEN PROCESSING - COL 7
                 if (tokenCount == Constants::kColumn7)  {
                     if (token != "0"){
                         int tmpint = std::stoi(token);

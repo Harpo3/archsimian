@@ -131,8 +131,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
             trim_cruft(selectedArtistAlbToken);
             trim_cruft(selectedArtistTmpToken);
             if (selectedArtistAlbToken == selectedArtistTmpToken){
-                //std::cout << "selectedArtistAlbToken " << selectedArtistAlbToken << ", AlbumIDToken " << AlbumIDToken<< std::endl;
-                albIDVect.push_back(selectedArtistAlbToken + ',' + AlbumIDToken);
+                std::string commatxt{","};
+                std::string vectorstring;
+                vectorstring.append(selectedArtistAlbToken).append(commatxt).append(AlbumIDToken);
+                albIDVect.push_back(vectorstring);
             }
         }
         ++h;

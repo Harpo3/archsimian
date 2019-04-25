@@ -31,11 +31,8 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
         while (std::getline(iss, token, ',')) {
-            // TOKEN PROCESSING - COL 1
             if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
-            // TOKEN PROCESSING - COL 2
             if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
-            // TOKEN PROCESSING - COL 7
             if (tokenCount == Constants::kColumn7)  {
                 playlistPos = token;
                 if ((ratingCode == "1") && (playlistPos != "0")){
@@ -87,23 +84,21 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
         int tokenCount{0}; //token count is the number of delimiter characters within str
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ',')) {
-            // TOKEN PROCESSING - COL 0
             if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
-            // TOKEN PROCESSING - COL 1
             if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
-            // TOKEN PROCESSING - COL 2
             if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
-            // TOKEN PROCESSING - COL 3
             if (tokenCount == Constants::kColumn3) {songPath = token;}// store song path variable
-            // TOKEN PROCESSING - COL 6
             if (tokenCount == Constants::kColumn6) {albumID = token;}// store album ID variable
-            // TOKEN PROCESSING - COL 7
             if (tokenCount == Constants::kColumn7)  {playlistPos = token;}
             ++ tokenCount;
         }
-        if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1))  // if a code 1 track is not
-            //in the playlist and not the last artist selected, add to vector used to return track path to s_selectedCode1Path
-        {code1tracksvect.push_back(tokenLTP+","+selectedArtistToken+","+songPath+","+playlistPos);}
+        if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1)) {
+            // if a code 1 track is not
+            //in the playlist and not the last artist selected, add to vector used to return track path to s_selectedCode1Path        
+            std::string commatxt{","};
+            std::string vectorstring;
+            vectorstring.append(tokenLTP).append(commatxt).append(selectedArtistToken).append(commatxt).append(songPath).append(commatxt).append(playlistPos);
+            code1tracksvect.push_back(vectorstring);}
     }
     std::sort (code1tracksvect.begin(), code1tracksvect.end());
     std::string fullstring = code1tracksvect.front();
