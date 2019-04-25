@@ -77,14 +77,14 @@ Note: while it could installed on a separate partition of Windows using a dual b
 
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
-Backup 6.0 (trixmoto) for backing up the MM4 database; 
+Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database; 
 Update Location of Files in Database (if you install a VM); 
-RegEx Find and Replace; and, 
-ImportM3U
+RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
+ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
 
 <b>Linux applications you will need (For Arch, via the AUR):</b>
 
-SQLite 3 for database commands
+SQLite3 for database commands
 
 <b>Linux applications you will likely want to use along with this program:</b>
 
@@ -92,9 +92,9 @@ audacious-qt5 (linux media player that sounds great, and best of all integrates 
 
 conky (if you wish to display cover art and most other tag elements right on a panel docked onto your desktop (cool!)
 
-id3ted for tag scripting requirements if you want to update tags in Linux
+id3ted and kid3-cli for tag scripting requirements (if you want the ability to update tags in Linux).
 
-Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
+Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a VM)
 
 <b>Preparation</b>
 
