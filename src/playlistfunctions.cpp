@@ -20,22 +20,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     //Lookup the rating codes for last two tracks on the playlist;
     if (Constants::kVerbose) std::cout << "ratingCodeSelected function started." << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-
-    int x = 0; // variable to return the rating code to be used for the next track selection
-    //bool isRating1Qty = (s_rCode1TotTrackQty != 0);// set bool to true if there is at least one track with a rating of 1
-   // int rating1PosCount{0};
-    //std::cout << "rating Code 1 Selection started. *_srepeatFreqForCode1 result is: " <<*_repeatFreqCode1 <<  std::endl;
-   // if (isRating1Qty) //Before going to logic for other rating codes, determine whether to select rating code 1
-    //{
-        // check if rating 1 total in playlist is equal to *_srCode1TotTrackQty; if true
-        // set isRating1Qty to false and continue function
-        // Else calculate the 'most recent' playlist position and set variable rating1PosCountuse
-        // Compare rating1PosCount with *_srepeatFreqForCode1
-        //bool select1Here{0};
-       // select1Here = (rating1PosCount == repeatFreqCode1);
-        //std::cout << "rating Code 1 Selection started. bool isRating1Qty result is: "<< isRating1Qty <<" and select1Here result is: "<<select1Here<< std::endl;
-       // rating1PosCount = 1;
-    //}
+    int x = 0; // variable to return the rating code to be used for the next track selection 
     std::string codeForPos1;
     std::string codeForPos2;
     std::string codeForPos3;
@@ -78,12 +63,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
         while (std::getline(iss, token, ',')) {
             if (tokenCount == Constants::kColumn1)  {
                 selectedRatingCode = token;
-                //if (selectedPlaylistPosition == "1") {codeForPos1 = selectedRatingCode;
-                //std::cout << "selectedPlaylistPosition 1 should be: "<< str <<" rating: " <<token << std::endl;
-                //}
-                //if (selectedPlaylistPosition == "2") {codeForPos2 = selectedRatingCode;
-                 //   std::cout << "selectedPlaylistPosition 2 should be: "<< str <<" rating: " <<token << std::endl;
-               // }
             }
             if (tokenCount == Constants::kColumn4)  {selectedSongLength = std::atof(token.c_str());
             }
@@ -133,6 +112,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double ratioTime6 = totalPLTime6 / totalPlaylistTime;
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
+
     if (Constants::kVerbose) {
     std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_ratingRatio3 << std::endl;
     std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_ratingRatio4<< std::endl;
@@ -141,6 +121,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_ratingRatio7<< std::endl;
     std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_ratingRatio8<< std::endl;
     }
+
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
     double varianceRatioTime3 = (s_ratingRatio3 - ratioTime3) / s_ratingRatio3;
@@ -149,6 +130,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double varianceRatioTime6 = (s_ratingRatio6 - ratioTime6) / s_ratingRatio6;
     double varianceRatioTime7 = (s_ratingRatio7 - ratioTime7) / s_ratingRatio7;
     double varianceRatioTime8 = (s_ratingRatio8 - ratioTime8) / s_ratingRatio8;
+
     if (Constants::kVerbose) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
@@ -159,6 +141,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::cout << "Rating for last track added was: " <<codeForPos1;
     std::cout << ", and second-to-last was: " <<codeForPos2 << std::endl;
     }
+
     //If the playlist ratio is less than the program ratio, then that code is underrepresented on the playlist.
     // The largest positive number is the most underrepresented rating code of the current playlist.
     // Create constants with the variances just calculated for each rating code variance to place them in an array
@@ -168,7 +151,8 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     const double vrt5 = varianceRatioTime5;
     const double vrt6 = varianceRatioTime6;
     const double vrt7 = varianceRatioTime7;
-    const double vrt8 = varianceRatioTime8;    
+    const double vrt8 = varianceRatioTime8;
+
     // Determine whether a code of 1 was added in either of the last two tracks
     // If either has a rating code of 1, reassign other rating code using codeForPos3, as applicable
     if ((codeForPos1 == "1") || (codeForPos2 == "1")) {
@@ -309,8 +293,7 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
 
 //Screen out tracks in ratedabbr2.txt that do not match the rating of the s_ratingNextTrack variable
 // Screen out tracks that have an artist that matches any when iterating through the artistexcludes.txt file
-// Send remaining to a new vector
-// Sort vector to select the oldest dated track for addition to the playlist
+// Send remaining to a new vector, sort vector to select the oldest dated track for addition to the playlist
 // Write/append the cleanedplaylist.txt file the oldest dated track found.
 
 std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath, bool &s_includeAlbumVariety){
