@@ -8,21 +8,21 @@
 
 int main(int argc,char* argv[])
 {
-        QApplication mainapp(argc, argv);        
+        QApplication mainapp(argc, argv);
+        // Set application name and directory for application data (/local/share)
         QApplication::setOrganizationName("archsimian");
         QApplication::setApplicationName("archsimian");
-
         QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
         QDir appDataPath = appDataPathstr;
-        if( ! appDataPath.exists() )
+        if( !appDataPath.exists() )
         {
             appDataPath.mkpath(appDataPathstr);
         }
         QString mydirpath = appDataPath.path();
         std::string convertStdPath = mydirpath.toStdString();
-        //std::cout <<convertStdPath<< std::endl;
+        // Launch gui (archsimian.cpp)
         ArchSimian guiWindow;
-        guiWindow.show();   // This launches the user interface (UI)
+        guiWindow.show();
         QApplication::exec();
     return 0;
 }

@@ -9,8 +9,6 @@
 
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
-//using StringVector = std::vector<std::string>;
-//using StringVector2D = std::vector<StringVector>;
 
 inline bool doesFileExist (const std::string& name) {
     struct stat buffer{};
