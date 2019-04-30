@@ -10,7 +10,7 @@ depends=('qt5-base' 'sqlite3')
 makedepends=('git')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}")
-source=('git+https://github.com/Harpo3/archsimian#branch=archsimian-git')
+source=('git+https://github.com/Harpo3/archsimian')
 md5sums=('SKIP')
 
 pkgver() {
