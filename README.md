@@ -23,7 +23,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
 
-2.  Youn can include or exclude new tracks from your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
+2.  You can include or exclude new tracks from being added to your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
 3. Assign zero stars in MediaMonkey to exclude tracks from the ArchSimian-produced playlist.
 
@@ -33,7 +33,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled. Play with the frequency tab settings to your liking (restart), then select a playlist and add some tracks and export the changes back to your playlist directory.
 
-7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, it exports the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist that can be imported into MediaMonkey (using the .mmip ImportM3U).
+7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, you can export the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist, which can then be imported into MediaMonkey (using the .mmip ImportM3U) for use in Windows or synced to a portable device.
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
 
