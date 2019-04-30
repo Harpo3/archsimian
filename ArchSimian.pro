@@ -75,6 +75,4 @@ INSTALLS += target
 RESOURCES += \
     systray.qrc \    
 
-DISTFILES += \
-    .SRCINFO \
-    PKGBUILD
+DISTFILES +=
