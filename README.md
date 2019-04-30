@@ -21,9 +21,9 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in the ArchSimian-produced playlist. You should have 2,000 or more for it to work well. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library dir tree must look like ->  Drive:/artist/album/song in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
+1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
 
-2.  A one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated, if you plan to enable this feature in ArchSimian. This tells ArchSimian to include new tracks in the selection process. You can set the frequency for new tracks separately. The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
+2.  Youn can include or exclude new tracks from your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
 3. Assign zero stars in MediaMonkey to exclude tracks from the ArchSimian-produced playlist.
 
@@ -77,14 +77,14 @@ Note: while it could installed on a separate partition of Windows using a dual b
 
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
-Backup 6.0 (trixmoto) for backing up the MM4 database; 
+Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database; 
 Update Location of Files in Database (if you install a VM); 
-RegEx Find and Replace; and, 
-ImportM3U
+RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
+ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
 
 <b>Linux applications you will need (For Arch, via the AUR):</b>
 
-SQLite 3 for database commands
+SQLite3 for database commands
 
 <b>Linux applications you will likely want to use along with this program:</b>
 
@@ -92,9 +92,9 @@ audacious-qt5 (linux media player that sounds great, and best of all integrates 
 
 conky (if you wish to display cover art and most other tag elements right on a panel docked onto your desktop (cool!)
 
-id3ted for tag scripting requirements if you want to update tags in Linux
+id3ted and kid3-cli for tag scripting requirements (if you want the ability to update tags in Linux).
 
-Oracle VirtualBox VM (to run MM4 in Linux by running Windows 10 on a VM)
+Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a VM)
 
 <b>Preparation</b>
 
