@@ -86,7 +86,7 @@ ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</htm
 
 SQLite3, qt5-base, git
 
-<b>Linux applications you maight like to use along with this program:</b>
+<b>Linux applications you might like to use along with this program:</b>
 
 audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
 
