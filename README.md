@@ -65,7 +65,7 @@ If you enable the 'include new tracks' feature, you will get artist repeats more
 
 <b>Hardware and Software Requirements:</b>
 
-If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly. Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
+If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
 
 If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
