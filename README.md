@@ -1,6 +1,6 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
-<img src="http://i.imgur.com/r7WxYoa.png..." data-canonical-src="http://i.imgur.com/r7WxYoa.png" width="502" height="600" />
+<img src="http://i.imgur.com/mWmPTts.png..." data-canonical-src="http://i.imgur.com/mWmPTts.png" width="502" height="600" />
 <p>You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
 
 For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different but similar artists and you choose to treat them as one artist. It is up to you.
@@ -168,20 +168,20 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 <b> Initial Settings</b>
 
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
-<img src="http://imgur.com/0f7CCTJ.png/..." data-canonical-src="http://imgur.com/0f7CCTJ.png" width="502" height="600" />
+<img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
 
 <b> Statistics</b>
 <p>The Statistics tab lists detailed information about the composition of your music library</p>
-<img src="http://imgur.com//CyUlYMx.png/..." data-canonical-src="http://imgur.com//CyUlYMx.png" width="502" height="600" />
+<img src="http://imgur.com//XA1Ztz5.png/..." data-canonical-src="http://imgur.com//XA1Ztz5.png" width="502" height="600" />
 
 <b> Frequency</b>
 <p>The Frequency tab has functions to set the frequency for repeating tracks based on ratings. Factors are applied in a hierarchical fashion.</p>
-<img src="http://imgur.com//znrCVa8.png/..." data-canonical-src="http://imgur.com//znrCVa8.png" width="502" height="600" />
+<img src="http://imgur.com//duceyte.png/..." data-canonical-src="http://imgur.com//duceyte.png" width="502" height="600" />
 
 <b> Albums</b>
 
 <p>The Albums tab appears when the user selects "Album-level variety" in the Settings tab. The user can then set criteria for when album-level variety will be applied.</p>
-<img src="http://imgur.com//nfRaqnE.png/..." data-canonical-src="http://imgur.com//nfRaqnE.png" width="502" height="600" />
+<img src="http://imgur.com//EMswcA4.png/..." data-canonical-src="http://imgur.com//EMswcA4.png" width="502" height="600" />
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
