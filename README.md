@@ -126,8 +126,8 @@ X:\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Re
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
 If you do it correctly, your music directory should look like this:
-<img src="http://i.imgur.com/a/UDbIYsW.jpg..." data-canonical-src="http://i.imgur.com/a/UDbIYsW.jpg" width="502" height="600" />
-<p>
+<blockquote class="imgur-embed-pub" lang="en" data-id="a/UDbIYsW"><a href="//imgur.com/UDbIYsW"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+    
 
 Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
 
