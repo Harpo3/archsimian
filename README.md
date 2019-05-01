@@ -65,21 +65,30 @@ If you enable the 'include new tracks' feature, you will get artist repeats more
 
 <b>Hardware and Software Requirements:</b>
 
+A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You may be able to make this work with other Linux distros and DEs, but your mileage may vary. 
+
+Windows 7 or higher
+
+MediaMonkey4 Gold for Windows 
+
+<b>Windows Configurations:</b>
+
+While Linux can be installed on a separate partition of Windows using a dual boot system, it is far easier to run a Windows 10 VM running within Linux. Even if you have Windows installed on a dual boot, you might also want a VM installed in Linux if you want to avoid having to reboot twice for every library/playlist update. 
+
 If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
 
 If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
-A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You may be able to make this work with other Linux distros and DEs, but your mileage may vary. 
+<b>MediaMonkey Addons:</b>
 
-MediaMonkey4 Gold for Windows 
-
-Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update. 
-
-Separately, you need to install/setup several scripts (.mmip files) in MM4:
+You need to install/setup several scripts (.mmip files) in MM4:
  
-Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database; 
-Update Location of Files in Database (if you install a VM); 
+Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database;
+
+Update Location of Files in Database (if you install a VM);
+
 RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
+
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
 
 <b>Dependencies:</b>
