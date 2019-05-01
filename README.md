@@ -21,7 +21,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
+1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces or special characters in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
 
 2.  You can include or exclude new tracks from being added to your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
