@@ -79,6 +79,10 @@ If you are running KDE and the Windows VirtualMachine (VM) together, you will ne
 
 If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
 
+MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
+
+If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
+
 <b>MediaMonkey Addons:</b>
 
 You need to install/setup several scripts (.mmip files) in MM4:
@@ -140,10 +144,6 @@ If you do it correctly, your music directory should look like this:
     
 
 Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions.</b> Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required). If you do not directly use either of these two fields, ArchSimian will still work correctly, <b> but just make sure these two fields are blank for every track tag</b>.
-
-<b>MM4 Installation in the VM</b> – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
-
-If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
 
 <b> Troubleshooting</b>
 
