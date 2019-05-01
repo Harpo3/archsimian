@@ -113,11 +113,9 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 <b>Preparation</b>
 
-<b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons).
+<b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons). 
 
-Whether you do this or not, you will want to use a VM in Arch to update music tags and the MM4 database between the two operating systems if you do not wish to do constant reboots to change OSes. 
-
-Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. It may run on fewer rated tracks, but that has not been tested.
+Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. Again, it might run on fewer rated tracks, but testing has only been done on an 8,000+ rated library, so your mileage may vary.
 
 <b>2) MM4 installation/configuration</b>
 
