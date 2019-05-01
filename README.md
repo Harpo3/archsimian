@@ -83,6 +83,8 @@ MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox i
 
 If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
 
+When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
+
 <b>MediaMonkey Addons:</b>
 
 You need to install/setup several scripts (.mmip files) in MM4:
@@ -115,10 +117,7 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 Whether you do this or not, you will want to use a VM in Arch to update music tags and the MM4 database between the two operating systems if you do not wish to do constant reboots to change OSes. 
 
-Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. It may run on fewer rated tracks, but that has not been tested.
-
-When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
-
+Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. It may run on fewer rated tracks, but that has not been tested.
 
 <b>2) MM4 installation/configuration</b>
 
