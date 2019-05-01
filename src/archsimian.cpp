@@ -738,6 +738,16 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (!m_prefs.s_noAutoSave){
             ui->autosavecheckBox->setChecked(false);
         }
+        if (m_prefs.s_disableNotificationAddTracks){
+            ui->disablenotecheckBox->setChecked(true);
+        }
+        if (!m_prefs.s_disableNotificationAddTracks){
+            ui->disablenotecheckBox->setChecked(false);
+        }
+
+
+
+
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
         ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
@@ -1019,10 +1029,6 @@ void ArchSimian::on_addtrksspinBox_valueChanged(int s_numTracks)
                                 + tr(" minutes per day, tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
     ui->daystracksLabel->setText(tr("days added for 'Add Songs' quantity selected above will be ") +
                                  QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3)+tr(" days."));
-    if (s_numTracks > Constants::kNotifyTrackThreshold){
-        s_disableNotificationAddTracks = false;
-        m_prefs.s_disableNotificationAddTracks = s_disableNotificationAddTracks;
-    }
 }
 
 void ArchSimian::on_repeatFreq1SpinBox_valueChanged(int myvalue)
@@ -1488,9 +1494,16 @@ void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
 
 void ArchSimian::on_disablenotecheckBox_stateChanged(int disableNote)
 {
-    s_disableNotificationAddTracks = disableNote;
+    ui->disablenotecheckBox->checkState();
     m_prefs.s_disableNotificationAddTracks = disableNote;
-    QWidget::repaint();
+    if (ui->disablenotecheckBox->checkState() == 2){
+        m_prefs.s_disableNotificationAddTracks = true;
+        QWidget::repaint();
+    }
+    if (ui->disablenotecheckBox->checkState() == 0){
+        m_prefs.s_disableNotificationAddTracks = false;
+        QWidget::repaint();
+    }
 }
 
 void ArchSimian::on_resetpushButton_released()
