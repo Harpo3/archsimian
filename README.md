@@ -82,11 +82,11 @@ Update Location of Files in Database (if you install a VM);
 RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
 
-<b>Linux applications you will need (For Arch, via the AUR):</b>
+<b>Dependencies:</b>
 
-SQLite3 for database commands
+SQLite3, qt5-base, git
 
-<b>Linux applications you will likely want to use along with this program:</b>
+<b>Linux applications you maight like to use along with this program:</b>
 
 audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
 
