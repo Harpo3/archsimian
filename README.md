@@ -73,7 +73,7 @@ A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You ma
 
 MediaMonkey4 Gold for Windows 
 
-Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
+Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update. 
 
 Separately, you need to install/setup several scripts (.mmip files) in MM4:
  
