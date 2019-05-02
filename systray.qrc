@@ -10,6 +10,10 @@
         <file>images/four.png</file>
         <file>images/five.png</file>
         <file>images/as1.png</file>
+        <file>images/exit.png</file>
+        <file>images/new.png</file>
+        <file>images/open.png</file>
+        <file>images/save.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

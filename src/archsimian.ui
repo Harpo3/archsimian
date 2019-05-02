@@ -2127,6 +2127,10 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen_Playlist">
+   <property name="icon">
+    <iconset resource="../systray.qrc">
+     <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/open.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/open.png</iconset>
+   </property>
    <property name="text">
     <string>Open Playlist</string>
    </property>
@@ -2143,6 +2147,10 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </property>
   </action>
   <action name="actionExport_Playlist">
+   <property name="icon">
+    <iconset resource="../systray.qrc">
+     <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save.png</iconset>
+   </property>
    <property name="text">
     <string>Save (Export) Playlist</string>
    </property>
@@ -2151,6 +2159,10 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../systray.qrc">
+     <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/exit.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
@@ -2169,6 +2181,10 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </property>
   </action>
   <action name="actionSave_Settings">
+   <property name="icon">
+    <iconset resource="../systray.qrc">
+     <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save.png</iconset>
+   </property>
    <property name="text">
     <string>Save User Settings</string>
    </property>
