@@ -21,9 +21,9 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     if (Constants::kVerbose) std::cout << "ratingCodeSelected function started." << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     int x = 0; // variable to return the rating code to be used for the next track selection 
-    std::string codeForPos1;
-    std::string codeForPos2;
-    std::string codeForPos3;
+    std::string codeForPos1{"3"};
+    std::string codeForPos2{"4"};
+    std::string codeForPos3{"5"};
     bool exclude7and8 = false;
     std::string codeForPos;
     //Collect the time on the current playlist for each rating category and for the playlist as a whole;

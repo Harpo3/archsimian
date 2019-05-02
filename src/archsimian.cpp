@@ -648,6 +648,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+        if (s_playlistSize == 1) s_playlistSize = 0;
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
     }
 
@@ -804,22 +805,31 @@ void ArchSimian::on_addsongsButton_released(){
     std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
+    if (s_playlistSize == 0) {
+        std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
+        ofs.open(appDataPathstr.toStdString()+"/cleaned playlist.txt", std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
+    }
+
     std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (GUI display)
     // Second, determine the rating for the track selection
     if (Constants::kVerbose) std::cout << "Running ratingCodeSelected function before loop."<< std::endl;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                            s_ratingRatio7,s_ratingRatio8);
+     if (s_playlistSize == 0) {s_ratingNextTrack = 6;}
+
     if (Constants::kVerbose) std::cout <<"ratingCodeSelected function before loop completed. Result is: "<< s_ratingNextTrack <<
                                                 ". Now starting loop for track selections..." <<std::endl;
     // Third, start loop for the number of tracks the user selected to add (numtracks)
-    for (int i=0; i < numTracks; i++){
+    for (int i=0; i < numTracks; i++){        
         if (Constants::kVerbose) std::cout << "Top of Loop. Count: " <<i<< std::endl;
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
         s_selectedCode1Path = "";
         s_selectedTrackPath = "";
-        if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        if ((s_includeNewTracks) && (s_playlistSize > 0)){
+            // If user is including new tracks, determine if a code 1 track should be added for this particular selection
             code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
             // Use stats to check that all code 1 tracks are not already in the playlist, and the repeat frequency is met
             if ((s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){
@@ -829,12 +839,14 @@ void ArchSimian::on_addsongsButton_released(){
                                                              "Code 1 track added to playlist."<< std::endl;
             }
         }
-        else {s_selectedCode1Path = nullptr;} // If selection criteria for rating code 1 is not met, return empty string
+        else {s_selectedCode1Path = "";}
+
+        // If selection criteria for rating code 1 is not met, return empty string
         if (!s_selectedCode1Path.empty()) {
             s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
         if ((!s_includeNewTracks)||(s_ratingNextTrack != 1)) { // If user excluded new tracks, or set rating code is not 1, do normal selection
             if ((Constants::kVerbose)&&(!s_includeNewTracks)) std::cout << "User excluding new tracks. Check whether user selected album variety " << std::endl;
-            if (s_includeAlbumVariety){ // If not 1, and user has selected album variety, get album ID stats
+            if (s_includeAlbumVariety){ // If not 1, and user has selected album variety, get album ID stats                
                 if (Constants::kVerbose) std::cout << "User selected album variety. Getting functions getTrimArtAlbmList and getAlbumIDs." << std::endl;
                 getTrimArtAlbmList();
                 getAlbumIDs();
