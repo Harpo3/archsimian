@@ -1498,6 +1498,40 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
     ArchSimian::on_getplaylistButton_clicked();
 }
 
+void ArchSimian::on_actionNew_Playlist_triggered()
+{
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+    QString strFile = dialog.getSaveFileName(nullptr, "Create New File","","");
+    //qDebug()<<strFile;
+    QFile file(strFile);
+    file.open(QIODevice::WriteOnly);
+    file.close();
+    m_prefs.defaultPlaylist = strFile;
+    s_defaultPlaylist = m_prefs.defaultPlaylist;
+            ui->setgetplaylistLabel->setText("Selected: " + QString(s_defaultPlaylist));
+            getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+            s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+            s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+            getExcludedArtists(s_playlistSize);
+            if (s_includeAlbumVariety){
+                buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
+            }
+            ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
+            ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+            if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+                s_uniqueCode1ArtistCount = 0;
+                s_code1PlaylistCount = 0;
+                s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
+                code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+                ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+            }
+            ui->songsaddtextBrowser->setText("");
+            ui->addsongsButton->setEnabled(true);
+            ui->exportplaylistButton->setEnabled(true);
+
+}
+
 void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
 {
     s_noAutoSave = autosave;

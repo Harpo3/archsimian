@@ -93,6 +93,8 @@ private slots:
 
     void on_actionOpen_Playlist_triggered();
 
+    void on_actionNew_Playlist_triggered();
+
     void on_autosavecheckBox_stateChanged(int autosave);
 
     void on_disablenotecheckBox_stateChanged(int disableNote);
