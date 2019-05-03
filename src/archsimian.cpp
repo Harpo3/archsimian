@@ -871,7 +871,7 @@ void ArchSimian::on_addsongsButton_released(){
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                           QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",100000);
+    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",5000);
     QFile songtext1(appDataPathstr+"/songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
