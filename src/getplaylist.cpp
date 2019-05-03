@@ -18,13 +18,21 @@ unsigned long cnt = 0;
  return int(cnt);
 }
 
-void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
+void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
+    if (Constants::kVerbose){std::cout << "getPlaylist: s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+    ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    std::ofstream ofs1; //open the ratedabbr2 file for writing with the truncate option to delete the content.
+    ofs1.open(appDataPathstr.toStdString()+"/ratedabbr2.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs1.close();
     static std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
     static std::string musiclibdirname = s_musiclibrarydirname.toStdString();
-    std::string playlistFile = s_selectedplaylist;
-    std::ifstream readFile(playlistFile);
+    //std::string playlistFile = s_selectedplaylist;
+    std::ifstream readFile(s_defaultPlaylist.toStdString());
+    if (Constants::kVerbose){std::cout << "getPlaylist: playlistFile is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     std::ofstream outf(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (!readFile.is_open()) {
         std::cout << "getPlaylist: The readFile did not open. Did you manually export the MediaMonkey playlist?";
@@ -46,7 +54,7 @@ void getPlaylist(const QString &s_defaultPlaylist, const QString &s_musiclibrary
             line.replace(line.find(str2),str2.length(),"/");
             found=line.find("third dir symbol",found+1,1);
             line.replace(line.find(str2),str2.length(),"/");
-        }
+        }        
         outf << line << '\n'; // DO NOT ADD endl here
     }
     readFile.close();

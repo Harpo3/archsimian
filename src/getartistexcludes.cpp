@@ -81,6 +81,10 @@ void getExcludedArtists(const int &s_playlistSize)
     std::vector<std::string>histvect; // vector to collect excluded artists from 'outside the playlist'
     std::vector<std::string> artistExcludesVec;// vector to collect all excluded artists
     std::ofstream playlistPosList(appDataPathstr.toStdString()+"/playlistposlist.txt"); // output file for writing ratedabbr.txt with added artist intervals
+    // Clear ratedabbr2 if file exists
+    std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+    ofs.open(appDataPathstr.toStdString()+"/ratedabbr2.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
     std::ofstream ratedabbr2(appDataPathstr.toStdString()+"/ratedabbr2.txt"); // output file for writing ratedabbr.txt with added artist intervals
     std::string str1; // store the string for ratedabbr.txt
     //std::string playlistPosition; // Custom1 variable for playlistposlist.txt

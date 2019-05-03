@@ -608,25 +608,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((Constants::kVerbose) && (s_bool_RatedAbbrExist) && (s_bool_IsUserConfigSet)){std::cout
                 << "Archsimian.cpp: Step 8. MM.DB and artist.adj not recently updated. ratedabbr.txt not updated." << std::endl;}
 
-    // 9. Determine if a playlist exists, and if not, determine if it was identified as being selected in the user's config:
-    // Determine if cleaned (path-corrected) playlist selected (s_bool_PlaylistExist) cleanedplaylist.txt exists, doesFileExist (const std::string& name);
-    // sets bool6 and bool7
-    if (s_bool_IsUserConfigSet){
-        s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-        if (s_bool_PlaylistExist) {
-            s_bool_PlaylistSelected = true;
-            if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist exists and was not updated." << std::endl;}
-        }
-        //a. If s_bool_PlaylistExist is false, determine if playlist was identified as selected in user config (sets s_bool_PlaylistSelected)
-        if (!s_bool_PlaylistExist){
-            if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist not found. Checking user config for playlist selection." << std::endl;}
-            std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
-            if (!s_selectedplaylist.empty()) {
-                s_bool_PlaylistSelected = true;
-                if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist found in user config." << std::endl;}
-            }
-        }
-    }
+    // 9. Set playlist exists to false always to force reloading of playlist every time the program starts
+    s_bool_PlaylistExist = false;
+    s_bool_PlaylistSelected = true;
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9 (revised for mult playlists). Playlist set to not exists." << std::endl;}
+
 
     // 10. If a playlist was identified in the user config, but the playlist file is not found, obtain the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
@@ -806,8 +792,8 @@ void ArchSimian::on_addsongsButton_released(){
     ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
     if (s_playlistSize == 0) {
-        std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
-        ofs.open(appDataPathstr.toStdString()+"/cleaned playlist.txt", std::ofstream::out | std::ofstream::trunc);
+        std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+        ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
         ofs.close();
     }
 
@@ -943,38 +929,69 @@ void ArchSimian::on_setmmdbButton_clicked(){
 // User selects playlist from configured directory for 'backup playlists'
 void ArchSimian::on_getplaylistButton_clicked()
 {
+    // Set s_bool_PlaylistExist to false
+    s_bool_PlaylistSelected = false;
+    // Get playlist from user
     QFileDialog setgetplaylistdialog;
     QString selectedplaylist = QFileDialog::getOpenFileName (
                 this,
                 "Select playlist for which you will add tracks",
                 QString(s_mmPlaylistDir),//default dir for playlists
                 "playlists(.m3u) (*.m3u)");
+    // Set selected as default playlist, save to settings
+    m_prefs.defaultPlaylist = selectedplaylist;
+    s_defaultPlaylist = m_prefs.defaultPlaylist;
+    saveSettings();
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist.. s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
+    ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
+    // Remove ratedabbr2 and run getPlaylist function, Set s_bool_PlaylistExist to true
+    //removeAppData("ratedabbr2.txt");
+    //std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+    //ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
+    //ofs.close();
+    //s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. cleanedplaylist should be zero now: "<< s_playlistSize << std::endl;}
+    //std::ofstream ofs1; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+    //ofs1.open(appDataPathstr.toStdString()+"/ratedabbr2.txt", std::ofstream::out | std::ofstream::trunc);
+    //ofs1.close();
+    //s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/ratedabbr2.txt");
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. ratedabbr2 should be zero now: "<< s_playlistSize << std::endl;}
+    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+    s_bool_PlaylistSelected = true;
+    // Get playlist size
+    s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+    if (s_playlistSize == 1) s_playlistSize = 0;
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist.. s_playlistSize is: "<< s_playlistSize << std::endl;}
 
-        if (selectedplaylist.size() > 0)
-        {
-        m_prefs.defaultPlaylist = selectedplaylist;
-        s_defaultPlaylist = m_prefs.defaultPlaylist;
-        ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
-        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
-        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-        s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
-        getExcludedArtists(s_playlistSize);
-        if (s_includeAlbumVariety){
-            buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
-        }
-        ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
-        ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-        if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
-            s_uniqueCode1ArtistCount = 0;
-            s_code1PlaylistCount = 0;
-            s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
-            code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
-            ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
-        }
-        ui->songsaddtextBrowser->setText("");
-        ui->addsongsButton->setEnabled(true);
-        ui->exportplaylistButton->setEnabled(true);
-        }
+    // Recalculate historical count
+    s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist.. s_histCount is: "<< s_histCount << std::endl;}
+
+    // Update excluded artists by running function getExcludedArtists() which also recreates ratedabbr2, and check code1 stats
+    getExcludedArtists(s_playlistSize);
+
+    if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+    }
+    // Recheck album excludes if enabled
+
+    if (s_includeAlbumVariety)
+    {
+        buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
+        ui->albumsTab->setEnabled(true);
+    }
+    ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
+    ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+    if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        s_uniqueCode1ArtistCount = 0;
+        s_code1PlaylistCount = 0;
+        s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
+        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+    }
+    ui->songsaddtextBrowser->setText("");
+    ui->addsongsButton->setEnabled(true);
+    ui->exportplaylistButton->setEnabled(true);
 }
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
@@ -1453,6 +1470,11 @@ void ArchSimian::on_actionExit_triggered()
 {
     if (!s_noAutoSave){
         saveSettings();
+        std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+        ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
+        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. cleanedplaylist should be zero now: "<< s_playlistSize << std::endl;}
        qApp->quit();
     }
     if (s_noAutoSave){
@@ -1460,6 +1482,11 @@ void ArchSimian::on_actionExit_triggered()
                                                       "the configuration settings before quitting?", QMessageBox::Yes | QMessageBox::No))
         {
             saveSettings();
+            std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+            ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
+            ofs.close();
+            s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+            if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. cleanedplaylist should be zero now: "<< s_playlistSize << std::endl;}
         }
         qApp->quit();
     }
@@ -1500,6 +1527,9 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
 
 void ArchSimian::on_actionNew_Playlist_triggered()
 {
+    // Set s_bool_PlaylistExist to false
+    s_bool_PlaylistSelected = false;
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. Set playlist to not exist." << std::endl;}
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
     QString strFile = dialog.getSaveFileName(nullptr, "Create New File","","");
@@ -1507,29 +1537,51 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     QFile file(strFile);
     file.open(QIODevice::WriteOnly);
     file.close();
+    // Save selected playlist to user config, then set s_defaultPlaylist to selected playlist
     m_prefs.defaultPlaylist = strFile;
     s_defaultPlaylist = m_prefs.defaultPlaylist;
-            ui->setgetplaylistLabel->setText("Selected: " + QString(s_defaultPlaylist));
-            getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
-            s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-            s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
-            getExcludedArtists(s_playlistSize);
-            if (s_includeAlbumVariety){
-                buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
-            }
-            ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
-            ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-            if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
-                s_uniqueCode1ArtistCount = 0;
-                s_code1PlaylistCount = 0;
-                s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
-                code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
-                ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
-            }
-            ui->songsaddtextBrowser->setText("");
-            ui->addsongsButton->setEnabled(true);
-            ui->exportplaylistButton->setEnabled(true);
+    saveSettings();
 
+    // Remove ratedabbr2 and run getPlaylist function, Set s_bool_PlaylistExist to true
+    //removeAppData("ratedabbr2.txt");
+    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+    s_bool_PlaylistSelected = true;
+
+    // Get playlist size
+    s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+    if (s_playlistSize == 1) s_playlistSize = 0;
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. s_playlistSize is: "<< s_playlistSize << std::endl;}
+
+    // Recalculate historical count
+    s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. s_histCount is: "<< s_histCount << std::endl;}
+
+    // Update excluded artists by running function getExcludedArtists() which also recreates ratedabbr2, and check code1 stats
+    getExcludedArtists(s_playlistSize);
+
+    if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+    }
+    // Recheck album excludes if enabled
+
+    if (s_includeAlbumVariety)
+    {
+        buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
+        ui->albumsTab->setEnabled(true);
+    }
+    ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
+    ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
+    ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+    if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
+        s_uniqueCode1ArtistCount = 0;
+        s_code1PlaylistCount = 0;
+        s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
+        code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
+        ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+    }
+    ui->songsaddtextBrowser->setText("");
+    ui->addsongsButton->setEnabled(true);
+    ui->exportplaylistButton->setEnabled(true);
 }
 
 void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
