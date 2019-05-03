@@ -2,11 +2,13 @@
 #define ARCHSIMIAN_H
 
 #include <QMainWindow>
+#include <QtWidgets/QToolBar>
+#include <QAction>
 
 
 namespace Ui {
 class ArchSimian;
-//class QLabel;
+//class QAction;
 //class QMenu;
 }
 
@@ -31,11 +33,7 @@ public slots:
 
     void on_setmmdbButton_clicked();
 
-    void on_addsongsButton_released();
-
-    void on_getplaylistButton_clicked();
-
-    void on_exportplaylistButton_clicked();
+    void on_addsongsButton_released();    
 
 
 private slots:
@@ -84,7 +82,6 @@ private slots:
 
     void on_actionExit_triggered();
 
-
     void on_actionAbout_Qt_triggered();
 
     void on_actionSave_Settings_triggered();
@@ -104,6 +101,8 @@ private slots:
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
+//    QToolBar *mainToolBar;
+
 
 
 public:
@@ -138,6 +137,7 @@ private:
 
     void loadSettings();
     void saveSettings();
+
 
     SPreferences m_prefs;
     };
