@@ -54,10 +54,22 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>500</width>
+        <height>600</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>1000</width>
-        <height>600</height>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="focusPolicy">
@@ -182,14 +194,14 @@
          <widget class="QFrame" name="dbUpdateStatus">
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>300</width>
             <height>600</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>200</height>
+            <height>16777215</height>
            </size>
           </property>
           <property name="frameShape">
@@ -271,9 +283,9 @@
           <widget class="QLabel" name="playlistdaysLabel">
            <property name="geometry">
             <rect>
-             <x>192</x>
+             <x>190</x>
              <y>70</y>
-             <width>231</width>
+             <width>271</width>
              <height>16</height>
             </rect>
            </property>
@@ -404,9 +416,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>150</y>
+             <y>180</y>
              <width>471</width>
-             <height>291</height>
+             <height>331</height>
             </rect>
            </property>
           </widget>
@@ -414,7 +426,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>130</y>
+             <y>160</y>
              <width>461</width>
              <height>16</height>
             </rect>
@@ -425,6 +437,48 @@
            <property name="text">
             <string>Tracks Panel - Tracks added will appear below when request is completed (takes time)</string>
            </property>
+          </widget>
+          <widget class="QFrame" name="viewplaylistlayout">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>130</y>
+             <width>481</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <widget class="QPushButton" name="viewplaylistButton">
+            <property name="geometry">
+             <rect>
+              <x>7</x>
+              <y>4</y>
+              <width>80</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Open</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="viewplaylistLabel">
+            <property name="geometry">
+             <rect>
+              <x>100</x>
+              <y>7</y>
+              <width>281</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>View currently selected playlist</string>
+            </property>
+           </widget>
           </widget>
          </widget>
         </item>

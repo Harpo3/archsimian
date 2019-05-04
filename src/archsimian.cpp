@@ -24,6 +24,7 @@
 #include "getartistadjustedcount.h"
 #include "code1.h"
 #include "albumidandselect.h"
+#include "playlistcontentdialog.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -212,10 +213,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmdblabel->setText(s_mmBackupDBDir);
         ui->setmmpllabel->setText(s_mmPlaylistDir);
         ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
+        ui->viewplaylistButton->setDisabled(false);
+        ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         ui->instructionlabel->setText(tr(""));
         if (s_defaultPlaylist == ""){
-            ui->setgetplaylistLabel->setText("  ****** No playlist has been selected ******");
+            ui->setgetplaylistLabel->setText("No playlist selected");
             ui->addsongsButton->setEnabled(false);
+            ui->viewplaylistButton->setDisabled(true);
+            ui->viewplaylistLabel->setText(tr("No playlist selected"));
         }
         ui->setmmdbButton->setEnabled(true);
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
@@ -636,7 +641,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-        if (s_playlistSize == 1) s_playlistSize = 0;
+        if (s_playlistSize < 2) {
+            s_playlistSize = 0;
+            ui->viewplaylistButton->setDisabled(true);
+            ui->viewplaylistLabel->setText(tr("Current playlist is empty"));
+        }
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
     }
 
@@ -733,9 +742,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (!m_prefs.s_disableNotificationAddTracks){
             ui->disablenotecheckBox->setChecked(false);
         }
-
-
-
 
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
@@ -878,6 +884,8 @@ void ArchSimian::on_addsongsButton_released(){
     QTextStream in(&songtext1);
     ui->songsaddtextBrowser->setText(in.readAll());
     ui->addsongsButton->setEnabled(true);
+    ui->viewplaylistButton->setDisabled(false);
+    ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
 }
 
 void ArchSimian::on_setlibraryButton_clicked(){
@@ -1479,9 +1487,15 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. ratedabbr2 should be zero now: "<< s_playlistSize << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
         s_bool_PlaylistSelected = true;
+        ui->viewplaylistButton->setDisabled(false);
+        ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         // Get playlist size
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-        if (s_playlistSize == 1) s_playlistSize = 0;
+        if (s_playlistSize < 2) {
+            s_playlistSize = 0;
+            ui->viewplaylistButton->setDisabled(true);
+            ui->viewplaylistLabel->setText(tr("Current playlist is empty"));
+        }
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist.. s_playlistSize is: "<< s_playlistSize << std::endl;}
 
         // Recalculate historical count
@@ -1571,6 +1585,8 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     }
     ui->songsaddtextBrowser->setText("");
     ui->addsongsButton->setEnabled(true);
+    ui->viewplaylistButton->setDisabled(true);
+    ui->viewplaylistLabel->setText(tr("Current playlist is empty"));
 }
 
 void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
@@ -1618,4 +1634,11 @@ void ArchSimian::on_resetpushButton_released()
         saveSettings();
         qApp->quit();
     }
+}
+
+void ArchSimian::on_viewplaylistButton_clicked()
+{
+    PlaylistContentDialog playlistcontentdialog;
+    playlistcontentdialog.setModal(true);
+    playlistcontentdialog.exec();
 }

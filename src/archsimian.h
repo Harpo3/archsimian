@@ -98,6 +98,8 @@ private slots:
 
     void on_resetpushButton_released();
 
+    void on_viewplaylistButton_clicked();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
