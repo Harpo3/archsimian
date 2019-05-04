@@ -894,7 +894,7 @@ void ArchSimian::on_addsongsButton_released(){
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                           QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",5000);
+    ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",3000);
     QFile songtext1(appDataPathstr+"/songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
@@ -1418,7 +1418,7 @@ void ArchSimian::on_actionExport_Playlist_triggered()
     int s_musicdirlength{};
     s_musicdirlength = musicLibraryDirLen(s_musiclibrarydirname);
     exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_defaultPlaylist,  s_winDriveLtr,  s_musiclibrarydirname);
-    ui->statusBar->showMessage("Replaced Windows playlist with Archsimian-modified playlist",50000);
+    ui->statusBar->showMessage("Saved Archsimian-modified playlist in Windows directory format",3000);
 }
 
 void ArchSimian::on_actionExit_triggered()
@@ -1455,7 +1455,7 @@ void ArchSimian::on_actionAbout_Qt_triggered()
 void ArchSimian::on_actionSave_Settings_triggered()
 {
     saveSettings();
-    ui->statusBar->showMessage("Saved user settings",50000);
+    ui->statusBar->showMessage("Saved user settings",3000);
 }
 
 void ArchSimian::on_actionAbout_triggered()
