@@ -110,10 +110,13 @@
            <widget class="QLabel" name="setgetplaylistLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
               <weight>50</weight>
               <bold>false</bold>
              </font>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
             </property>
             <property name="text">
              <string>Playlist:</string>

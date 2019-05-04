@@ -221,6 +221,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->addsongsButton->setEnabled(false);
             ui->viewplaylistButton->setDisabled(true);
             ui->viewplaylistLabel->setText(tr("No playlist selected"));
+            QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
         }
         ui->setmmdbButton->setEnabled(true);
         bool needUpdate = recentlyUpdated(s_mmBackupDBDir);
@@ -618,6 +619,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // 9. Set playlist exists to false always to force reloading of playlist every time the program starts
     s_bool_PlaylistExist = false;
     s_bool_PlaylistSelected = true;
+    if (s_defaultPlaylist == "")s_bool_PlaylistSelected = false;
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9 (revised for mult playlists). Playlist set to not exists." << std::endl;}
 
 
@@ -630,9 +632,23 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+        QFileInfo fi(s_defaultPlaylist);
+        QString justname = fi.fileName();
+        QMainWindow::setWindowTitle("ArchSimian - "+justname);
         if (!s_bool_PlaylistExist) {std::cout << "Archsimian.cpp: Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }
     if ((Constants::kVerbose) && (s_bool_PlaylistExist) && (s_bool_IsUserConfigSet)){std::cout << "Archsimian.cpp: Step 10. Playlist exists and was not updated." << std::endl;}
+
+    // 10a. If a playlist was not identified in the user config
+
+    if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (!s_bool_PlaylistSelected) && (!s_bool_PlaylistExist)){
+
+    ui->setgetplaylistLabel->setText("No playlist selected");
+    ui->addsongsButton->setEnabled(false);
+    ui->viewplaylistButton->setDisabled(true);
+    ui->viewplaylistLabel->setText(tr("No playlist selected"));
+    QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
+    }
 
     // NOTE: functions used in the next three steps (11-13) will later be reused when adding tracks to
     // playlist - here is to get the initial values if a playlist exists
@@ -645,6 +661,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             s_playlistSize = 0;
             ui->viewplaylistButton->setDisabled(true);
             ui->viewplaylistLabel->setText(tr("Current playlist is empty"));
+            QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
         }
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
     }
@@ -886,6 +903,9 @@ void ArchSimian::on_addsongsButton_released(){
     ui->addsongsButton->setEnabled(true);
     ui->viewplaylistButton->setDisabled(false);
     ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
+    QFileInfo fi(s_defaultPlaylist);
+    QString justname = fi.fileName();
+    QMainWindow::setWindowTitle("ArchSimian - "+justname);
 }
 
 void ArchSimian::on_setlibraryButton_clicked(){
@@ -1471,6 +1491,7 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         m_prefs.defaultPlaylist = selectedplaylist;
         s_defaultPlaylist = m_prefs.defaultPlaylist;
         saveSettings();
+        QMainWindow::setWindowTitle("ArchSimian - "+s_defaultPlaylist);
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist.. s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
         ui->setgetplaylistLabel->setText("Selected: " + QString(selectedplaylist));
         // Remove ratedabbr2 and run getPlaylist function, Set s_bool_PlaylistExist to true
@@ -1489,6 +1510,9 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         s_bool_PlaylistSelected = true;
         ui->viewplaylistButton->setDisabled(false);
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
+        QFileInfo fi(s_defaultPlaylist);
+        QString justname = fi.fileName();
+        QMainWindow::setWindowTitle("ArchSimian - "+justname);
         // Get playlist size
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (s_playlistSize < 2) {
@@ -1587,6 +1611,9 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     ui->addsongsButton->setEnabled(true);
     ui->viewplaylistButton->setDisabled(true);
     ui->viewplaylistLabel->setText(tr("Current playlist is empty"));
+    QFileInfo fi(s_defaultPlaylist);
+    QString justname = fi.fileName();
+    QMainWindow::setWindowTitle("ArchSimian - "+justname);
 }
 
 void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
