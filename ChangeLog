@@ -1,1 +1,14 @@
+Changelog
 
+5 May 2019 - version 1.01
+
+Fixed the following bugs:
+Fixed display state of disablenotecheckBox
+Shortened the duration of songs added notice in status bar
+
+Added the following features:
+Ability to create an new (empty playlist) to build a playlist from scratch
+Implemented toolbar icons (replaced open and save buttons) for basic commands (new, open, save, exit)
+Display current playlist in new window
+Add file name/status to Window title bar
+Improvements to GUI layout
