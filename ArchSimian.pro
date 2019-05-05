@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = archsimian
 TEMPLATE = app
-VERSION = v.1.0
+VERSION = v.1.01
 DEFINES += APP_VERSION=$$VERSION
 
 # The following define makes your compiler emit warnings if you use
@@ -37,6 +37,7 @@ SOURCES += \
     src/getplaylist.cpp \
     src/lastplayeddays.cpp \
     src/main.cpp \
+    src/playlistcontentdialog.cpp \
     src/playlistfunctions.cpp \
     src/utilities.cpp \
     src/writesqlfile.cpp \
@@ -54,12 +55,14 @@ HEADERS += \
     src/getartistexcludes.h \
     src/getplaylist.h \
     src/lastplayeddays.h \
+    src/playlistcontentdialog.h \
     src/playlistfunctions.h \
     src/utilities.h \
     src/writesqlfile.h
 
 FORMS += \
-    src/archsimian.ui
+    src/archsimian.ui \
+    src/playlistcontentdialog.ui
 
 INCLUDEPATH += /src
                /images
