@@ -1,9 +1,9 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
-<img src="http://i.imgur.com/r7WxYoa.png..." data-canonical-src="http://i.imgur.com/r7WxYoa.png" width="502" height="600" />
-<p>You may want this program if you have a large music library and want to build a more complex set of rules for populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
+<img src="http://i.imgur.com/mWmPTts.png..." data-canonical-src="http://i.imgur.com/mWmPTts.png" width="502" height="600" />
+<p>You may want this program if you have a large music library with ratings assigned, and want to build a more refined set of rules for automatically populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
 
-For example, let's say you have two 'different' artists, "Tom Petty" and "Tom Petty & the Heartbreakers." This is basically the same artist and so you wish to treat them both as the same artist for purposes of when the artist should be repeated. You store a common name for both (eg. the custom grouping "Petty") in MM4 (using each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like, such as "Pop1971" with different but similar artists and you choose to treat them as one artist. It is up to you.
+For example, let's say you have tracks for two "different" artists: "Tom Petty" and "Tom Petty & the Heartbreakers." Both are basically the same artist, so why not treat them the same artist, especially for purposes of when that artist should be repeated? You can store a common name (eg. using the custom grouping of "Petty") in MM4 (this is each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like (even if they are <b>not</b> similar). You could choose any group of artists and have them treated as if they were one artist. It is up to you.
 
 Users import a playlist from MM4, add tracks using ArchSimian, then export the improved playlist back into MM4 for use in Windows (and to sync with mobile devices using the MM4 for Android App). 
 
@@ -21,7 +21,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
+1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces or special characters in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
 
 2.  You can include or exclude new tracks from being added to your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
@@ -55,38 +55,53 @@ The playlist improvement concept is this: the play history in the MM database ca
             ▪     total number of each rating category by artist 
             ▪     last album played for a given artist
 
-For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. 
+For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. The spacing is also a function of how many total artists with rated tracks are in your library. 
 
-Also, you can enable the album-variety feature. When enabled, you will hear a track from a different album than the one last played of the artist, and the criteria for applying the feature can be set by the user.  
+You can also enable an 'album-variety' feature. If enabled, you will hear a track from a different album than the one last played of the artist when criteria set by the user is met (minimum number of albums, minimum number of tracks per album).  
 
-Replay intervals – you can set the planned time between repeats based on rating. By using ratios of repeat frequency with average listening time, the program can determine track should be added to the playlist. Variety takes precedence over repeat frequency.  If you set two-star tracks to repeat every three years, but your actual history is they have all been heard in the last two years, they will still be added based on the 'relative frequency' to that of the other tracks. To 'transition to longer times' set at a lower repeat frequency than what you desire (need three years, set to four years).
+Replay intervals – you can adjust the 'global' time between repeats with different intervals for each track rating. By using ratios of repeat frequency with average listening time, the program can determine whether a given track should be added to the playlist. Variety takes precedence over repeat frequency. 
 
-If you have enabled the 'include new tracks' feature, you may get artist repeats more frequently. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. If there is more than one artist who has new tracks, then the last new artist selected will not be selected for the next new track. So, you could hear the same artist after 20 tracks if the setting is 10 and there is more than one artist with new tracks.
+If you enable the 'include new tracks' feature, you will get artist repeats more frequently, but you control the frequency. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. One useful feature of the program is that if there is more than one new artist, then the last new artist selected will be excluded from selection of the next new track. So, in this example, you could hear the same artist after 20 tracks when the repeat interval is 10 and you have more than one artist with new tracks.
 
 <b>Hardware and Software Requirements:</b>
 
-If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly. Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
+A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You may be able to make this work with other Linux distros and DEs, but your mileage may vary. 
 
-If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
-
-A Linux OS (I have tested it in Arch, for other distros, I have not tested, and highly recommend KDE as your Desktop Environment (DE), mainly for the notifications it gives you; also conky if you want your music player integrated onto the desktop itself). You may be able to make this work with other Linux distros or DEs, but your mileage will vary and any changes needed are not addressed here. 
+Windows 7 or higher
 
 MediaMonkey4 Gold for Windows 
 
-Note: while it could installed on a separate partition of Windows using a dual boot system, it is far easier installed and running in a Windows 10 VM running in Arch. Even if you have Windows installed on a dual boot, you will want to also have the VM installed in Arch if you want to avoid having to reboot twice for every library/playlist update). 
+<b>Windows Configurations:</b>
 
-Separately, you need to install/setup several scripts (.mmip files) in MM4:
+While Linux can be installed on a separate partition of Windows using a dual boot system, it is far easier to run a Windows 10 VM running within Linux. Even if you have Windows installed on a dual boot, you might also want a VM installed in Linux if you want to avoid having to reboot twice for every library/playlist update. 
+
+If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
+
+If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
+
+MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
+
+If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
+
+When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
+
+<b>MediaMonkey Addons:</b>
+
+You need to install/setup several scripts (.mmip files) in MM4:
  
-Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database; 
-Update Location of Files in Database (if you install a VM); 
+Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database;
+
+Update Location of Files in Database (if you install a VM);
+
 RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
+
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
 
-<b>Linux applications you will need (For Arch, via the AUR):</b>
+<b>Dependencies:</b>
 
-SQLite3 for database commands
+SQLite3, qt5-base, git
 
-<b>Linux applications you will likely want to use along with this program:</b>
+<b>Linux applications you might like to use along with this program:</b>
 
 audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
 
@@ -98,14 +113,9 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 <b>Preparation</b>
 
-<b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons).
+<b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons). 
 
-Whether you do this or not, you will want to use a VM in Arch to update music tags and the MM4 database between the two operating systems if you do not wish to do constant reboots to change OSes. 
-
-Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both your Windows VM and Arch so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. It may run on fewer rated tracks, but that has not been tested.
-
-When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
-
+Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. Again, it might run on fewer rated tracks, but testing has only been done on an 8,000+ rated library, so your mileage may vary.
 
 <b>2) MM4 installation/configuration</b>
 
@@ -125,11 +135,12 @@ X:\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Re
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
-Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. if you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions. Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required, and if you do not directly place them, <b>make sure this field is blank for all tracks</b>.
+If you do it correctly, your music directory should look like this:
+<img src="http://i.imgur.com/ZnEguuK.jpg..." data-canonical-src="http://i.imgur.com/ZnEguuK.jpg" width="608" height="475" />
+<p>
+    
 
-<b>MM4 Installation in the VM</b> – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
-
-If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
+Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions.</b> Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required). If you do not directly use either of these two fields, ArchSimian will still work correctly, <b> but just make sure these two fields are blank for every track tag</b>.
 
 <b> Troubleshooting</b>
 
@@ -158,25 +169,25 @@ Below are the ArchSimian rating codes and associated MM4 star ratings:
 
 ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. 
 
-(If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. Archsimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself,though. First sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc using the above key. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.) 
+(<i>If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.</i>) 
 
 <b> Initial Settings</b>
 
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
-<img src="http://imgur.com/0f7CCTJ.png/..." data-canonical-src="http://imgur.com/0f7CCTJ.png" width="502" height="600" />
+<img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
 
 <b> Statistics</b>
 <p>The Statistics tab lists detailed information about the composition of your music library</p>
-<img src="http://imgur.com//CyUlYMx.png/..." data-canonical-src="http://imgur.com//CyUlYMx.png" width="502" height="600" />
+<img src="http://imgur.com//XA1Ztz5.png/..." data-canonical-src="http://imgur.com//XA1Ztz5.png" width="502" height="600" />
 
 <b> Frequency</b>
 <p>The Frequency tab has functions to set the frequency for repeating tracks based on ratings. Factors are applied in a hierarchical fashion.</p>
-<img src="http://imgur.com//znrCVa8.png/..." data-canonical-src="http://imgur.com//znrCVa8.png" width="502" height="600" />
+<img src="http://imgur.com//duceyte.png/..." data-canonical-src="http://imgur.com//duceyte.png" width="502" height="600" />
 
 <b> Albums</b>
 
 <p>The Albums tab appears when the user selects "Album-level variety" in the Settings tab. The user can then set criteria for when album-level variety will be applied.</p>
-<img src="http://imgur.com//nfRaqnE.png/..." data-canonical-src="http://imgur.com//nfRaqnE.png" width="502" height="600" />
+<img src="http://imgur.com//EMswcA4.png/..." data-canonical-src="http://imgur.com//EMswcA4.png" width="502" height="600" />
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
