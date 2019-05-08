@@ -171,7 +171,7 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 
 (<i>If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.</i>) 
 
-<b> Initial Settings</b>
+<b> ArchSimian Configuration</b>
 
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
 <img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
@@ -188,6 +188,10 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 
 <p>The Albums tab appears when the user selects "Album-level variety" in the Settings tab. The user can then set criteria for when album-level variety will be applied.</p>
 <img src="http://imgur.com//EMswcA4.png/..." data-canonical-src="http://imgur.com//EMswcA4.png" width="502" height="600" />
+
+<b>Creating a New Playlist</b>
+
+Select new file using the toolbar or menu, and tracks can be added. ArchSimian uses your MM4 listening history.
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
