@@ -91,7 +91,7 @@ You need to install/setup several scripts (.mmip files) in MM4:
  
 Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database;
 
-Update Location of Files in Database (if you install a VM);
+Update Location of Files in Database (if you install a VM): <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
 RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
 
