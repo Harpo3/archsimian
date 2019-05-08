@@ -117,7 +117,7 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. Again, it might run on fewer rated tracks, but testing has only been done on an 8,000+ rated library, so your mileage may vary.
 
-<b>2) MM4 installation/configuration</b>
+<b>2) MediaMonky 4.x Settings</b>
 
 This program requires prior preparation in MM4. Backup your MM4.DB and .ini files before you start. 
 
