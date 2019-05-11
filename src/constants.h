@@ -14,12 +14,12 @@ const double kEpochConv2{86400.00};
 // for a random number selection. The selection will be from a range
 // between the lower and upper bounds representing the number of
 // artificial calendar days since a never-played-track was "last played".
-// This will cause the program to select the recent unrated track for the playlist
-// on a random basis.
+// This will cause the program to select the unplayed tracks that have an assigned
+// rating (of other than 1) and assign them to the playlist candidate list on a random basis.
 
 // These types may be changed in a future update to allow for user-level adjustments (within a range).
-const int kLowerRndBound{30};
-const int kUpperRndBound{500};
+const int kLowerRndBound{180};
+const int kUpperRndBound{700};
 
 // Constant used to standardize the user configuration file name for Arch
 const char kUserFileName[16]{"archsimian.conf"};  // user configuration and preferences filename
@@ -28,14 +28,12 @@ const char kCleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSi
 const char kCleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
 
 // Constants used to set the maximum size of a playlist or max Code1 position
-
 const int kMaxFinalPlaylistPos{99999};
 const int kMaxLowestCode1Pos{99999};
 const int kMaxHighestCode1Pos{99999};
 
 // Constant for number tracks to add before notifying user of delay in processing
 const int kNotifyTrackThreshold{29};
-
 
 // Constants to set user-configurable default settings
 const int kUserDefaultRepeatFreqCode1{20};
