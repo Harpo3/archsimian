@@ -123,7 +123,7 @@ std::string getChgdDirStr(std::vector<std::string> const &input, std::string chg
 // Code that uses streambuf this way must be guarded by a sentry object.
 // The sentry object performs various tasks,
 // such as thread synchronization and updating the stream state.
-//
+
 std::istream& safeGetline(std::istream& is, std::string& t){
     t.clear();
     std::istream::sentry se(is, true);

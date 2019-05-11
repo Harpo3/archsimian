@@ -276,8 +276,6 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
     primarySongsTable.close();   // Close files opened for reading and writing
 }
 
-
-
 // Function to create the file ratedabbr.txt which adds artist intervals, and which will then be used for track selection functions
 void getSubset()
 {

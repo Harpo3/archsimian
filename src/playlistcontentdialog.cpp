@@ -19,7 +19,3 @@ PlaylistContentDialog::~PlaylistContentDialog()
 {
     delete ui;
 }
-
-
-
-

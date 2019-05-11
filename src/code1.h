@@ -3,4 +3,5 @@
 #include <string>
 
 void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path);
+
 #endif // CODE1_H

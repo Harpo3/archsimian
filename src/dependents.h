@@ -7,6 +7,9 @@
 // third party apps by name and return a bool with the result
 
 bool isLibRefreshNeeded(const QString &s_mmBackupDBDir);
+
 std::string getMMdbDate(const QString &s_mmBackupDBDir);
+
 std::string getLastTableDate();
+
 #endif // DEPENDENTS_H

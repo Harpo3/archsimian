@@ -14,7 +14,6 @@ for each artist in the artistalbmexcls.txt file. Sends the IDs to a text file ex
 */
 
 void getAlbumIDs(){
-    //if (Constants::kVerbose) std::cout << "Starting selectTrack function. Rating for next track is " << s_ratingNextTrack << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::fstream filestrartists;
     filestrartists.open (appDataPathstr.toStdString()+"/selalbmexcl.txt");

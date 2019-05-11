@@ -199,19 +199,10 @@ void getExcludedArtists(const int &s_playlistSize)
     fsexclvec = artistExcludesVec;
     std::vector<std::string>::iterator ip;
     std::sort (fsexclvec.begin(), fsexclvec.end());
-    //new code
-    //
     std::set<std::string> s;
     unsigned long myvecsz = fsexclvec.size();
     for (unsigned long i = 0; i < myvecsz; ++i) s.insert(fsexclvec[i]);
     fsexclvec.assign (s.begin(), s.end());
-    //
-    //old code
-    //
-    //std::size_t myvecsz = fsexclvec.size();
-    //ip = std::unique(fsexclvec.begin(), fsexclvec.begin() + static_cast<char32_t>(myvecsz));
-    //fsexclvec.resize(std::distance(fsexclvec.begin(), ip));
-    //
     for (ip = fsexclvec.begin(); ip != fsexclvec.end(); ++ip) {
         artistExcList << *ip << "\n";
     }

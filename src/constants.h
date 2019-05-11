@@ -16,6 +16,7 @@ const double kEpochConv2{86400.00};
 // artificial calendar days since a never-played-track was "last played".
 // This will cause the program to select the recent unrated track for the playlist
 // on a random basis.
+
 // These types may be changed in a future update to allow for user-level adjustments (within a range).
 const int kLowerRndBound{30};
 const int kUpperRndBound{500};
@@ -137,10 +138,8 @@ const int kRatingCode6{6};
 const int kRatingCode7{7};
 const int kRatingCode8{8};
 
-
-
 // Constant to turn on or off troubleshooting feedback in console
 const bool kVerbose{false};
-
 }
+
 #endif // CONSTANTS_H

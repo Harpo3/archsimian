@@ -7,7 +7,6 @@
 #include <QTextStream>
 #include <QMessageBox>
 
-
 namespace Ui {
 class PlaylistContentDialog;
 }
@@ -19,7 +18,6 @@ class PlaylistContentDialog : public QDialog
 public:
     explicit PlaylistContentDialog(QWidget *parent = nullptr);
     ~PlaylistContentDialog();
-
 
 private:
     Ui::PlaylistContentDialog *ui;
