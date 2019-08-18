@@ -1,11 +1,11 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
 <img src="http://i.imgur.com/mWmPTts.png..." data-canonical-src="http://i.imgur.com/mWmPTts.png" width="502" height="600" />
-<p>You may want this program if you have a large music library with ratings assigned, and want to build a more refined set of rules for automatically populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings.</p>
+<p>You may want this program if you have a large music library with ratings assigned, and want to build a more refined set of rules for automatically populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings, and lets you control how frequently new tracks are played.</p>
 
-For example, let's say you have tracks for two "different" artists: "Tom Petty" and "Tom Petty & the Heartbreakers." Both are basically the same artist, so why not treat them the same artist, especially for purposes of when that artist should be repeated? You can store a common name (eg. using the custom grouping of "Petty") in MM4 (this is each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like (even if they are <b>not</b> similar). You could choose any group of artists and have them treated as if they were one artist. It is up to you.
+Artist groupings let you control artist name variations. Let's say you have tracks for two "different" artists: "Tom Petty" and "Tom Petty & the Heartbreakers." Both are basically the same artist, so why not treat them as the same artist for considering when that artist should be repeated? You can store a common name (eg. using the custom grouping of "Petty") in MM4 (this is each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like (even if they are <b>not</b> similar). You could choose any group of artists and have them treated as if they were one artist. It is up to you.
 
-Users import a playlist from MM4, add tracks using ArchSimian, then export the improved playlist back into MM4 for use in Windows (and to sync with mobile devices using the MM4 for Android App). 
+Users import a playlist from MM4 (or create a new one), add tracks using ArchSimian, then export the improved playlist back into MM4 for use in Windows (and to sync with mobile devices using the MM4 for Android App). 
 
 <b>Improving MediaMonkey 4 Gold by improving playlist creation</b>
 
@@ -31,7 +31,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
 
-6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled. Play with the frequency tab settings to your liking (restart), then select a playlist and add some tracks and export the changes back to your playlist directory.
+6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled. Play with the frequency tab settings to your liking (restart), then select or create a playlist and add some tracks. Save the changes (song paths are in Windows directory format) to your playlist directory.
 
 7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, you can export the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist, which can then be imported into MediaMonkey (using the .mmip ImportM3U) for use in Windows or synced to a portable device.
 
@@ -91,7 +91,7 @@ You need to install/setup several scripts (.mmip files) in MM4:
  
 Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database;
 
-Update Location of Files in Database (if you install a VM);
+Update Location of Files in Database (if you install a VM): <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
 RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
 
@@ -117,7 +117,7 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. Again, it might run on fewer rated tracks, but testing has only been done on an 8,000+ rated library, so your mileage may vary.
 
-<b>2) MM4 installation/configuration</b>
+<b>2) MediaMonkey 4.x Settings</b>
 
 This program requires prior preparation in MM4. Backup your MM4.DB and .ini files before you start. 
 
@@ -169,9 +169,11 @@ Below are the ArchSimian rating codes and associated MM4 star ratings:
 
 ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. 
 
-(<i>If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.</i>) 
+(<i>If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
-<b> Initial Settings</b>
+First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.</i>) 
+
+<b> ArchSimian Configuration</b>
 
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
 <img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
@@ -189,6 +191,10 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 <p>The Albums tab appears when the user selects "Album-level variety" in the Settings tab. The user can then set criteria for when album-level variety will be applied.</p>
 <img src="http://imgur.com//EMswcA4.png/..." data-canonical-src="http://imgur.com//EMswcA4.png" width="502" height="600" />
 
+<b>Creating a New Playlist</b>
+
+Select new file using the toolbar or menu, and tracks can be added. ArchSimian uses your MM4 listening history.
+
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
 
@@ -201,5 +207,5 @@ The Playlist will be saved as xxxxx.m3u, which can then be opened by another med
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying. After you revise the playlist in ArchSimian, it will place it in the folder where you placed the MM4 exported playlist. You can then import it back into MM4 using the ImportM3U plugin and update the playlist in MM4.
 
-When you have added tracks from ArchSimian, you can export your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app.
+When you have added tracks from ArchSimian, you can simply save your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app.
 
