@@ -1,5 +1,6 @@
 #include <QStandardPaths>
 #include <QDir>
+#include <QMessageBox>
 #include <fstream>
 #include <sstream>
 #include "basiclibfunctions.h"
@@ -375,11 +376,11 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             continue;} // if an excluded artist is found continue to next str1
         artexcludes.close();
         /*
-           If not yet skipped, and if the user has enabled the album variety feature, open another inner loop and iterate through
+           If not yet skipped (!s_excludeMatch), and if the user has enabled the album variety feature, open another inner loop and iterate through
            finalids.txt (which contains the album IDs which are to be excluded) and compare each ID to the str1 albumID token.
            Continue to next str1 if a match found (meaning it identifies an excluded album ID).
         */
-        if (s_includeAlbumVariety){
+        if ((s_includeAlbumVariety) && (!s_excludeMatch)){ // added condition on 11 Apr 2020 ---> && (!s_excludeMatch)           
             QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
@@ -403,7 +404,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
                 artalbexcludes.close();
                 continue;}// if an excluded artist is found continue to next str1
             artalbexcludes.close();
-        }
+        } 
         finaltracksvect.push_back(tokenLTP+","+songPath); // If not skipped by now, add the track to the final list
         // end of the str1 while block, continue to next str1
     }
