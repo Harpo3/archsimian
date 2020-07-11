@@ -863,20 +863,7 @@ void ArchSimian::on_addsongsButton_released(){
                 getAlbumIDs();
             }
             if (Constants::kVerbose) std::cout << "Now selecting track for non-code-1 track selection (function selectTrack)." << std::endl;
-            try {
             selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
-            }
-            catch (const std::bad_alloc& exception) {
-                std::cerr << "bad_alloc detected: Maximum playlist length has been reached. Exiting program." << exception.what();
-                //QMessageBox msgBox;
-                //msgBox.setText("Artist excludes error: Attempted to add tracks, but no available tracks found. Maximum"
-                                                                     //" playlist length has been reached.");
-                QMessageBox msgBox;
-                QString msgboxtxt = "Sorry, attempted to add tracks at this quantity, but not enough available tracks found. Try again with fewer tracks. Exiting program ";
-                msgBox.setText(msgboxtxt);
-                msgBox.exec();
-                qApp->quit(); //Exit program
-              }
         }
         // Collect and collate 'track selected' info for (GUI display of) final song selections
         std::string shortselectedTrackPath;
