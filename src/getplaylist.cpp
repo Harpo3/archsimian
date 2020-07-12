@@ -17,9 +17,8 @@ unsigned long cnt = 0;
     cnt++;
  return int(cnt);
 }
-
-void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened){   //  Purpose is to remove the m3u headers lines, leaving just the file path
-    // need to change config management for selected playlist and music library directory to QSettings format
+//  Purpose is to remove the m3u headers lines, leaving just the file paths
+void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened){
     if (Constants::kVerbose){std::cout << "getPlaylist: s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.

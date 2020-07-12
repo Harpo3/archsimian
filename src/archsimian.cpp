@@ -128,8 +128,8 @@ static QString s_musiclibrarydirname{""};
 static QString s_mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
-static QString s_musiclibshortened{""};// NEW these should be blank, and loaded from config file.  New to add code for that
-static QString s_windowstopfolder{""}; // NEW same
+static QString s_musiclibshortened{""};
+static QString s_windowstopfolder{""};
 static QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
 static QDir appDataPath = appDataPathstr;
 static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
