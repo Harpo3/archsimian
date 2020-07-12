@@ -91,6 +91,12 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     if (Constants::kVerbose) std::cout << "Path token used to identify Windows top folder is: "<< tempPath1 << '\n';
     int delimCount = countDelimChars(tempPath1);
     if (Constants::kVerbose) std::cout << "Number of delimiters found: "<< delimCount << '\n';
+    if (delimCount > 4){
+        QMessageBox msgBox;
+        msgBox.setText("Windows directory of music library is set in a sub-directory. The music library must be located in a top directory. ");
+        msgBox.exec();
+        exit(1);
+    }
     if (delimCount == 4){
         // Four delimiters means there is a folder in libtable.dsv other than for: 1. Artist, 2. Album, and 3. Song
         // Next is to extract the string identifying the Windows top folder under which the music library resides

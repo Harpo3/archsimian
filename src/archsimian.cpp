@@ -875,13 +875,20 @@ void ArchSimian::on_addsongsButton_released(){
             }
             catch (const std::bad_alloc& exception) {
                 std::cerr << "bad_alloc detected: Maximum playlist length has been reached. Exiting program." << exception.what();
+                i = numTracks;
                 //QMessageBox msgBox;
                 //msgBox.setText("Artist excludes error: Attempted to add tracks, but no available tracks found. Maximum"
                                                                      //" playlist length has been reached.");
                 QMessageBox msgBox;
-                QString msgboxtxt = "Sorry, attempted to add tracks at this quantity, but not enough available tracks found. Try again with fewer tracks. Exiting program ";
+                QString msgboxtxt = "Out of memory error (bad_alloc):failed during attempt to add tracks. Possible reasons: "
+                                    "1. Not enough available tracks found. Try again with fewer tracks or try to start a new playlist."
+                                    "2. Settings in MediaMonkey for backing up database/exporting playlists are incorrect."
+                                    "3. ArchSimian configuration incorrect. Check configuration: ~/.config/archsimian/archsimian.conf."
+                                    "Pressing OK will try to remove temporary files at ~/.local/share/archsimian/ and exit program.";
                 msgBox.setText(msgboxtxt);
-                msgBox.exec();
+                msgBox.exec();                
+                removeAppData("cleanlib.dsv");
+                removeAppData("playlistposlist.txt");
                 qApp->quit(); //Exit program
               }
         }
@@ -890,7 +897,32 @@ void ArchSimian::on_addsongsButton_released(){
         shortselectedTrackPath = s_selectedTrackPath;
         std::string key1 ("/");
         std::string key2 ("_");
-        shortselectedTrackPath.erase(0,11);
+        // Next, determine how many alphanumeric chars there are in the windowstopfolder name
+
+        char *array_point;
+        char c1;
+        unsigned long count=0, alp=0, digt=0, oth=0;
+        char string_array[100];
+        strcpy(string_array, s_musiclibrarydirname.toStdString().c_str());
+        for(array_point=string_array;*array_point!='\0';array_point++)
+        {
+            c1=*array_point;
+            count++;
+            if (isalpha(c1))
+            {
+                alp++;
+            }
+            else
+                if (isdigit(c1))
+                {
+                    digt++;
+                }
+                else
+                {
+                    oth++;
+                }
+        }
+        shortselectedTrackPath.erase(0,count);
         std::size_t found = shortselectedTrackPath.rfind(key1);
         std::size_t found1 = shortselectedTrackPath.rfind(key2);
         if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}

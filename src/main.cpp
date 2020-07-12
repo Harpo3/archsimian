@@ -21,8 +21,8 @@ int main(int argc,char* argv[])
         QString mydirpath = appDataPath.path();
         std::string convertStdPath = mydirpath.toStdString();
         // Launch GUI (archsimian.cpp, which is the mainwindow file)
-        ArchSimian guiWindow;
-        guiWindow.show();
+        ArchSimian guiWindow;        
+        guiWindow.show();        
         QApplication::exec();
     return 0;
 }
