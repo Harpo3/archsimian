@@ -11,6 +11,7 @@
 // Function to calculate which artists need to be excluded from the current track selection
 void getArtistExcludes()
 {
+    if (Constants::kVerbose) std::cout << "getArtistExcludes function started." << std::endl;
     std::fstream filestrinterval;
     filestrinterval.open ("ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}

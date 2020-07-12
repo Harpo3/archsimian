@@ -5,7 +5,7 @@
 
 bool recentlyUpdated(const QString &s_mmBackupDBDir);
 
-void getLibrary(const QString &s_musiclibrarydirname);
+void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshortened, QString *s_windowstopfolder);
 
 void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1TotTrackQty,int *_srCode1MsTotTime,
                  int *_srCode3TotTrackQty,int *_srCode3MsTotTime,int *_srCode4TotTrackQty,int *_srCode4MsTotTime,

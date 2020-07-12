@@ -10,6 +10,34 @@
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
+const std::string emptyString = "";
+std::string ExtractString( std::string source, std::string start, std::string end )
+{
+     std::size_t startIndex = source.find( start );
+
+     // If the starting delimiter is not found on the string
+     // stop the process, you're done!
+     //
+     if( startIndex == std::string::npos )
+     {
+        return emptyString;
+     }
+
+     // Adding the length of the delimiter to our starting index
+     // this will move us to the beginning of our sub-string.
+     //
+     startIndex += start.length();
+
+     // Looking for the end delimiter
+     //
+     std::string::size_type endIndex = source.find( end, startIndex );
+
+     // Returning the substring between the start index and
+     // the end index. If the endindex is invalid then the
+     // returned value is empty string.
+     return source.substr( startIndex, endIndex - startIndex );
+}
+
 inline bool doesFileExist (const std::string& name) {
     struct stat buffer{};
     return (stat (name.c_str(), &buffer) == 0);
@@ -23,6 +51,16 @@ int countBlankChars(std::string input)
         if (isspace(input[i]))
             ++spaces;}
         return spaces;
+}
+
+int countDelimChars(std::string input)
+{
+    int delims = 0;
+    unsigned long totalchars = input.length();
+    for (unsigned long i = 0; i< totalchars; ++i){
+        if (input[i] == '\\')
+            ++delims;}
+        return delims;
 }
 
 StringVector2D readDSV(const std::string& filename)
@@ -108,13 +146,13 @@ std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgd
 }
 
 // Function to return all vector contents to a single dir path string using a '/' delimiter
-std::string getChgdDirStr(std::vector<std::string> const &input, std::string chgdString, const QString &s_musiclibrarydirname) {
-    std::ostringstream oschgdString;
-    for (unsigned long i = 1; i < input.size(); i++) {
-        oschgdString << '/' << input.at(i);
-    }
-    chgdString = s_musiclibrarydirname.toStdString() + oschgdString.str();
-    return chgdString;
+std::string getChgdDirStr(std::vector<std::string> const &input, std::string chgdString, std::string musiclibshortened) {
+            std::ostringstream oschgdString;
+            for (unsigned long i = 1; i < input.size(); i++) {
+                oschgdString << '/' << input.at(i);
+            }
+            chgdString = musiclibshortened + oschgdString.str(); // changed here too
+            return chgdString;
 }
 
 // Function to read a line of data that may have variable line ending chars

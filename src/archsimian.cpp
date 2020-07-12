@@ -128,6 +128,8 @@ static QString s_musiclibrarydirname{""};
 static QString s_mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
+static QString s_musiclibshortened("/mnt/vboxfiles");// NEW these should be blank, and loaded from config file.  New to add code for that
+static QString s_windowstopfolder("music"); // NEW same
 static QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
 static QDir appDataPath = appDataPathstr;
 static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
@@ -374,10 +376,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 perror("wait");
                 _exit(1);
             }
-            getLibrary(s_musiclibrarydirname); // get songs table from MM.DB
+            getLibrary(s_musiclibrarydirname,&s_musiclibshortened, &s_windowstopfolder); // get songs table from MM.DB
             removeSQLFile();
         }
     }
+    if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5 completed. s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
     s_bool_CleanLibExist = doesFileExist (cleanLibFile);
     if (s_bool_CleanLibExist) {removeAppData ("libtable.dsv");}
     else {
@@ -630,7 +633,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // (after running getPlaylist) if initially false
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected) && (!s_bool_PlaylistExist)){
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
-        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         QFileInfo fi(s_defaultPlaylist);
         QString justname = fi.fileName();
@@ -1526,7 +1529,7 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         //ofs1.close();
         //s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/ratedabbr2.txt");
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. ratedabbr2 should be zero now: "<< s_playlistSize << std::endl;}
-        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened);
         s_bool_PlaylistSelected = true;
         ui->viewplaylistButton->setDisabled(false);
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
@@ -1597,7 +1600,7 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     }
     // Remove ratedabbr2 and run getPlaylist function, Set s_bool_PlaylistExist to true
     //removeAppData("ratedabbr2.txt");
-    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname);
+    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened);
     s_bool_PlaylistSelected = true;
     // Get playlist size
     s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");

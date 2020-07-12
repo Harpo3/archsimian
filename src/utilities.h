@@ -6,8 +6,12 @@
 
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
+const std::string emptyString = "";
+std::string ExtractString( std::string source, std::string start, std::string end );
 
 int countBlankChars(std::string input);
+
+int countDelimChars(std::string input);
 
 StringVector2D readDSV(const std::string& filename);
 StringVector2D readCSV(const std::string& filename);
@@ -22,7 +26,7 @@ std::string removeSpaces(std::string str);
 
 std::string getChgdDSVStr(std::vector<std::string> const &input,std::string chgdString);
 
-std::string getChgdDirStr(std::vector<std::string> const &input, std::string chgdString, const QString &s_musiclibrarydirname);
+std::string getChgdDirStr(std::vector<std::string> const &input, std::string chgdString, std::string musiclibshortened);
 
 std::istream& safeGetline(std::istream& is, std::string& t);
 

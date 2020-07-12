@@ -18,7 +18,7 @@ unsigned long cnt = 0;
  return int(cnt);
 }
 
-void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname){   //  Purpose is to remove the m3u headers lines, leaving just the file path
+void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened){   //  Purpose is to remove the m3u headers lines, leaving just the file path
     // need to change config management for selected playlist and music library directory to QSettings format
     if (Constants::kVerbose){std::cout << "getPlaylist: s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
@@ -30,6 +30,7 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     ofs1.close();
     static std::string s_selectedplaylist = s_defaultPlaylist.toStdString();
     static std::string musiclibdirname = s_musiclibrarydirname.toStdString();
+    static std::string musiclibdirshort = s_musiclibshortened.toStdString();
     //std::string playlistFile = s_selectedplaylist;
     std::ifstream readFile(s_defaultPlaylist.toStdString());
     if (Constants::kVerbose){std::cout << "getPlaylist: playlistFile is: "<< s_defaultPlaylist.toStdString() << std::endl;}
@@ -49,10 +50,13 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
         std::string str2 ("\\");
         std::size_t found = line.find(str2);
         if (found!=std::string::npos) {// colon is one char before the first dir symbol
-            line.replace(line.find(str2),str2.length(),musiclibdirname + "/");
+            line.replace(line.find(str2),str2.length(), musiclibdirshort + "/");
             found=line.find("second dir symbol",found+1,1);
             line.replace(line.find(str2),str2.length(),"/");
             found=line.find("third dir symbol",found+1,1);
+            line.replace(line.find(str2),str2.length(),"/");
+            //NEW add if statement for whether windows top folder exists
+            found=line.find("fourth dir symbol",found+1,1);
             line.replace(line.find(str2),str2.length(),"/");
         }        
         outf << line << '\n'; // DO NOT ADD endl here
@@ -76,8 +80,11 @@ void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr)
 void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_defaultPlaylist, QString &s_winDriveLtr, QString &s_musiclibrarydirname){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     static std::string playlistpath = s_defaultPlaylist.toStdString();
+    if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistpath = "<<playlistpath<< std::endl;
     static std::string playlistdirname = s_mmPlaylistDir.toStdString();
+    if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistdirname = "<<playlistdirname<< std::endl;
     static std::string musicLibraryDir=s_musiclibrarydirname.toStdString();
+    if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: musicLibraryDir = "<<musicLibraryDir<< std::endl;
     std::string winDriveLtr = s_winDriveLtr.toStdString();
     std::ifstream readFile(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     std::ofstream outf(playlistpath);
@@ -89,7 +96,7 @@ void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QS
     while (std::getline(readFile, line)){
         std::istringstream iss(line);
         std::string str = line;
-        str.replace(str.begin(),str.begin()+s_musicdirlength,winDriveLtr+":");
+        str.replace(str.begin(),str.begin()+s_musicdirlength,winDriveLtr+":\\music");
         line = str;
         std::string str1 (musicLibraryDir);
         std::size_t found1 = line.find(str1);

@@ -49,10 +49,92 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
     return refreshNeededResult;
 }
 
-// Function to create the library file using the exported songs table (libtable.dsv) of the MediMonkey database
-void getLibrary(const QString &s_musiclibrarydirname)
+// Function to create the library file using the exported songs table (libtable.dsv) of the MediaMonkey database
+void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshortened, QString *s_windowstopfolder)
 {
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    std::string musiclibshortened = s_musiclibrarydirname.toStdString(); // default setting using local string
+    std::string windowstopfolder ("");// default setting using local string
+    if (Constants::kVerbose) std::cout << "Starting getLibrary function. This is the default value for *s_musiclibshortened: " << musiclibshortened << std::endl;
+
+    // First, determine whether there is a Windows top level folder in libtable.dsv. If so, identify the name and exclude
+    // when creating the song paths for cleanlib.dsv
+
+    std::string tempdatabaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // now we can use it as a temporary input file
+    std::ifstream myfile(tempdatabaseFile);
+    if (!myfile.is_open())
+    {
+        std::exit(EXIT_FAILURE);
+    }
+    std::string line, csvItem;
+    int lineNumber = 0;
+    int lineNumberSought = 2;
+    if (myfile.is_open()) {
+        while (getline(myfile,line)) {
+            lineNumber++;
+            if(lineNumber == lineNumberSought) {
+                std::istringstream myline(line);
+                while(getline(myline, csvItem, ',')) {}
+            }
+        }
+        myfile.close();
+    }
+    std::vector<std::string> temptokens;
+    std::stringstream tempcheck1(csvItem);// stringstream for parsing carat delimiter
+    std::string tempintermediate; // intermediate value for parsing carat delimiter
+    while(getline(tempcheck1, tempintermediate, '^'))
+    {
+        temptokens.push_back(tempintermediate);
+    }
+    std::string tempPath1;
+    tempPath1 = temptokens[8];
+    if (Constants::kVerbose) std::cout << "Path token used to identify Windows top folder is: "<< tempPath1 << '\n';
+    int delimCount = countDelimChars(tempPath1);
+    if (Constants::kVerbose) std::cout << "Number of delimiters found: "<< delimCount << '\n';
+    if (delimCount == 4){
+        // Four delimiters means there is a folder in libtable.dsv other than for: 1. Artist, 2. Album, and 3. Song
+        // Next is to extract the string identifying the Windows top folder under which the music library resides
+        std::string extracted = ExtractString( tempPath1, "\\", "\\" );
+        windowstopfolder = extracted;
+        if (Constants::kVerbose) std::cout << "This is the found value of windowstopfolder (local): " << windowstopfolder << std::endl;
+
+        // Next, determine how many alphanumeric chars there are in the windowstopfolder name
+
+        char *array_point;
+        char c1;
+        unsigned long count=0, alp=0, digt=0, oth=0;
+        char string_array[100];
+        strcpy(string_array, windowstopfolder.c_str());
+        for(array_point=string_array;*array_point!='\0';array_point++)
+        {
+            c1=*array_point;
+            count++;
+            if (isalpha(c1))
+            {
+                alp++;
+            }
+            else
+                if (isdigit(c1))
+                {
+                    digt++;
+                }
+                else
+                {
+                    oth++;
+                }
+        }
+        if (Constants::kVerbose) std::cout <<" The number of characters in the string windowstopfolderis: "<<count<<std::endl;
+
+        // Next, use the number of chars in the string to determine the string (musiclibshortened) for writing paths when creating cleanlib.dsv
+
+        std::string st = musiclibshortened.substr(0, musiclibshortened.size()-count-1); // the -1 is to also remove dir delimiter /
+        musiclibshortened = st;
+        if (Constants::kVerbose) std::cout << "This is the new value for musiclibshortened: " << musiclibshortened << std::endl;
+    }
+    temptokens.shrink_to_fit();
+
+    // Next, iterate libtable.dsv again, this time with musiclibshortened defined, and write cleanlib.dsv
+
     std::ifstream filestr1;
     filestr1.open (appDataPathstr.toStdString()+"/libtable.dsv");
     if (filestr1.is_open()) {filestr1.close();}
@@ -95,7 +177,7 @@ void getLibrary(const QString &s_musiclibrarydirname)
             dirPathTokens.push_back(intermediate2);
         }
         dirPathTokens.at(Constants::kColumn0) = s_musiclibrarydirname.toStdString();
-        songPath1 = getChgdDirStr(dirPathTokens,songPath1,s_musiclibrarydirname);        
+        songPath1 = getChgdDirStr(dirPathTokens,songPath1,musiclibshortened);
         int zeroCount = countBlankChars(songPath1); // run function to identify any paths that have blank spaces
         if (zeroCount > 0){
             QMessageBox msgBox;
@@ -150,6 +232,12 @@ void getLibrary(const QString &s_musiclibrarydirname)
     }
     primarySongsTable.close();   // Close files opened for reading and writing
     outf.close();
+    // Return local variables windowstopfolder and musiclibshortened using pointers
+    QString windowst = QString::fromStdString(windowstopfolder);
+    *s_windowstopfolder = windowst;
+    QString musicl = QString::fromStdString(musiclibshortened);
+    *s_musiclibshortened = musicl;
+
 }
 
 // Function to collect and process music library data needed to calculate song placement in the playlist
