@@ -121,6 +121,8 @@ private:
         QString mmBackupDBDir{};
         QString mmPlaylistDir{};
         QString s_WindowsDriveLetter{};
+        QString s_musiclibshortened{};
+        QString s_windowstopfolder;
         bool s_includeNewTracks{};
         bool s_includeAlbumVariety{};
         bool s_noAutoSave{};
@@ -134,7 +136,6 @@ private:
         int s_minalbums{};
         int s_mintrackseach{};
         int s_mintracks{};
-
     };
 
     void loadSettings();

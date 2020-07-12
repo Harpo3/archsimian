@@ -128,8 +128,8 @@ static QString s_musiclibrarydirname{""};
 static QString s_mmPlaylistDir{""};
 static QString s_defaultPlaylist{""};
 static QString s_winDriveLtr;
-static QString s_musiclibshortened("/mnt/vboxfiles");// NEW these should be blank, and loaded from config file.  New to add code for that
-static QString s_windowstopfolder("music"); // NEW same
+static QString s_musiclibshortened{""};// NEW these should be blank, and loaded from config file.  New to add code for that
+static QString s_windowstopfolder{""}; // NEW same
 static QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
 static QDir appDataPath = appDataPathstr;
 static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
@@ -172,12 +172,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_repeatFreqForCode1 = m_prefs.repeatFreqCode1;
     getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
     m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
+    s_windowstopfolder = m_prefs.s_windowstopfolder;
+    s_musiclibshortened = m_prefs.s_musiclibshortened;
 
     // Set up the GUI
     ui->setupUi(this);
     ui->mainQTabWidget->setCurrentIndex(0);
-
-
 
     // Step 1. Determine if user configuration exists:
     //
@@ -378,10 +378,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
             }
             getLibrary(s_musiclibrarydirname,&s_musiclibshortened, &s_windowstopfolder); // get songs table from MM.DB
             removeSQLFile();
+            m_prefs.s_windowstopfolder = s_windowstopfolder;
+            m_prefs.s_musiclibshortened = s_musiclibshortened;
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
+            s_bool_CleanLibExist = doesFileExist (cleanLibFile);
         }
     }
-    if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5 completed. s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
-    s_bool_CleanLibExist = doesFileExist (cleanLibFile);
+    if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5 completed."<< std::endl;
+
     if (s_bool_CleanLibExist) {removeAppData ("libtable.dsv");}
     else {
         std::cout << "Archsimian.cpp: Step 6. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
@@ -1059,6 +1063,8 @@ void ArchSimian::loadSettings()
     m_prefs.s_minalbums = settings.value("s_minalbums", Constants::kUserDefaultMinalbums).toInt();
     m_prefs.s_mintrackseach = settings.value("s_mintrackseach", Constants::kUserDefaultMintrackseach).toInt();
     m_prefs.s_mintracks = settings.value("s_mintracks", Constants::kUserDefaultMintracks).toInt();
+    m_prefs.s_windowstopfolder = settings.value("s_windowstopfolder",Constants::kUserDefaultWindowsDriveLetter).toString();
+    m_prefs.s_musiclibshortened = settings.value("s_musiclibshortened",Constants::kUserDefaultWindowsDriveLetter).toString();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -1085,7 +1091,8 @@ void ArchSimian::saveSettings()
     settings.setValue("s_mintrackseach",m_prefs.s_mintrackseach);
     settings.setValue("s_mintracks",m_prefs.s_mintracks);
     settings.setValue("s_WindowsDriveLetter",m_prefs.s_WindowsDriveLetter);
-
+    settings.setValue("s_windowstopfolder",m_prefs.s_windowstopfolder);
+    settings.setValue("s_musiclibshortened",m_prefs.s_musiclibshortened);
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
