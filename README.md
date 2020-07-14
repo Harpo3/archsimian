@@ -21,7 +21,7 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces or special characters in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
+1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces or special characters in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows or it may also have a top level directory like "music" which holds your library: <i>Drive:/music/artist/album/song</i>. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
 
 2.  You can include or exclude new tracks from being added to your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
 
@@ -129,9 +129,9 @@ MM4 Configuration – Under Tools > Options > Library, enable the following: Inf
 
 Tools > Options > Library > Appearance > Ignore prefixes
 
-Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive]/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
+Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive]/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library and "music" is a top folder on the drive, if used. Do not place the path below the level as shown in the "music" example. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
 
-X:\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Replace($lower(<Artist>), ,_)_-_$Replace($lower(<Title>), ,_)
+X:\music\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Replace($lower(<Artist>), ,_)_-_$Replace($lower(<Title>), ,_)
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
@@ -196,7 +196,7 @@ First, sort all tracks by their star rating. Select all the tracks of a particul
 Select new file using the toolbar or menu, and tracks can be added. ArchSimian uses your MM4 listening history.
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
-To use ArchSimian, (unfortunately) you have to <i>manually</i> export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. As stated in the MM4 manual: 
+To use ArchSimian, you have to export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. The easy way is to install the "Export/Create Playlist for Child Nodes" extension in MM4. Configure to export as "ANSI" and set directory for using in ArchSimian. Then. simply right click on the playlist and export. If you don't want to use the extension, this is also a base feature of MM4, but you will have to do it more manually. As stated in the MM4 manual: 
 
 <i>To export specific .m3u files:
 1.	Select the Tracks you wish to export from a Playlist
