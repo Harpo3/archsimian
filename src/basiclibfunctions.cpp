@@ -58,7 +58,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     if (Constants::kVerbose) std::cout << "Starting getLibrary function. This is the default value for *s_musiclibshortened: " << musiclibshortened << std::endl;
 
     // First, determine whether there is a Windows top level folder in libtable.dsv. If so, identify the name and exclude
-    // when creating the song paths for cleanlib.dsv
+    // when creating the song paths for cleanlib.dsv.
 
     std::string tempdatabaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // now we can use it as a temporary input file
     std::ifstream myfile(tempdatabaseFile);
@@ -129,6 +129,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
                     oth++;
                 }
         }
+        // NEW - need to change "count" to a static var so getplaylist (57) can be updated.
         if (Constants::kVerbose) std::cout <<" The number of characters in the string windowstopfolderis: "<<count<<std::endl;
 
         // Next, use the number of chars in the string to determine the string (musiclibshortened) for writing paths when creating cleanlib.dsv
@@ -156,6 +157,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     std::getline(primarySongsTable, str); //Get column titles header string
     outf << str << "\n"; // Write column titles header string to first line of file
     while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
+        //
         // Declare variables applicable to all rows
         std::istringstream iss(str);
         std::string token;
@@ -233,6 +235,13 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
             tokens.at(Constants::kColumn19) = removeSpaces(tokens[Constants::kColumn19]);
         }
         str = getChgdDSVStr(tokens,str);
+        // Remove certain special characters from the string before writing line to cleanlib.dsv
+        std::string specchars = "\?@&()#\"+*!;"; /// Identify special characters to remove
+        str.erase(remove_if(str.begin(), str.end(),
+                            [&specchars](const char& c) {
+                                return specchars.find(c) != std::string::npos;
+                            }),
+                            str.end());
         outf << str << "\n"; // The string is valid, write to clean file
         tokens.shrink_to_fit();
     }
