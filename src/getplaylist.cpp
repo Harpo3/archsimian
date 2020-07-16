@@ -1,21 +1,18 @@
 #include <sstream>
-#include <string>
 #include <iostream>
 #include <fstream>
 #include <QString>
 #include <QStandardPaths>
 #include <QDir>
-#include <iostream>
 #include "constants.h"
 #include "utilities.h"
 
-int musicLibraryDirLen(QString &s_musiclibrarydirname)
-{
-static std::string musicLibraryDir = s_musiclibrarydirname.toStdString(); // in main prgm, need to fix with QSettings variable
-unsigned long cnt = 0;
- for(size_t i=0; musicLibraryDir[i]; i++)
-    cnt++;
- return int(cnt);
+int musicLibraryDirLen(QString &s_musiclibrarydirname){
+    static std::string musicLibraryDir = s_musiclibrarydirname.toStdString(); // in main prgm, need to fix with QSettings variable
+    unsigned long cnt = 0;
+    for(size_t i=0; musicLibraryDir[i]; i++)
+        cnt++;
+    return int(cnt);
 }
 //  Purpose is to remove the m3u headers lines, leaving just the file paths
 void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened){
@@ -64,8 +61,7 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     outf.close();
 }
 
-void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr)
-{    
+void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr){    
     static std::string playlist = s_defaultPlaylist.toStdString();
     std::ifstream readFile(playlist);
     std::string line;

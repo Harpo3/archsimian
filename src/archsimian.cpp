@@ -38,11 +38,6 @@ inline bool doesFileExist (const std::string& name) {
     return (stat (name.c_str(), &buffer) == 0);
 }
 
-bool comp(int a, int b)
-{
-    return (a < b);
-}
-
 // VARIABLE DECLARATIONS & INITIALIZATIONS
 static bool s_bool_IsUserConfigSet {false};
 static bool s_bool_MMdbExist{false};
@@ -148,15 +143,12 @@ static int playlistTrackLimitCodeQty{0};
 static bool playlistFull{false};
 static int s_MaxAvailableToAdd{0};
 
-
-
 // Create GUI Widget ArchSimian
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
 {   
     QWidget setupwindow;
-    //connect(ui->actionNew, &QAction::triggered, this, &ArchSimian::on_actionNew_Playlist_triggered);
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf"; // sets the config file location for QSettings
     // QSettings: load user settings from archsimian.conf file
     loadSettings();
@@ -476,7 +468,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
                 +(s_yrsTillRepeatCode7factor * s_rCode7TotTrackQty) + (s_yrsTillRepeatCode8factor * s_rCode8TotTrackQty);
 
-        // NEW step 6 - set selTrackLimitCodeTotTrackQty
         selTrackLimitCodeTotTrackQty = std::min({s_rCode3TotTrackQty, s_rCode4TotTrackQty, s_rCode5TotTrackQty, s_rCode6TotTrackQty,
                                                  s_rCode7TotTrackQty, s_rCode8TotTrackQty},comp);
         if (selTrackLimitCodeTotTrackQty == s_rCode3TotTrackQty)
@@ -492,8 +483,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             playlistTrackLimitCodeQty = (int (selTrackLimitCodeRatingRatio * selTrackLimitCodeTotTrackQty * trackLimitPercentage));
             std::cout << "playlistTrackLimitCodeQty is: "<< playlistTrackLimitCodeQty << std::endl;
         }
-        // ******* end new ************
-
         //Print verbose results to console
         if (Constants::kVerbose) {
             std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
@@ -548,7 +537,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
         }
         s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
-
         ui->daystracksLabel->setText(QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
     }
     else {
@@ -842,7 +830,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
         ui->albumsTab->setEnabled(true);
     }
-    // NEW 14.a.
     // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
     setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
     // Calculate the maximum tracks that can be added to the playlist, based on current playlist size, the
@@ -862,10 +849,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     }
     if (Constants::kVerbose) std::cout << "playlist full status is: "<< playlistFull << std::endl;
+    // End setup of UI
+}
 
-}//
-
-// Functions available from the GUI Window
+// Functions available from within the UI
 
 void ArchSimian::on_addsongsButton_released(){
     if (Constants::kVerbose) std::cout << "Starting addSongs function." << std::endl;
@@ -1547,18 +1534,6 @@ void ArchSimian::on_mintrackseachspinBox_valueChanged(int arg1)
  ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
 }
 
-/*void ArchSimian::on_addsongsButton_clicked(bool checked) // change button state when tracks added is completed
-//{
-  //  ui->addsongsButton->setEnabled(false);
-    ui->addtrksspinBox->setEnabled(false);
-    if (checked){
-        ui->addsongsButton->isDown();
-        checked = false;
-    }
-    ui->addsongsButton->setEnabled(true);
-    ui->addtrksspinBox->setEnabled(true);
-}
-*/
 void ArchSimian::on_actionExport_Playlist_triggered()
 {
     int s_musicdirlength{};

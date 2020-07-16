@@ -6,6 +6,9 @@
 
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
+
+bool comp(int a, int b);
+
 const std::string emptyString = "";
 std::string ExtractString( std::string source, std::string start, std::string end );
 

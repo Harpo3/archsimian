@@ -10,28 +10,27 @@
 using StringVector = std::vector<std::string>;
 using StringVector2D = std::vector<StringVector>;
 
+
+bool comp(int a, int b)
+{
+    return (a < b);
+}
+
 const std::string emptyString = "";
 std::string ExtractString( std::string source, std::string start, std::string end )
 {
      std::size_t startIndex = source.find( start );
-
      // If the starting delimiter is not found on the string
      // stop the process, you're done!
-     //
      if( startIndex == std::string::npos )
      {
         return emptyString;
      }
-
      // Adding the length of the delimiter to our starting index
      // this will move us to the beginning of our sub-string.
-     //
      startIndex += start.length();
-
      // Looking for the end delimiter
-     //
      std::string::size_type endIndex = source.find( end, startIndex );
-
      // Returning the substring between the start index and
      // the end index. If the endindex is invalid then the
      // returned value is empty string.
