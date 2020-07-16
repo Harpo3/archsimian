@@ -845,7 +845,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     else {
         ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
-        ui->addtrksspinBox->setValue(s_MaxAvailableToAdd/2);
+        if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
+        if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
         ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     }
     if (Constants::kVerbose) std::cout << "playlist full status is: "<< playlistFull << std::endl;
@@ -1024,7 +1025,8 @@ void ArchSimian::on_addsongsButton_released(){
                                           QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",4000);
     ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
-    ui->addtrksspinBox->setValue(s_MaxAvailableToAdd/2);
+    if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
+    if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
     QFile songtext1(appDataPathstr+"/songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
