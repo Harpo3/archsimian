@@ -173,11 +173,17 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
             <property name="maximum">
-             <number>500</number>
+             <number>100</number>
             </property>
             <property name="singleStep">
              <number>10</number>
+            </property>
+            <property name="stepType">
+             <enum>QAbstractSpinBox::DefaultStepType</enum>
             </property>
             <property name="value">
              <number>50</number>
@@ -191,6 +197,12 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>298</width>
+              <height>16777215</height>
+             </size>
             </property>
             <property name="text">
              <string> tracks to selected playlist. </string>
@@ -336,7 +348,7 @@
                <string>Sets the frequency at which new tracks appear in the playlist. Feature enabled in the settings tab.</string>
               </property>
               <property name="maximum">
-               <number>500</number>
+               <number>100</number>
               </property>
               <property name="value">
                <number>20</number>
@@ -447,6 +459,12 @@
              <width>300</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Noto Serif</family>
+             <pointsize>7</pointsize>
+            </font>
            </property>
           </widget>
           <widget class="QLabel" name="label">

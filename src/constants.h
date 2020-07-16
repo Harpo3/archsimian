@@ -137,7 +137,7 @@ const int kRatingCode7{7};
 const int kRatingCode8{8};
 
 // Constant to turn on or off troubleshooting feedback in console
-const bool kVerbose{false};
+const bool kVerbose{true};
 }
 
 #endif // CONSTANTS_H

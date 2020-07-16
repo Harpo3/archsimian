@@ -33,7 +33,7 @@ public slots:
 
     void on_setmmdbButton_clicked();
 
-    void on_addsongsButton_released();    
+    void on_addsongsButton_released();
 
 
 private slots:
@@ -76,7 +76,7 @@ private slots:
 
     void on_mintrackseachspinBox_valueChanged(int arg1);
 
-    void on_addsongsButton_clicked(bool checked);
+    //void on_addsongsButton_clicked(bool checked);
 
     void on_actionExport_Playlist_triggered();
 

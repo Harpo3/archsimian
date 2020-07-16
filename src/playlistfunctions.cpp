@@ -355,7 +355,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
          If str1 has not yet been skipped, a track has been found with the rating selected and is not yet been placed on the playlist
          Now, open an inner loop and iterate through artistexcludes.txt, comparing each 'exclude' entry against the artist token.
          Continue to next str1 if a match found (meaning it identifies an excluded artist).
-        */
+        */        
         QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
         std::ifstream artistexcludes;  // Next ensure artistexcludes.txt is ready to open
         artistexcludes.open (appDataPathstr.toStdString()+"/artistexcludes.txt");
@@ -418,7 +418,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     playlist << *s_selectedTrackPath << "\n";
     playlist.close();    
     std::string selectedTrackPathshort;
-    if (Constants::kVerbose) std::cout << "selectTrack function: Track selected (non-code-1): " << *s_selectedTrackPath  << std::endl;
+    if (Constants::kVerbose) std::cout << "selectTrack function: Track selected and added (non-code-1): " << *s_selectedTrackPath  << std::endl;
     finaltracksvect.shrink_to_fit();
     return *s_selectedTrackPath;
 }

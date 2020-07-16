@@ -11,4 +11,6 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
 
 void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_slowestCode1Pos, std::string *_sartistLastCode1);
 
+void setPlaylistLimitCount (int &selectedTrackLimitCode, int *s_playlistActualCntSelCode);
+
 #endif // PLAYLISTFUNCTIONS_H
