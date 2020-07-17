@@ -653,20 +653,22 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((Constants::kVerbose) && (s_bool_RatedAbbrExist) && (s_bool_IsUserConfigSet)){std::cout
                 << "Archsimian.cpp: Step 8. MM.DB and artist.adj not recently updated. ratedabbr.txt not updated." << std::endl;}
 
-    // 9. Set playlist exists to false always to force reloading of playlist every time the program starts. Also set status of playlist selection.
+    // 9. Set playlist exists to false always to force reloading of playlist every time the program starts. Also set status of playlist selection from configuration.
     s_bool_PlaylistExist = false;
     s_bool_PlaylistSelected = true;
-    if (s_defaultPlaylist == "")s_bool_PlaylistSelected = false;
-    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9 (revised for mult playlists). Playlist set to not exists." << std::endl;}
+    if (s_defaultPlaylist == ""){
+        s_bool_PlaylistSelected = false;
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to not exists. Playlist not selected." << std::endl;}
+    }
+    else{if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to not exists, and a default playlist has been identified." << std::endl;}
 
-
-    // 10. If a playlist was identified in the user config, generate the playlist file: If user configuration
+    // 10. If a playlist was identified in the user config and selected in step 9, generate the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
     // (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
     // then set s_bool_PlaylistExist to true, rechecking, run doesFileExist (const std::string& name) function. Evaluates s_bool_PlaylistExist and sets to true
     // (after running getPlaylist) if initially false
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected)){
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist identified from user config. Generating 'cleanedplaylist' file for editing." << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         QFileInfo fi(s_defaultPlaylist);
