@@ -53,6 +53,8 @@ const QString kUserDefaultWindowsDriveLetter{};
 const int kUserDefaultMinalbums{2};
 const int kUserDefaultMintrackseach{4};
 const int kUserDefaultMintracks{8};
+const QString kWindowsTopFolder{""};
+const QString kMusicLibShortened{""};
 
 // Constants for bound limits for setting by user in ui
 const int kRatingCode3MinDays{10};

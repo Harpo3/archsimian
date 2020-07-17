@@ -142,6 +142,7 @@ static int s_playlistActualCntSelCode{0};
 static int playlistTrackLimitCodeQty{0};
 static bool playlistFull{false};
 static int s_MaxAvailableToAdd{0};
+static bool s_topLevelFolderExists{0};
 
 // Create GUI Widget ArchSimian
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -388,9 +389,13 @@ ArchSimian::ArchSimian(QWidget *parent) :
             removeSQLFile();
             m_prefs.s_windowstopfolder = s_windowstopfolder;
             m_prefs.s_musiclibshortened = s_musiclibshortened;
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and "
+                                                                                     "s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
             if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
             s_bool_CleanLibExist = doesFileExist (cleanLibFile);
         }
+        if (s_windowstopfolder.toStdString()== ""){s_topLevelFolderExists = false;}
+                else{s_topLevelFolderExists = true;}
     }
     if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5 completed."<< std::endl;
 
@@ -660,7 +665,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // (after running getPlaylist) if initially false
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected) && (!s_bool_PlaylistExist)){
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
-        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened);
+        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         QFileInfo fi(s_defaultPlaylist);
         QString justname = fi.fileName();
@@ -1176,8 +1181,8 @@ void ArchSimian::loadSettings()
     m_prefs.s_minalbums = settings.value("s_minalbums", Constants::kUserDefaultMinalbums).toInt();
     m_prefs.s_mintrackseach = settings.value("s_mintrackseach", Constants::kUserDefaultMintrackseach).toInt();
     m_prefs.s_mintracks = settings.value("s_mintracks", Constants::kUserDefaultMintracks).toInt();
-    m_prefs.s_windowstopfolder = settings.value("s_windowstopfolder",Constants::kUserDefaultWindowsDriveLetter).toString();
-    m_prefs.s_musiclibshortened = settings.value("s_musiclibshortened",Constants::kUserDefaultWindowsDriveLetter).toString();
+    m_prefs.s_windowstopfolder = settings.value("s_windowstopfolder",Constants::kWindowsTopFolder).toString();
+    m_prefs.s_musiclibshortened = settings.value("s_musiclibshortened",Constants::kMusicLibShortened).toString();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -1637,7 +1642,7 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         //ofs1.close();
         //s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/ratedabbr2.txt");
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Add/change playlist. ratedabbr2 should be zero now: "<< s_playlistSize << std::endl;}
-        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened);
+        getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistSelected = true;
         ui->viewplaylistButton->setDisabled(false);
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
@@ -1708,7 +1713,7 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     }
     // Remove ratedabbr2 and run getPlaylist function, Set s_bool_PlaylistExist to true
     //removeAppData("ratedabbr2.txt");
-    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened);
+    getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
     s_bool_PlaylistSelected = true;
     // Get playlist size
     s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");

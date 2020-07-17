@@ -15,7 +15,7 @@ int musicLibraryDirLen(QString &s_musiclibrarydirname){
     return int(cnt);
 }
 //  Purpose is to remove the m3u headers lines, leaving just the file paths
-void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened){
+void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened, bool s_topLevelFolderExists){
     if (Constants::kVerbose){std::cout << "getPlaylist: s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
@@ -51,10 +51,11 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
             line.replace(line.find(str2),str2.length(),"/");
             found=line.find("third dir symbol",found+1,1);
             line.replace(line.find(str2),str2.length(),"/");
-            //NEW add if statement for whether windows top folder exists
-            found=line.find("fourth dir symbol",found+1,1);
-            line.replace(line.find(str2),str2.length(),"/");
-        }        
+            if (s_topLevelFolderExists == true){
+                found=line.find("fourth dir symbol",found+1,1);
+                line.replace(line.find(str2),str2.length(),"/");
+            }
+        }
         outf << line << '\n'; // DO NOT ADD endl here
     }
     readFile.close();

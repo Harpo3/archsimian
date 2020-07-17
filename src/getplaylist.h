@@ -9,7 +9,7 @@ int musicLibraryDirLen(QString &s_musiclibrarydirname);
 
 std::vector<std::string> getPlaylistVect(std::string fileName);
 
-void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened);
+void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened, bool s_topLevelFolderExists);
 
 void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr);
 
