@@ -144,7 +144,7 @@ static bool playlistFull{false};
 static int s_MaxAvailableToAdd{0};
 static bool s_topLevelFolderExists{0};
 
-// Create GUI Widget ArchSimian
+// Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ArchSimian)
@@ -183,7 +183,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_windowstopfolder = m_prefs.s_windowstopfolder;
     s_musiclibshortened = m_prefs.s_musiclibshortened;
 
-    // Set up the GUI
+    // Set up the UI
     ui->setupUi(this);
     ui->mainQTabWidget->setCurrentIndex(0);
 
@@ -192,7 +192,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // Use QSettings archsimian.conf file entries to check entries for mmBackupDBDir, mmPlaylistDir, and musicLibraryDir
     // If any are blank, or the dir found does not exist, or file MM.DB does not exist at the location specified, then
     // launch child window for user to set the locations prior to launch of main window. When child window
-    // is closed verfiy the locations anf files selected exist.
+    // is closed verify the locations and files selected exist.
     //
     // UI configuration: determine state of user config
     //
@@ -204,7 +204,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::cout << "Archsimian.cpp: Step 1. Unable to open archsimian.conf configuration file or, one or more locations has no data. s_bool_IsUserConfigSet result: "
                   << s_bool_IsUserConfigSet << std::endl;
     }
-    //If configuration has already been set, populate the GUI labels accordingly
+    //If configuration has already been set, populate the UI labels accordingly
     if (s_bool_IsUserConfigSet)
     {
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration was set. s_bool_IsUserConfigSet result: " << s_bool_IsUserConfigSet << std::endl;
@@ -265,9 +265,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_IsUserConfigSet = false;
     }
 
-    // If configuration has not been set up completely, load GUI setup instructions for user to set configuration locations
+    // If configuration has not been set up completely, load UI setup instructions for user to set configuration locations
     if (!s_bool_IsUserConfigSet) {
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration has not been set. Adjusting GUI settings" << std::endl;
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration has not been set. Adjusting UI settings" << std::endl;
         ui->setlibrarylabel->setText(tr(""));
         ui->setlibraryButton->setEnabled(true);
         ui->setmmpllabel->setText(tr(""));
@@ -324,9 +324,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_MMdbUpdated = recentlyUpdated(s_mmBackupDBDir);
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 4. Is the MM.DB file date newer (greater) than the CleanLibFile date."
                                                      " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
-        // set GUI labels if MM.DB was recently updated
+        // set UI labels if MM.DB was recently updated
         if (s_bool_MMdbUpdated) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
-            // If result is 1, removeAppData ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
+            // If newer is true, removeAppData ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
         {
             QMessageBox msgBox;
             msgBox.setText("ArchSimian Database Update: A new MediaMonkey database backup has been "
@@ -347,15 +347,16 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-    // Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table into Archsimian: If user configuration
-    // and MM4 data exist, but the songs table does not (bool_IsUserConfigSet, s_bool_MMdbExist are true, s_bool_CleanLibExist is false), import songs table into AS, by running
-    // writeSQLFile() function, which creates the temporary basic table file libtable.dsv; then run the getLibrary() function, which creates
-    // the refined table file cleanlib.dsv The getLibrary() function completes the
+    // Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table (from MM.DB to libtable.dsv to cleanlib.dsv)
+    // into Archsimian: If user configuration and MM4 data exist, but the songs table does not (bool_IsUserConfigSet, s_bool_MMdbExist are true,
+    // s_bool_CleanLibExist is false), import songs table into AS, by running writeSQLFile() function, which creates the temporary basic table file
+    // libtable.dsv; then run the getLibrary() function, which creates the refined table file cleanlib.dsv The getLibrary() function completes the
     // following refinements: (a) corrects the directory paths to Linux, (b) adds random lastplayed dates for rated or "new-need-to-be-rated"
     // tracks that have no play history, (c) creates rating codes for any blank values found in GroupDesc col, using POPM values,
     // and (d) creates Artist codes (using col 1) and places the code in Custom2 if Custom2 is blank. Then set s_bool_CleanLibExist to true, rechecking,
     // run doesFileExist (const std::string& name) function. After verifying  cleanlib.dsv exists, remove temporary basic table file
     // libtable.dsv Evaluates s_bool_CleanLibExist for existence of cleanlib.dsv (cleanLibFile)
+
     if ((Constants::kVerbose)&&(!s_bool_MMdbUpdated)&&(s_bool_CleanLibExist)&&(s_bool_IsUserConfigSet)){
         std::cout << "Archsimian.cpp: Step 5. CleanLib file exists and MM.DB was not recently updated. Skip to Step 6."<< std::endl;}
 
@@ -652,19 +653,19 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((Constants::kVerbose) && (s_bool_RatedAbbrExist) && (s_bool_IsUserConfigSet)){std::cout
                 << "Archsimian.cpp: Step 8. MM.DB and artist.adj not recently updated. ratedabbr.txt not updated." << std::endl;}
 
-    // 9. Set playlist exists to false always to force reloading of playlist every time the program starts
+    // 9. Set playlist exists to false always to force reloading of playlist every time the program starts. Also set status of playlist selection.
     s_bool_PlaylistExist = false;
     s_bool_PlaylistSelected = true;
     if (s_defaultPlaylist == "")s_bool_PlaylistSelected = false;
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9 (revised for mult playlists). Playlist set to not exists." << std::endl;}
 
 
-    // 10. If a playlist was identified in the user config, but the playlist file is not found, obtain the playlist file: If user configuration
+    // 10. If a playlist was identified in the user config, generate the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
-    // (s_bool_PlaylistSelected is true), but cleaned playlist does not (s_bool_PlaylistExist is false), run function to obtain cleaned playlist file getPlaylist()
+    // (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
     // then set s_bool_PlaylistExist to true, rechecking, run doesFileExist (const std::string& name) function. Evaluates s_bool_PlaylistExist and sets to true
     // (after running getPlaylist) if initially false
-    if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected) && (!s_bool_PlaylistExist)){
+    if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected)){
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist missing, but was found in user config. Recreating playlist" << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
@@ -895,7 +896,7 @@ void ArchSimian::on_addsongsButton_released(){
         ofs.close();
     }
 
-    std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (GUI display)
+    std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (UI display)
     // Second, determine the rating for the track selection
     if (Constants::kVerbose) std::cout << "Running ratingCodeSelected function before loop."<< std::endl;
     s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
@@ -952,7 +953,7 @@ void ArchSimian::on_addsongsButton_released(){
                 qApp->quit(); //Exit program
               }
         }
-        // Collect and collate 'track selected' info for (GUI display of) final song selections
+        // Collect and collate 'track selected' info for (UI display of) final song selections
         std::string shortselectedTrackPath;
         shortselectedTrackPath = s_selectedTrackPath;
         std::string key1 ("/");
@@ -999,7 +1000,7 @@ void ArchSimian::on_addsongsButton_released(){
         if (Constants::kVerbose) std::cout<< "ratingCodeSelected function in loop completed. Result: " << s_ratingNextTrack << ". Count "
                                                             "at end (1006) is now: "<< i<<". Adding track "<< i + 1<<"." << std::endl;
     }
-     //After all tracks have been processed, update GUI with information to user about tracks added to playlist
+     //After all tracks have been processed, update UI with information to user about tracks added to playlist
     // First, update playlist limit and recalc s_MaxAvailableToAdd
     setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
     if (s_MaxAvailableToAdd == 0){
