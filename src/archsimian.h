@@ -100,6 +100,8 @@ private slots:
 
     void on_saveConfigButton_released();
 
+    void on_windowsDriveLtrEdit_textChanged(const QString &arg1);
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -136,6 +138,7 @@ private:
         int s_minalbums{};
         int s_mintrackseach{};
         int s_mintracks{};
+        int s_playlistActualCntSelCode{};
     };
 
     void loadSettings();

@@ -41,20 +41,21 @@ const int kUserDefaultTracksToAdd{10};
 const QString kUserDefaultDefaultPlaylist{};
 const bool kUserDefaultIncludeNewTracks{false};
 const bool kUserDefaultIncludeAlbumVariety{false};
-const bool kUserDefaultNoAutoSave{true};
-const bool kUserDefaultDisableNotificationAddTracks{false};
+const bool kUserDefaultNoAutoSave{false};
+const bool kUserDefaultDisableNotificationAddTracks{true};
 const double kUserDefaultDaysTillRepeatCode3{65};
 const double kUserDefaultRepeatFactorCode4{2.7};
 const double kUserDefaultRepeatFactorCode5{2.1};
 const double kUserDefaultRepeatFactorCode6{2.2};
 const double kUserDefaultRepeatFactorCode7{1.6};
 const double kUserDefaultRepeatFactorCode8{1.4};
-const QString kUserDefaultWindowsDriveLetter{};
+const QString kUserDefaultWindowsDriveLetter{""};
 const int kUserDefaultMinalbums{2};
 const int kUserDefaultMintrackseach{4};
 const int kUserDefaultMintracks{8};
 const QString kWindowsTopFolder{""};
 const QString kMusicLibShortened{""};
+const int kPlaylistActualCntSelCode{0};
 
 // Constants for bound limits for setting by user in ui
 const int kRatingCode3MinDays{10};

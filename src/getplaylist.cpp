@@ -69,7 +69,7 @@ void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr){
     std::string line;
     std::getline(readFile, line); //skip first line
     std::getline(readFile, line);
-    std::istringstream iss(line); //start with first line
+    std::istringstream iss(line); //start with first line    
     *s_winDriveLtr = line.front();
     readFile.close();
 }
