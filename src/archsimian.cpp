@@ -829,27 +829,28 @@ ArchSimian::ArchSimian(QWidget *parent) :
     {
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
         ui->albumsTab->setEnabled(true);
+        // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
+        setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
+        // Calculate the maximum tracks that can be added to the playlist, based on current playlist size, the
+        // frequency of adding code 3 (or other code) to the playlist, and the number of code 3 tracks currently
+        // in the playlist.
+        s_MaxAvailableToAdd = (int (playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_playlistSize / playlistTrackLimitCodeQty));
+        if (Constants::kVerbose) std::cout << "playlistLimitCount at program launch is: "<< s_playlistActualCntSelCode << std::endl;
+        // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
+        if (s_playlistActualCntSelCode > playlistTrackLimitCodeQty){
+            playlistFull = true;
+            ui->addsongsButton->setEnabled(false);
+            ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
+        }
+        else {
+            ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
+            if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
+            if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
+            ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+        }
+        if (Constants::kVerbose) std::cout << "playlist full status is: "<< playlistFull << std::endl;
     }
-    // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
-    setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
-    // Calculate the maximum tracks that can be added to the playlist, based on current playlist size, the
-    // frequency of adding code 3 (or other code) to the playlist, and the number of code 3 tracks currently
-    // in the playlist.
-    s_MaxAvailableToAdd = (int (playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_playlistSize / playlistTrackLimitCodeQty));
-    if (Constants::kVerbose) std::cout << "playlistLimitCount at program launch is: "<< s_playlistActualCntSelCode << std::endl;
-    // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
-    if (s_playlistActualCntSelCode > playlistTrackLimitCodeQty){
-        playlistFull = true;
-        ui->addsongsButton->setEnabled(false);
-        ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
-    }
-    else {
-        ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
-        if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-        if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
-        ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-    }
-    if (Constants::kVerbose) std::cout << "playlist full status is: "<< playlistFull << std::endl;
+
     // End setup of UI
 }
 
