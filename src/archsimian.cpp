@@ -661,7 +661,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to not exists. Playlist not selected." << std::endl;}
     }
     else{if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to not exists, and a default playlist has been identified." << std::endl;}
-
+    }
     // 10. If a playlist was identified in the user config and selected in step 9, generate the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
     // (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
