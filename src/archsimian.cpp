@@ -197,7 +197,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // UI configuration: determine state of user config
     //
     if ((s_mmBackupDBDir != nullptr) && (s_musiclibrarydirname != nullptr) && (s_mmPlaylistDir != nullptr)){
-        // add code to verify file /dir locations *****************
         if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 1. The locations s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDir have all been set up." << std::endl;}
         s_bool_IsUserConfigSet = true;
     }
@@ -215,6 +214,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->albumscheckBox->setChecked(true);
             ui->mainQTabWidget->setTabEnabled(4, true);
         }
+        ui->saveConfigButton->setEnabled(false);
         ui->menuBar->setDisabled(false);
         ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
         ui->setlibraryButton->setEnabled(true);
@@ -274,6 +274,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmplButton->setEnabled(true);
         ui->setmmdblabel->setText(tr(""));
         ui->setmmdbButton->setEnabled(true);
+        ui->saveConfigButton->setEnabled(true);
         ui->menuBar->setDisabled(true);
         ui->autosavecheckBox->setChecked(true);
         ui->setgetplaylistLabel->setText(tr("Select playlist for adding tracks"));
@@ -1057,6 +1058,7 @@ void ArchSimian::on_setlibraryButton_clicked(){
                 );
     ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
     // Write description note and directory configuration to archsimian.conf
+    ui->saveConfigButton->setEnabled(true);
     m_prefs.musicLibraryDir = s_musiclibrarydirname;
     ui->setmmplButton->setEnabled(true);    
 }
@@ -1071,6 +1073,7 @@ void ArchSimian::on_setmmplButton_clicked(){
                 "/"
                 );
     ui->setmmpllabel->setText(QString(mmbackuppldirname));
+    ui->saveConfigButton->setEnabled(true);
     m_prefs.mmPlaylistDir = mmbackuppldirname;
 }
 
@@ -1084,6 +1087,7 @@ void ArchSimian::on_setmmdbButton_clicked(){
                 "/"
                 );
     ui->setmmdblabel->setText(QString(mmbackupdbdirname));
+    ui->saveConfigButton->setEnabled(true);
     m_prefs.mmBackupDBDir = mmbackupdbdirname;
 }
 
@@ -1804,4 +1808,10 @@ void ArchSimian::on_viewplaylistButton_clicked()
     PlaylistContentDialog playlistcontentdialog;
     playlistcontentdialog.setModal(true);
     playlistcontentdialog.exec();
+}
+
+void ArchSimian::on_saveConfigButton_released()
+{
+    saveSettings();
+    qApp->quit();
 }
