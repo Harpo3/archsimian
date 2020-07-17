@@ -32,7 +32,8 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     if (Constants::kVerbose){std::cout << "getPlaylist: playlistFile is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     std::ofstream outf(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (!readFile.is_open()) {
-        std::cout << "getPlaylist: The readFile did not open. Did you manually export the MediaMonkey playlist?";
+        std::cout << "getPlaylist: The readFile did not open. Did you select a backup rather than an exported MediaMonkey "
+                     "playlist, or otherwise did you manually set the playlist in archsimian.cof without the full and proper path?";
         std::exit(EXIT_FAILURE);
     }
     std::string line;

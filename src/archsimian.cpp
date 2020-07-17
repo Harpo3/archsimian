@@ -268,6 +268,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // If configuration has not been set up completely, load UI setup instructions for user to set configuration locations
     if (!s_bool_IsUserConfigSet) {
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration has not been set. Adjusting UI settings" << std::endl;
+        QMainWindow::setWindowTitle("ArchSimian - Initial Configuration Setup");
         ui->setlibrarylabel->setText(tr(""));
         ui->setlibraryButton->setEnabled(true);
         ui->setmmpllabel->setText(tr(""));
@@ -658,17 +659,17 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_bool_PlaylistSelected = true;
     if (s_defaultPlaylist == ""){
         s_bool_PlaylistSelected = false;
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to not exists. Playlist not selected." << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to 'not exist'. Playlist not selected." << std::endl;}
     }
-    else{if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to not exists, and a default playlist has been identified." << std::endl;}
+    else{if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to 'not exist'. Default playlist identified." << std::endl;}
     }
-    // 10. If a playlist was identified in the user config and selected in step 9, generate the playlist file: If user configuration
+    // 10. If a playlist was identified in the user config (step 9), generate the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
     // (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
     // then set s_bool_PlaylistExist to true, rechecking, run doesFileExist (const std::string& name) function. Evaluates s_bool_PlaylistExist and sets to true
     // (after running getPlaylist) if initially false
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected)){
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Playlist identified from user config. Generating 'cleanedplaylist' file for editing." << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Generating 'cleanedplaylist' file for editing using default playlist identified in user config." << std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         QFileInfo fi(s_defaultPlaylist);
@@ -678,7 +679,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     if ((Constants::kVerbose) && (s_bool_PlaylistExist) && (s_bool_IsUserConfigSet)){std::cout << "Archsimian.cpp: Step 10. Playlist exists and was not updated." << std::endl;}
 
-    // 10a. If a playlist was not identified in the user config
+    // 10a. If a playlist was not identified in the user config, adjust the UI accordingly
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (!s_bool_PlaylistSelected) && (!s_bool_PlaylistExist)){
 
@@ -694,7 +695,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // playlist - here is to get the initial values if a playlist exists
 
     //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
-    // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist);
+    // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist); And, get the Windows drive letter.
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (s_playlistSize < 2) {
@@ -706,7 +707,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
             QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
         }
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
-
+        getWindowsDriveLtr(s_defaultPlaylist, &s_winDriveLtr);
+        m_prefs.s_WindowsDriveLetter = s_winDriveLtr;
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Windows drive letter set and saved to user configuration "
+                                              "as: "<< s_winDriveLtr.toStdString() << std::endl;}
     }
 
     // 12. If playlist exists, obtain the historical count (in addition to the playlist count) up to the sequential track limit:
@@ -715,7 +719,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // playlist, as part of a later function to make a new track selection), using the variable s_histCount. The value is
     // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
     // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
-    // and SequentialTrackLimit obtained with data from function getDBStats()]
+    // and SequentialTrackLimit obtained with data from function getDBStats()
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
@@ -723,11 +727,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
 
     //13. If playlist exists, artist statistics are processed, and modified database exists, create/update excluded artists
-    // list: If cleaned playlist exists (s_bool_PlaylistExist is true), and artistsadj.txt exists (s_bool_artistsadjExist is true) and modified database exists
+    // list. Creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
+    //ratingCodeSelected and selectTrack: If cleaned playlist exists (s_bool_PlaylistExist is true), and artistsadj.txt exists (s_bool_artistsadjExist is true) and modified database exists
     // (s_bool_RatedAbbrExist), run function getExcludedArtists() to create/update excluded artists list using vectors
-    // read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt. Also,
-    // creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
-    //ratingCodeSelected and selectTrack
+    // read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt.
+
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 13. Processing artist stats and excluded artists list. Creating temporary "
+                                          "database (ratedabbr2.txt) with playlist position numbers for use in subsequent "
+                                          "functions, ratingCodeSelected and selectTrack."<< s_histCount << std::endl;}
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))   {
         getExcludedArtists(s_playlistSize);
     }
@@ -838,7 +845,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     {
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
         ui->albumsTab->setEnabled(true);
-        // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
+    }
+    //15. Sets the initial playlist size limit to restrict how many tracks can be added to the playlist
+    if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
+    {
+       // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
         setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
         // Calculate the maximum tracks that can be added to the playlist, based on current playlist size, the
         // frequency of adding code 3 (or other code) to the playlist, and the number of code 3 tracks currently
@@ -858,8 +869,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
         }
         if (Constants::kVerbose) std::cout << "playlist full status is: "<< playlistFull << std::endl;
-    }
-
+        }
     // End setup of UI
 }
 
