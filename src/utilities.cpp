@@ -226,3 +226,20 @@ std::vector<std::string> split(std::string strToSplit, char delimeter){
     }
     return splittedStrings;
 }
+
+std::string GetStdoutFromCommand(std::string cmd) {
+
+std::string data;
+FILE * stream;
+const int max_buffer = 256;
+char buffer[max_buffer];
+cmd.append(" 2>&1");
+
+stream = popen(cmd.c_str(), "r");
+if (stream) {
+  while (!feof(stream))
+    if (fgets(buffer, max_buffer, stream) != nullptr) data.append(buffer);
+      pclose(stream);
+  }
+return data;
+}

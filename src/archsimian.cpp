@@ -38,6 +38,26 @@ inline bool doesFileExist (const std::string& name) {
     return (stat (name.c_str(), &buffer) == 0);
 }
 
+inline std::string getCurrentDateTime( std::string s ){
+    time_t now = time(nullptr);
+    struct tm  tstruct;
+    char  buf[80];
+    tstruct = *localtime(&now);
+    if(s=="now")
+        strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+    else if(s=="date")
+        strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
+    return std::string(buf);
+};
+inline void Logger( std::string logMsg ){
+
+    std::string filePath = "diagnosticslog.txt";
+    std::string now = getCurrentDateTime("now");
+    std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app );
+    ofs << now << '\t' << logMsg << '\n';
+    ofs.close();
+}
+
 // VARIABLE DECLARATIONS & INITIALIZATIONS
 static bool s_bool_IsUserConfigSet {false};
 static bool s_bool_MMdbExist{false};
@@ -249,7 +269,128 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                            tr(", Library date: ")+ QString::fromStdString(LastTableDate));
         }
     }
+    // If configuration has already been set, run diagnostics on the selections made
 
+    // Remove existing diagnostics log
+    removeAppData("diagnosticslog.txt");
+    // Start log file
+    Logger(" ************************************************ ");
+    Logger(" ********** ArchSimian Diagnostics Log ********** ");
+    Logger(" ************************************************ ");
+    // Open configuration file
+    QString configFilePath = QStandardPaths::locate(QStandardPaths::AppConfigLocation, QString(), QStandardPaths::LocateDirectory);
+    std::string configFile = configFilePath.toStdString()+"archsimian/archsimian.conf";
+    //std::cout << configFile << std::endl;
+    Logger("[Configuration] Looking for ArchSimian configuration file...");
+    // Extract the paths used for mmBackupDBDir (mmdbPath), musicLibraryDir (musiclibPath) & mmPlaylistDir (pldirPath)
+    bool configExist = doesFileExist (configFile);
+    if (configExist == false){
+        Logger ("[Configuration] ***ERROR*** archsimian.conf was not found at " + configFile + ". \n\t\t\t\t\t\t\t\t\tComplete 'Settings' tab in "
+                                                                                               "Archsimian then run diagnostics again.");
+        std::exit(EXIT_FAILURE);
+    }
+    if (configExist == true){
+        Logger ("[Configuration] archsimian.conf found at " + configFile);
+    }
+    std::ifstream file(configFile);
+    std::string strconfig;
+    std::string mmdbPath;
+    std::string musiclibPath;
+    std::string pldirPath;
+    Logger ("[Configuration] Verifying files and directories as specified in configuration...");
+    while (std::getline(file, strconfig)) {
+        std::vector<std::string> splittedStrings = split(strconfig, '=');
+        if (splittedStrings[0] == "mmBackupDBDir") {
+            Logger("[Configuration] Looking for MediaMonkey backup directory and database (MM.DB) file...");
+            mmdbPath = splittedStrings[1];
+            //std::cout << mmdbPath << "\n";
+            configExist = doesFileExist (mmdbPath + "/MM.DB");
+            if (configExist == false){
+                Logger ("*****************************************************");
+                Logger ("[Configuration] ***ERROR*** MM.DB was NOT FOUND at " + mmdbPath + ". \n\t\t\t\t\t\t\t\t\tBackup your MediaMonkey "
+                                                                                           "database to this location, then run diagnostics again.");
+                Logger ("*****************************************************");
+                std::exit(EXIT_FAILURE);
+            }
+            if (configExist == true){
+                Logger ("[Configuration] MM.DB FOUND at " + mmdbPath);
+            }
+            continue;}
+        else if (splittedStrings[0] == "mmPlaylistDir") {
+            Logger("[Configuration] Looking for exported playlists...");
+            pldirPath = splittedStrings[1];
+            Logger("[Configuration] Playlists directory FOUND at " + pldirPath + ". Checking for playlists...");
+            //std::cout << pldirPath  << "\n";
+            // Run ls command in directory to test for m3u files
+            std::string ls = GetStdoutFromCommand("ls -1 "+pldirPath+"/*.m3u");
+            Logger("[Configuration] Playlist check result: " + ls + " \n\t\t\t\t\t\t\t\t\tChecking this playlist...\n");
+            Logger ("*****************************************************");
+            Logger("[Configuration] [REVIEW REQUIRED]");
+            Logger ("*****************************************************");
+            // add code to inspect m3u file. If "file -i" is charset=utf-16le instead of charset=us-ascii, this indicate error
+            std::string ls2 = GetStdoutFromCommand("file -i "+ls);
+            Logger("[Configuration] Playlist result: " + ls2 + "\n\t\t\t\t\t\t\t\t\tIf the above result is 'charset=us-ascii', the playlist file is OK as "
+                                                               "formatted. \n\n\t\t\t\t\t\t\t\t\tIf it is "
+                                                               "'charset=utf-16le' or some other encoding type, the file is in the WRONG FORMAT AND WILL "
+                                                               "NOT IMPORT CORRECTLY. This error usually means the file is a MediaMonkey BACKUP of the "
+                                                               "playlist, rather than a MANUALLY EXPORTED ONE. In MediaMonkey, you may need to install the 'Export/Create "
+                                                               "Playlists for Child Nodes' extension by Zvezdan Dimitrijevic if MM's built-in export function does not work. "
+                                                               "Find 'Export/Create Playlists'"
+                                                               " from the 'File' menu, then go to 'Options' and select the following: 'All levels of sub-nodes',"
+                                                               " 'To child folders', 'M3U', 'ANSI' with 'BOM' checked, Skip export of 'All nodes'.");
+            continue;}
+        else if (splittedStrings[0] == "musicLibraryDir") {
+            Logger("[Configuration] Looking for music library...");
+            musiclibPath = splittedStrings[1];
+            Logger("[Configuration] Music library directory FOUND at " + musiclibPath+ ".\n\n\t\t\t\t\t\t\t\t\tChecking the directory structure...\n");
+            //std::cout << musiclibPath << "\n";
+            std::string  dirdepth = GetStdoutFromCommand("find "+musiclibPath+" -depth -printf '%d\n' | sort -rn | head -1");
+            int i = std::stoi(dirdepth);
+            if (i == 2){
+                Logger("[Configuration] Music library directory depth is CORRECT at " + dirdepth + ".");
+            }
+            else {
+                Logger ("*****************************************************");
+                Logger("[Configuration] [REVIEW REQUIRED] Music library directory depth may NOT be correct. ");
+                Logger ("*****************************************************");
+                Logger("\n\t\t\t\t\t\t\t\t\tThere should be 2 subdirectories, artist and album only. Instead the search found: " + dirdepth);
+                std::string dirsearchoutput = GetStdoutFromCommand("find "+musiclibPath+" -mindepth 3 -maxdepth 10 -type d");
+                Logger("[Configuration] If the above result was 3, AND the ONLY entry below refers to 'System Volume Information', the result is OK."
+                       "\n\t\t\t\t\t\t\t\t\tOtherwise, revise the music folders "
+                       "shown:\n\n\t\t\t\t\t\t\t\t\t " + dirsearchoutput);
+            }
+            std::cout << "Directory depth is " << i  << "\n";
+            std::string countm ("\"*.mp3\"");
+            std::string countmp3files = GetStdoutFromCommand("find "+musiclibPath+" -type f -name "+ countm + " -printf x | wc -c");
+
+            int mp3cnt = std::stoi(countmp3files);
+
+            if (mp3cnt < 1000){
+                Logger ("*****************************************************");
+                Logger("[Configuration] ***WARNING*** There were less than 1,000 mp3 files found. \n\t\t\t\t\t\t\t\t\tUncertain whether"
+                       " program will work correctly.");
+                Logger ("*****************************************************");
+                Logger("[Configuration] Number of mp3 files found was "+ countmp3files);
+            }
+            else {
+                Logger("[Configuration] Music library CHECKED and an ACCEPTABLE number of mp3 files were found: " + countmp3files);
+            }
+            Logger("[Configuration] Checking library for mp3 filenames containing spaces...\n");
+            std::string countn ("\"* *.mp3*\"");
+            std::string countmp3fspaces = GetStdoutFromCommand("find "+musiclibPath+" -name *"+ countn + " -printf x | wc -c");
+            int mp3spccnt = std::stoi(countmp3fspaces);
+            if (mp3spccnt > 0){
+                Logger ("*****************************************************");
+                Logger("[Configuration] ***WARNING*** There were mp3s found with spaces: " + countmp3fspaces);
+                Logger ("*****************************************************");
+                std::string listmp3fspaces = GetStdoutFromCommand("find "+musiclibPath+" -name "+ countn);
+                Logger("[Configuration] Revise the following: \n\n" + listmp3fspaces);
+            }
+            else {
+                Logger("[Configuration] Music files CHECKED and no mp3 were found to have spaces: " + countmp3fspaces);
+            }
+            continue;}
+    }
     // Step 2. Determine if the MediaMonkey (MM.DB) database exists with the doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
     if (s_bool_IsUserConfigSet) {
         std::string mmdbdir = s_mmBackupDBDir.toStdString();

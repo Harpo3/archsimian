@@ -39,4 +39,6 @@ void removeAppData(std::string str);
 
 std::vector<std::string> split(std::string strToSplit, char delimeter);
 
+std::string GetStdoutFromCommand(std::string cmd);
+
 #endif // UTILITIES_H
