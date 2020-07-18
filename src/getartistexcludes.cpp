@@ -112,8 +112,10 @@ void getExcludedArtists(const int &s_playlistSize)
     int songCount = 0;
     static std::string song;
     while (getline(playlistTable,song)){
+        int tempsize{0};
         ++playlistCount;
-        s_playlistPosition = s_playlistSize-playlistCount + 1; // playlist position is most recently added (to bottom)
+        if (s_playlistSize-playlistCount + 1 == 0) { tempsize = 1;}
+        s_playlistPosition = s_playlistSize-playlistCount + tempsize + 1; // playlist position is most recently added (to bottom)
         std::string txtPos;
         std::string pathinlib;
         std::string artistinvec;

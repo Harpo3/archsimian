@@ -15,8 +15,8 @@ void setPlaylistLimitCount (int &selectedTrackLimitCode, int *s_playlistActualCn
     std::string ratingCodeFound2{""};
     std::string strLimitcode = std::to_string(selectedTrackLimitCode);
     int interimcount{0};
-    if (Constants::kVerbose) std::cout << "setPlaylistLimitCount function: strLimitcode: "
-                                       <<strLimitcode <<". Starting function. "<< std::endl;
+    //if (Constants::kVerbose) std::cout << "setPlaylistLimitCount function: strLimitcode: "
+    //                                   <<strLimitcode <<". Starting function. "<< std::endl;
     std::string playlistPos{0};
     std::ifstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
