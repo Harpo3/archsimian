@@ -1050,23 +1050,26 @@ void ArchSimian::on_addsongsButton_released(){
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                                s_ratingRatio7,s_ratingRatio8); // Recalc rating selection
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: ratingCodeSelected function in loop completed. Result: " << s_ratingNextTrack << ". Count "
-                                                            "at end (1006) is now: "<< i<<". Adding track "<< i + 1<<"." << std::endl;
+                                                            "at end (1006) is now: "<< i<< std::endl;
+        if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *****************************************************************" << std::endl;
+        if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *************   Adding track "<< i + 1<<".   ********************" << std::endl;
+        if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *****************************************************************" << std::endl;
     }
      //After all tracks have been processed, update UI with information to user about tracks added to playlist
     // First, update playlist limit and recalc s_MaxAvailableToAdd
-    setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
+
+    //setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode); commented out because the function would be counting twice
     if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_playlistActualCntSelCode (actual 3s in playlist) "
                                                   "(after all tracks have been processed) is: "<< s_playlistActualCntSelCode << std::endl;
     if (Constants::kVerbose){std::cout << "on_addsongsButton_released: on_actionOpen_Playlist_triggered. s_playlistSize before s_MaxAvailableToAdd calc is: "<< s_playlistSize << std::endl;}
 
     s_MaxAvailStaticCast = static_cast<double>(playlistTrackLimitCodeQty) / static_cast<double>(s_playlistSize);
     s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
-    if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_MaxAvailableToAdd (after all tracks have been processed) is: "<< s_playlistActualCntSelCode << std::endl;
-    //m_prefs.s_playlistActualCntSelCode = s_playlistActualCntSelCode; commented out because playlist might not be saved
+    if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_MaxAvailableToAdd (after all tracks have been processed) is: "<< s_MaxAvailableToAdd << std::endl;
     if (s_MaxAvailableToAdd == 0){
         playlistFull = true;
         ui->addsongsButton->setEnabled(false);
-        ui->addsongsLabel->setText(tr("on_addsongsButton_released: Playlist is at maximum size."));
+        ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
     }    
     else {
         s_MaxAvailStaticCast = static_cast<double>(playlistTrackLimitCodeQty) / static_cast<double>(s_playlistSize);
@@ -1618,6 +1621,8 @@ void ArchSimian::on_actionExport_Playlist_triggered()
 {
     int s_musicdirlength{};
     s_musicdirlength = musicLibraryDirLen(s_musiclibrarydirname);
+    s_defaultPlaylist = m_prefs.defaultPlaylist;
+    if (Constants::kVerbose){std::cout << "on_actionExport_Playlist_triggered: s_defaultPlaylist save is to: "<< s_defaultPlaylist.toStdString() << std::endl;}
     exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_defaultPlaylist,  s_winDriveLtr,  s_musiclibrarydirname);
     m_prefs.s_playlistActualCntSelCode = s_playlistActualCntSelCode;
     s_playlistActualCntSelCode = m_prefs.s_playlistActualCntSelCode;
@@ -1751,8 +1756,8 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
             ui->albumsTab->setEnabled(true);
         }
         //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
-
-        setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
+        s_playlistActualCntSelCode = 0; //First reset to zero
+        setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode); // Now get the count
         s_MaxAvailStaticCast = static_cast<double>(playlistTrackLimitCodeQty) / static_cast<double>(s_playlistSize);
         s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
         if (Constants::kVerbose) std::cout << "on_actionOpen_Playlist_triggered: s_MaxAvailableToAdd for playlist loaded is: "<< s_MaxAvailableToAdd << std::endl;

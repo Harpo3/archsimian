@@ -63,19 +63,8 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     outf.close();
 }
 
-void getWindowsDriveLtr(QString &s_defaultPlaylist, QString *s_winDriveLtr){    
-    static std::string playlist = s_defaultPlaylist.toStdString();
-    std::ifstream readFile(playlist);
-    std::string line;
-    std::getline(readFile, line); //skip first line
-    std::getline(readFile, line);
-    std::istringstream iss(line); //start with first line    
-    *s_winDriveLtr = line.front();
-    readFile.close();
-}
-
 void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_defaultPlaylist, QString &s_winDriveLtr, QString &s_musiclibrarydirname){
-    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();    
     static std::string playlistpath = s_defaultPlaylist.toStdString();
     if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistpath = "<<playlistpath<< std::endl;
     static std::string playlistdirname = s_mmPlaylistDir.toStdString();
