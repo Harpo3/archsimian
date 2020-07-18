@@ -4,6 +4,8 @@
 #include <QString>
 #include <QStandardPaths>
 #include <QDir>
+#include <QTextStream>
+#include <QFile>
 #include "constants.h"
 #include "utilities.h"
 
@@ -63,17 +65,18 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     outf.close();
 }
 
-void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_defaultPlaylist, QString &s_winDriveLtr, QString &s_musiclibrarydirname){
-    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();    
-    static std::string playlistpath = s_defaultPlaylist.toStdString();
-    if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistpath = "<<playlistpath<< std::endl;
+void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_winDriveLtr, QString &s_musiclibrarydirname, std::string &playlistpath){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();        
+    if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistpath from function variable = "<<playlistpath<< std::endl;
     static std::string playlistdirname = s_mmPlaylistDir.toStdString();
     if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistdirname = "<<playlistdirname<< std::endl;
     static std::string musicLibraryDir=s_musiclibrarydirname.toStdString();
     if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: musicLibraryDir = "<<musicLibraryDir<< std::endl;
+    std::string internalplaylistpath = playlistpath;
+    if (Constants::kVerbose) std::cout << "exportPlaylistToWindows: playlistpath from internalplaylistpath variable = "<<internalplaylistpath<< std::endl;
     std::string winDriveLtr = s_winDriveLtr.toStdString();
     std::ifstream readFile(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-    std::ofstream outf(playlistpath);
+    std::ofstream outf(internalplaylistpath);
     if (!readFile.is_open()) {
         std::cout << "exportPlaylistToWindows: The readFile did not open. Did you delete the active playlist?";
         std::exit(EXIT_FAILURE);
@@ -103,3 +106,4 @@ void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QS
     readFile.close();
     outf.close();
 }
+

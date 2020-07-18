@@ -144,6 +144,7 @@ static bool playlistFull{false};
 static int s_MaxAvailableToAdd{0};
 static bool s_topLevelFolderExists{0};
 static double s_MaxAvailStaticCast{0.0};
+static std::string playlistpath{""};
 
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -1622,8 +1623,9 @@ void ArchSimian::on_actionExport_Playlist_triggered()
     int s_musicdirlength{};
     s_musicdirlength = musicLibraryDirLen(s_musiclibrarydirname);
     s_defaultPlaylist = m_prefs.defaultPlaylist;
+    playlistpath = s_defaultPlaylist.toStdString();
     if (Constants::kVerbose){std::cout << "on_actionExport_Playlist_triggered: s_defaultPlaylist save is to: "<< s_defaultPlaylist.toStdString() << std::endl;}
-    exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_defaultPlaylist,  s_winDriveLtr,  s_musiclibrarydirname);
+    exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_winDriveLtr,  s_musiclibrarydirname, playlistpath);
     m_prefs.s_playlistActualCntSelCode = s_playlistActualCntSelCode;
     s_playlistActualCntSelCode = m_prefs.s_playlistActualCntSelCode;
     saveSettings();
