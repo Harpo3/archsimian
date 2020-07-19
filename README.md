@@ -64,25 +64,11 @@ If you enable the 'include new tracks' feature, you will get artist repeats more
 
 <b>Hardware and Software Requirements:</b>
 
-A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You may be able to make this work with other Linux distros and DEs, but your mileage may vary. 
+A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You may be able to make this work with other Linux distros and DEs, but your mileage may vary. ArchSimian is a Qt5 application, using C++14.
 
 Windows 7 or higher
 
 MediaMonkey4 Gold for Windows 
-
-<b>Windows Configurations:</b>
-
-While Linux can be installed on a separate partition of Windows using a dual boot system, it is far easier to run a Windows 10 VM running within Linux. Even if you have Windows installed on a dual boot, you might also want a VM installed in Linux if you want to avoid having to reboot twice for every library/playlist update. 
-
-If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
-
-If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html>
-
-MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
-
-If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
-
-When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
 
 <b>MediaMonkey Addons:</b>
 
@@ -92,9 +78,23 @@ Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scrip
 
 Update Location of Files in Database (if you install a VM): <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
-RegEx Find and Replace: <html>http://solair.eunet.rs/~zvezdand/RegExpReplace.htm</html>; and, 
+Export/CreatExport for Child Nodes: <html>ExportM3UsForSubNodes</html>;
 
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
+
+<b>Windows Configurations (dual boot vs. virtual machine):</b>
+
+While Linux can be installed on a separate partition of Windows using a dual boot system, it is far easier to run a Windows 10 VM running within Linux. Even if you have Windows installed on a dual boot, you might also want a VM installed in Linux if you want to avoid having to reboot twice for every library/playlist update. 
+
+If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
+
+If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html> IMPORTANT: When you specify in VM settings the shared folder(s), deselect automount and specify the mount point with the drive letter of you choice.
+
+MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
+
+If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
+
+When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
 
 <b>Dependencies:</b>
 
