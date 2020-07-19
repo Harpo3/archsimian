@@ -64,7 +64,7 @@ If you enable the 'include new tracks' feature, you will get artist repeats more
 
 <b>Hardware and Software Requirements:</b>
 
-A Linux OS (I have tested it in Arch and KDE as the Desktop Environment). You may be able to make this work with other Linux distros and DEs, but your mileage may vary. ArchSimian is a Qt5 application, using C++14.
+A Linux OS (I have tested it in Arch and KDE as the Desktop Environment), a desktop environment, and 4GB of RAM. You may be able to make this work with other Linux distros and DEs, but your mileage may vary. ArchSimian is a Qt5 application, using C++14.
 
 Windows 7 or higher
 
