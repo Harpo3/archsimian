@@ -124,7 +124,7 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 
 <b> Troubleshooting</b>
 
-The program works well, but you will have problems if you do not configure your library correctly. After you run the first setup menu, ArchSimian runs a diagnostic routine, which can be found in the <i>.local/share/archsimian</i> folder as <i>diagnosticslog.txt</i> to provide corrective guidance.
+After you run the first setup menu, ArchSimian runs a diagnostic routine, which can be found in the <i>.local/share/archsimian</i> folder as <i>diagnosticslog.txt</i> to provide corrective guidance if you have problems.
 
 Again, ensure all tracks in MM4 you want to include in your playlists are rated prior to running ArchSimian. 
 
