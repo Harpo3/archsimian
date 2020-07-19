@@ -78,7 +78,7 @@ Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scrip
 
 Update Location of Files in Database (if you install a VM): <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
-Export/CreatExport for Child Nodes: <html>ExportM3UsForSubNodes</html>;
+Export/CreatExport for Child Nodes: <html>http://solair.eunet.rs/~zvezdand/ExportM3UsForSubNodes.htm</html>;
 
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
 
