@@ -89,15 +89,7 @@ Update Location of Files in Database: <html>http://solair.eunet.rs/~zvezdand/Upd
 
 SQLite3, qt5-base, git
 
-<b>Linux applications you might like to use along with this program:</b>
-
-audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
-
-conky (if you wish to display cover art and most other tag elements right on a panel docked onto your desktop (cool!)
-
-id3ted and kid3-cli for tag scripting requirements (if you want the ability to update tags in Linux).
-
-Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a VM)
+Linux applications you might like to use along with this program (See note 3)
 
 <b>Preparation</b>
 
@@ -205,3 +197,13 @@ MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox i
 If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
 
 When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
+
+3. <b>Linux applications you might like to use along with this program:</b>
+
+audacious-qt5 (linux media player that sounds great, and best of all integrates with conky perfectly). Install audacious-plugins-qt5 and apulse.
+
+conky (if you wish to display cover art and most other tag elements right on a panel docked onto your desktop (cool!)
+
+id3ted and kid3-cli for tag scripting requirements (if you want the ability to update tags in Linux).
+
+Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a VM)
