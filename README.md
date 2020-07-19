@@ -109,13 +109,13 @@ MM4 Configuration – Under Tools > Options > Library, enable the following: Inf
 
 Tools > Options > Library > Appearance > Ignore prefixes
 
-Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive:]/artist/album OR [drive:]/music/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library and "music" is a top folder on the drive, if used. Do not place the path below the level as shown in the "music" example. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
+Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive:]/artist/album OR [drive:]/music/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library and "music" is a top folder on the drive, if used. Do not place the path below the directory level shown in the below "music" example. Filenames will be lower case with no spaces:
 
 X:\music\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Replace($lower(<Artist>), ,_)_-_$Replace($lower(<Title>), ,_)
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
-If you do it correctly, your music directory should look like this:
+Your music directory structure (directly under the drive, or under a top level folder, like "music") should look like this:
 <img src="http://i.imgur.com/ZnEguuK.jpg..." data-canonical-src="http://i.imgur.com/ZnEguuK.jpg" width="608" height="475" />
 <p>
     
@@ -137,6 +137,10 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 <b> Settings</b>
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety. The first time the program is run this tab only will appear. The 3 locations including windows drive letter (not shown in this photo) must be identified for the program to run.</p>
 <img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
+
+<b> MM4.DB Update</b>
+
+When you update MM4 (for tracks recently played, new tracks, changed ratings) and backup its MM.DB file, ArchSimian will automatically detect the new data when you launch the program, and it will display this message on the 'Playlist' tab, when completed: "<i>MM.DB was recently backed up. Library has been rebuilt.</i>" The program works best if data is first updated in MM4 before launching ArchSimian.
 
 <b> Statistics</b>
 <p>The Statistics tab lists detailed information about the composition of your music library</p>
