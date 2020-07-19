@@ -96,7 +96,6 @@ private:
         int s_minalbums{};
         int s_mintrackseach{};
         int s_mintracks{};
-        //int s_playlistActualCntSelCode{};
     };
 
     void loadSettings();

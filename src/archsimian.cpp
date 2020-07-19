@@ -1866,21 +1866,17 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     }
     //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
 
-    //setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode); - tempnote
-    //s_MaxAvailableToAdd = (int (playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (playlistTrackLimitCodeQty / s_playlistSize)); - tempnote
-
-    // New playlist has no tracks yet - set s_playlistSize to 0, set s_playlistActualCntSelCode to 0, and set s_MaxAvailableToAdd
-    // as equal to playlistTrackLimitCodeQty
     s_playlistSize = 0;
     s_playlistActualCntSelCode = 0;
-    s_MaxAvailableToAdd = playlistTrackLimitCodeQty;
+    // Somewhat arbitrary guess on a reasonable starting max to use. Will be recalculated once tracks are added.
+    s_MaxAvailableToAdd = int(static_cast<double>(playlistTrackLimitCodeQty) / static_cast<double>(selTrackLimitCodeRatingRatio))-50;
     playlistFull = false;
 
     // Finalize playlist loading
     ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-    ui->addtrksspinBox->setValue(10);
+    ui->addtrksspinBox->setValue(30);
     ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd-1,'g', 3));
     std::string MMdbDate = getMMdbDate(s_mmBackupDBDir);
     std::string LastTableDate = getLastTableDate();
