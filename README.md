@@ -115,7 +115,7 @@ X:\music\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>
 
 More on AutoOrganize filename changing here: <html>https://www.mediamonkey.com/sw/webhelp/frame/index.html?configuringdirectoryandfileformats.htm</html>
 
-If you do it correctly, your music directory should look like this:
+Your music directory structure (directly under the drive, or under a top level folder, like "music") should look like this:
 <img src="http://i.imgur.com/ZnEguuK.jpg..." data-canonical-src="http://i.imgur.com/ZnEguuK.jpg" width="608" height="475" />
 <p>
     
