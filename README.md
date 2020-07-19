@@ -156,16 +156,7 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 Select new file using the toolbar or menu, and tracks can be added. ArchSimian uses your MM4 listening history.
 
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
-To use ArchSimian, you have to export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. The easy way is to install the "Export/Create Playlist for Child Nodes" extension in MM4. Configure to export as "ANSI" and set directory for using in ArchSimian. Then. simply right click on the playlist and export. If you don't want to use the extension, this is also a base feature of MM4, but you will have to do it more manually. As stated in the MM4 manual: 
-
-<i>To export specific .m3u files:
-1.	Select the Tracks you wish to export from a Playlist
-2.	From the File menu click Export to Playlist or right-click Send to .m3u Playlist
-3.	Choose a folder and filename (xxxxx.m3u) for the Playlist
-
-The Playlist will be saved as xxxxx.m3u, which can then be opened by another media player.</i>
-
-The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying. After you revise the playlist in ArchSimian, it will place it in the folder where you placed the MM4 exported playlist. You can then import it back into MM4 using the ImportM3U plugin and update the playlist in MM4.
+To use ArchSimian, you have to export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. The easy way is to install the "Export/Create Playlist for Child Nodes" extension in MM4. Configure to export as "ANSI" and set directory for using in ArchSimian. Then. simply right click on the playlist and export. If you don't want to use the extension, this is also a base feature of MM4, but you will have to do it more manually (See note 5). After you revise the playlist in ArchSimian, it will place it in the folder where you placed the MM4 exported playlist. You can then import it back into MM4 using the ImportM3U plugin and update the playlist in MM4.
 
 When you have added tracks from ArchSimian, you can simply save your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app.
 
@@ -208,3 +199,14 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 4. If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
 First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.
+
+5. As stated in the MM4 manual: 
+
+<i>To export specific .m3u files:
+1.	Select the Tracks you wish to export from a Playlist
+2.	From the File menu click Export to Playlist or right-click Send to .m3u Playlist
+3.	Choose a folder and filename (xxxxx.m3u) for the Playlist
+
+The Playlist will be saved as xxxxx.m3u, which can then be opened by another media player.</i>
+
+The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying.
