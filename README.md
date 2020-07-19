@@ -5,7 +5,7 @@ You worked hard to build a large music library (2,000+ rated tracks), so make th
 
 Artist groupings let you control artist name variations. Let's say you have tracks for two "different" artists: "Tom Petty" and "Tom Petty & the Heartbreakers." Both are basically the same artist, so why not treat them as the same artist for considering when that artist should be repeated? You can store a common name (eg. using the custom grouping of "Petty") in MM4 (this is each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like (even if they are <b>not</b> similar). You could choose any group of artists and have them treated as if they were one artist. It is up to you.
 
-Users import a playlist from MM4 (or create a new one), add tracks using ArchSimian, then export the improved playlist back into MM4 for use in Windows (and to sync with mobile devices using the MM4 for Android App). 
+Users can import a playlist from MM4, or export a new one to MM4. Add tracks using ArchSimian, and export the improved playlist back into MM4 for use in Windows (and to sync with mobile devices using the MM4 for Android App). 
 
 <b>Improving MediaMonkey 4 Gold by improving playlist creation</b>
 
@@ -21,27 +21,26 @@ The playlist improvement concept is this: the play history in the MM database ca
 
 <b>(TL;DR) Quickstart:</b>
 
-1. Rate all tracks in MediaMonkey you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces or special characters in them. Your music library directory tree must look like ->  <i>Drive:/artist/album/song</i> in Windows or it may also have a top level directory like "music" which holds your library: <i>Drive:/music/artist/album/song</i>. If your tracks and directories are not formatted this way, ArchSimian <b>will not run</b>.
+1. Rate all tracks in MediaMonkey 4 (MM4) you want to include in ArchSimian. You should have 2,000 or more, but it might work with less. This program was tested with 8000+ rated tracks. MediaMonkey should be "auto-organizing" your library and filenames <b> must</b> not have any spaces or special characters in them. Your music library directory tree <b>must</b> look like ->  <i>Drive:/artist/album/song</i> OR <i>Drive:/music/artist/album/song</i> in Windows. The library tree cannot reside at a lower directory level.
 
-2.  You can include or exclude new tracks from being added to your playlist. If you include them, a one-star rating is special in ArchSimian. Assign one-star in MediaMonkey for new tracks you have not yet rated. This identifies new tracks in the selection process. You can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MediaMonkey for "Grouping" and "Custom2" are special to ArchSimian, so if you are currently using these fields, you may have to change them (if so, read details).
+2.  You can include or exclude new (unrated) tracks from being added to your playlist. If you wish to include them, the MM4 one-star rating is special for how ArchSimian treats them. Assign one-star in MM4 for new tracks you have not yet rated. This identifies new tracks in the selection process. In ArchSimian, you can also set the frequency for inserting a new track (i.e. every 10 songs). The tag fields in MM4 for "Grouping" and "Custom2" are also special for how ArchSimian treats them, so if you are currently using these fields, you may have to change them (if so, read details).
 
-3. Assign zero stars in MediaMonkey to exclude tracks from the ArchSimian-produced playlist.
+3. Assign zero stars in MM4 to exclude tracks from being added to ArchSimian-produced playlists.
 
-4. You can (and should) set 'custom' artist groupings in MediaMonkey using the "Custom2" field. ArchSimian will override artist tags wherever Custom2 is used. It is a best practice to spend some time with the artist groupings. If you make sure all 'variances' to artist names have been reconciled this way, you will get the most real variety in your playlist.
+4. You can (and should, but is not required) set 'custom' artist groupings in MM4 using the "Custom2" field. ArchSimian will override artist tags wherever Custom2 is used. It is a best practice to spend some time with the artist groupings. If you make sure all 'variances' to artist names have been reconciled this way, you will get the most real variety in your playlist.
 
-5. Export the MM.DB (safest is to use a backup) to a dir you will select in ArchSimian setup menu. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu.
+5. Export the MM.DB (safest is to use a backup) from within MM4 to a dir you will then select in the ArchSimian setup menu. Export playlists for use in ArchSimian using the "manual export" function found under MediaMonkey's "File" menu. Do not use a 'backup' version.
 
-6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), and directory where playlists are stored. Restart the program. It will then process your MM.DB and launch with all of its features enabled. Play with the frequency tab settings to your liking (restart), then select or create a playlist and add some tracks. Save the changes (song paths are in Windows directory format) to your playlist directory.
+6. Install ArchSimian. You will get a starting menu for setting up locations for MM.DB backup, location of (shared) music library (select the top dir of your music library), directory where playlists are stored. and the Windows drive letter of your music library. Restart the program. It will then process your MM.DB and launch with all of its features enabled. If there is any problem, you will find a diagnostics log in your .local/share/archsimian directory. Play with the frequency tab settings to your liking (restart), then select or create a playlist and add some tracks. Saving changes or creating new playlists will generate m3u files with song paths compatible with Windows directory format to the location you specify.
 
-7. ArchSimian lets you set how tracks will be added to the playlist, and after adding tracks, you can export the modified playlist back to the dir where it was originally selected, overwriting the older playlist. You will then have a Windows-compatible playlist, which can then be imported into MediaMonkey (using the .mmip ImportM3U) for use in Windows or synced to a portable device. Before each time you run ArchSimian, be sure to first open MediaMonkey and (1) synchronize your playlist(s) from any devices like smart-phones and ipod type devices, and then (2) back up your MediaMonkey database so ArchSimian will have all of your current LastPlayed dates and any ratings changes.
+7. You will then have a Windows-compatible playlist, which can be imported into MediaMonkey (using the .mmip ImportM3U) for use in Windows or to sync for a portable device. IMPORTANT: Before each time you run ArchSimian, be sure to FIRST open MM4 and (1) synchronize your playlist(s) from any devices like smart-phones and ipod type devices, and then (2) back up your MediaMonkey database so ArchSimian will get all of your current LastPlayed dates, new tracks added, and ratings changes.
 
 <b>The primary goal is to improve the variety of artists within the playlist, while at the same time considering rating and lastplayed date.</b> 
-
 
     • Obtains music tag data and other data stored within the MM.DB file to create a new database for
     this application
     • Using the database created, and statistics compiled from it, uses the data as constraints to 
-    determine ‘optimum availability’ then iteratively select each single track added to the chosen 
+    determine ‘optimum availability’ then iteratively selects each single track added to the chosen 
     playlist
     • Saves user preferences, such as file locations for MM4 backup database, MM4 backup playlists 
     and Archsimian program/playlist preferences
@@ -55,13 +54,13 @@ The playlist improvement concept is this: the play history in the MM database ca
             ▪     total number of each rating category by artist 
             ▪     last album played for a given artist
 
-For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. The spacing is set automatically based on the total number of rated tracks for each artist, and the track total is further adjusted based on the ratings assigned to each track. The spacing is also a function of how many total artists with rated tracks are in your library. 
+For artists with many rated songs, the “availability” of that artist may be more frequent, but without this program, you might end up with a song from the same artist after only 10 tracks, instead of 60 or 150. So in ArchSimian, the spacing is set automatically based on the total number of rated tracks for each artist, and based on the ratings assigned to all of the tracks in our library. The spacing between artist repeats is a function of how many total artists with rated tracks are in your library. 
 
-You can also enable an 'album-variety' feature. If enabled, you will hear a track from a different album than the one last played of the artist when criteria set by the user is met (minimum number of albums, minimum number of tracks per album).  
+You can also enable an 'album-variety' feature. If enabled, you will hear a track from a different album than the one last played of the artist. you can specify minimum number of albums, minimum number of tracks per album.  
 
-Replay intervals – you can adjust the 'global' time between repeats with different intervals for each track rating. By using ratios of repeat frequency with average listening time, the program can determine whether a given track should be added to the playlist. Variety takes precedence over repeat frequency. 
+Replay intervals – you can adjust the 'global' time between repeats with different intervals for each track rating. By using ratios of repeat frequency with average listening time, the program can determine when or whether a given track should be added to the playlist. Variety takes precedence over repeat frequency. 
 
-If you enable the 'include new tracks' feature, you will get artist repeats more frequently, but you control the frequency. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. One useful feature of the program is that if there is more than one new artist, then the last new artist selected will be excluded from selection of the next new track. So, in this example, you could hear the same artist after 20 tracks when the repeat interval is 10 and you have more than one artist with new tracks.
+If you enable the 'include new tracks' feature, you will get artist repeats more frequently, but you can control the frequency. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. One useful feature of the program is that if there is more than one <i>new</i> artist, then the last new artist selected will be excluded from selection of the next new track. So, in this example, you could hear the same artist after 20 tracks when the repeat interval is 10 and you have more than one artist with new tracks.
 
 <b>Hardware and Software Requirements:</b>
 
