@@ -138,6 +138,10 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 <p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety. The first time the program is run this tab only will appear. The 3 locations including windows drive letter (not shown in this photo) must be identified for the program to run.</p>
 <img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
 
+<b> MM4.DB Update</b>
+
+When you update MM4 (for tracks played, new tracks, changed ratings) and backup its MM.DB file, ArchSimian will automatically detect the new data when you launch the program, and will display a dialog to inform you to wait for the database to update.
+
 <b> Statistics</b>
 <p>The Statistics tab lists detailed information about the composition of your music library</p>
 <img src="http://imgur.com//XA1Ztz5.png/..." data-canonical-src="http://imgur.com//XA1Ztz5.png" width="502" height="600" />
