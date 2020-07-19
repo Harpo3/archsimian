@@ -8,59 +8,6 @@
 #include <set>
 
 
-// Function to calculate which artists need to be excluded from the current track selection
-void getArtistExcludes()
-{
-    if (Constants::kVerbose) std::cout << "getArtistExcludes function started." << std::endl;
-    std::fstream filestrinterval;
-    filestrinterval.open ("ratedabbr.txt");
-    if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file after it was created in child process." << std::endl;}
-    std::string ratedlibrary = "ratedabbr.txt"; // now we can use it as input file
-    std::ifstream ratedSongsTable(ratedlibrary);
-    if (!ratedSongsTable.is_open())
-    {
-        std::cout << "getArtistExcludes: Error opening ratedSongsTable." << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
-    std::ofstream playlistPosList("playlistposlist.txt"); // output file for writing ratedabbr.txt with added artist intervals
-    std::string str1; // store the string for ratedabbr.txt
-    std::string playlistPosition; // Custom1 variable from ratedabbr.txt
-    std::string selectedArtistToken; // Artist variable from ratedabbr.txt
-    std::map<std::string,int> countMap; // Create a map for two types, string and int
-    std::vector<std::string>plvect;
-    plvect.reserve(5000);
-    // Outer loop: iterate through ratedSongsTable in the file "ratedabbr.txt" then use str1 to add Col 36 to ratedabbr.txt
-    while (std::getline(ratedSongsTable, str1))
-    {  // Declare variables applicable to all rows
-        std::istringstream iss(str1); // str is the string of each row
-        std::string token; // token is the contents of each column of data
-        int tokenCount{0}; //token count is the number of delimiter characters within str
-        // Inner loop: iterate through each column (token) of row
-        while (std::getline(iss, token, ','))
-        {
-            if ((tokenCount == 1) && (token != "0"))
-            {playlistPosition = token;} // playlist position, exclude if not in playlist
-            if (tokenCount == 3)  {selectedArtistToken = token;}//  artist is selected
-            ++ tokenCount;
-        }
-        if ((playlistPosition != "0") && (playlistPosition != "Custom1")){
-            std::string commatxt{","};
-            std::string vectorstring;
-            vectorstring.append(selectedArtistToken).append(commatxt).append(playlistPosition);
-            plvect.push_back(vectorstring);}
-        playlistPosition = "0";
-    }
-    std::sort (plvect.begin(), plvect.end());
-    for(const auto & i : plvect)
-    {
-        playlistPosList << i << "\n";
-    }
-    plvect.shrink_to_fit();
-    ratedSongsTable.close(); // Close ratedabbr.txt and output file
-    playlistPosList.close();
-}
-
 // Function to create the artistexcludes file
 void getExcludedArtists(const int &s_playlistSize)
 {
