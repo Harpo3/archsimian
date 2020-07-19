@@ -161,7 +161,7 @@ To use ArchSimian, you have to export from MediaMonkey the MM4 playlist you will
 When you have added tracks from ArchSimian, you can simply save your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app.
 
 <b>NOTES</b>
-1. Below shows the ArchSimian rating code assigned to each MM4 star rating:
+1. <b>Below shows the ArchSimian rating code assigned to each MM4 star rating:</b>
  
 <p>1 – new song not yet rated (one star)</p>
 <p>(2 is reserved)</p>
@@ -196,11 +196,13 @@ id3ted and kid3-cli for tag scripting requirements (if you want the ability to u
 
 Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a VM)
 
-4. If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
+4. <b>If you wish, you can assign ArchSimian rating codes directly in MM4:</b> 
+
+Use the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
 First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.
 
-5. As stated in the MM4 manual: 
+5. <b>As stated in the MM4 manual:</b> 
 
 <i>To export specific .m3u files:
 1.	Select the Tracks you wish to export from a Playlist
