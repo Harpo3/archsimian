@@ -134,7 +134,8 @@ Tracks with no rating are excluded from playlist computation in ArchSimian, so f
 
 ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. (See Notes 1 and 4)
 
-<p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety</p>
+<b> Settings</b>
+<p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety. The first time the program is run this tab only will appear. The 3 locations including windows drive letter (not shown in this photo) must be identified for the program to run.</p>
 <img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
 
 <b> Statistics</b>
