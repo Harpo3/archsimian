@@ -75,11 +75,8 @@ MediaMonkey4 Gold for Windows
 You need to install/setup several scripts (.mmip files) in MM4 if you do not already use them:
  
 Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database;
-
 Export/CreatExport for Child Nodes: <html>http://solair.eunet.rs/~zvezdand/ExportM3UsForSubNodes.htm</html>;
-
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>
-
 If you install a VM:
 Update Location of Files in Database: <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
