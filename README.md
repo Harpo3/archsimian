@@ -115,15 +115,15 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 <b>1) Operating Systems</b> - If you have multiple drives (or are currently using MM4 on Windows on the same computer), decide whether you want Arch installed on the same box. If you do, the best practice is for the Arch drive to be on a separate hard drive from that of Windows (for security reasons). 
 
-Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted storage drive that will be shared by both Windows and Arch, so do not move your music library to a Linux-formatted drive. Set Arch file permissions accordingly for read-write access to the music library location. Again, it might run on fewer rated tracks, but testing has only been done on an 8,000+ rated library, so your mileage may vary.
+Your music library should contain at least <b> 2,000 rated tracks </b> and be located on a windows-formatted (NTFS) storage drive that will be shared by both Windows and Linux. Set Linux file permissions accordingly for read-write access to the music library location. Again, it might run on fewer rated tracks, but testing has only been done on an 8,000+ rated library, so your mileage may vary.
 
 <b>2) MediaMonkey 4.x Settings</b>
 
 This program requires prior preparation in MM4. Backup your MM4.DB and .ini files before you start. 
 
-If you decide the program is not working for you, you can restore it back to your original configuration, but...WARNING: you will be “stuck” with any changes made to your library filename/directory structure as described below, so if you are using some other filenaming/directory approach, either be prepared to backup your whole music library with the original filenaming/directory configuration, or accept the alternative of doing the “MM4 Configuration” section below then doing a second backup of the db and ini files. Remember all of this is at your own risk!
+Word to the wise: If you have to change your original MM4 configuration to use this program, you will be “stuck” with any changes made to your library filename/directory structure as described below, so if you are using some other filenaming/directory approach, either be prepared to backup your whole music library with the original filenaming/directory configuration, or accept the alternative of doing the “MM4 Configuration” section below then doing a second backup of the db and ini files. Remember all of this is at your own risk!
 
-Even if you choose to not use ArchSimian, the below configuration changes are useful for configuring your library to access it via your Linux distribution. The below configuration worked for me:
+Even if you choose to not use ArchSimian, the below configuration changes are useful for configuring your library to access via a Linux distribution. The below configuration worked for me:
 
 MM4 Configuration – Under Tools > Options > Library, enable the following: Infer file properties from filenames, use Tags then inferred properties; Get album titles and track numbers for tags only; Scan file directories for artwork; Update file info from tags when rescanning files. Under  Tools > Options > Library > Tags & Playlists, enable ID3v2 tags; ASCII Always; Update tags when editing properties; enable ‘Use Unicode (UTF-8 encoding) for M3U playlists, Warn when duplicate files are added; for artwork, Save image to file folder, First image per album/series: folder.jpg.
 
