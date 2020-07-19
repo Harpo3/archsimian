@@ -26,6 +26,7 @@
 #include "albumidandselect.h"
 #include "playlistcontentdialog.h"
 #include "playlistlimit.h"
+#include "diagnostics.h"
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -206,30 +207,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::cout << "Archsimian.cpp: Step 1. Unable to open archsimian.conf configuration file or, one or more locations has no data. s_bool_IsUserConfigSet result: "
                   << s_bool_IsUserConfigSet << std::endl;
     }
-    //If configuration has already been set, run diagnostics on the configuration completed
-    if (s_bool_IsUserConfigSet)
-    {
-        std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
-        removeAppData(logd);
-        // Start log file
-        Logger(" ************************************************ ");
-        Logger(" ********** ArchSimian Diagnostics Log ********** ");
-        Logger(" ************************************************ ");
-        // Open configuration file
-        QString configFilePath = QStandardPaths::locate(QStandardPaths::AppConfigLocation, QString(), QStandardPaths::LocateDirectory);
-        std::string configFile = configFilePath.toStdString()+"archsimian/archsimian.conf";
-        //std::cout << configFile << std::endl;
-        Logger("[Configuration] Looking for ArchSimian configuration file...");
-        // Extract the paths used for mmBackupDBDir (mmdbPath), musicLibraryDir (musiclibPath) & mmPlaylistDir (pldirPath)
-        bool configExist = doesFileExist (configFile);
-        if (configExist == false){
-            Logger ("[Configuration] ***ERROR*** archsimian.conf was not found at " + configFile + ". \n\t\t\t\t\t\t\t\t\tComplete 'Settings' tab in "
-                                                                                                   "Archsimian then run diagnostics again.");
-           //std::exit(EXIT_FAILURE);
-        }
-        if (configExist == true){
-            Logger ("[Configuration] archsimian.conf found at " + configFile);
-        }
+    //If configuration has already been set but a library has not yet been processed (new config or MM.DB update), run diagnostics on the configuration completed
+    if ((s_bool_IsUserConfigSet)&&(!s_bool_CleanLibExist)) {
+    generateDiagsLog();
+    if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Generating a diagnostic check on configuration." << std::endl;
     }
 
     //If configuration has already been set, populate the UI labels accordingly

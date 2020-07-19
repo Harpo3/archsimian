@@ -1,6 +1,4 @@
-#include <QStandardPaths>
 #include <QDir>
-#include <QMessageBox>
 #include <fstream>
 #include <sstream>
 #include "basiclibfunctions.h"

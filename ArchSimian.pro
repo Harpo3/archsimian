@@ -33,6 +33,7 @@ SOURCES += \
     src/buildalbumexcllibrary.cpp \
     src/code1.cpp \
     src/dependents.cpp \
+    src/diagnostics.cpp \
     src/getartistadjustedcount.cpp \
     src/getplaylist.cpp \
     src/lastplayeddays.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
     src/code1.h \
     src/constants.h \
     src/dependents.h \
+    src/diagnostics.h \
     src/getartistadjustedcount.h \
     src/getartistexcludes.h \
     src/getplaylist.h \

@@ -1,6 +1,4 @@
-#include <QStandardPaths>
 #include <QDir>
-#include <QMessageBox>
 #include <fstream>
 #include <sstream>
 #include "basiclibfunctions.h"
@@ -47,4 +45,3 @@ void setPlaylistLimitCount (int &selectedTrackLimitCode, int *s_playlistActualCn
     *s_playlistActualCntSelCode = interimcount;
     ratedSongsTable2.close();
 }
-
