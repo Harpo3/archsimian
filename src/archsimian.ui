@@ -905,10 +905,10 @@ MediaMonkey database backup file</string>
        <widget class="QLineEdit" name="windowsDriveLtrEdit">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>20</x>
           <y>160</y>
-          <width>21</width>
-          <height>22</height>
+          <width>16</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="maxLength">
@@ -919,10 +919,23 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>50</x>
-          <y>160</y>
-          <width>381</width>
-          <height>21</height>
+          <y>150</y>
+          <width>421</width>
+          <height>36</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
         </property>
         <property name="text">
          <string>Enter the Windows drive letter associated with your music library.</string>

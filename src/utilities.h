@@ -41,4 +41,8 @@ std::vector<std::string> split(std::string strToSplit, char delimeter);
 
 std::string GetStdoutFromCommand(std::string cmd);
 
+std::string getCurrentDateTime( std::string s );
+
+void Logger( std::string logMsg );
+
 #endif // UTILITIES_H

@@ -69,12 +69,12 @@ void getExcludedArtists(const int &s_playlistSize)
     int s_playlistPosition;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "getArtistExcludes: Error opening ratedabbr.txt file ." << std::endl;}
+    else {std::cout << "getExcludedArtists: Error opening ratedabbr.txt file ." << std::endl;}
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())
     {
-        std::cout << "getArtistExcludes: Error opening ratedSongsTable." << std::endl;
+        std::cout << "getExcludedArtists: Error opening ratedSongsTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     StringVector2D ratedabbrVec = readCSV(appDataPathstr.toStdString()+"/ratedabbr.txt");
@@ -100,12 +100,12 @@ void getExcludedArtists(const int &s_playlistSize)
     std::fstream playList;
     playList.open (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (playList.is_open()) {playList.close();}
-    else {std::cout << "getArtistExcludes: Error opening cleanedplaylist.txt file." << std::endl;}
+    else {std::cout << "getExcludedArtists: Error opening cleanedplaylist.txt file." << std::endl;}
     std::string playlist = appDataPathstr.toStdString()+"/cleanedplaylist.txt"; // now we can use it as input file
     std::ifstream playlistTable(playlist);
     if (!playlistTable.is_open())
     {
-        std::cout << "getArtistExcludes: Error opening playlistTable." << std::endl;
+        std::cout << "getExcludedArtists: Error opening playlistTable." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     int playlistCount = 0;
@@ -212,5 +212,4 @@ void getExcludedArtists(const int &s_playlistSize)
     ratedSongsTable.close(); // Close ratedabbr.txt and output file
     ratedabbr2.close();
     artistExcList.close();
-    //remove("playlistposlist.txt");
 }

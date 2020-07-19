@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QStandardPaths>
 #include <QMessageBox>
 #include <QDir>
@@ -37,7 +38,7 @@ std::string ExtractString( std::string source, std::string start, std::string en
      return source.substr( startIndex, endIndex - startIndex );
 }
 
-inline bool doesFileExist (const std::string& name) {
+bool doesFileExist (const std::string& name) {
     struct stat buffer{};
     return (stat (name.c_str(), &buffer) == 0);
 }
@@ -242,4 +243,27 @@ if (stream) {
       pclose(stream);
   }
 return data;
+}
+
+std::string getCurrentDateTime( std::string s ){
+    time_t now = time(nullptr);
+    struct tm  tstruct;
+    char  buf[80];
+    tstruct = *localtime(&now);
+    if(s=="now")
+        strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+    else if(s=="date")
+        strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
+    return std::string(buf);
+};
+
+void Logger( std::string logMsg ){
+
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
+    std::string filePath = logd;
+    std::string now = getCurrentDateTime("now");
+    std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app );
+    ofs << now << '\t' << logMsg << '\n';
+    ofs.close();
 }
