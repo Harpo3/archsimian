@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -2075,6 +2075,89 @@ MediaMonkey database backup file</string>
         </property>
         <property name="text">
          <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="playlistLimitSlider">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>500</y>
+          <width>251</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>70</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="sliderPosition">
+         <number>95</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBelow</enum>
+        </property>
+        <property name="tickInterval">
+         <number>5</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="playlistSliderLabel">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>440</y>
+          <width>291</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Playlist capacity adjustment - adjust down if program cashes at existing playlist capacity setting. Normally 95 is adequate. </string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="playlistLimitSliderValue">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>500</y>
+          <width>21</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>95</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="minPlaylistLimitLabel">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>520</y>
+          <width>31</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>70</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="maxPlaylistLimitLabel">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>520</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>100</string>
         </property>
        </widget>
       </widget>

@@ -60,7 +60,8 @@ private slots:
     void on_autosavecheckBox_stateChanged(int autosave);
     void on_disablenotecheckBox_stateChanged(int disableNote);
     void on_resetpushButton_released();
-    void on_viewplaylistButton_clicked();
+    void on_viewplaylistButton_clicked();   
+    void on_playlistLimitSlider_valueChanged(int value);
 
 private:
     Ui::ArchSimian *ui;
