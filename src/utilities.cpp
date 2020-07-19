@@ -38,7 +38,7 @@ std::string ExtractString( std::string source, std::string start, std::string en
      return source.substr( startIndex, endIndex - startIndex );
 }
 
-bool doesFileExist (const std::string& name) {
+inline bool doesFileExist (const std::string& name) {
     struct stat buffer{};
     return (stat (name.c_str(), &buffer) == 0);
 }

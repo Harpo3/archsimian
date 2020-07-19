@@ -252,7 +252,6 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     *s_windowstopfolder = windowst;
     QString musicl = QString::fromStdString(musiclibshortened);
     *s_musiclibshortened = musicl;
-
 }
 
 // Function to collect and process music library data needed to calculate song placement in the playlist

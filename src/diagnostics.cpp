@@ -36,7 +36,7 @@ void generateDiagsLog (){
     if (configExist == false){
         Logger ("[Configuration] ***ERROR*** archsimian.conf was not found at " + configFile + ". \n\t\t\t\t\t\t\t\t\tComplete 'Settings' tab in "
                                                                                                "Archsimian then run diagnostics again.");
-       return;
+        qApp->quit();
     }
     if (configExist == true){
         Logger ("[Configuration] archsimian.conf found at " + configFile);
