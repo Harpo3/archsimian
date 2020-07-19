@@ -80,7 +80,7 @@ Export/CreatExport for Child Nodes: <html>http://solair.eunet.rs/~zvezdand/Expor
 
 ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</html>;
 
-If you install a VM:
+If a Windows VM:
 Update Location of Files in Database: <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
 <b>Windows Configurations (dual boot vs. virtual machine):</b>
