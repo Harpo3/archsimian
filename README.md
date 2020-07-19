@@ -76,7 +76,7 @@ You need to install/setup several scripts (.mmip files) in MM4 if you do not alr
  
 Backup 6.0 (trixmoto: <html>https://www.rik.onl/mediamonkey/search.php?all=scripts</html>) for backing up the MM4 database;
 
-Update Location of Files in Database (if you install a VM): <html>solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
+Update Location of Files in Database (if you install a VM): <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
 Export/CreatExport for Child Nodes: <html>ExportM3UsForSubNodes</html>;
 
