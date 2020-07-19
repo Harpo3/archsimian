@@ -83,19 +83,7 @@ ImportM3U: <html>https://www.mediamonkey.com/addons/browse/item/import-m3u/</htm
 If a Windows VM:
 Update Location of Files in Database: <html>http://solair.eunet.rs/~zvezdand/UpdateLocationOfFiles.htm</html>;
 
-<b>Windows Configurations (dual boot vs. virtual machine):</b>
-
-While Linux can be installed on a separate partition of Windows using a dual boot system, it is far easier to run a Windows 10 VM running within Linux. Even if you have Windows installed on a dual boot, you might also want a VM installed in Linux if you want to avoid having to reboot twice for every library/playlist update. 
-
-If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
-
-If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html> IMPORTANT: When you specify in VM settings the shared folder(s), deselect automount and specify the mount point with the drive letter of you choice.
-
-MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
-
-If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
-
-When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
+<b>Windows Configurations (dual boot vs. virtual machine) (See note 2)</b>
 
 <b>Dependencies:</b>
 
@@ -129,7 +117,7 @@ MM4 Configuration – Under Tools > Options > Library, enable the following: Inf
 
 Tools > Options > Library > Appearance > Ignore prefixes
 
-Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive]/artist/album OR [drive]/music/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library and "music" is a top folder on the drive, if used. Do not place the path below the level as shown in the "music" example. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
+Library - ensure the file hierarchy of your MM4 music library drive conforms to the hierarchy of [drive:]/artist/album OR [drive:]/music/artist/album, with no additional subfolders. All music folders and files should be in lower case and have no spaces or special characters (filename example: 01_-_alexi_murdoch_-_towards_the_sun.mp3).  To do file and folder naming, first go to Tools > AutoOrganize Files, and select the radio button for “Move and rename files to new destination based on file tags.” This lets MM4 manage your directory structure. Then, under destination, where “X” is the drive letter assigned to your music library and "music" is a top folder on the drive, if used. Do not place the path below the level as shown in the "music" example. Enter this line, which will ensure the filenames are lower case letters and they do not have spaces:
 
 X:\music\$Replace($lower(<Artist>), ,_)\$Replace($lower(<Album>), ,_)\<Track#:2>_-_$Replace($lower(<Artist>), ,_)_-_$Replace($lower(<Title>), ,_)
 
@@ -144,30 +132,13 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 
 <b> Troubleshooting</b>
 
-The program works well, but you will have problems if you do not configure your library correctly. If you have any issues, you should first consider this is the cause. Most common are spaces/special characters in the track filenames (see above), and special characters in the tags themselves. 
-
-I have not yet written debugging code for this, but special characters within the music tags can be fixed in MM4. You can search in MM4 for tags containing special characters by using this search format:
-
- '/', '\', '?', ',', '|', ':', '.', '_', '(', ')', '[', ']', '&', '@', '#', '+', '*', '!', '-', ';' '”' 
-
-Unfortunately, this method does <b>not</b> work for double quotation marks, which have to be changed, and you also will have to ensure no tags have carats (^) in them. So, the remedy is to install the .mmip “RegEx Find and Replace” (add on), then select the option for “Replace specified string with another one in <Into Field>...” You can then replace all instances of double quotation marks with single quotation marks for all tag fields (in particular you will find this occurrence in song titles and album titles) in your library. Carats need to be removed or replaced with a different character because it is the delimiter this program uses to extract the songs table from the MM.DB. If you have carats, the fields will not parse correctly in this program. It appears commas and single quotes do not cause any problem.
+The program works well, but you will have problems if you do not configure your library correctly. After you run the first setup menu, ArchSimian runs a diagnostic routine, which can be found in the <i>.local/share/archsimian</i> folder as <i>diagnosticslog.txt</> to provide corrective guidance.
 
 Again, ensure all tracks in MM4 you want to include in your playlists are rated prior to running ArchSimian. 
 
 Tracks with no rating are excluded from playlist computation in ArchSimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). ArchSimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
 
-Below are the ArchSimian rating codes and associated MM4 star ratings:
- 
-<p>1 – new song not yet rated (one star)</p>
-<p>(2 is reserved)</p>
-<p>3 – five stars</p>
-<p>4 – four stars</p>
-<p>5 – three and one half stars</p>
-<p>6 – three stars</p>
-<p>7 – two and one half stars</p>
-<p>8 – two stars</p>
-
-ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. 
+ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. (See Note 1)
 
 (<i>If you wish, you can assign ArchSimian rating codes directly in MM4 using the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
@@ -209,3 +180,28 @@ The default name MM4 gives you is “New playlist.m3u,” but you can save it as
 
 When you have added tracks from ArchSimian, you can simply save your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app.
 
+<b>NOTES</b>
+1. Below shows the ArchSimian rating code assigned to each MM4 star rating:
+ 
+<p>1 – new song not yet rated (one star)</p>
+<p>(2 is reserved)</p>
+<p>3 – five stars</p>
+<p>4 – four stars, and four and one half stars (ArchSimian treats them as a single rating)</p>
+<p>5 – three and one half stars</p>
+<p>6 – three stars</p>
+<p>7 – two and one half stars</p>
+<p>8 – two stars</p>
+
+2. <b>Windows Configurations (dual boot vs. virtual machine):</b>
+
+While Linux can be installed on a separate partition of Windows using a dual boot system, it is far easier to run a Windows 10 VM running within Linux. Even if you have Windows installed on a dual boot, you might also want a VM installed in Linux if you want to avoid having to reboot twice for every library/playlist update. 
+
+If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
+
+If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html> IMPORTANT: When you specify in VM settings the shared folder(s), deselect automount and specify the mount point with the drive letter of you choice.
+
+MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
+
+If you use the MM4 Android App to sync to your phone wirelessly, you can still use it while MM4 is running in the VM, but you may need to disable KDE from autoconnecting to your phone so the VM can recognize the device.
+
+When installing the VM you have to add guest additions before you install MM4 so that you can configure access to the music library and the folder(s) you will use to store the MM4 backups for its database and for your playlists.
