@@ -140,7 +140,7 @@ ArchSimian uses the "star ratings" you have in MM4 and translates them into rati
 
 <b> MM4.DB Update</b>
 
-When you update MM4 (for tracks played, new tracks, changed ratings) and backup its MM.DB file, ArchSimian will automatically detect the new data when you launch the program, and will display a dialog to inform you to wait for the database to update.
+When you update MM4 (for tracks recently played, new tracks, changed ratings) and backup its MM.DB file, ArchSimian will automatically detect the new data when you launch the program, and will display a dialog to inform you to wait for the database to update. The program works best if data is first updated in MM4 before launching ArchSimian.
 
 <b> Statistics</b>
 <p>The Statistics tab lists detailed information about the composition of your music library</p>
