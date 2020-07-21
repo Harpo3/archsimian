@@ -122,6 +122,14 @@ Your music directory structure (directly under the drive, or under a top level f
 
 Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions.</b> Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required). If you do not directly use either of these two fields, ArchSimian will still work correctly, <b> but just make sure these two fields are blank for every track tag</b>.
 
+<b> Initial Setup Instructions</b>
+<p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety. The first time the program is run this tab only will appear. 
+
+<b>The 3 directory locations and the Windows drive letter locations ALL must be identified during initial setup for the program to run.</b>  
+
+(windows drive letter location edit box is not shown in the photo) .</p>
+<img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
+
 <b> Troubleshooting</b>
 
 After you run the first setup menu, ArchSimian runs a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting, or after a MM.DB update.
@@ -135,14 +143,6 @@ Tracks with no rating are excluded from playlist computation in ArchSimian, so f
 <b>IMPORTANT</b> - if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
 
 ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. (See Notes 1 and 4)
-
-<b> Settings</b>
-<p>The Settings tab has functions to set locations for needed files, and user can choose to include new tracks or enable album-level variety. The first time the program is run this tab only will appear. 
-
-<b>The 3 directory locations and the Windows drive letter locations ALL must be identified during initial setup for the program to run.</b>  
-
-(windows drive letter location edit box is not shown in the photo) .</p>
-<img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
 
 <b> MM4.DB Update</b>
 
