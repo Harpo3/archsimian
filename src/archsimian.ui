@@ -2078,6 +2078,9 @@ MediaMonkey database backup file</string>
         </property>
        </widget>
        <widget class="QSlider" name="playlistLimitSlider">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -2122,6 +2125,9 @@ MediaMonkey database backup file</string>
         </property>
        </widget>
        <widget class="QLabel" name="playlistLimitSliderValue">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>360</x>
@@ -2135,6 +2141,9 @@ MediaMonkey database backup file</string>
         </property>
        </widget>
        <widget class="QLabel" name="minPlaylistLimitLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -2148,6 +2157,9 @@ MediaMonkey database backup file</string>
         </property>
        </widget>
        <widget class="QLabel" name="maxPlaylistLimitLabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>320</x>

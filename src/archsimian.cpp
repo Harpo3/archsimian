@@ -25,7 +25,6 @@
 #include "code1.h"
 #include "albumidandselect.h"
 #include "playlistcontentdialog.h"
-#include "playlistlimit.h"
 #include "diagnostics.h"
 
 template <std::size_t N>
@@ -139,12 +138,9 @@ static int selectedTrackLimitCode{3};
 static int selTrackLimitCodeTotTrackQty{0};
 static double selTrackLimitCodeRatingRatio{0};
 static double trackLimitPercentage{0.95};
-static int s_playlistActualCntSelCode{0};
 static int playlistTrackLimitCodeQty{0};
-static bool playlistFull{false};
 static int s_MaxAvailableToAdd{0};
 static bool s_topLevelFolderExists{0};
-static double s_MaxAvailStaticCast{0.0};
 static std::string playlistpath{""};
 static int s_PlaylistLimit{0};
 static int s_OpenPlaylistLimit{0};
@@ -186,7 +182,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_winDriveLtr = m_prefs.s_WindowsDriveLetter;
     s_windowstopfolder = m_prefs.s_windowstopfolder;
     s_musiclibshortened = m_prefs.s_musiclibshortened;
-    //s_playlistActualCntSelCode = m_prefs.s_playlistActualCntSelCode;
+    //s_configurationchanged = m_prefs.s_playlistActualCntSelCode;
 
     // Set up the UI
     ui->setupUi(this);
@@ -205,17 +201,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 1. The locations s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDir have all been set up." << std::endl;}
         s_bool_IsUserConfigSet = true;
     }
-    else {        
+    else {
         std::cout << "Archsimian.cpp: Step 1. Unable to open archsimian.conf configuration file or, one or more locations has no data. s_bool_IsUserConfigSet result: "
                   << s_bool_IsUserConfigSet << std::endl;
-    }
-    //If configuration has already been set but a library has not yet been processed (new config or MM.DB update), run diagnostics on the configuration completed
-    if (s_bool_IsUserConfigSet) {
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Generating a diagnostic check on configuration changes or database update." << std::endl;
-        std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
-        removeAppData(logd);
-        removeAppData("diagnosticslog.txt");
-        generateDiagsLog();
     }
 
     //If configuration has already been set, populate the UI labels accordingly
@@ -305,13 +293,21 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                          "(7) Close (which saves the locations and settings) and restart the program."));
     }
 
-    // Step 3. Determine if Archsimian songs table exists: If user configuration exists and MM4 data exists (s_bool_IsUserConfigSet and s_bool_MMdbExist are true),
+    // Step 3. Determine if Archsimian songs table exists: If it does not, run diagnostics. If user configuration exists and MM4 data exists (s_bool_IsUserConfigSet and s_bool_MMdbExist are true),
     // determine if cleanlib.dsv songs table (cleanLibFile) exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
     // imported from MM.DB) (sets s_bool_CleanLibExist)
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist)) {
         bool tmpbool{true};
         tmpbool = doesFileExist(cleanLibFile);
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3. tmpbool indicating cleanLibFile file: " << cleanLibFile << "  exists result: " << tmpbool << std::endl;
+        if (!tmpbool){
+            // If cleanlib does not exist, run diagnostics before generating library
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Generating a diagnostic check on configuration changes or database update." << std::endl;
+            std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
+            removeAppData(logd);
+            //removeAppData("diagnosticslog.txt");
+            generateDiagsLog();
+        }
         if (tmpbool){ // check that file is not empty
             //Check whether the songs table currently has any data in it
             std::streampos cleanLibFilesize;
@@ -331,7 +327,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
     if ((Constants::kVerbose)&&(s_bool_IsUserConfigSet)) std::cout << "Archsimian.cpp: Step 3. Does CleanLibFile exist. s_bool_CleanLibExist result: "
-                                                                                  << s_bool_CleanLibExist << std::endl;
+                                                                   << s_bool_CleanLibExist << std::endl;
 
     // 4. Determine if MM.DB was recently updated: s_bool_MMdbUpdated is set by comparing MM.DB file date
     // to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
@@ -340,16 +336,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_bool_IsUserConfigSet) {
         s_bool_MMdbUpdated = recentlyUpdated(s_mmBackupDBDir);
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 4. Is the MM.DB file date newer (greater) than the CleanLibFile date."
-                                                     " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
+                                              " s_bool_MMdbUpdated result: "<< s_bool_MMdbUpdated << std::endl;
         // set UI labels if MM.DB was recently updated
         if (s_bool_MMdbUpdated) // bool s_bool_MMdbUpdated: 1 means refresh DB, 0 means skip
             // If newer is true, removeAppData ratedabbr.txt, ratedabbr2.txt, artistsadj.txt, playlistposlist.txt, artistexcludes.txt, and cleanedplaylist.txt files
         {
-            QMessageBox msgBox;
-            msgBox.setText("ArchSimian Database Update: A new MediaMonkey database backup has been "
-                                                                 "identified, so updating ArchSimian may take some time."
-                                                                 " The program window will appear once the update has been completed.");
-            msgBox.exec();
             removeAppData("ratedabbr.txt");
             s_bool_RatedAbbrExist = false;
             removeAppData("ratedabbr2.txt");
@@ -362,6 +353,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
             s_bool_PlaylistExist = false;
             ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt."));
         }
+        //    Run diagnostics on the configuration currently set or library updated
+
+
+
     }
 
     // Step 5. If user configuration and MM4 data exist, but the songs table does not, import songs table (from MM.DB to libtable.dsv to cleanlib.dsv)
@@ -379,7 +374,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if (((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (!s_bool_CleanLibExist)) || (s_bool_MMdbUpdated)) {
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5. User configuration and MM.DB exists, but the songs table does not, or MM.DB was"
-                                                     "recently updated. Importing songs table (create CleanLib) into Archsimian from MM.DB..." <<std::endl;
+                                              "recently updated. Importing songs table (create CleanLib) into Archsimian from MM.DB..." <<std::endl;
         writeSQLFile(); // Create a SQL file with instructions to extract the Songs table from the MediaMonkey database
         pid_t c_pid;// Create a fork object; child to get database table into a dsv file, then child to open that table only
         // after it finishes getting written, not before.
@@ -409,8 +404,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
             m_prefs.s_windowstopfolder = s_windowstopfolder;
             m_prefs.s_musiclibshortened = s_musiclibshortened;
             if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and "
-                                                                                     "s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
-            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
+                                                                                                                                         "s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and "
+                                                                                                                                         "s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
             s_bool_CleanLibExist = doesFileExist (cleanLibFile);
         }
     }
@@ -507,7 +503,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "selTrackLimitCodeTotTrackQty is: "<< selTrackLimitCodeTotTrackQty << std::endl;
             std::cout << "selectedTrackLimitCode is: "<< selectedTrackLimitCode << std::endl;
             std::cout << "selTrackLimitCodeRatingRatio is: "<< selTrackLimitCodeRatingRatio << std::endl;
-            std::cout << "trackLimitPercentage is: "<< trackLimitPercentage << std::endl;            
+            std::cout << "trackLimitPercentage is: "<< trackLimitPercentage << std::endl;
             std::cout << "playlistTrackLimitCodeQty is: "<< playlistTrackLimitCodeQty << std::endl;
         }
         //Print verbose results to console
@@ -548,7 +544,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Adjusted hours code 5 - s_adjHoursCode5 : "<< s_adjHoursCode5 << std::endl;
             std::cout << "Adjusted hours code 6 - s_adjHoursCode6 : "<< s_adjHoursCode6 << std::endl;
             std::cout << "Adjusted hours code 7 - s_adjHoursCode7 : "<< s_adjHoursCode7 << std::endl;
-            std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;            
+            std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
             std::cout << "Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
             std::cout << "Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
             std::cout << "Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
@@ -576,6 +572,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
     // MM.DB was not recently updated, check for state of s_bool_artistsadjExist (artistsadj.txt).
     // If file is missing or empty, create file with artist statistics
+
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) &&
             (s_bool_dbStatsCalculated) && (!s_bool_MMdbUpdated)) {
         s_bool_artistsadjExist = false;
@@ -597,12 +594,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 delete[] memblock;
             }
             else std::cout << "Archsimian.cpp: Step 7. There was a problem opening artistsadj.txt" << std::endl;
-
             if (artsistAdjsize != 0) {s_bool_artistsadjExist = true;// file artistsadj.txt exists and is greater in size than zero, set to true
                 // If MM.DB not recently updated and artistsadj.txt does not need to be updated, check if ratedabbr.txt exists
                 // If it does set s_bool_RatedAbbrExist to true.
                 if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7. MM.DB not recently updated and artistsadj.txt does not need to be updated. "
-                                                              "Now checking s_bool_RatedAbbrExist." << std::endl;}
+                                                       "Now checking s_bool_RatedAbbrExist." << std::endl;}
                 tmpbool2 = doesFileExist(appDataPathstr.toStdString()+"/ratedabbr.txt");
                 if (tmpbool2){ // check that file is not empty
                     //Check whether the songs table currently has any data in it
@@ -628,9 +624,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
             if (artsistAdjsize == 0) {s_bool_artistsadjExist = false;}// file exists but size is zero, set to false
         }
         if (!tmpbool){s_bool_artistsadjExist = false;} // file does not exist, set bool to false
-
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7. MM.DB not recently updated. Verifying artistsadj.txt exists and is not zero. "
-                                                     "s_bool_artistsadjExist result: "<< s_bool_artistsadjExist << std::endl;
+                                              "s_bool_artistsadjExist result: "<< s_bool_artistsadjExist << std::endl;
         if (!s_bool_artistsadjExist){
             getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                                    &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
@@ -681,9 +676,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_PlaylistSelected = false;
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to 'not exist'. Playlist not selected." << std::endl;}
     }
-    else{if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to 'not exist'. Default playlist identified." << std::endl;}
-        s_topLevelFolderExists = true; // check temporary
-    }
+
     // 10. If a playlist was identified in the user config (step 9), generate the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
     // (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
@@ -702,22 +695,17 @@ ArchSimian::ArchSimian(QWidget *parent) :
         QMainWindow::setWindowTitle("ArchSimian - "+justname);
         if (!s_bool_PlaylistExist) {std::cout << "Archsimian.cpp: Step 10. Something went wrong at the function getPlaylist." << std::endl;}
     }
-    //if ((Constants::kVerbose) && (s_bool_PlaylistExist) && (s_bool_IsUserConfigSet)){std::cout << "Archsimian.cpp: Step 10. Playlist exists and was not updated." << std::endl;}
 
     // 10a. If a playlist was not identified in the user config, adjust the UI accordingly
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (!s_bool_PlaylistSelected) && (!s_bool_PlaylistExist)){
-
-    ui->setgetplaylistLabel->setText("No playlist selected");
-    ui->addsongsButton->setEnabled(false);
-    ui->addsongsLabel->setText(tr(""));
-    ui->viewplaylistButton->setDisabled(true);
-    ui->viewplaylistLabel->setText(tr("No playlist selected"));    
-    QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
+        ui->setgetplaylistLabel->setText("No playlist selected");
+        ui->addsongsButton->setEnabled(false);
+        ui->addsongsLabel->setText(tr(""));
+        ui->viewplaylistButton->setDisabled(true);
+        ui->viewplaylistLabel->setText(tr("No playlist selected"));
+        QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
     }
-
-    // NOTE: functions used in the next three steps (11-15) will later be reused when adding tracks to
-    // playlist - here is to get the initial values if a playlist exists
 
     //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
     // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist); And, get the Windows drive letter.
@@ -731,7 +719,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->viewplaylistLabel->setText(tr("Current playlist is empty"));
             QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
         }
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Playlist size is: "<< s_playlistSize << std::endl;}        
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Playlist size is: "<< s_playlistSize << std::endl;}
         //s_winDriveLtr = m_prefs.s_WindowsDriveLetter;
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 11. Windows drive letter loaded from user configuration "
                                               "as: "<< s_winDriveLtr.toStdString() << std::endl;}
@@ -744,6 +732,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
     // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
     // and SequentialTrackLimit obtained with data from function getDBStats()
+
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
@@ -836,22 +825,22 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
         ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
     }
-        ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
-        ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
-        ui->mintrackseachspinBox->setValue(m_prefs.s_mintrackseach);
-        ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-        ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                       ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                       ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                       ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                       ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                       ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-        ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
+    ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
+    ui->mintrackseachspinBox->setValue(m_prefs.s_mintrackseach);
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     if (!s_bool_IsUserConfigSet){
         ui->mainQTabWidget->setTabEnabled(0, false);
         ui->mainQTabWidget->setTabEnabled(2, false);
@@ -872,92 +861,49 @@ ArchSimian::ArchSimian(QWidget *parent) :
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
         ui->albumsTab->setEnabled(true);
     }
-    // 15. Sets the initial playlist size limit to restrict how many tracks can be added to the playlist
+    // 15. Sets the playlist size limit to restrict how many total tracks can be added to any playlist
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. Run setPlaylistLimitCount to set the initial count for playlistLimitCount." << std::endl;}
-
-    if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
+    // Set variables for playlist limit applicable for all playlists created
+    if (s_bool_IsUserConfigSet)
     {
-        // Test NEW formula
         double tracksPerDay = (s_avgListeningRateInMins) / (s_AvgMinsPerSong);
         double interim1 = (tracksPerDay * selTrackLimitCodeRatingRatio * s_DaysBeforeRepeatCode3);
         int firstlimittest = int((selTrackLimitCodeTotTrackQty - interim1)/selTrackLimitCodeRatingRatio);
         int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
-        s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 50;
+        s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 50; // NEW need to add variable for 50
+
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. selTrackLimitCodeTotTrackQty: "<< selTrackLimitCodeTotTrackQty << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  tracksPerDay:(s_avgListeningRateInMins) / (s_AvgMinsPerSong)-> "<< tracksPerDay << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  selTrackLimitCodeRatingRatio: "<< selTrackLimitCodeRatingRatio << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  s_DaysBeforeRepeatCode3: "<< s_DaysBeforeRepeatCode3 << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  interim1: "<< interim1 << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  firstlimittest: "<< firstlimittest << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  secondlimittest: "<< secondlimittest << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  s_PlaylistLimit = smaller of firstlimittest and secondlimittest: "<< s_PlaylistLimit << std::endl;}
+    }
+    if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
+    {
+        // If a default playlist is found, set s_OpenPlaylistLimit to the s_PlaylistLimit
+        // Then, set s_MaxAvailableToAdd, using the s_OpenPlaylistLimit less the number of tracks already in the playlist
         s_OpenPlaylistLimit = s_PlaylistLimit;
-
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. selTrackLimitCodeTotTrackQty: "<< selTrackLimitCodeTotTrackQty << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. tracksPerDay:(s_avgListeningRateInMins) / (s_AvgMinsPerSong)-> "<< tracksPerDay << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. selTrackLimitCodeRatingRatio: "<< selTrackLimitCodeRatingRatio << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. s_DaysBeforeRepeatCode3: "<< s_DaysBeforeRepeatCode3 << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. interim1: "<< interim1 << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. firstlimittest: "<< firstlimittest << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. secondlimittest: "<< secondlimittest << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. s_PlaylistLimit = smaller of firstlimittest and secondlimittest: "<< s_PlaylistLimit << std::endl;}
-
-
-        // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
-
-        //If a playlist exists, count the number of 'limit' tracks (s_playlistActualCntSelCode)in the playlist at initial launch
-
-        // TEST remove: setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
-
-        // Calculate the maximum tracks that can be added to the playlist, based on current playlist size, the
-        // frequency of adding code 3 (or other code) to the playlist, and the number of code 3 tracks currently
-        // in the playlist.
-
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. playlistTrackLimitCodeQty before s_MaxAvailableToAdd calc is: "<< playlistTrackLimitCodeQty << std::endl;
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. s_playlistActualCntSelCode (actual 3s in playlist) "
-                                              "before s_MaxAvailableToAdd calc is: "<< s_playlistActualCntSelCode << std::endl;
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_playlistSize before s_MaxAvailableToAdd calc is: "<< s_playlistSize << std::endl;}
-
-        // Count the initial s_MaxAvailableToAdd for the playlist at initial launch
-        // TEST remove: s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
-        // TEST remove: s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
-        // TEST added
         s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. playlistTrackLimitCodeQty - s_playlistActualCntSelCode is: "<< playlistTrackLimitCodeQty - s_playlistActualCntSelCode << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_MaxAvailStaticCast is: "<< s_MaxAvailStaticCast << std::endl;}
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. s_MaxAvailableToAdd after variable check is: "<< s_MaxAvailableToAdd << std::endl;
-        // If the playlist is small, force a baseline max of 30
-        // TEST remove: if (s_playlistSize < 30){
-        // TEST remove:     s_MaxAvailableToAdd = 50;
-        // TEST remove:     ui->addtrksspinBox->setValue(20);
-         // TEST remove:    ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: 50"));
-        // TEST remove: }
-        // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
-        /* // TEST remove:
-        if (s_playlistSize > 29){
-            if (s_playlistActualCntSelCode > playlistTrackLimitCodeQty){
-                playlistFull = true;
-                ui->addsongsButton->setEnabled(false);
-                ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
-            }
-            else {
-                ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
-                if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-                if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
-                ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-            }
-        } end // TEST remove:
-        */
-        // TEST added
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist found. Setting "
+                                              "s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize: "<< s_MaxAvailableToAdd << std::endl;
+        // Set labels, UI settings for when playlist is full
         if (s_MaxAvailableToAdd < 1){
             s_MaxAvailableToAdd = 0;
-            playlistFull = true;
             ui->addsongsButton->setEnabled(false);
             ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
         }
+        // If playlist is not full set default labels and spinbox values
         else {
             ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
             if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
             if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
             ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
         }
-        // end TEST added
-
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. s_MaxAvailableToAdd at program launch is: "<< s_MaxAvailableToAdd << std::endl;
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Playlist full status is: "<< playlistFull << std::endl;
-        }
+    }
     // End setup of UI
 }
 
@@ -968,45 +914,45 @@ void ArchSimian::on_addsongsButton_released(){
     // First set messages and feedback to user during process
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     int numTracks = ui->addtrksspinBox->value(); // Sets the number of tracks the user selected to add (numtracks)
-    // Reduce s_MaxAvailableToAdd quantity by number of tracks to be added
+    // Reduce s_MaxAvailableToAdd quantity by number of tracks to be added (numTracks above)
     if (s_MaxAvailableToAdd > 0){
         s_MaxAvailableToAdd = s_MaxAvailableToAdd - numTracks;
     }
     // If tracks added makes s_MaxAvailableToAdd = 0, then dim the button and change label
     if (s_MaxAvailableToAdd < 1){
         s_MaxAvailableToAdd = 0;
-        playlistFull = true;
         ui->addsongsButton->setEnabled(false);
-        ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
+        ui->addsongsLabel->setText(tr("Playlist is already at maximum size."));
     }
-
     if (numTracks > Constants::kNotifyTrackThreshold) {
         if (!s_disableNotificationAddTracks){
-        QMessageBox msgBox;
-        QString msgboxtxt = "This can take some time since you are adding " + QString::number(numTracks) + " tracks.";
-        msgBox.setText(msgboxtxt);
-        msgBox.exec();
+            QMessageBox msgBox;
+            QString msgboxtxt = "This can take some time since you are adding " + QString::number(numTracks) + " tracks.";
+            msgBox.setText(msgboxtxt);
+            msgBox.exec();
         }
     }
     std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
+    // If adding the first song to an empty playlist, open an empty playlist (cleanedplaylist.txt) and
+    // and set an arbitrary rating code (6) for s_ratingNextTrack, before beginning
     if (s_playlistSize == 0) {
         std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
         ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
         ofs.close();
+        {s_ratingNextTrack = 6;}
     }
-
     std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (UI display)
-    // Second, determine the rating for the track selection
+    // Determine the rating for the track selection if there are already tracks in the playlist
     if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Running ratingCodeSelected function before loop."<< std::endl;
-    s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
-                                           s_ratingRatio7,s_ratingRatio8);
-     if (s_playlistSize == 0) {s_ratingNextTrack = 6;}
-
+    if (s_playlistSize > 0) {
+        s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
+                                               s_ratingRatio7,s_ratingRatio8);
+    }
     if (Constants::kVerbose) std::cout <<"on_addsongsButton_released: ratingCodeSelected function before loop completed. Result is: "<< s_ratingNextTrack <<
-                                                ". Now starting loop (913) to select tracks and add them to playlist..." <<std::endl;
-    // Third, start loop for the number of tracks the user selected to add (numtracks)
+                                         ". Now starting loop (913) to select tracks and add them to playlist..." <<std::endl;
+    // Start loop for the number of tracks the user selected to add (numtracks)
     for (int i=0; i < numTracks; i++){
         if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Top of Loop (914). Count: " <<i<<". Adding track "<< i + 1<<"." <<std::endl;
         s_uniqueCode1ArtistCount = 0;
@@ -1022,24 +968,23 @@ void ArchSimian::on_addsongsButton_released(){
                 getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
                 s_selectedTrackPath = s_selectedCode1Path; // set the track selection to the code 1 selection
                 if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Rating code 1 applies to current track selection: " << s_selectedTrackPath << std::endl <<
-                                                             "Code 1 track added to playlist."<< std::endl;
+                                                      "Code 1 track added to playlist."<< std::endl;
             }
         }
         else {s_selectedCode1Path = "";}
-
         // If selection criteria for rating code 1 is not met, return empty string
         if (!s_selectedCode1Path.empty()) {
             s_ratingNextTrack = 1;} // If string is not empty, set rating for next track as code 1
         if ((!s_includeNewTracks)||(s_ratingNextTrack != 1)) { // If user excluded new tracks, or set rating code is not 1, do normal selection
             if ((Constants::kVerbose)&&(!s_includeNewTracks)) std::cout << "User excluding new tracks. Check whether user selected album variety " << std::endl;
-            if (s_includeAlbumVariety){ // If not 1, and user has selected album variety, get album ID stats                
+            if (s_includeAlbumVariety){ // If not 1, and user has selected album variety, get album ID stats
                 if (Constants::kVerbose) std::cout << "on_addsongsButton_released: User selected album variety. Getting functions getTrimArtAlbmList and getAlbumIDs." << std::endl;
                 getTrimArtAlbmList();
                 getAlbumIDs();
             }
             if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Now selecting track for non-code-1 track selection (function selectTrack)." << std::endl;
             try {
-            selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
+                selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
             }
             catch (const std::bad_alloc& exception) {
                 std::cerr << "on_addsongsButton_released: bad_alloc detected: Maximum playlist length has been reached. Exiting program." << exception.what();
@@ -1048,11 +993,11 @@ void ArchSimian::on_addsongsButton_released(){
                 QString msgboxtxt = "on_addsongsButton_released: Out of memory error (bad_alloc):failed during attempt to add tracks. Likely reason: "
                                     "Not enough available tracks found. Lower track limit buffer variable and restart.";
                 msgBox.setText(msgboxtxt);
-                msgBox.exec();                
+                msgBox.exec();
                 removeAppData("cleanlib.dsv");
                 removeAppData("playlistposlist.txt");
                 qApp->quit(); //Exit program
-              }
+            }
         }
         // Collect and collate 'track selected' info for (UI display of) final song selections
         std::string shortselectedTrackPath;
@@ -1060,7 +1005,6 @@ void ArchSimian::on_addsongsButton_released(){
         std::string key1 ("/");
         std::string key2 ("_");
         // Next, determine how many alphanumeric chars there are in the windowstopfolder name
-
         char *array_point;
         char c1;
         unsigned long count=0, alp=0, digt=0, oth=0;
@@ -1099,68 +1043,30 @@ void ArchSimian::on_addsongsButton_released(){
         s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
                                                s_ratingRatio7,s_ratingRatio8); // Recalc rating selection
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: ratingCodeSelected function in loop completed. Result: " << s_ratingNextTrack << ". Count "
-                                                            "at end (1006) is now: "<< i<< std::endl;
+                                                                                                                                                           "at end (1006) is now: "<< i<< std::endl;
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *****************************************************************" << std::endl;
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *************   Added track "<< i + 1<<".   ********************" << std::endl;
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *****************************************************************" << std::endl;
-        // If track selected is a 3 (or other selectedTrackLimitCode), then increase the count
-        // TEST remove: if (s_ratingNextTrack == selectedTrackLimitCode){++s_playlistActualCntSelCode;}
     }
-    // TEST remove: }
-     //After all tracks have been processed, update UI with information to user about tracks added to playlist
-    // First, update playlist limit and recalc s_MaxAvailableToAdd
-
-    /*    // TEST remove:
-    if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_playlistActualCntSelCode (actual 3s in playlist) "
-                                                  "(after all tracks have been processed) is: "<< s_playlistActualCntSelCode << std::endl;
-    if (Constants::kVerbose){std::cout << "on_addsongsButton_released: s_playlistSize before s_MaxAvailableToAdd calc is: "<< s_playlistSize << std::endl;}
-
-    s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
-    s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
-    if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_MaxAvailableToAdd (after all tracks have been processed) is: "<< s_MaxAvailableToAdd << std::endl;
-    if (Constants::kVerbose){std::cout << "on_addsongsButton_released: playlistTrackLimitCodeQty - s_playlistActualCntSelCode is: "<< playlistTrackLimitCodeQty - s_playlistActualCntSelCode << std::endl;}
-    if (Constants::kVerbose){std::cout << "on_addsongsButton_released: s_MaxAvailStaticCast is: "<< s_MaxAvailStaticCast << std::endl;}
-    if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_MaxAvailableToAdd after variable check is: "<< s_MaxAvailableToAdd << std::endl;
-    if (s_MaxAvailableToAdd < 2){
-        playlistFull = true;
+    if (s_MaxAvailableToAdd < 1){
+        s_MaxAvailableToAdd = 0;
         ui->addsongsButton->setEnabled(false);
         ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
     }
-    else {
-        // Second, determine if playlist is now full after tracks add by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
-        ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
-        if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-        if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
-        ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-    }
-    // If the playlist is small, force a baseline max of 50
-    if (s_playlistSize < 30){
-        s_MaxAvailableToAdd = 50;
-    } end // TEST remove:
-    */ // TEST remove:
-
-    // TEST added
-
-    if (s_MaxAvailableToAdd == 0){
-        playlistFull = true;
-        ui->addsongsButton->setEnabled(false);
-        ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
-    }
+    // If playlist is not full set default labels and spinbox values
     else {
         ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
         if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
         if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
         ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     }
-    // end TEST added
-
     if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
     }
     songtext.close();
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
-                                          QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
+                                   QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",4000);
     ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
     if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
@@ -1191,7 +1097,7 @@ void ArchSimian::on_setlibraryButton_clicked(){
     // Write description note and directory configuration to archsimian.conf
     ui->saveConfigButton->setEnabled(true);
     m_prefs.musicLibraryDir = s_musiclibrarydirname;
-    ui->setmmplButton->setEnabled(true);    
+    ui->setmmplButton->setEnabled(true);
 }
 
 void ArchSimian::on_setmmplButton_clicked(){
@@ -1227,7 +1133,7 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
     if (index == 0) { // if the Playlist tab is selected, save and reload settings since rating code values may have been changed
         saveSettings();
         loadSettings();
-        }
+    }
     if (index == 2) // if the Statistics tab is selected, refresh stats
     {
         ui->ybrLabel3->setText("Years between repeats for rating code 3 (5 stars): " + QString::number(s_yrsTillRepeatCode3,'g', 3) +
@@ -1318,7 +1224,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_mintracks = settings.value("s_mintracks", Constants::kUserDefaultMintracks).toInt();
     m_prefs.s_windowstopfolder = settings.value("s_windowstopfolder",Constants::kWindowsTopFolder).toString();
     m_prefs.s_musiclibshortened = settings.value("s_musiclibshortened",Constants::kMusicLibShortened).toString();
-//    m_prefs.s_playlistActualCntSelCode = settings.value("s_playlistActualCntSelCode", Constants::kPlaylistActualCntSelCode).toInt();
+    //    m_prefs.s_playlistActualCntSelCode = settings.value("s_playlistActualCntSelCode", Constants::kPlaylistActualCntSelCode).toInt();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -1332,7 +1238,7 @@ void ArchSimian::saveSettings()
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
     settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
-    settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);    
+    settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);
     settings.setValue("s_disableNotificationAddTracks",m_prefs.s_disableNotificationAddTracks);
     settings.setValue("s_includeAlbumVariety",m_prefs.s_includeAlbumVariety);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
@@ -1347,7 +1253,7 @@ void ArchSimian::saveSettings()
     settings.setValue("s_winDriveLtr",m_prefs.s_WindowsDriveLetter);
     settings.setValue("s_windowstopfolder",m_prefs.s_windowstopfolder);
     settings.setValue("s_musiclibshortened",m_prefs.s_musiclibshortened);
-//    settings.setValue("s_playlistActualCntSelCode", m_prefs.s_playlistActualCntSelCode);
+    //    settings.setValue("s_playlistActualCntSelCode", m_prefs.s_playlistActualCntSelCode);
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
@@ -1357,13 +1263,13 @@ void ArchSimian::closeEvent(QCloseEvent *event)
         event->accept();
     }
     if (s_noAutoSave == 1){
-    if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to settings before exit?",
-                                                  QMessageBox::Yes | QMessageBox::No))
-    {
-        saveSettings();
+        if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to settings before exit?",
+                                                      QMessageBox::Yes | QMessageBox::No))
+        {
+            saveSettings();
+            event->accept();
+        }
         event->accept();
-    }
-    event->accept();
     }
 }
 
@@ -1442,11 +1348,11 @@ void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -1477,11 +1383,11 @@ void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -1513,11 +1419,11 @@ void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -1547,11 +1453,11 @@ void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -1581,11 +1487,11 @@ void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -1615,11 +1521,11 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
     ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                   ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
+                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
+                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -1633,16 +1539,16 @@ void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
     m_prefs.s_includeNewTracks = inclNew;
     ui->InclNewcheckbox->checkState();
     if (ui->InclNewcheckbox->checkState() == 2){
-    ui->repeatFreq1SpinBox->setEnabled(true);
-    ui->newtracksqtyLabel->setDisabled(false);
-    ui->repeatfreqtxtLabel->setDisabled(false);
-    QWidget::repaint();
+        ui->repeatFreq1SpinBox->setEnabled(true);
+        ui->newtracksqtyLabel->setDisabled(false);
+        ui->repeatfreqtxtLabel->setDisabled(false);
+        QWidget::repaint();
     }
     if (!static_cast<bool>(ui->InclNewcheckbox->checkState())){
-    ui->repeatFreq1SpinBox->setEnabled(false);
-    ui->newtracksqtyLabel->setDisabled(true);
-    ui->repeatfreqtxtLabel->setDisabled(true);
-    QWidget::repaint();
+        ui->repeatFreq1SpinBox->setEnabled(false);
+        ui->newtracksqtyLabel->setDisabled(true);
+        ui->repeatfreqtxtLabel->setDisabled(true);
+        QWidget::repaint();
     }
 }
 
@@ -1664,8 +1570,8 @@ void ArchSimian::on_albumscheckBox_stateChanged(int inclAlbums)
 
 void ArchSimian::on_minalbumsspinBox_valueChanged(int arg1)
 {
-   m_prefs.s_minalbums =  arg1;
-   ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
+    m_prefs.s_minalbums =  arg1;
+    ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
 }
 
 void ArchSimian::on_mintracksspinBox_valueChanged(int arg1)
@@ -1675,8 +1581,8 @@ void ArchSimian::on_mintracksspinBox_valueChanged(int arg1)
 
 void ArchSimian::on_mintrackseachspinBox_valueChanged(int arg1)
 {
- m_prefs.s_mintrackseach = arg1;
- ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
+    m_prefs.s_mintrackseach = arg1;
+    ui->mintracksspinBox->setMinimum(s_minalbums * s_mintrackseach);
 }
 
 void ArchSimian::on_actionExport_Playlist_triggered()
@@ -1702,7 +1608,7 @@ void ArchSimian::on_actionExit_triggered()
         ofs.close();
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. cleanedplaylist should be zero now: "<< s_playlistSize << std::endl;}
-       qApp->quit();
+        qApp->quit();
     }
     if (s_noAutoSave){
         if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes to "
@@ -1721,7 +1627,7 @@ void ArchSimian::on_actionExit_triggered()
 
 void ArchSimian::on_actionAbout_Qt_triggered()
 {
- QApplication::aboutQt();
+    QApplication::aboutQt();
 }
 
 void ArchSimian::on_actionSave_Settings_triggered()
@@ -1733,18 +1639,18 @@ void ArchSimian::on_actionSave_Settings_triggered()
 void ArchSimian::on_actionAbout_triggered()
 {
     QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.04"
-               "\n\nThis program is free software: you can redistribute it and/or modify"
-               " it under the terms of the GNU General Public License as published by"
-               " the Free Software Foundation, either version 3 of the License, or"
-               " (at your option) any later version.\n"
-               "\n"
-               "This program is distributed in the hope that it will be useful,"
-               " but WITHOUT ANY WARRANTY; without even the implied warranty of"
-               " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
-               " GNU General Public License for more details.\n"
-               "\n"
-               "You should have received a copy of the GNU General Public License"
-               " along with this program. If not, see https://www.gnu.org/licenses/"));
+                                                 "\n\nThis program is free software: you can redistribute it and/or modify"
+                                                 " it under the terms of the GNU General Public License as published by"
+                                                 " the Free Software Foundation, either version 3 of the License, or"
+                                                 " (at your option) any later version.\n"
+                                                 "\n"
+                                                 "This program is distributed in the hope that it will be useful,"
+                                                 " but WITHOUT ANY WARRANTY; without even the implied warranty of"
+                                                 " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
+                                                 " GNU General Public License for more details.\n"
+                                                 "\n"
+                                                 "You should have received a copy of the GNU General Public License"
+                                                 " along with this program. If not, see https://www.gnu.org/licenses/"));
 }
 
 void ArchSimian::on_actionOpen_Playlist_triggered()
@@ -1766,9 +1672,9 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         }
         // Set selected as default playlist, save to settings
         if(!selectedplaylist.isEmpty()&&selectedplaylist!=""){
-        m_prefs.defaultPlaylist = selectedplaylist;
-        s_defaultPlaylist = m_prefs.defaultPlaylist;
-        saveSettings();
+            m_prefs.defaultPlaylist = selectedplaylist;
+            s_defaultPlaylist = m_prefs.defaultPlaylist;
+            saveSettings();
         }
         QMainWindow::setWindowTitle("ArchSimian - "+s_defaultPlaylist);
         if (Constants::kVerbose){std::cout << "on_actionOpen_Playlist_triggered: Add/change playlist.. s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
@@ -1780,7 +1686,7 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistSelected = true;
         if (Constants::kVerbose){std::cout << "on_actionOpen_Playlist_triggered: For playlist opened, cleanedplaylist regenerated."
-                                               << std::endl;}
+                                           << std::endl;}
         ui->viewplaylistButton->setDisabled(false);
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         QFileInfo fi(s_defaultPlaylist);
@@ -1820,61 +1726,21 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         }
         //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
 
-         /*    // TEST remove:
-        s_playlistActualCntSelCode = 0; //First reset to zero
-        setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode); // Now get the count
-        //s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
-        s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
-        s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
-        // If the playlist is small, force a baseline max of 30
-        if (s_playlistSize < 30){
-            s_MaxAvailableToAdd = 50;
-            ui->addtrksspinBox->setValue(20);
-            ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: 50"));
-        } end TEST remove:
-        */
         // TEST added
         s_OpenPlaylistLimit = s_PlaylistLimit;
         s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
-        if (s_MaxAvailableToAdd == 0){
-            playlistFull = true;
+        if (s_MaxAvailableToAdd < 1){
+            s_MaxAvailableToAdd = 0;
             ui->addsongsButton->setEnabled(false);
             ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
         }
+        // If playlist is not full set default labels and spinbox values
         else {
             ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
             if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
             if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
             ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
         }
-        // end TEST added
-        if (Constants::kVerbose) std::cout << "on_actionOpen_Playlist_triggered: s_MaxAvailableToAdd for playlist loaded is: "<< s_MaxAvailableToAdd << std::endl;
-        if (Constants::kVerbose) std::cout << "on_actionOpen_Playlist_triggered: s_playlistActualCntSelCode for playlist loaded is: "<< s_playlistActualCntSelCode << std::endl;
-
-        if (Constants::kVerbose){std::cout << "on_actionOpen_Playlist_triggered. playlistTrackLimitCodeQty - "
-                                              "s_playlistActualCntSelCode is: "<< playlistTrackLimitCodeQty - s_playlistActualCntSelCode << std::endl;}
-         if (Constants::kVerbose){std::cout << "on_actionOpen_Playlist_triggered. s_MaxAvailStaticCast is: "<< s_MaxAvailStaticCast << std::endl;}
-         if (Constants::kVerbose) std::cout << "on_actionOpen_Playlist_triggered. s_MaxAvailableToAdd after variable check is: "<< s_MaxAvailableToAdd << std::endl;
-
-
-        // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
-         /*    // TEST remove:
-
-         if (s_playlistSize > 29){
-             // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
-             if (s_playlistActualCntSelCode > playlistTrackLimitCodeQty){
-                 playlistFull = true;
-                 ui->addsongsButton->setEnabled(false);
-                 ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
-             }
-             else {
-                 ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
-                 if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-                 if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
-                 ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-             }
-         }
-         */
 
         // Finalize playlist loading
 
@@ -1916,13 +1782,10 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     }
     // Save selected playlist to user config, then set s_defaultPlaylist to selected playlist
     if(!strFile.isEmpty()&&strFile!=""){
-    m_prefs.defaultPlaylist = strFile;
-    s_defaultPlaylist = m_prefs.defaultPlaylist;
-    saveSettings();
+        m_prefs.defaultPlaylist = strFile;
+        s_defaultPlaylist = m_prefs.defaultPlaylist;
+        saveSettings();
     }
-    // Remove ratedabbr2 and run getPlaylist function, Set s_bool_PlaylistExist to true
-    //removeAppData("ratedabbr2.txt");
-    //removeAppData("ratedabbr2.txt");
     // Update excluded artists  (from step 13) by running function getExcludedArtists() which also recreates ratedabbr2, and check code1 stats
     if (Constants::kVerbose){std::cout << "on_actionNew_Playlist_triggered: Running getPlaylist." << std::endl;}
     getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
@@ -1950,18 +1813,11 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
     s_playlistSize = 0;
 
-    /*    // TEST remove:
-    s_playlistActualCntSelCode = 0;
-    // Somewhat arbitrary guess on a reasonable starting max to use. Will be recalculated once tracks are added.
-    s_MaxAvailableToAdd = int(static_cast<double>(playlistTrackLimitCodeQty) / static_cast<double>(selTrackLimitCodeRatingRatio))-50;
-    playlistFull = false;
-*/
-    // TEST added
+    // Set s_MaxAvailableToAdd to s_OpenPlaylistLimit without adjustment since new playlist is empty
     s_MaxAvailableToAdd = s_OpenPlaylistLimit;
     ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
     if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(50);}
     ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-    // TEST end added
 
     // Finalize playlist loading
     ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
@@ -2061,6 +1917,6 @@ void ArchSimian::on_windowsDriveLtrEdit_textChanged(const QString &arg1)
 
 //void ArchSimian::on_playlistLimitSlider_valueChanged(int value)
 //{
-    // Adjustment for track limit percentage. Set variable by dividing slider value by 100.
+// Adjustment for track limit percentage. Set variable by dividing slider value by 100.
 
 //}

@@ -40,7 +40,6 @@ SOURCES += \
     src/main.cpp \
     src/playlistcontentdialog.cpp \
     src/playlistfunctions.cpp \
-    src/playlistlimit.cpp \
     src/utilities.cpp \
     src/writesqlfile.cpp \
     src/getartistexcludes.cpp
@@ -60,7 +59,6 @@ HEADERS += \
     src/lastplayeddays.h \
     src/playlistcontentdialog.h \
     src/playlistfunctions.h \
-    src/playlistlimit.h \
     src/utilities.h \
     src/writesqlfile.h
 
