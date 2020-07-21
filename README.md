@@ -125,14 +125,14 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 <b> Initial Setup Instructions</b>
 <p>When you start ArchSimian the first time, complete the Settings tab to set 3 directory locations for needed files, and identify the Windows folder for the music library. Include new tracks or enable album-level variety is not required (but can be done) initially. During setup, only this tab will appear. 
 
-<b>The 3 directory locations and the Windows drive letter locations ALL must be identified during initial setup for the program to run.</b>  
+<b>The 3 directory locations and the Windows drive letter ALL must be identified during initial setup for the program to run.</b>  
 
-(windows drive letter location edit box is not shown in the photo) .</p>
+(windows drive letter location edit box is not shown in the photo) When complete press the button to "save the configuration and exit". </p>
 <img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
 
 <b> Troubleshooting</b>
 
-After you run the first setup menu, ArchSimian runs a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting, or after a MM.DB update.
+When you complete the setup menu, ArchSimian will run a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting. Diagnostics also run after every MM.DB update.
 
 <b> ArchSimian Configuration</b>
 
