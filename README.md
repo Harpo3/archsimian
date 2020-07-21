@@ -124,13 +124,15 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 
 <b> Troubleshooting</b>
 
-After you run the first setup menu, ArchSimian runs a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems.
+After you run the first setup menu, ArchSimian runs a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting, or after a MM.DB update.
 
 <b> ArchSimian Configuration</b>
 
-Ensure all tracks in MM4 you want to include in your playlists are rated prior to running ArchSimian. 
+Ensure all tracks in MM4 you want included are rated prior to running ArchSimian. 
 
-Tracks with no rating are excluded from playlist computation in ArchSimian, so for any new tracks not yet rated, you need to rate them as “1 star” in MM4. Tracks you want to exclude from computation need to have their ratings removed (zero stars). ArchSimian will know the 1 star tracks are actually new/not-yet-rated tracks. Be careful because if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
+Tracks with no rating are excluded from playlist computation in ArchSimian, so for any new tracks not yet rated, you need to rate them “1 star” in MM4. Tracks you want to exclude need to have their ratings removed (zero stars) in MM4. ArchSimian will treat 1 star tracks as new/not-yet-rated tracks. 
+
+<b>IMPORTANT</b> - if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
 
 ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. (See Notes 1 and 4)
 
