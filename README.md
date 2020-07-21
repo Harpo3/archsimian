@@ -123,7 +123,7 @@ Your music directory structure (directly under the drive, or under a top level f
 Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions.</b> Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required). If you do not directly use either of these two fields, ArchSimian will still work correctly, <b> but just make sure these two fields are blank for every track tag</b>.
 
 <b> Initial Setup Instructions</b>
-<p>When you start ArchSimian the first time, complete the Settings tab to set 3 directory locations for needed files, and identify the Windows folder for the music library. Include new tracks or enable album-level variety is not required (but can be done) initially. During setup, only this tab will appear. 
+<p>When you start ArchSimian the first time, complete the Settings tab to set 3 directory locations for needed files, and identify the Windows folder for the music library. You may also set "include new tracks" and "enable album-level variety" initially. During setup, only this tab will appear. 
 
 <b>The 3 directory locations and the Windows drive letter ALL must be identified during initial setup for the program to run.</b>  
 
