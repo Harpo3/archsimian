@@ -146,6 +146,8 @@ static int s_MaxAvailableToAdd{0};
 static bool s_topLevelFolderExists{0};
 static double s_MaxAvailStaticCast{0.0};
 static std::string playlistpath{""};
+static int s_PlaylistLimit{0};
+static int s_OpenPlaylistLimit{0};
 
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -208,9 +210,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
                   << s_bool_IsUserConfigSet << std::endl;
     }
     //If configuration has already been set but a library has not yet been processed (new config or MM.DB update), run diagnostics on the configuration completed
-    if ((s_bool_IsUserConfigSet)&&(!s_bool_CleanLibExist)) {
-    generateDiagsLog();
-    if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Generating a diagnostic check on configuration." << std::endl;
+    if (s_bool_IsUserConfigSet) {
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Generating a diagnostic check on configuration changes or database update." << std::endl;
+        std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
+        removeAppData(logd);
+        removeAppData("diagnosticslog.txt");
+        generateDiagsLog();
     }
 
     //If configuration has already been set, populate the UI labels accordingly
@@ -856,8 +861,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->settingsTab->setEnabled(true);
     }
     /* 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary(const int &s_minalbums,
-      const int &s_mintrackseach, const int &s_mintracks). What it does: When basiclibrary functions are processed
-      (at startup), run this function to get artists meeting the screening criteria (if user selected album variety).
+      const int &s_mintrackseach, const int &s_mintracks). When basiclibrary functions are processed
+      (at startup), this function gets artists meeting the screening criteria if the user selected album-level variety.
       This generates the file artistalbmexcls.txt (see albumexcludes project) */
 
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary."<< s_includeAlbumVariety << std::endl;}
@@ -867,16 +872,34 @@ ArchSimian::ArchSimian(QWidget *parent) :
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
         ui->albumsTab->setEnabled(true);
     }
-    //15. Sets the initial playlist size limit to restrict how many tracks can be added to the playlist
+    // 15. Sets the initial playlist size limit to restrict how many tracks can be added to the playlist
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. Run setPlaylistLimitCount to set the initial count for playlistLimitCount." << std::endl;}
 
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
     {
-       // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
+        // Test NEW formula
+        double tracksPerDay = (s_avgListeningRateInMins) / (s_AvgMinsPerSong);
+        double interim1 = (tracksPerDay * selTrackLimitCodeRatingRatio * s_DaysBeforeRepeatCode3);
+        int firstlimittest = int((selTrackLimitCodeTotTrackQty - interim1)/selTrackLimitCodeRatingRatio);
+        int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
+        s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 50;
+        s_OpenPlaylistLimit = s_PlaylistLimit;
 
-        // NEW If a playlist exists, count the number of 'limit' tracks (s_playlistActualCntSelCode)in the playlist at initial launch
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. selTrackLimitCodeTotTrackQty: "<< selTrackLimitCodeTotTrackQty << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. tracksPerDay:(s_avgListeningRateInMins) / (s_AvgMinsPerSong)-> "<< tracksPerDay << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. selTrackLimitCodeRatingRatio: "<< selTrackLimitCodeRatingRatio << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. s_DaysBeforeRepeatCode3: "<< s_DaysBeforeRepeatCode3 << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. interim1: "<< interim1 << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. firstlimittest: "<< firstlimittest << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. secondlimittest: "<< secondlimittest << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. TEST new formula. s_PlaylistLimit = smaller of firstlimittest and secondlimittest: "<< s_PlaylistLimit << std::endl;}
 
-        setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
+
+        // Run setPlaylistLimitCount whenever an existing playlist is opened, Set the initial count for playlistLimitCount:
+
+        //If a playlist exists, count the number of 'limit' tracks (s_playlistActualCntSelCode)in the playlist at initial launch
+
+        // TEST remove: setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode);
 
         // Calculate the maximum tracks that can be added to the playlist, based on current playlist size, the
         // frequency of adding code 3 (or other code) to the playlist, and the number of code 3 tracks currently
@@ -888,18 +911,21 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_playlistSize before s_MaxAvailableToAdd calc is: "<< s_playlistSize << std::endl;}
 
         // Count the initial s_MaxAvailableToAdd for the playlist at initial launch
-        s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
-        s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
+        // TEST remove: s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
+        // TEST remove: s_MaxAvailableToAdd = int (static_cast<double>(playlistTrackLimitCodeQty - s_playlistActualCntSelCode) * (s_MaxAvailStaticCast));
+        // TEST added
+        s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. playlistTrackLimitCodeQty - s_playlistActualCntSelCode is: "<< playlistTrackLimitCodeQty - s_playlistActualCntSelCode << std::endl;}
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_MaxAvailStaticCast is: "<< s_MaxAvailStaticCast << std::endl;}
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. s_MaxAvailableToAdd after variable check is: "<< s_MaxAvailableToAdd << std::endl;
         // If the playlist is small, force a baseline max of 30
-        if (s_playlistSize < 30){
-            s_MaxAvailableToAdd = 50;
-            ui->addtrksspinBox->setValue(20);
-            ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: 50"));
-        }
+        // TEST remove: if (s_playlistSize < 30){
+        // TEST remove:     s_MaxAvailableToAdd = 50;
+        // TEST remove:     ui->addtrksspinBox->setValue(20);
+         // TEST remove:    ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: 50"));
+        // TEST remove: }
         // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
+        /* // TEST remove:
         if (s_playlistSize > 29){
             if (s_playlistActualCntSelCode > playlistTrackLimitCodeQty){
                 playlistFull = true;
@@ -909,10 +935,26 @@ ArchSimian::ArchSimian(QWidget *parent) :
             else {
                 ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
                 if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-                if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd-1);}
+                if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
                 ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
             }
+        } end // TEST remove:
+        */
+        // TEST added
+        if (s_MaxAvailableToAdd < 1){
+            s_MaxAvailableToAdd = 0;
+            playlistFull = true;
+            ui->addsongsButton->setEnabled(false);
+            ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
         }
+        else {
+            ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
+            if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
+            if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
+            ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+        }
+        // end TEST added
+
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. s_MaxAvailableToAdd at program launch is: "<< s_MaxAvailableToAdd << std::endl;
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Playlist full status is: "<< playlistFull << std::endl;
         }
@@ -931,7 +973,8 @@ void ArchSimian::on_addsongsButton_released(){
         s_MaxAvailableToAdd = s_MaxAvailableToAdd - numTracks;
     }
     // If tracks added makes s_MaxAvailableToAdd = 0, then dim the button and change label
-    if (s_MaxAvailableToAdd == 0){
+    if (s_MaxAvailableToAdd < 1){
+        s_MaxAvailableToAdd = 0;
         playlistFull = true;
         ui->addsongsButton->setEnabled(false);
         ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
@@ -1061,12 +1104,13 @@ void ArchSimian::on_addsongsButton_released(){
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *************   Added track "<< i + 1<<".   ********************" << std::endl;
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *****************************************************************" << std::endl;
         // If track selected is a 3 (or other selectedTrackLimitCode), then increase the count
-        if (s_ratingNextTrack == selectedTrackLimitCode){++s_playlistActualCntSelCode;}
-
+        // TEST remove: if (s_ratingNextTrack == selectedTrackLimitCode){++s_playlistActualCntSelCode;}
     }
+    // TEST remove: }
      //After all tracks have been processed, update UI with information to user about tracks added to playlist
     // First, update playlist limit and recalc s_MaxAvailableToAdd
 
+    /*    // TEST remove:
     if (Constants::kVerbose) std::cout << "on_addsongsButton_released: s_playlistActualCntSelCode (actual 3s in playlist) "
                                                   "(after all tracks have been processed) is: "<< s_playlistActualCntSelCode << std::endl;
     if (Constants::kVerbose){std::cout << "on_addsongsButton_released: s_playlistSize before s_MaxAvailableToAdd calc is: "<< s_playlistSize << std::endl;}
@@ -1086,13 +1130,30 @@ void ArchSimian::on_addsongsButton_released(){
         // Second, determine if playlist is now full after tracks add by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
         ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
         if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-        if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd-1);}
-        ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd-1,'g', 3));
+        if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
+        ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     }
     // If the playlist is small, force a baseline max of 50
     if (s_playlistSize < 30){
         s_MaxAvailableToAdd = 50;
+    } end // TEST remove:
+    */ // TEST remove:
+
+    // TEST added
+
+    if (s_MaxAvailableToAdd == 0){
+        playlistFull = true;
+        ui->addsongsButton->setEnabled(false);
+        ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
     }
+    else {
+        ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
+        if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
+        if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
+        ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+    }
+    // end TEST added
+
     if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
     }
@@ -1103,7 +1164,7 @@ void ArchSimian::on_addsongsButton_released(){
     ui->statusBar->showMessage("Added " + QString::number(numTracks) + " tracks to playlist",4000);
     ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
     if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-    if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd-1);}
+    if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
     QFile songtext1(appDataPathstr+"/songtext.txt");
     if(!songtext1.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",songtext1.errorString());
@@ -1758,6 +1819,8 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
             ui->albumsTab->setEnabled(true);
         }
         //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
+
+         /*    // TEST remove:
         s_playlistActualCntSelCode = 0; //First reset to zero
         setPlaylistLimitCount (selectedTrackLimitCode, &s_playlistActualCntSelCode); // Now get the count
         //s_MaxAvailStaticCast = static_cast<double>(s_playlistSize) / static_cast<double>(s_playlistActualCntSelCode);
@@ -1768,7 +1831,23 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
             s_MaxAvailableToAdd = 50;
             ui->addtrksspinBox->setValue(20);
             ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: 50"));
+        } end TEST remove:
+        */
+        // TEST added
+        s_OpenPlaylistLimit = s_PlaylistLimit;
+        s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
+        if (s_MaxAvailableToAdd == 0){
+            playlistFull = true;
+            ui->addsongsButton->setEnabled(false);
+            ui->addsongsLabel->setText(tr("Playlist is at maximum size."));
         }
+        else {
+            ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
+            if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
+            if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
+            ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+        }
+        // end TEST added
         if (Constants::kVerbose) std::cout << "on_actionOpen_Playlist_triggered: s_MaxAvailableToAdd for playlist loaded is: "<< s_MaxAvailableToAdd << std::endl;
         if (Constants::kVerbose) std::cout << "on_actionOpen_Playlist_triggered: s_playlistActualCntSelCode for playlist loaded is: "<< s_playlistActualCntSelCode << std::endl;
 
@@ -1779,6 +1858,8 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
 
 
         // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
+         /*    // TEST remove:
+
          if (s_playlistSize > 29){
              // Determine if playlist is already full at program launch by comparing s_playlistActualCntSelCode to playlistTrackLimitCodeQty, then set bool
              if (s_playlistActualCntSelCode > playlistTrackLimitCodeQty){
@@ -1789,10 +1870,12 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
              else {
                  ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
                  if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(10);}
-                 if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd-1);}
-                 ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd-1,'g', 3));
+                 if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
+                 ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
              }
          }
+         */
+
         // Finalize playlist loading
 
         ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
@@ -1865,19 +1948,27 @@ void ArchSimian::on_actionNew_Playlist_triggered()
         ui->albumsTab->setEnabled(true);
     }
     //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
-
     s_playlistSize = 0;
+
+    /*    // TEST remove:
     s_playlistActualCntSelCode = 0;
     // Somewhat arbitrary guess on a reasonable starting max to use. Will be recalculated once tracks are added.
     s_MaxAvailableToAdd = int(static_cast<double>(playlistTrackLimitCodeQty) / static_cast<double>(selTrackLimitCodeRatingRatio))-50;
     playlistFull = false;
+*/
+    // TEST added
+    s_MaxAvailableToAdd = s_OpenPlaylistLimit;
+    ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
+    if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(50);}
+    ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+    // TEST end added
 
     // Finalize playlist loading
     ui->setgetplaylistLabel->setText("Selected: " + s_defaultPlaylist);
     ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->addtrksspinBox->setValue(30);
-    ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd-1,'g', 3));
+    ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     std::string MMdbDate = getMMdbDate(s_mmBackupDBDir);
     std::string LastTableDate = getLastTableDate();
     ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(MMdbDate)+
@@ -1968,8 +2059,8 @@ void ArchSimian::on_windowsDriveLtrEdit_textChanged(const QString &arg1)
 }
 
 
-void ArchSimian::on_playlistLimitSlider_valueChanged(int value)
-{
+//void ArchSimian::on_playlistLimitSlider_valueChanged(int value)
+//{
     // Adjustment for track limit percentage. Set variable by dividing slider value by 100.
 
-}
+//}
