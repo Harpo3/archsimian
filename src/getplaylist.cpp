@@ -18,7 +18,6 @@ int musicLibraryDirLen(QString &s_musiclibrarydirname){
 }
 //  Purpose is to remove the m3u headers lines, leaving just the file paths
 void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirname, QString &s_musiclibshortened, bool s_topLevelFolderExists){
-    if (Constants::kVerbose){std::cout << "getPlaylist: s_defaultPlaylist is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
@@ -31,7 +30,6 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     static std::string musiclibdirshort = s_musiclibshortened.toStdString();
     //std::string playlistFile = s_selectedplaylist;
     std::ifstream readFile(s_defaultPlaylist.toStdString());
-    if (Constants::kVerbose){std::cout << "getPlaylist: playlistFile is: "<< s_defaultPlaylist.toStdString() << std::endl;}
     std::ofstream outf(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (!readFile.is_open()) {
         std::cout << "getPlaylist: The readFile did not open. Did you select a backup rather than an exported MediaMonkey "

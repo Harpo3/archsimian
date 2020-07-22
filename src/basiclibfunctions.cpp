@@ -23,7 +23,6 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
     bool refreshNeededResult{false};
     std::string convertStd2 = appDataPathstr.toStdString()+"/cleanlib.dsv";
     existResult = doesFileExist(convertStd2);// See inline function at top
-    if (Constants::kVerbose) std::cout << "recentlyUpdated(): doesFileExist() result for cleanlib.dsv is " << existResult << std::endl;
     if (!existResult) {refreshNeededResult = true;}
     // If the lib file exists, Get the epoch date for the MM.DB file and see which file is older
     if (existResult){
@@ -32,16 +31,13 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
         struct stat stbuf1{};
         stat(mmpath.c_str(), &stbuf1);
         localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want        
-        if (Constants::kVerbose) std::cout << "MM.DB is " << stbuf1.st_mtime << std::endl;        
         struct stat stbuf2{}; // Now get the date for the cleanlib.csv file
         std::string mmpath99 = appDataPathstr.toStdString()+"/cleanlib.dsv";
         stat(mmpath99.c_str(), &stbuf2);
         localtime(&stbuf2.st_mtime);        
-        if (Constants::kVerbose) std::cout << "cleanlib.csv is " << stbuf2.st_mtime << std::endl;
         double dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
         if (dateResult > 0) {
             refreshNeededResult = true;
-            if (Constants::kVerbose) std::cout << "MM.DB was recently backed up. Updating library and stats..." << std::endl;
         }
         // If the result is negative, then MM4 has not been updated since the program library was last refreshed. No update is necessary.
         // If positive, need to refresh all library data.
@@ -55,7 +51,6 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::string musiclibshortened = s_musiclibrarydirname.toStdString(); // default setting using local string
     std::string windowstopfolder ("");// default setting using local string
-    if (Constants::kVerbose) std::cout << "Starting getLibrary function. This is the default value for *s_musiclibshortened: " << musiclibshortened << std::endl;
     // First, determine whether there is a Windows top level folder in libtable.dsv. If so, identify the name and exclude
     // when creating the song paths for cleanlib.dsv.
     std::string tempdatabaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // now we can use it as a temporary input file
@@ -86,9 +81,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     }
     std::string tempPath1;
     tempPath1 = temptokens[8];
-    if (Constants::kVerbose) std::cout << "Path token used to identify Windows top folder is: "<< tempPath1 << '\n';
     int delimCount = countDelimChars(tempPath1);
-    if (Constants::kVerbose) std::cout << "Number of delimiters found: "<< delimCount << '\n';
     if (delimCount > 4){
         QMessageBox msgBox;
         msgBox.setText("Windows directory of music library is set in a sub-directory. The music library must be located in a top directory. ");
@@ -100,7 +93,6 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
         // Next is to extract the string identifying the Windows top folder under which the music library resides
         std::string extracted = ExtractString( tempPath1, "\\", "\\" );
         windowstopfolder = extracted;
-        if (Constants::kVerbose) std::cout << "This is the found value of windowstopfolder (local): " << windowstopfolder << std::endl;
         // Next, determine how many alphanumeric chars there are in the windowstopfolder name
         char *array_point;
         char c1;
@@ -125,11 +117,9 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
                     oth++;
                 }
         }
-        if (Constants::kVerbose) std::cout <<" The number of characters in the string windowstopfolderis: "<<count<<std::endl;
         // Next, use the number of chars in the string to determine the string (musiclibshortened) for writing paths when creating cleanlib.dsv
         std::string st = musiclibshortened.substr(0, musiclibshortened.size()-count-1); // the -1 is to also remove dir delimiter /
         musiclibshortened = st;
-        if (Constants::kVerbose) std::cout << "This is the new value for musiclibshortened: " << musiclibshortened << std::endl;
     }
     temptokens.shrink_to_fit();
     // Next, iterate libtable.dsv again, this time with musiclibshortened defined, and write cleanlib.dsv
@@ -370,8 +360,7 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
 // Function to create the file ratedabbr.txt which adds artist intervals, and which will then be used for track selection functions
 void getSubset()
 {
-    if (Constants::kVerbose) std::cout << "Building the Archsimian database with artist intervals calculated....";
-        QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();    
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ofstream ratedabbr(appDataPathstr.toStdString()+"/ratedabbr.txt"); // output file for subset table
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
@@ -397,10 +386,7 @@ void getSubset()
     static std::string s_artistInterval{"0"};
     std::string s_selectedTrackPath;
     StringVector2D artistIntervalVec = readCSV(appDataPathstr.toStdString()+"/artistsadj.txt");
-    //std::cout << "Starting getline to read artistsadj.txt file into artistsadjVec." << std::endl;
     std::vector<std::string>ratedabbrvect;
-    //ratedabbrvect.reserve(20000);
-    if (Constants::kVerbose) std::cout << "................" << std::endl;
     // Outer loop: iterate through ratedSongsTable in the file "ratedlib.dsv"
     // Need to store col values for song path (8), LastPlayedDate (17), playlist position (will be obtained from cleanedplaylist), artist (19),
     // rating (29); artist interval will be obtained from artistsadj.txt
@@ -408,7 +394,6 @@ void getSubset()
         std::istringstream iss(str1); // str is the string of each row
         std::string token; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
-        //std::cout << "While iterating lines from cleanlib.dsv into vector ratedabbrvect, start token loop." << std::endl;
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^')) {
             if (tokenCount == Constants::kColumn2){albumID = token;} // store albumID variable
@@ -434,7 +419,6 @@ void getSubset()
         // Write lasttimeplayed, rating code, artist, songpath, songlength, repeat interval, and playlist position of zero to
         // the output file if not currently the header row, and is a rated track
         if (ratingCode != "0"){
-            //std::cout << "Processing rated string #: " <<ratedabbrvect.size() << "." << "\n";            
             if ((selectedArtistToken != "Custom2") && (selectedArtistToken != "Artist")){
                 std::string commatxt{","};
                 std::string endval{",0"};
@@ -446,12 +430,10 @@ void getSubset()
         }
     }
     ratedabbrvect.shrink_to_fit();
-    if (Constants::kVerbose) std::cout << "Do final sort of ratedabbrvect and write to file." << std::endl;
     std::sort (ratedabbrvect.begin(), ratedabbrvect.end());
     for (const auto & i : ratedabbrvect){
         ratedabbr << i << "\n";}
     primarySongsTable.close(); // Close cleanlib and vectors
     ratedabbr.close();
     ratedabbrvect.shrink_to_fit();
-    if (Constants::kVerbose) std::cout << "...finished!" << std::endl;
 }

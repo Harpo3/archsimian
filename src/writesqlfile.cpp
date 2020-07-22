@@ -34,10 +34,5 @@ void writeSQLFile(){
 void removeSQLFile(){
     const std::string sqlpathdirname = getenv("HOME");
     std::string sqlfile(sqlpathdirname + Constants::kSqlFileName);
-    std::cout << "SQL file location " <<sqlfile<< std::endl;
     remove (sqlfile.c_str());// remove exportMMTable.sql from home directory
-    if( remove( sqlfile.c_str() ) != 0 )
-      perror( "removeSQLFile: Error deleting file" );
-    else
-      puts( "removeSQLFile: File successfully deleted" );
 }

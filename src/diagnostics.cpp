@@ -91,7 +91,6 @@ void generateDiagsLog (){
                        "\n\t\t\t\t\t\t\t\t\tOtherwise, revise the music folders "
                        "shown:\n\n\t\t\t\t\t\t\t\t\t " + dirsearchoutput);
             }
-            std::cout << "Directory depth is " << i  << "\n";
             std::string countm ("\"*.mp3\"");
             std::string countmp3files = GetStdoutFromCommand("find "+musiclibPath+" -type f -name "+ countm + " -printf x | wc -c");
 

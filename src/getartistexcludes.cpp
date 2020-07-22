@@ -35,7 +35,6 @@ void getExcludedArtists(const int &s_playlistSize)
     ofs.close();
     std::ofstream ratedabbr2(appDataPathstr.toStdString()+"/ratedabbr2.txt"); // output file for writing ratedabbr.txt with added artist intervals
     std::string str1; // store the string for ratedabbr.txt
-    //std::string playlistPosition; // Custom1 variable for playlistposlist.txt
     std::string selectedArtistToken; // Artist variable from ratedabbrVec
     std::string tokenLTP; // LastPlayed Date in SQL Time from ratedabbrVec
     std::string ratingCode; // Rating code from ratedabbrVec
@@ -67,7 +66,6 @@ void getExcludedArtists(const int &s_playlistSize)
         std::string pathinlib;
         std::string artistinvec;
         txtPos = std::to_string(s_playlistPosition);
-        //std::cout << " PL POS: "<<s_playlistPosition  << " " << song <<std::endl;
         for(auto & i : ratedabbrVec){ // read each row element into the variables needed
             tokenLTP = i[Constants::kColumn0];
             ratingCode = i[Constants::kColumn1];
@@ -133,10 +131,7 @@ void getExcludedArtists(const int &s_playlistSize)
     StringVector2D finalhistvec = readCSV(appDataPathstr.toStdString()+"/playlistposlist.txt"); // open "playlistposlist.txt" as 2D vector finalhistvec
     for (auto & i : finalhistvec){
         for(int j=0;j<6;j++){
-            //std::cout << i[4] << ", " <<finalhistvec[i][5] << std::endl;
             if (std::stoi(i[4]) > std::stoi(i[5])){ // if playlist pos [6] is less than interval [5],
-                //artistExcList << finalhistvec[i][1] << std::endl;
-                //std::cout << finalhistvec[i][1] << ", "<< finalhistvec[i][4] << ", " <<finalhistvec[i][5]<< std::endl;
                 artistExcludesVec.push_back(i[1]); // then pushback artist (finalhistvec[i][1]) to artistExcludesVec
             }
         }

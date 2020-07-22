@@ -137,14 +137,13 @@ static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
 static int selectedTrackLimitCode{3};
 static int selTrackLimitCodeTotTrackQty{0};
 static double selTrackLimitCodeRatingRatio{0};
-static double trackLimitPercentage{0.95};
 static int playlistTrackLimitCodeQty{0};
 static int s_MaxAvailableToAdd{0};
 static bool s_topLevelFolderExists{0};
 static std::string playlistpath{""};
 static int s_PlaylistLimit{0};
 static int s_OpenPlaylistLimit{0};
-bool diagsran(0);
+static bool diagsran(0);
 
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -288,7 +287,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmpllabel->setText(tr("Select the shared Windows directory where you store your m3u playlists."));
         ui->setmmdblabel->setText(tr("Select the shared Windows directory where you stored the MediaMonkey database (MM.DB) backup file."));
         ui->instructionlabel->setText(tr("ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the "
-                                         "location where you did backups for your M3U playlist \n(3) Set the location where you did backup "
+                                         "location where you did exports of your M3U playlists from MM4 \n(3) Set the location where you did backup "
                                          "of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level "
                                          "variety. \n(6) Enter the Windows drive letter of the music library. \n"
                                          "(7) Close (which saves the locations and settings) and restart the program."));
@@ -378,8 +377,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         std::cout << "Archsimian.cpp: Step 5. CleanLib file exists and MM.DB was not recently updated. Skip to Step 6."<< std::endl;}
 
     if (((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (!s_bool_CleanLibExist)) || (s_bool_MMdbUpdated)) {
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5. User configuration and MM.DB exists, but the songs table does not, or MM.DB was"
-                                              "recently updated. Importing songs table (create CleanLib) into Archsimian from MM.DB..." <<std::endl;
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5. User configuration and MM.DB exists, but the songs table does not, or MM.DB was "
+                                              "recently updated. Importing songs table (create CleanLib) from MM.DB." <<std::endl;
         writeSQLFile(); // Create a SQL file with instructions to extract the Songs table from the MediaMonkey database
         pid_t c_pid;// Create a fork object; child to get database table into a dsv file, then child to open that table only
         // after it finishes getting written, not before.
@@ -408,10 +407,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
             removeSQLFile();
             m_prefs.s_windowstopfolder = s_windowstopfolder;
             m_prefs.s_musiclibshortened = s_musiclibshortened;
-            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and "
-                                                                                                                                         "s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
-            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: " << s_musiclibshortened.toStdString()<< " and "
-                                                                                                                                         "s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5: s_musiclibshortened: "
+                                               << s_musiclibshortened.toStdString()<< " and s_windowstopfolder: "<<s_windowstopfolder.toStdString() << std::endl;
             s_bool_CleanLibExist = doesFileExist (cleanLibFile);
         }
     }
@@ -419,9 +416,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if (s_windowstopfolder.toStdString()== ""){s_topLevelFolderExists = false;}
     else{s_topLevelFolderExists = true;}
     if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5 s_topLevelFolderExists = "<<s_topLevelFolderExists<< std::endl;
-    if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 5 completed." << std::endl;
-
-
     if (s_bool_CleanLibExist) {removeAppData ("libtable.dsv");}
     else {
         std::cout << "Archsimian.cpp: Step 6. Unable to create cleanLibFile, cleanlib.dsv." << std::endl;
@@ -503,66 +497,64 @@ ArchSimian::ArchSimian(QWidget *parent) :
             selectedTrackLimitCode = 3;
             selTrackLimitCodeRatingRatio = s_ratingRatio3;
         }
-        playlistTrackLimitCodeQty = (int (selTrackLimitCodeRatingRatio * selTrackLimitCodeTotTrackQty * trackLimitPercentage));
         if (Constants::kVerbose) {
-            std::cout << "selTrackLimitCodeTotTrackQty is: "<< selTrackLimitCodeTotTrackQty << std::endl;
-            std::cout << "selectedTrackLimitCode is: "<< selectedTrackLimitCode << std::endl;
-            std::cout << "selTrackLimitCodeRatingRatio is: "<< selTrackLimitCodeRatingRatio << std::endl;
-            std::cout << "trackLimitPercentage is: "<< trackLimitPercentage << std::endl;
-            std::cout << "playlistTrackLimitCodeQty is: "<< playlistTrackLimitCodeQty << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. selTrackLimitCodeTotTrackQty is: "<< selTrackLimitCodeTotTrackQty << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. selectedTrackLimitCode is: "<< selectedTrackLimitCode << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. selTrackLimitCodeRatingRatio is: "<< selTrackLimitCodeRatingRatio << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. playlistTrackLimitCodeQty is: "<< playlistTrackLimitCodeQty << std::endl;
         }
         //Print verbose results to console
         if (Constants::kVerbose) {
-            std::cout << "Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
-            std::cout << "Total tracks Rating 1 - s_rCode1TotTrackQty : " << s_rCode1TotTrackQty << ". Total Time (hrs) - s_rCode1TotTime : " <<  s_rCode1TotTime << std::endl;
-            std::cout << "Total tracks Rating 3 - s_rCode3TotTrackQty : " << s_rCode3TotTrackQty << ". Total Time (hrs) - s_rCode3TotTime : " <<  s_rCode3TotTime << std::endl;
-            std::cout << "Total tracks Rating 4 - s_rCode4TotTrackQty : " << s_rCode4TotTrackQty << ". Total Time (hrs) - s_rCode4TotTime : " <<  s_rCode4TotTime << std::endl;
-            std::cout << "Total tracks Rating 5 - s_rCode5TotTrackQty : " << s_rCode5TotTrackQty << ". Total Time (hrs) - s_rCode5TotTime : " <<  s_rCode5TotTime << std::endl;
-            std::cout << "Total tracks Rating 6 - s_rCode6TotTrackQty : " << s_rCode6TotTrackQty << ". Total Time (hrs) - s_rCode6TotTime : " <<  s_rCode6TotTime << std::endl;
-            std::cout << "Total tracks Rating 7 - s_rCode7TotTrackQty : " << s_rCode7TotTrackQty << ". Total Time (hrs) - s_rCode7TotTime : " <<  s_rCode7TotTime << std::endl;
-            std::cout << "Total tracks Rating 8 - s_rCode8TotTrackQty : " << s_rCode8TotTrackQty << ". Total Time (hrs) - s_rCode8TotTime : " <<  s_rCode8TotTime << std::endl;
-            std::cout << "Total tracks in the library is - s_totalLibQty : " << s_totalLibQty << std::endl;
-            std::cout << "Total rated tracks in the library is - s_totalRatedQty : " << s_totalRatedQty << std::endl;
-            std::cout << "Total rated time in the library is - s_TotalRatedTime : " <<s_totalRatedTime << std::endl;
-            std::cout << "Total time listened for first 10-day period is (hrs) - s_SQL10TotTimeListened : " << s_SQL10TotTimeListened << std::endl;
-            std::cout << "Total tracks played in the first period is - s_SQL10DayTracksTot : " << s_SQL10DayTracksTot << std::endl;
-            std::cout << "Total time listened for second 10-day period is (hrs) - s_SQL20TotTimeListened : " << s_SQL20TotTimeListened << std::endl;
-            std::cout << "Total tracks played in the second period is - s_SQL20DayTracksTot : " << s_SQL20DayTracksTot << std::endl;
-            std::cout << "Total time listened for third 10-day period is (hrs): " << s_SQL30TotTimeListened << std::endl;
-            std::cout << "Total tracks played in the third period is - s_SQL30TotTimeListened : " << s_SQL30DayTracksTot << std::endl;
-            std::cout << "Total time listened for fourth 10-day period is (hrs) - s_SQL40TotTimeListened : " << s_SQL40TotTimeListened << std::endl;
-            std::cout << "Total tracks played in the fourth period is - s_SQL40DayTracksTot : " << s_SQL40DayTracksTot << std::endl;
-            std::cout << "Total time listened for fifth 10-day period is (hrs) - s_SQL50TotTimeListened : " << s_SQL50TotTimeListened << std::endl;
-            std::cout << "Total tracks played in the fifth period is - s_SQL50DayTracksTot : " << s_SQL50DayTracksTot << std::endl;
-            std::cout << "Total time listened for sixth 10-day period is (hrs) - s_SQL60TotTimeListened : " << s_SQL60TotTimeListened << std::endl;
-            std::cout << "Total tracks played in the sixth period is - s_SQL60DayTracksTot : " << s_SQL60DayTracksTot << std::endl;
-            std::cout << "Total time listened for the last 60 days is (hrs) - s_totHrsLast60Days : " << s_totHrsLast60Days << std::endl;
-            std::cout << "Calculated daily listening rate is (hrs) - s_listeningRate : "<< s_listeningRate << std::endl;
-            std::cout << "Years between repeats code 3 - s_yrsTillRepeatCode3 : "<< s_yrsTillRepeatCode3 << std::endl;
-            std::cout << "Years between repeats code 4 - s_yrsTillRepeatCode4 : "<< s_yrsTillRepeatCode4 << std::endl;
-            std::cout << "Years between repeats code 5 - s_yrsTillRepeatCode5 : "<< s_yrsTillRepeatCode5 << std::endl;
-            std::cout << "Years between repeats code 6 - s_yrsTillRepeatCode6 : "<< s_yrsTillRepeatCode6 << std::endl;
-            std::cout << "Years between repeats code 7 - s_yrsTillRepeatCode7 : "<< s_yrsTillRepeatCode7 << std::endl;
-            std::cout << "Years between repeats code 8 - s_yrsTillRepeatCode8 : "<< s_yrsTillRepeatCode8 << std::endl;
-            std::cout << "Adjusted hours code 3 - s_adjHoursCode3 : "<< s_adjHoursCode3 << std::endl;
-            std::cout << "Adjusted hours code 4 - s_adjHoursCode4 : "<< s_adjHoursCode4 << std::endl;
-            std::cout << "Adjusted hours code 5 - s_adjHoursCode5 : "<< s_adjHoursCode5 << std::endl;
-            std::cout << "Adjusted hours code 6 - s_adjHoursCode6 : "<< s_adjHoursCode6 << std::endl;
-            std::cout << "Adjusted hours code 7 - s_adjHoursCode7 : "<< s_adjHoursCode7 << std::endl;
-            std::cout << "Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
-            std::cout << "Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
-            std::cout << "Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
-            std::cout << "Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
-            std::cout << "Percentage of track time for scheduling rating code 4 - s_ratingRatio4 * 100 : "<< s_ratingRatio4  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
-            std::cout << "Percentage of track time for scheduling rating code 5 - s_ratingRatio5 * 100 : "<< s_ratingRatio5  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
-            std::cout << "Percentage of track time for scheduling rating code 6 - s_ratingRatio6 * 100 : "<< s_ratingRatio6 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
-            std::cout << "Percentage of track time for scheduling rating code 7 - s_ratingRatio7 * 100 : "<< s_ratingRatio7 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
-            std::cout << "Percentage of track time for scheduling rating code 8 - s_ratingRatio8 * 100 : "<< s_ratingRatio8 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
-            std::cout << "Number of days until track repeat under rating code 3 - s_DaysBeforeRepeatCode3 : "<< s_DaysBeforeRepeatCode3 << std::endl;
-            std::cout << "Average length of rated songs in fractional minutes - s_AvgMinsPerSong : "<< s_AvgMinsPerSong << std::endl;
-            std::cout << "Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
-            std::cout << "Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
-            std::cout << "Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl<< std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 0 - s_rCode0TotTrackQty : " << s_rCode0TotTrackQty << ". Total Time (hrs) - s_rCode0TotTime : " <<  s_rCode0TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 1 - s_rCode1TotTrackQty : " << s_rCode1TotTrackQty << ". Total Time (hrs) - s_rCode1TotTime : " <<  s_rCode1TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 3 - s_rCode3TotTrackQty : " << s_rCode3TotTrackQty << ". Total Time (hrs) - s_rCode3TotTime : " <<  s_rCode3TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 4 - s_rCode4TotTrackQty : " << s_rCode4TotTrackQty << ". Total Time (hrs) - s_rCode4TotTime : " <<  s_rCode4TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 5 - s_rCode5TotTrackQty : " << s_rCode5TotTrackQty << ". Total Time (hrs) - s_rCode5TotTime : " <<  s_rCode5TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 6 - s_rCode6TotTrackQty : " << s_rCode6TotTrackQty << ". Total Time (hrs) - s_rCode6TotTime : " <<  s_rCode6TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 7 - s_rCode7TotTrackQty : " << s_rCode7TotTrackQty << ". Total Time (hrs) - s_rCode7TotTime : " <<  s_rCode7TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks Rating 8 - s_rCode8TotTrackQty : " << s_rCode8TotTrackQty << ". Total Time (hrs) - s_rCode8TotTime : " <<  s_rCode8TotTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks in the library is - s_totalLibQty : " << s_totalLibQty << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total rated tracks in the library is - s_totalRatedQty : " << s_totalRatedQty << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total rated time in the library is - s_TotalRatedTime : " <<s_totalRatedTime << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for first 10-day period is (hrs) - s_SQL10TotTimeListened : " << s_SQL10TotTimeListened << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks played in the first period is - s_SQL10DayTracksTot : " << s_SQL10DayTracksTot << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for second 10-day period is (hrs) - s_SQL20TotTimeListened : " << s_SQL20TotTimeListened << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks played in the second period is - s_SQL20DayTracksTot : " << s_SQL20DayTracksTot << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for third 10-day period is (hrs): " << s_SQL30TotTimeListened << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks played in the third period is - s_SQL30TotTimeListened : " << s_SQL30DayTracksTot << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for fourth 10-day period is (hrs) - s_SQL40TotTimeListened : " << s_SQL40TotTimeListened << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks played in the fourth period is - s_SQL40DayTracksTot : " << s_SQL40DayTracksTot << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for fifth 10-day period is (hrs) - s_SQL50TotTimeListened : " << s_SQL50TotTimeListened << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks played in the fifth period is - s_SQL50DayTracksTot : " << s_SQL50DayTracksTot << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for sixth 10-day period is (hrs) - s_SQL60TotTimeListened : " << s_SQL60TotTimeListened << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total tracks played in the sixth period is - s_SQL60DayTracksTot : " << s_SQL60DayTracksTot << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total time listened for the last 60 days is (hrs) - s_totHrsLast60Days : " << s_totHrsLast60Days << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Calculated daily listening rate is (hrs) - s_listeningRate : "<< s_listeningRate << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Years between repeats code 3 - s_yrsTillRepeatCode3 : "<< s_yrsTillRepeatCode3 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Years between repeats code 4 - s_yrsTillRepeatCode4 : "<< s_yrsTillRepeatCode4 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Years between repeats code 5 - s_yrsTillRepeatCode5 : "<< s_yrsTillRepeatCode5 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Years between repeats code 6 - s_yrsTillRepeatCode6 : "<< s_yrsTillRepeatCode6 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Years between repeats code 7 - s_yrsTillRepeatCode7 : "<< s_yrsTillRepeatCode7 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Years between repeats code 8 - s_yrsTillRepeatCode8 : "<< s_yrsTillRepeatCode8 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 3 - s_adjHoursCode3 : "<< s_adjHoursCode3 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 4 - s_adjHoursCode4 : "<< s_adjHoursCode4 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 5 - s_adjHoursCode5 : "<< s_adjHoursCode5 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 6 - s_adjHoursCode6 : "<< s_adjHoursCode6 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 7 - s_adjHoursCode7 : "<< s_adjHoursCode7 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 4 - s_ratingRatio4 * 100 : "<< s_ratingRatio4  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 5 - s_ratingRatio5 * 100 : "<< s_ratingRatio5  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 6 - s_ratingRatio6 * 100 : "<< s_ratingRatio6 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 7 - s_ratingRatio7 * 100 : "<< s_ratingRatio7 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 8 - s_ratingRatio8 * 100 : "<< s_ratingRatio8 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Number of days until track repeat under rating code 3 - s_DaysBeforeRepeatCode3 : "<< s_DaysBeforeRepeatCode3 << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Average length of rated songs in fractional minutes - s_AvgMinsPerSong : "<< s_AvgMinsPerSong << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Calculated tracks per day - s_avgListeningRateInMins / s_AvgMinsPerSong : "<< s_avgListeningRateInMins / s_AvgMinsPerSong << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Sequential Track Limit - s_SequentialTrackLimit : "<< s_SequentialTrackLimit << std::endl;
         }
         s_bool_dbStatsCalculated = true; // Set bool to true for s_bool_dbStatsCalculated
         ui->daystracksLabel->setText(QString::number((m_prefs.tracksToAdd * s_AvgMinsPerSong)/s_avgListeningRateInMins,'g', 3));
@@ -570,7 +562,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     else {
         s_bool_dbStatsCalculated = false;
         if (s_bool_IsUserConfigSet){
-            std::cout << "Archsimian.cpp: Step 6. Something went wrong processing the function getDBStats." << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. ERROR: Something went wrong processing the function getDBStats." << std::endl;
         }
     }
 
@@ -598,7 +590,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 file.close();
                 delete[] memblock;
             }
-            else std::cout << "Archsimian.cpp: Step 7. There was a problem opening artistsadj.txt" << std::endl;
+            else std::cout << "Archsimian.cpp: Step 7. ERROR: There was a problem opening artistsadj.txt" << std::endl;
             if (artsistAdjsize != 0) {s_bool_artistsadjExist = true;// file artistsadj.txt exists and is greater in size than zero, set to true
                 // If MM.DB not recently updated and artistsadj.txt does not need to be updated, check if ratedabbr.txt exists
                 // If it does set s_bool_RatedAbbrExist to true.
@@ -647,7 +639,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) &&
             (s_bool_dbStatsCalculated) && (s_bool_MMdbUpdated)) {
-        if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7. MM.DB was recently updated. Processing artist statistics..." << std::endl;}
+        if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7. MM.DB was recently updated. Processing artist statistics." << std::endl;}
         getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                                &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                                &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
@@ -690,9 +682,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected) && (s_topLevelFolderExists)){
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Regenerating 'cleanedplaylist' file for editing using default playlist identified in user config." << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Prior to running getPlaylist, here are the values for the five "
-                                              "inputs: "<< s_bool_IsUserConfigSet<<", \n"<< s_defaultPlaylist.toStdString()<<", \n"<< s_musiclibrarydirname.toStdString()<<
-                                              ", \n"<<s_musiclibshortened.toStdString()<<", and \n"<<s_topLevelFolderExists<< std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Running getPlaylist for this default playlist: "
+                                              << s_defaultPlaylist.toStdString()<< std::endl;}
         getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
         s_bool_PlaylistExist = doesFileExist (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         QFileInfo fi(s_defaultPlaylist);
@@ -747,9 +738,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // (s_bool_RatedAbbrExist), run function getExcludedArtists() to create/update excluded artists list using vectors
     // read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt.
 
-    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 13. Processing artist stats and excluded artists list. Creating temporary "
-                                          "database (ratedabbr2.txt) with playlist position numbers for use in subsequent "
-                                          "functions, ratingCodeSelected and selectTrack."<< s_histCount << std::endl;}
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 13. Processing artist stats and excluded artists list. Creating temporary database (ratedabbr2.txt)"<< std::endl;}
+    if (Constants::kVerbose){std::cout << "                         with playlist position numbers for use in subsequent functions, ratingCodeSelected and selectTrack."<< std::endl;}
+
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))   {
         getExcludedArtists(s_playlistSize);
     }
@@ -873,15 +864,16 @@ ArchSimian::ArchSimian(QWidget *parent) :
         int firstlimittest = int((selTrackLimitCodeTotTrackQty - interim1)/selTrackLimitCodeRatingRatio);
         int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
         s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 50; // NEW need to add variable for 50
+        s_MaxAvailableToAdd = s_PlaylistLimit; // In case there is no default playlist, set s_MaxAvailableToAdd to calculated limit
 
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. selTrackLimitCodeTotTrackQty: "<< selTrackLimitCodeTotTrackQty << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  tracksPerDay:(s_avgListeningRateInMins) / (s_AvgMinsPerSong)-> "<< tracksPerDay << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  selTrackLimitCodeRatingRatio: "<< selTrackLimitCodeRatingRatio << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  s_DaysBeforeRepeatCode3: "<< s_DaysBeforeRepeatCode3 << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  interim1: "<< interim1 << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  firstlimittest: "<< firstlimittest << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  secondlimittest: "<< secondlimittest << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15.  s_PlaylistLimit = smaller of firstlimittest and secondlimittest: "<< s_PlaylistLimit << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. tracksPerDay:(s_avgListeningRateInMins) / (s_AvgMinsPerSong)-> "<< tracksPerDay << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. selTrackLimitCodeRatingRatio: "<< selTrackLimitCodeRatingRatio << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_DaysBeforeRepeatCode3: "<< s_DaysBeforeRepeatCode3 << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. interim1: "<< interim1 << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. firstlimittest: "<< firstlimittest << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. secondlimittest: "<< secondlimittest << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_PlaylistLimit = smaller of firstlimittest and secondlimittest: "<< s_PlaylistLimit << std::endl;}
     }
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
     {
@@ -904,7 +896,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
             if (s_MaxAvailableToAdd < 10) {ui->addtrksspinBox->setValue(s_MaxAvailableToAdd);}
             ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
         }
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. s_MaxAvailableToAdd at program launch is: "<< s_MaxAvailableToAdd << std::endl;
+    }
+    if ((!s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)){
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist not found. s_MaxAvailableToAdd at program launch is: "<< s_MaxAvailableToAdd << std::endl;
     }
     // End setup of UI
 }
@@ -1635,7 +1629,7 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.04"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.05"
                                                  "\n\nThis program is free software: you can redistribute it and/or modify"
                                                  " it under the terms of the GNU General Public License as published by"
                                                  " the Free Software Foundation, either version 3 of the License, or"

@@ -17,7 +17,6 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
-    std::cout << appDataPathstr.toStdString()+"/cleanlib.dsv"<< std::endl;
     if (cleanlib.is_open()) {cleanlib.close();}
     else {std::cout << "getArtistAdjustedCount: Error opening cleanlib.dsv file." << std::endl;}
     std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib.dsv";    // Now we can use it as input file
@@ -74,7 +73,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     }
     myfile.close();
     artistList.close();
-    removeAppData("artists2.txt");
+    //removeAppData("artists2.txt");
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
     cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib2.is_open()) {cleanlib2.close();}
@@ -83,7 +82,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open (appDataPathstr.toStdString()+"/artists.txt");
     if (artists2.is_open()) {artists2.close();}
-    else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file ." << std::endl;}
+    else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file." << std::endl;}
     std::string artistsTable2 = appDataPathstr.toStdString()+"/artists.txt"; // now we can use it as input file
     std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
@@ -183,5 +182,5 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     artistcsv.close();
     outartists2.close();
     artists.shrink_to_fit();
-    removeAppData("artists.txt");
+    //removeAppData("artists.txt");
 }
