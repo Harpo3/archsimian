@@ -107,10 +107,8 @@ void getExcludedArtists(const int &s_playlistSize)
     }
     std::sort (histvect.begin(), histvect.end());
     std::reverse (histvect.begin(), histvect.end());
-
     std::string strbuild;
     std::sort (ratedabbrVec.begin(), ratedabbrVec.end());
-
     // Writes a 2D vector of strings to a file, each row with comma separated values
     // This file (ratedabbr2.txt) will be later used to select next track for playlist (total rating times, and current playlist position)
     for ( const auto &row : ratedabbrVec )

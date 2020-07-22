@@ -1,10 +1,8 @@
 #include <QSettings>
 #include <QDir>
-#include <QDebug>
 #include <QApplication>
 #include <QStandardPaths>
 #include "archsimian.h"
-#include<iostream>
 
 int main(int argc,char* argv[])
 {

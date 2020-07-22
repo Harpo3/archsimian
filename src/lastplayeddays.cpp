@@ -20,8 +20,8 @@
 //
 double getLastPlayedDays (double x){
     // This provides a variable (currDate) to store the current date in epoch time format
-    double currDate = std::chrono::duration_cast<std::chrono::seconds>
-            (std::chrono::system_clock::now().time_since_epoch()).count();
+    double currDate = double(std::chrono::duration_cast<std::chrono::seconds>
+            (std::chrono::system_clock::now().time_since_epoch()).count());
     // Need to test whether the track has been played before. If it has not,
     // MM4 assigns a float of 0.0, so use a conditional to test whether the
     //  number is 0.0. See constants.h for info on constants used.
@@ -62,8 +62,8 @@ double getLastPlayedDays (double x){
 
 double getNewRandomLPDate (double x)
 {
-    double currDate = std::chrono::duration_cast<std::chrono::seconds>
-            (std::chrono::system_clock::now().time_since_epoch()).count();
+    double currDate = double(std::chrono::duration_cast<std::chrono::seconds>
+            (std::chrono::system_clock::now().time_since_epoch()).count());
     // Need to test whether the track has been played before. If it has not,
     // MM4 assigns a float of 0.0, so use a conditional to test whether the
     //  number is 0.0. See constants.h for info on constants used.

@@ -87,7 +87,6 @@ StringVector2D readCSV(const std::string& filename)
     StringVector2D result;
     std::string row;
     std::string item;
-
     std::ifstream in(filename);
     while(getline(in,row))
     {
@@ -206,7 +205,6 @@ void removeAppData(std::string str)
     str = appDataPathstr.toStdString() +"/" + str;
     bool existResult;
     existResult = doesFileExist(str);// See inline function at top
-    //std::cout <<"removeAppData: Removing: "<< str << std::endl;
     if (existResult == 1) {
         remove (str.c_str());  // remove file referenced by str from the AppData directory
         if(remove( str.c_str() ) != 0 ) {
@@ -235,7 +233,6 @@ FILE * stream;
 const int max_buffer = 256;
 char buffer[max_buffer];
 cmd.append(" 2>&1");
-
 stream = popen(cmd.c_str(), "r");
 if (stream) {
   while (!feof(stream))
@@ -255,7 +252,7 @@ std::string getCurrentDateTime( std::string s ){
     else if(s=="date")
         strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
     return std::string(buf);
-};
+}
 
 void Logger( std::string logMsg ){
 

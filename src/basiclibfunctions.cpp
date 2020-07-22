@@ -56,10 +56,8 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     std::string musiclibshortened = s_musiclibrarydirname.toStdString(); // default setting using local string
     std::string windowstopfolder ("");// default setting using local string
     if (Constants::kVerbose) std::cout << "Starting getLibrary function. This is the default value for *s_musiclibshortened: " << musiclibshortened << std::endl;
-
     // First, determine whether there is a Windows top level folder in libtable.dsv. If so, identify the name and exclude
     // when creating the song paths for cleanlib.dsv.
-
     std::string tempdatabaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // now we can use it as a temporary input file
     std::ifstream myfile(tempdatabaseFile);
     if (!myfile.is_open())
@@ -103,9 +101,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
         std::string extracted = ExtractString( tempPath1, "\\", "\\" );
         windowstopfolder = extracted;
         if (Constants::kVerbose) std::cout << "This is the found value of windowstopfolder (local): " << windowstopfolder << std::endl;
-
         // Next, determine how many alphanumeric chars there are in the windowstopfolder name
-
         char *array_point;
         char c1;
         unsigned long count=0, alp=0, digt=0, oth=0;
@@ -129,19 +125,14 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
                     oth++;
                 }
         }
-        // NEW - need to change "count" to a static var so getplaylist (57) can be updated.
         if (Constants::kVerbose) std::cout <<" The number of characters in the string windowstopfolderis: "<<count<<std::endl;
-
         // Next, use the number of chars in the string to determine the string (musiclibshortened) for writing paths when creating cleanlib.dsv
-
         std::string st = musiclibshortened.substr(0, musiclibshortened.size()-count-1); // the -1 is to also remove dir delimiter /
         musiclibshortened = st;
         if (Constants::kVerbose) std::cout << "This is the new value for musiclibshortened: " << musiclibshortened << std::endl;
     }
     temptokens.shrink_to_fit();
-
     // Next, iterate libtable.dsv again, this time with musiclibshortened defined, and write cleanlib.dsv
-
     std::ifstream filestr1;
     filestr1.open (appDataPathstr.toStdString()+"/libtable.dsv");
     if (filestr1.is_open()) {filestr1.close();}
@@ -157,7 +148,6 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     std::getline(primarySongsTable, str); //Get column titles header string
     outf << str << "\n"; // Write column titles header string to first line of file
     while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
-        //
         // Declare variables applicable to all rows
         std::istringstream iss(str);
         std::string token;
@@ -216,8 +206,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
             tokens.at(Constants::kColumn29) = newstr;
         }
         if ((tokens[Constants::kColumn13] != "0") && ((tokens[Constants::kColumn17] == "0.0")||(tokens[Constants::kColumn17] == "0"))){
-            // generate a random lastplayed date if its current
-            //  value is "0" unless track has a zero star rating
+            // Generate a random lastplayed date if its current value is "0" unless track has a zero star rating
             // Process a function to generate a random date 30-500 days ago then save to a string
             double rndresult{0.0};
             int intconvert;
@@ -229,7 +218,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
             strrandom = std::to_string(intconvert); // convert the integer to string
             tokens.at(Constants::kColumn17) = strrandom;
         }
-        //Adds artist (without any spaces) to Col 19 if Col 19 does not have a custom value already
+        // Adds artist (without any spaces) to Col 19 if Col 19 does not have a custom value already
         if ((tokens[Constants::kColumn13] != "0") && (tokens[Constants::kColumn19].empty())) {
             tokens.at(Constants::kColumn19) = tokens[1];
             tokens.at(Constants::kColumn19) = removeSpaces(tokens[Constants::kColumn19]);

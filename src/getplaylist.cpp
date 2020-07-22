@@ -39,7 +39,6 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
         std::exit(EXIT_FAILURE);
     }
     std::string line;
-    //std::getline(readFile, line); //skip first line
     while (std::getline(readFile, line)){
         std::istringstream iss(line); //start with first line
         // Fix the dir string: remove colon, insert library user path, and correct the dir symbol from \ to /

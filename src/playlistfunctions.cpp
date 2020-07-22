@@ -102,7 +102,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::cout << "totalPLTime8 is: " <<totalPLTime8/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
     std::cout << "totalPlaylistTime is: " <<totalPlaylistTime/(Constants::kMilSecsToMinsFactor/Constants::kMinsToHoursFactor) << std::endl;
     }
-
     //Calculate time ratio for each rating code by dividing each by the total playlist time.
     //variables:
     double ratioTime3 = totalPLTime3 / totalPlaylistTime;
@@ -111,7 +110,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double ratioTime6 = totalPLTime6 / totalPlaylistTime;
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
-
     if (Constants::kVerbose) {
     std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_ratingRatio3 << std::endl;
     std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_ratingRatio4<< std::endl;
@@ -120,7 +118,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_ratingRatio7<< std::endl;
     std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_ratingRatio8<< std::endl;
     }
-
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
     double varianceRatioTime3 = (s_ratingRatio3 - ratioTime3) / s_ratingRatio3;
@@ -129,7 +126,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double varianceRatioTime6 = (s_ratingRatio6 - ratioTime6) / s_ratingRatio6;
     double varianceRatioTime7 = (s_ratingRatio7 - ratioTime7) / s_ratingRatio7;
     double varianceRatioTime8 = (s_ratingRatio8 - ratioTime8) / s_ratingRatio8;
-
     if (Constants::kVerbose) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
@@ -140,7 +136,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::cout << "Rating for last track added was: " <<codeForPos1;
     std::cout << ", and second-to-last was: " <<codeForPos2 << std::endl;
     }
-
     //If the playlist ratio is less than the program ratio, then that code is underrepresented on the playlist.
     // The largest positive number is the most underrepresented rating code of the current playlist.
     // Create constants with the variances just calculated for each rating code variance to place them in an array
@@ -151,7 +146,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     const double vrt6 = varianceRatioTime6;
     const double vrt7 = varianceRatioTime7;
     const double vrt8 = varianceRatioTime8;
-
     // Determine whether a code of 1 was added in either of the last two tracks
     // If either has a rating code of 1, reassign other rating code using codeForPos3, as applicable
     if ((codeForPos1 == "1") || (codeForPos2 == "1")) {
@@ -165,7 +159,6 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     }
     // Determine whether a code of 7 or 8 was added in either of the last two tracks
     exclude7and8 = (codeForPos1 == "7") || (codeForPos1 == "8") || (codeForPos2 == "7") || (codeForPos2 == "8");
-    //
     // Condition 1
     // If both of the last two tracks was a code 7 or 8 (should not occur), exclude from consideration
     if (((codeForPos1=="7") || (codeForPos1=="8")) && ((codeForPos2 == "7") || (codeForPos2 =="8"))) {
