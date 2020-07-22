@@ -203,7 +203,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
             if (tokens[Constants::kColumn13] == "10") newstr = "0";
             if (tokens[Constants::kColumn13] == "0") newstr = "0";
             if (tokens[Constants::kColumn13].empty()) newstr = "0";
-            tokens.at(Constants::kColumn29) = newstr;
+            tokens.at(Constants::kColumn23) = newstr;
         }
         if ((tokens[Constants::kColumn13] != "0") && ((tokens[Constants::kColumn17] == "0.0")||(tokens[Constants::kColumn17] == "0"))){
             // Generate a random lastplayed date if its current value is "0" unless track has a zero star rating

@@ -15,8 +15,7 @@ void writeSQLFile(){
                      "SongTitle,SongPath,Year,Genre,FileLength,SongLength,Rating,"
                      "Bitrate,BPM,PlayCounter,LastTimePlayed,Custom1,Custom2,"
                      "Custom3,Custom4,Custom5,DateAdded,Publisher,Lyricist,"
-                     "Conductor,Remixer,InvolvedPeople,GroupDesc,OrigYear,Tempo,"
-                     "Mood,Occasion,Quality,SkipCount FROM songs"};
+                     "Conductor,Remixer,InvolvedPeople,GroupDesc FROM songs"};
     const std::string sqlpathdirname = getenv("HOME");
     std::ofstream sqlfile(sqlpathdirname + Constants::kSqlFileName); // exportMMTable.sql
     sqlfile << str1 << "\n";

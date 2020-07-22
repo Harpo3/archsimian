@@ -144,6 +144,7 @@ static bool s_topLevelFolderExists{0};
 static std::string playlistpath{""};
 static int s_PlaylistLimit{0};
 static int s_OpenPlaylistLimit{0};
+bool diagsran(0);
 
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -269,7 +270,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     // If configuration has not been set up completely, load UI setup instructions for user to set configuration locations
     if (!s_bool_IsUserConfigSet) {
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration has not been set. Adjusting UI settings" << std::endl;
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 2. Configuration has not been set. Adjusting UI settings" << std::endl;
         QMainWindow::setWindowTitle("ArchSimian - Initial Configuration Setup");
         ui->setlibrarylabel->setText(tr(""));
         ui->setlibraryButton->setEnabled(true);
@@ -306,6 +307,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
             removeAppData(logd);
             generateDiagsLog();
+            diagsran = true;
         }
         if (tmpbool){ // check that file is not empty
             //Check whether the songs table currently has any data in it
@@ -350,11 +352,14 @@ ArchSimian::ArchSimian(QWidget *parent) :
             s_bool_ExcludedArtistsProcessed = false;
             removeAppData("cleanedplaylist.txt");
             s_bool_PlaylistExist = false;
-            // If cleanlib does not exist (new installation), run diagnostics before generating library
-            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 4. Generating a diagnostic check after database update." << std::endl;
-            std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
-            removeAppData(logd);
-            generateDiagsLog();
+            // If cleanlib does not exist (new installation), run diagnostics before generating library if not already run (bool diagsran)
+            if (diagsran == false){
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 4. Generating a diagnostic check after database update." << std::endl;
+                std::string logd = appDataPathstr.toStdString()+"/diagnosticslog.txt";
+                removeAppData(logd);
+                generateDiagsLog();
+                ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt and diagnostics log generated."));
+            }
             ui->updatestatusLabel->setText(tr("MM.DB was recently backed up. Library has been rebuilt and diagnostics log generated."));
         }
      }
