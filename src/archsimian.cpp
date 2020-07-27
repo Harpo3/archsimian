@@ -1893,3 +1893,9 @@ void ArchSimian::on_windowsDriveLtrEdit_textChanged(const QString &arg1)
 //{
 // Adjustment for track limit percentage. Set variable by dividing slider value by 100.
 //}
+
+void ArchSimian::on_actionExport_Playlist_to_Linux_triggered()
+{
+exportPlaylistToLinux();
+ui->statusBar->showMessage("Exported Archsimian-modified playlist to home directory using Linux file path",4000);
+}

@@ -2333,6 +2333,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <addaction name="actionNew_Playlist"/>
     <addaction name="actionOpen_Playlist"/>
     <addaction name="actionExport_Playlist"/>
+    <addaction name="actionExport_Playlist_to_Linux"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -2405,6 +2406,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    <addaction name="actionNew_Playlist"/>
    <addaction name="actionOpen_Playlist"/>
    <addaction name="actionExport_Playlist"/>
+   <addaction name="actionExport_Playlist_to_Linux"/>
    <addaction name="actionExit"/>
   </widget>
   <action name="actionOpen_Playlist">
@@ -2433,7 +2435,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
      <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save.png</iconset>
    </property>
    <property name="text">
-    <string>Save Playlist</string>
+    <string>Export Playlist to Windows</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -2485,11 +2487,23 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <string>Ctrl+N</string>
    </property>
   </action>
+  <action name="actionExport_Playlist_to_Linux">
+   <property name="icon">
+    <iconset resource="../systray.qrc">
+     <normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save2.png</normaloff>:/&lt;qresource prefix=&quot;/&quot;&gt;/images/save2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Playlist to Linux</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>addsongsButton</tabstop>
   <tabstop>addtrksspinBox</tabstop>
+  <tabstop>addsongsButton</tabstop>
   <tabstop>repeatFreq1SpinBox</tabstop>
   <tabstop>songsaddtextBrowser</tabstop>
   <tabstop>setlibraryButton</tabstop>
@@ -2513,6 +2527,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <tabstop>minalbumsspinBox</tabstop>
   <tabstop>mintracksspinBox</tabstop>
   <tabstop>mintrackseachspinBox</tabstop>
+  <tabstop>setgetplaylistLabel</tabstop>
+  <tabstop>viewplaylistButton</tabstop>
+  <tabstop>saveConfigButton</tabstop>
+  <tabstop>windowsDriveLtrEdit</tabstop>
+  <tabstop>playlistLimitSlider</tabstop>
  </tabstops>
  <resources>
   <include location="../systray.qrc"/>

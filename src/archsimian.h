@@ -63,6 +63,8 @@ private slots:
     void on_viewplaylistButton_clicked();   
     //void on_playlistLimitSlider_valueChanged(int value);
 
+    void on_actionExport_Playlist_to_Linux_triggered();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;

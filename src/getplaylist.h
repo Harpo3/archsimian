@@ -13,4 +13,6 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
 
 void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QString &s_winDriveLtr, QString &s_musiclibrarydirname, std::string &playlistpath);
 
+void exportPlaylistToLinux();
+
 #endif // GETPLAYLIST_H

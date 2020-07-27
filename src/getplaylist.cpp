@@ -104,3 +104,11 @@ void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QS
     outf.close();
 }
 
+void exportPlaylistToLinux(){
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
+    QString appDataPathstr2 = QDir::homePath() + "/";
+    QFile("cleanedplaylist.txt");
+    QFile("cleanedplaylist.m3u");
+    QFile::copy(appDataPathstr+"cleanedplaylist.txt", appDataPathstr2+"cleanedplaylist.m3u");
+    //std::ifstream readFile(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+}
