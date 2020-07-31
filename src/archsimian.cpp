@@ -26,6 +26,8 @@
 #include "albumidandselect.h"
 #include "playlistcontentdialog.h"
 #include "diagnostics.h"
+#include "exporttoandroidaimp.h"
+#include <id3/tag.h>
 
 template <std::size_t N>
 int execvp(const char* file, const char* const (&argv)[N]) {//Function to execute command line with parameters
@@ -785,6 +787,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->playlistTab->setEnabled(true);
         ui->statisticsTab->setEnabled(true);
         ui->frequencyTab->setEnabled(true);
+        ui->syncTab->setEnabled(true);  // NEW
         if (m_prefs.s_includeAlbumVariety){
             ui->mainQTabWidget->setTabEnabled(4, true);
             ui->albumsTab->setEnabled(true);
@@ -816,7 +819,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->disablenotecheckBox->setChecked(false);
         }
 
-        ui->mainQTabWidget->setTabEnabled(5, false);// unused tab
+        ui->mainQTabWidget->setTabEnabled(5, true); // NEW
     }
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
     ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
@@ -1898,4 +1901,16 @@ void ArchSimian::on_actionExport_Playlist_to_Linux_triggered()
 {
 exportPlaylistToLinux();
 ui->statusBar->showMessage("Exported Archsimian-modified playlist to home directory using Linux file path",4000);
+}
+
+void ArchSimian::on_actionExport_to_AIMP_triggered()
+{
+    exportPlaylistToAndroidAIMP();
+}
+
+void ArchSimian::on_overrideCheckBox_stateChanged(int arg1)
+{
+    if (arg1 == 1){
+        ui->statusBar->showMessage("Changed database from MediaMonkey to ArchSimian.",4000);
+    }
 }

@@ -27,6 +27,39 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    ../../id3lib-3.8.3/src/c_wrapper.cpp \
+    ../../id3lib-3.8.3/src/field.cpp \
+    ../../id3lib-3.8.3/src/field_binary.cpp \
+    ../../id3lib-3.8.3/src/field_integer.cpp \
+    ../../id3lib-3.8.3/src/field_string_ascii.cpp \
+    ../../id3lib-3.8.3/src/field_string_unicode.cpp \
+    ../../id3lib-3.8.3/src/frame.cpp \
+    ../../id3lib-3.8.3/src/frame_impl.cpp \
+    ../../id3lib-3.8.3/src/frame_parse.cpp \
+    ../../id3lib-3.8.3/src/frame_render.cpp \
+    ../../id3lib-3.8.3/src/globals.cpp \
+    ../../id3lib-3.8.3/src/header.cpp \
+    ../../id3lib-3.8.3/src/header_frame.cpp \
+    ../../id3lib-3.8.3/src/header_tag.cpp \
+    ../../id3lib-3.8.3/src/helpers.cpp \
+    ../../id3lib-3.8.3/src/io.cpp \
+    ../../id3lib-3.8.3/src/io_decorators.cpp \
+    ../../id3lib-3.8.3/src/io_helpers.cpp \
+    ../../id3lib-3.8.3/src/misc_support.cpp \
+    ../../id3lib-3.8.3/src/mp3_parse.cpp \
+    ../../id3lib-3.8.3/src/readers.cpp \
+    ../../id3lib-3.8.3/src/spec.cpp \
+    ../../id3lib-3.8.3/src/tag.cpp \
+    ../../id3lib-3.8.3/src/tag_file.cpp \
+    ../../id3lib-3.8.3/src/tag_find.cpp \
+    ../../id3lib-3.8.3/src/tag_impl.cpp \
+    ../../id3lib-3.8.3/src/tag_parse.cpp \
+    ../../id3lib-3.8.3/src/tag_parse_lyrics3.cpp \
+    ../../id3lib-3.8.3/src/tag_parse_musicmatch.cpp \
+    ../../id3lib-3.8.3/src/tag_parse_v1.cpp \
+    ../../id3lib-3.8.3/src/tag_render.cpp \
+    ../../id3lib-3.8.3/src/utils.cpp \
+    ../../id3lib-3.8.3/src/writers.cpp \
     src/albumidandselect.cpp \
     src/archsimian.cpp \
     src/basiclibfunctions.cpp \
@@ -34,6 +67,7 @@ SOURCES += \
     src/code1.cpp \
     src/dependents.cpp \
     src/diagnostics.cpp \
+    src/exporttoandroidaimp.cpp \
     src/getartistadjustedcount.cpp \
     src/getplaylist.cpp \
     src/lastplayeddays.cpp \
@@ -45,6 +79,18 @@ SOURCES += \
     src/getartistexcludes.cpp
 
 HEADERS += \
+    ../../id3lib-3.8.3/include/id3.h \
+    ../../id3lib-3.8.3/src/field_def.h \
+    ../../id3lib-3.8.3/src/field_impl.h \
+    ../../id3lib-3.8.3/src/flags.h \
+    ../../id3lib-3.8.3/src/frame_def.h \
+    ../../id3lib-3.8.3/src/frame_impl.h \
+    ../../id3lib-3.8.3/src/header.h \
+    ../../id3lib-3.8.3/src/header_frame.h \
+    ../../id3lib-3.8.3/src/header_tag.h \
+    ../../id3lib-3.8.3/src/mp3_header.h \
+    ../../id3lib-3.8.3/src/spec.h \
+    ../../id3lib-3.8.3/src/tag_impl.h \
     src/albumidandselect.h \
     src/archsimian.h \
     src/basiclibfunctions.h \
@@ -53,6 +99,7 @@ HEADERS += \
     src/constants.h \
     src/dependents.h \
     src/diagnostics.h \
+    src/exporttoandroidaimp.h \
     src/getartistadjustedcount.h \
     src/getartistexcludes.h \
     src/getplaylist.h \
@@ -68,6 +115,8 @@ FORMS += \
 
 INCLUDEPATH += /src
                /images
+               /home/lpc123/scripts/cplus/id3lib-3.8.3/include
+               /home/lpc123/scripts/cplus/id3lib-3.8.3/src
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin

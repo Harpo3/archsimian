@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -2308,6 +2308,118 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="syncTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>Sync</string>
+       </attribute>
+       <widget class="QCheckBox" name="overrideCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>441</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Allow ArchSimian to manage library database and sync Android devices. </string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>491</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>WARNING: If checked, future play history cannot be transferred back to MediaMonkey.</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>90</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Android Device</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_14">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>95</y>
+          <width>281</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select KDEConnect device to sync</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_15">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>130</y>
+          <width>311</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select playlist to sync</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Sync Playlist</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_16">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>50</y>
+          <width>431</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Kid3 is an effective app to manage tags and filenames. </string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>180</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Update Library</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -2351,9 +2463,16 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     </property>
     <addaction name="actionSave_Settings"/>
    </widget>
+   <widget class="QMenu" name="menuAndroid">
+    <property name="title">
+     <string>Android</string>
+    </property>
+    <addaction name="actionExport_to_AIMP"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuAndroid"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -2497,6 +2616,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionExport_to_AIMP">
+   <property name="text">
+    <string>Export to AIMP</string>
    </property>
   </action>
  </widget>

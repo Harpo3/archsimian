@@ -62,8 +62,10 @@ private slots:
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
     //void on_playlistLimitSlider_valueChanged(int value);
-
     void on_actionExport_Playlist_to_Linux_triggered();
+    void on_actionExport_to_AIMP_triggered();
+    void on_overrideCheckBox_stateChanged(int arg1);
+
 
 private:
     Ui::ArchSimian *ui;

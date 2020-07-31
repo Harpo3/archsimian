@@ -16,6 +16,8 @@ int countBlankChars(std::string input);
 
 int countDelimChars(std::string input);
 
+int positionOfXthDelimChar(std::string input, int xthdelim);
+
 StringVector2D readDSV(const std::string& filename);
 StringVector2D readCSV(const std::string& filename);
 

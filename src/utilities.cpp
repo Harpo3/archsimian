@@ -63,6 +63,22 @@ int countDelimChars(std::string input)
         return delims;
 }
 
+int positionOfXthDelimChar(std::string input, int xthdelim)
+{
+    int delims = 0;
+    unsigned long posnumber = 0;
+    unsigned long totalchars = input.length();
+    for (unsigned long i = 0; i< totalchars; ++i){
+        if (input[i] == '/')
+            ++delims;
+        if (delims == xthdelim){
+            // Set position number
+            posnumber = i;
+        }
+    }
+        return int(posnumber);
+}
+
 StringVector2D readDSV(const std::string& filename)
 {
     char separator = '^';
