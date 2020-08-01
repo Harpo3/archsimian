@@ -2468,6 +2468,9 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
      <string>Android</string>
     </property>
     <addaction name="actionExport_to_AIMP"/>
+    <addaction name="actionIterate_tag"/>
+    <addaction name="actionGet_Last_Played_Dates"/>
+    <addaction name="actionDate_Conversion"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -2621,6 +2624,21 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <action name="actionExport_to_AIMP">
    <property name="text">
     <string>Export to AIMP</string>
+   </property>
+  </action>
+  <action name="actionIterate_tag">
+   <property name="text">
+    <string>Iterate tag</string>
+   </property>
+  </action>
+  <action name="actionGet_Last_Played_Dates">
+   <property name="text">
+    <string>Get Last Played Dates</string>
+   </property>
+  </action>
+  <action name="actionDate_Conversion">
+   <property name="text">
+    <string>Date Conversion</string>
    </property>
   </action>
  </widget>

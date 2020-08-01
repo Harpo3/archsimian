@@ -67,6 +67,12 @@ private slots:
     void on_overrideCheckBox_stateChanged(int arg1);
 
 
+    void on_actionIterate_tag_triggered();
+
+    void on_actionGet_Last_Played_Dates_triggered();
+
+    void on_actionDate_Conversion_triggered();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;

@@ -1914,3 +1914,18 @@ void ArchSimian::on_overrideCheckBox_stateChanged(int arg1)
         ui->statusBar->showMessage("Changed database from MediaMonkey to ArchSimian.",4000);
     }
 }
+
+void ArchSimian::on_actionIterate_tag_triggered()
+{
+    testid3tag();
+}
+
+void ArchSimian::on_actionGet_Last_Played_Dates_triggered()
+{
+    getLastPlayedDates();
+}
+
+void ArchSimian::on_actionDate_Conversion_triggered()
+{
+    logdateconversion();
+}
