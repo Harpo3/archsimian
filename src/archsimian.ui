@@ -2315,19 +2315,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <attribute name="title">
         <string>Sync</string>
        </attribute>
-       <widget class="QCheckBox" name="overrideCheckBox">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>441</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Allow ArchSimian to manage library database and sync Android devices. </string>
-        </property>
-       </widget>
        <widget class="QLabel" name="label_13">
         <property name="geometry">
          <rect>
@@ -2337,11 +2324,18 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
           <height>21</height>
          </rect>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>WARNING: If checked, future play history cannot be transferred back to MediaMonkey.</string>
+         <string>WARNING: If default changed, 'last played' history will no longer be synced in MediaMonkey.</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="selectAndroidDeviceButton">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -2354,17 +2348,20 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <string>Select Android Device</string>
         </property>
        </widget>
-       <widget class="QLabel" name="label_14">
+       <widget class="QLabel" name="androiddevicebuttonlabel">
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>95</y>
-          <width>281</width>
-          <height>21</height>
+          <y>85</y>
+          <width>331</width>
+          <height>41</height>
          </rect>
         </property>
         <property name="text">
-         <string>Select KDEConnect device to sync</string>
+         <string>Select KDEConnect device to sync (requires KDEconnect and AIMP player on Android device with logging enabled.)</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QLabel" name="label_15">
@@ -2397,26 +2394,70 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>50</y>
+          <y>220</y>
           <width>431</width>
-          <height>31</height>
+          <height>81</height>
          </rect>
         </property>
         <property name="text">
-         <string>Kid3 is an effective app to manage tags and filenames. </string>
+         <string>Kid3 is an effective app in Linux to manage tags, filenames, and ArchSimian rating codes (kid3 cannot edit half stars). Rating changes made on synced Android device will be ignored.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="updateASDBButton">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>180</y>
-          <width>141</width>
+          <width>181</width>
           <height>31</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>For AIMP Android players, updates last played history to the ArchSimian database instead updating from the MediaMonkey database. Changes are not synced to the MM4 database.</string>
+        </property>
         <property name="text">
-         <string>Update Library</string>
+         <string>Update ArchSimian Database</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="mmdisabledradioButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>491</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
+        </property>
+        <property name="statusTip">
+         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
+        </property>
+        <property name="text">
+         <string>Set ArchSimian to manage database (Syncthing, AIMP player for Android). </string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="mmenabledradioButton_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>441</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set MediaMonkey to manage database (default)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </widget>
@@ -2467,15 +2508,17 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <property name="title">
      <string>Android</string>
     </property>
-    <addaction name="actionExport_to_AIMP"/>
+    <addaction name="actionSyncPlaylist"/>
     <addaction name="actionIterate_tag"/>
     <addaction name="actionGet_Last_Played_Dates"/>
     <addaction name="actionDate_Conversion"/>
+    <addaction name="actionRemove_mp3s"/>
+    <addaction name="actionUpdateLastPlayed"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
-   <addaction name="menuHelp"/>
    <addaction name="menuAndroid"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -2621,9 +2664,12 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionExport_to_AIMP">
+  <action name="actionSyncPlaylist">
    <property name="text">
-    <string>Export to AIMP</string>
+    <string>Sync Playlist</string>
+   </property>
+   <property name="toolTip">
+    <string>Syncs playlist and mp3s to Syncthing folder</string>
    </property>
   </action>
   <action name="actionIterate_tag">
@@ -2639,6 +2685,21 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <action name="actionDate_Conversion">
    <property name="text">
     <string>Date Conversion</string>
+   </property>
+  </action>
+  <action name="actionCopy_mp3s_to_Android">
+   <property name="text">
+    <string>Copy mp3s to Android</string>
+   </property>
+  </action>
+  <action name="actionRemove_mp3s">
+   <property name="text">
+    <string>Remove mp3s</string>
+   </property>
+  </action>
+  <action name="actionUpdateLastPlayed">
+   <property name="text">
+    <string>UpdateLastPlayed</string>
    </property>
   </action>
  </widget>

@@ -21,6 +21,9 @@ const double kEpochConv2{86400.00};
 const int kLowerRndBound{180};
 const int kUpperRndBound{700};
 
+// Constant used to enabled MM4 update
+const bool kUserDefaultMM4Disabled{false};
+
 // Constant used to standardize the user configuration file name for Arch
 const char kUserFileName[16]{"archsimian.conf"};  // user configuration and preferences filename
 const char kSqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that the MM.DB Songs table can be exported

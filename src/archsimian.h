@@ -62,16 +62,27 @@ private slots:
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
     //void on_playlistLimitSlider_valueChanged(int value);
-    void on_actionExport_Playlist_to_Linux_triggered();
-    void on_actionExport_to_AIMP_triggered();
-    void on_overrideCheckBox_stateChanged(int arg1);
-
 
     void on_actionIterate_tag_triggered();
-
     void on_actionGet_Last_Played_Dates_triggered();
-
     void on_actionDate_Conversion_triggered();
+    void on_actionSyncPlaylist_triggered();
+
+    void on_actionRemove_mp3s_triggered();
+
+    void on_mmdisabledradioButton_clicked();
+
+    void on_mmenabledradioButton_2_clicked();
+
+
+
+    void on_selectAndroidDeviceButton_clicked();
+
+    void on_updateASDBButton_clicked();
+
+    void on_actionUpdateLastPlayed_triggered();
+
+    void on_actionExport_Playlist_to_Linux_triggered();
 
 private:
     Ui::ArchSimian *ui;
@@ -92,7 +103,8 @@ private:
         QString mmPlaylistDir{};
         QString s_WindowsDriveLetter{};
         QString s_musiclibshortened{};
-        QString s_windowstopfolder;
+        QString s_windowstopfolder{};
+        QString s_androidpathname{};
         bool s_includeNewTracks{};
         bool s_includeAlbumVariety{};
         bool s_noAutoSave{};
@@ -106,6 +118,7 @@ private:
         int s_minalbums{};
         int s_mintrackseach{};
         int s_mintracks{};
+        bool s_mm4disabled{};
     };
 
     void loadSettings();
