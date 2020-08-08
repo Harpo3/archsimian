@@ -84,6 +84,8 @@ private slots:
 
     void on_actionExport_Playlist_to_Linux_triggered();
 
+    void on_syncPlaylistButton_clicked();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;

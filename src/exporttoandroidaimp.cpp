@@ -14,10 +14,8 @@
 #include <time.h>
 #include <string.h>
 #include <id3/tag.h>
-#include <id3/misc_support.h>
-#include "id3/id3lib_streams.h"
-#include <filesystem>
-
+//#include <id3/misc_support.h>
+//#include "id3/id3lib_streams.h"
 
 // Convert standard (format: "Jul 26, 2020 1:30:42 PM") date/time string variable and return SQL time
 double logdateconversion(std::string chkthis){
@@ -48,10 +46,8 @@ void syncPlaylistWithSyncthing(){
     // and then, copy the resulting playlist and mp3s to the syncthing folder for use by android device
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     QString syncthingPathstr = QDir::homePath() + "/Sync/"; // Set syncthing path
-
     // First, remove all existing mp3s from syncthing directory
     removeMP3sSyncthing();
-
     std::ifstream linuxfilepath;
     linuxfilepath.open (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (linuxfilepath.is_open()) {linuxfilepath.close();}
@@ -84,19 +80,6 @@ void syncPlaylistWithSyncthing(){
     ofs1.close();
     readlist.close();
 }
-
-void ShowKnownFrameInfo() {
-    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
-    QString tempFileStr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib2.dsv";
-    std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib.dsv";
-    removeAppData(cleanlibSongsTable); // Remove old cleanlib.dsv
-    // Copy revised cleanLib (cleanlib2.dsv) to place new cleanlib.dsv file
-    //QFile::copy(tempFileStr, QString::fromUtf8(cleanlibSongsTable.c_str()));
-    std::filesystem::copy(tempFileStr.toStdString(),cleanlibSongsTable);
-    removeAppData(tempFileStr.toStdString()); // Remove cleanlib2.dsv
-
-}
-
 
 void testid3tag(){
     //ShowKnownFrameInfo();
@@ -173,12 +156,9 @@ void testid3tag(){
         std::cout<<"not found\n";
 }
 
-
-
 void getLastPlayedDates(QString &s_androidpathname){
-
-    // Add code here to check kdeconnect setting
-
+    // Gets lastplayed history from AIMP log and saves it to lastplayeddates.txt
+    // Add code here to check kdeconnect setting?
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
     std::fstream debuglog;
     debuglog.open (s_androidpathname.toStdString() + "/Android/data/com.aimp.player/cache/debug.log");
@@ -201,11 +181,12 @@ void getLastPlayedDates(QString &s_androidpathname){
     std::string lastplayedentry{""};
     std::string artistentry{""};
     std::string songentry{""};
+    std::string albumentry{""};
     int artistline {0};
     int songline ={0};
+    int albumline ={0};
     std::string str2{""};
     std::string str3{""};
-
     while (std::getline(debug, str1)) {
         std::size_t found = str1.find(lastplayedmarker);
         // Beginning of first section
@@ -233,6 +214,7 @@ void getLastPlayedDates(QString &s_androidpathname){
             }
             if (str3 != ""){
                 artistline = linecount + 1; // Set the line number for artist variable after lastplayed date found
+                albumline = linecount + 3;  // Set the line number for song title after lastplayed date found
                 songline = linecount + 4;  // Set the line number for song title after lastplayed date found
             }
             continue;
@@ -252,6 +234,18 @@ void getLastPlayedDates(QString &s_androidpathname){
                 }),
                                   artistentry.end());
             }
+            if ((linecount == albumline) && (collecteddate != "")){
+                // get song string if it is two lines after lastplayed date found
+                std::size_t strlength = str1.length();
+                albumentry = str1.substr (6,strlength-6);
+                // Remove certain special characters from the songentry string before writing line to lastplayeddates.txt
+                std::string specchars = "\?@&()#\"+*!;"; /// Identify special characters to remove
+                albumentry.erase(remove_if(albumentry.begin(), albumentry.end(),
+                                          [&specchars](const char& c) {
+                    return specchars.find(c) != std::string::npos;
+                }),
+                                albumentry.end());
+            }
             if ((linecount == songline) && (collecteddate != "")){
                 // get song string if it is two lines after lastplayed date found
                 std::size_t strlength = str1.length();
@@ -267,11 +261,12 @@ void getLastPlayedDates(QString &s_androidpathname){
             if ((linecount == songline +1) && (collecteddate != "")){
                 // If the line after completing assignment of the 3 variables: date, artist and song, save all three into one csv line
                 // to export or push into vector, then reset variables and continue going through the log
-                lastplayedentry = artistentry + "," + songentry+ "," +collecteddate;
+                lastplayedentry = artistentry + "," + albumentry+ "," + songentry+ "," +collecteddate;
                 std::cout << "lastplayedentry string is: " << lastplayedentry << '\n';
                 dateslist << lastplayedentry<<"\n";
                 collecteddate = "";
                 artistline = 0;
+                albumline = 0;
                 songline = 0;
                 str3 = "";
             }
@@ -283,18 +278,21 @@ void getLastPlayedDates(QString &s_androidpathname){
 }
 
 void updateCleanLibDates(){
+    // Uses lastplayeddates.txt to update last played dates in cleanlib.dsv for songs played and logged by AIMP
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
     QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib.dsv";
     QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib2.dsv";
     QFile::copy(tempFileStr1,tempFileStr2);
     // Create vector for new lastplayed dates
-    StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // open "playlistposlist.txt" as 2D vector lastplayedvec
+    StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // open "lastplayeddates.txt" as 2D vector lastplayedvec
     lastplayedvec.reserve(1000);
     std::string selectedArtistToken; // Artist variable from lastplayedvec
     std::string selectedTitleToken; // Title variable from lastplayedvec
+    std::string selectedAlbumToken; // Title variable from lastplayedvec
     std::string selectedSQLDateToken; // SQL Date variable from lastplayedvec
     std::string selectedLibArtistToken; // Artist variable from cleanlib.dsv
     std::string selectedLibTitleToken; // Title variable from cleanlib.dsv
+    std::string selectedLibAlbumToken; // Title variable from lastplayedvec
     std::string selectedLibSQLDateToken; // SQL Date variable from cleanlib.dsv
     // Open cleanlib.dsv as read file
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
@@ -328,14 +326,16 @@ void updateCleanLibDates(){
             tokens.push_back(intermediate);
         }
         selectedLibArtistToken = tokens[Constants::kColumn1];
+        selectedLibAlbumToken = tokens[Constants::kColumn3];
         selectedLibTitleToken = tokens[Constants::kColumn7];
         selectedLibSQLDateToken = tokens[Constants::kColumn17];
         for(auto & i : lastplayedvec){ // read each row element from the lastplayedvec into variables for comparison with Lib tokens
             selectedArtistToken = i[Constants::kColumn0];
-            selectedTitleToken = i[Constants::kColumn1];
-            selectedSQLDateToken = i[Constants::kColumn2];
+            selectedAlbumToken = i[Constants::kColumn1];
+            selectedTitleToken = i[Constants::kColumn2];
+            selectedSQLDateToken = i[Constants::kColumn3];
             // Match Artist and title in cleanLib from lastplayedvec and change SQL date for each
-            if ((selectedArtistToken == selectedLibArtistToken) && (selectedTitleToken == selectedLibTitleToken)){
+            if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken) && (selectedTitleToken == selectedLibTitleToken)){
                 tokens.at(Constants::kColumn17) = selectedSQLDateToken;
                 str = getChgdDSVStr(tokens,str); // recompile str with changed token
                 continue;

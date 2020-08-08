@@ -648,11 +648,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
                 file.close();
                 delete[] memblock;
             }
-            else std::cout << "Archsimian.cpp: Step 7. ERROR: There was a problem opening artistsadj.txt" << std::endl;
+            else std::cout << "Archsimian.cpp: Step 7a. ERROR: There was a problem opening artistsadj.txt" << std::endl;
             if (artsistAdjsize != 0) {s_bool_artistsadjExist = true;// file artistsadj.txt exists and is greater in size than zero, set to true
                 // If MM.DB not recently updated and artistsadj.txt does not need to be updated, check if ratedabbr.txt exists
                 // If it does set s_bool_RatedAbbrExist to true.
-                if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7. MM.DB not recently updated and artistsadj.txt does not need to be updated. "
+                if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7a. MM.DB not recently updated and artistsadj.txt does not need to be updated. "
                                                        "Now checking s_bool_RatedAbbrExist." << std::endl;}
                 tmpbool2 = doesFileExist(appDataPathstr.toStdString()+"/ratedabbr.txt");
                 if (tmpbool2){ // check that file is not empty
@@ -669,17 +669,21 @@ ArchSimian::ArchSimian(QWidget *parent) :
                         file.close();
                         delete[] memblock;
                     }
-                    else std::cout << "Archsimian.cpp: Step 7. There was a problem opening ratedabbr.txt" << std::endl;
+                    else std::cout << "Archsimian.cpp: Step 7a. There was a problem opening ratedabbr.txt" << std::endl;
                     if (ratedabbrsize != 0) {
                         s_bool_RatedAbbrExist = true;
-                        if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7. Set s_bool_RatedAbbrExist = true." << std::endl;}
+                        if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7a. Set s_bool_RatedAbbrExist = true." << std::endl;}
                     }
                 }
             }
             if (artsistAdjsize == 0) {s_bool_artistsadjExist = false;}// file exists but size is zero, set to false
         }
         if (!tmpbool){s_bool_artistsadjExist = false;} // file does not exist, set bool to false
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7. MM.DB not recently updated. Verifying artistsadj.txt exists and is not zero. "
+        if (s_mm4disabled){
+            s_bool_artistsadjExist = false; // If MM4 is disabled, set bool to false
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. MM4 is disabled. s_bool_artistsadjExist set to false." << std::endl;
+        }
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. MM.DB not recently updated. Verifying artistsadj.txt exists and is not zero. "
                                               "s_bool_artistsadjExist result: "<< s_bool_artistsadjExist << std::endl;
         if (!s_bool_artistsadjExist){
             getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
@@ -688,7 +692,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                    &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
             s_bool_artistsadjExist = doesFileExist (appDataPathstr.toStdString()+"/artistsadj.txt");
             s_bool_RatedAbbrExist = false;
-            if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7(a) Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+            if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7a Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
         }
     }
 
@@ -714,7 +718,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist)
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist)  && (s_bool_dbStatsCalculated)
-            && (s_bool_artistsadjExist) && (!s_bool_RatedAbbrExist)) {
+            && (s_bool_artistsadjExist) && ((!s_bool_RatedAbbrExist) || (s_mm4disabled))) {
         getSubset();
         s_bool_RatedAbbrExist = doesFileExist (appDataPathstr.toStdString()+"/ratedabbr.txt");
         if (!s_bool_RatedAbbrExist)  {std::cout << "Archsimian.cpp: Step 8. Something went wrong at the function getSubset(). ratedabbr.txt not created." << std::endl;}
@@ -731,6 +735,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_PlaylistSelected = false;
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Playlist set to 'not exist'. Playlist not selected." << std::endl;}
     }
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Default playlist found and selected." << std::endl;}
 
     // 10. If a playlist was identified in the user config (step 9), generate the playlist file: If user configuration
     // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
@@ -1989,6 +1994,7 @@ void ArchSimian::on_mmdisabledradioButton_clicked()
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
     ui->updateASDBButton->setDisabled(false);
+    ui->selectAndroidDeviceButton->setDisabled(false);
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to true: "<<s_mm4disabled << std::endl;}
     ui->statusBar->showMessage("Changed database from MediaMonkey to ArchSimian.",4000);
 }
@@ -1999,8 +2005,10 @@ void ArchSimian::on_mmenabledradioButton_2_clicked()
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
     ui->updateASDBButton->setDisabled(true);
+    ui->selectAndroidDeviceButton->setDisabled(true);
+    removeAppData("cleanlib.dsv"); // Remove cleanlib.dsv to force regeneration
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to false: "<<s_mm4disabled << std::endl;}
-    ui->statusBar->showMessage("Changed database from ArchSimian to MediaMonkey.",4000);
+    ui->statusBar->showMessage("Changed database from ArchSimian to MediaMonkey.",4000);   
 }
 
 
@@ -2018,11 +2026,15 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
     // Write description note and directory configuration to archsimian.conf
     m_prefs.s_androidpathname = s_androidpathname;
     saveSettings();
+    ui->statusBar->showMessage("Saved device location in ArchSimian.",4000);
 }
 
 void ArchSimian::on_updateASDBButton_clicked()
 {
-
+getLastPlayedDates(s_androidpathname);
+updateCleanLibDates();
+// Need to reprocess functions associated with a cleanlib.dsv change.
+ui->statusBar->showMessage("Processed lastplayed dates from Android device and updated Archsimian.",4000);
 }
 
 void ArchSimian::on_actionUpdateLastPlayed_triggered()
@@ -2033,4 +2045,9 @@ void ArchSimian::on_actionUpdateLastPlayed_triggered()
 void ArchSimian::on_actionExport_Playlist_to_Linux_triggered()
 {
     exportPlaylistToLinux();
+}
+
+void ArchSimian::on_syncPlaylistButton_clicked()
+{
+    syncPlaylistWithSyncthing();
 }
