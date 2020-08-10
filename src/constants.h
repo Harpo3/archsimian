@@ -30,6 +30,9 @@ const char kSqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that t
 const char kCleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
 const char kCleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
 
+// Constant for specilized application paths
+const char kAIMPLogPath[46]("/Android/data/com.aimp.player/cache/debug.log");
+
 // Constants used to set the maximum size of a playlist or max Code1 position
 const int kMaxFinalPlaylistPos{99999};
 const int kMaxLowestCode1Pos{99999};
