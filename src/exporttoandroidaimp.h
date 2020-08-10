@@ -9,4 +9,8 @@ void testid3tag();
 void getLastPlayedDates(QString &s_androidpathname);
 double logdateconversion(std::string chkthis);
 void updateCleanLibDates();
+void removeLinuxPlaylistFile();
+bool mapFunc(const std::string &a, const std::string &b);
+void splitsort(const std::string &s, std::string &mycombinedtext, std::string &selectedLPLSQLDate);
+void syncAudaciousLog();
 #endif // EXPORTTOANDROIDAIMP_H

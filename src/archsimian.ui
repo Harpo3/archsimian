@@ -2371,7 +2371,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>320</y>
+          <y>250</y>
           <width>311</width>
           <height>51</height>
          </rect>
@@ -2387,7 +2387,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>330</y>
+          <y>260</y>
           <width>141</width>
           <height>31</height>
          </rect>
@@ -2406,7 +2406,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
         <property name="text">
-         <string>Kid3 is an effective app in Linux to manage tags, filenames, and ArchSimian rating codes (kid3 cannot edit half stars). Rating changes made on synced Android device will be ignored.</string>
+         <string>Kid3 is an effective Linux application for managing tags, filenames, and ArchSimian rating codes. Codes should be used because Kid3 cannot edit half stars.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2466,6 +2466,51 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QPushButton" name="syncthingButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>160</y>
+          <width>151</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Syncthing Folder</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="syncthinglabel">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>160</y>
+          <width>321</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select the shared folder Syncthing will use to sync playlist and music files to Android device.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_17">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>210</y>
+          <width>291</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Reads lastplayed dates from Android device and updates play history in Archsiman.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -2520,6 +2565,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <addaction name="actionDate_Conversion"/>
     <addaction name="actionRemove_mp3s"/>
     <addaction name="actionUpdateLastPlayed"/>
+    <addaction name="actionsyncAudaciousLog"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -2706,6 +2752,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <action name="actionUpdateLastPlayed">
    <property name="text">
     <string>UpdateLastPlayed</string>
+   </property>
+  </action>
+  <action name="actionsyncAudaciousLog">
+   <property name="text">
+    <string>syncAudaciousLog</string>
    </property>
   </action>
  </widget>

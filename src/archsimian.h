@@ -86,6 +86,10 @@ private slots:
 
     void on_syncPlaylistButton_clicked();
 
+    void on_syncthingButton_clicked();
+
+    void on_actionsyncAudaciousLog_triggered();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -107,6 +111,7 @@ private:
         QString s_musiclibshortened{};
         QString s_windowstopfolder{};
         QString s_androidpathname{};
+        QString s_syncthingpathname{};
         bool s_includeNewTracks{};
         bool s_includeAlbumVariety{};
         bool s_noAutoSave{};

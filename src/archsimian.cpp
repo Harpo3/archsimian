@@ -135,6 +135,7 @@ static QString s_winDriveLtr;
 static QString s_musiclibshortened{""};
 static QString s_windowstopfolder{""};
 static QString s_androidpathname{""};
+static QString s_syncthingpathname{""};
 static bool s_mm4disabled{0};
 static QString appDataPathstr = QDir::homePath() + "/.local/share/archsimian";
 static QDir appDataPath = appDataPathstr;
@@ -189,6 +190,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_musiclibshortened = m_prefs.s_musiclibshortened;
     s_mm4disabled = m_prefs.s_mm4disabled;
     s_androidpathname = m_prefs.s_androidpathname;
+    s_syncthingpathname = m_prefs.s_syncthingpathname;
 
     // Set up the UI
     ui->setupUi(this);
@@ -217,12 +219,24 @@ ArchSimian::ArchSimian(QWidget *parent) :
     {
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration was set. s_bool_IsUserConfigSet result: " << s_bool_IsUserConfigSet << std::endl;
         m_prefs.musicLibraryDir = s_musiclibrarydirname;
-        if (!s_mm4disabled){
+        if (!s_mm4disabled){ // MM4 is enabled, disable sync buttons
             ui->updateASDBButton->setDisabled(true);
-            ui->mmenabledradioButton_2->setChecked(true);}
-        if (s_mm4disabled){
+            ui->syncthingButton->setDisabled(true);
+            ui->selectAndroidDeviceButton->setDisabled(true);
+            ui->syncPlaylistButton->setDisabled(true);
+            ui->mmenabledradioButton_2->setChecked(true);
+        }
+        if (s_mm4disabled){ // MM4 is disabled, enable (set disabled to false) sync buttons
             ui->updateASDBButton->setDisabled(false);
-            ui->mmdisabledradioButton->setChecked(true);}
+            ui->syncthingButton->setDisabled(false);
+            ui->selectAndroidDeviceButton->setDisabled(false);
+            ui->syncPlaylistButton->setDisabled(false);
+            ui->mmdisabledradioButton->setChecked(true);
+        }
+        if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons
+                    ui->updateASDBButton->setDisabled(true);
+                    ui->syncPlaylistButton->setDisabled(true);
+        }
         if (s_includeNewTracks) {ui->InclNewcheckbox->setChecked(true);}
         if (s_includeAlbumVariety) {
             ui->albumscheckBox->setChecked(true);
@@ -242,8 +256,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         ui->instructionlabel->setText(tr(""));
         ui->addsongsLabel->setText(tr("tracks to selected playlist."));
-        ui->androiddevicebuttonlabel->setText(tr("Select Android device if syncing 'last played' history using AIMP (requires KDEconnect, Dolphin, and AIMP with logging enabled)"));
+        ui->androiddevicebuttonlabel->setText(tr("Select Android device (for syncing play history using AIMP - requires KDEconnect and AIMP with logging enabled.)"));
         if (s_androidpathname != ""){ui->androiddevicebuttonlabel->setText(s_androidpathname);}
+        ui->syncthinglabel->setText(tr("Select the shared folder Syncthing will use to sync playlist and music files to Android device.)"));
+        if (s_syncthingpathname != ""){ui->syncthinglabel->setText(s_syncthingpathname);}
         if (s_defaultPlaylist == ""){
             ui->setgetplaylistLabel->setText("No playlist selected");
             ui->addsongsButton->setEnabled(false);
@@ -260,6 +276,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::string LastTableDate = getLastTableDate();
             ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(MMdbDate)+
                                            tr(", Library date: ")+ QString::fromStdString(LastTableDate));
+            if (s_mm4disabled){ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));}
         }
     }
     // Step 2. Determine if the MediaMonkey (MM.DB) database exists with the doesFileExist (const std::string& name) function (sets s_bool_MMdbExist).
@@ -1284,6 +1301,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_windowstopfolder = settings.value("s_windowstopfolder",Constants::kWindowsTopFolder).toString();
     m_prefs.s_musiclibshortened = settings.value("s_musiclibshortened",Constants::kMusicLibShortened).toString();
     m_prefs.s_androidpathname = settings.value("s_androidpathname","").toString();
+    m_prefs.s_syncthingpathname = settings.value("s_syncthingpathname","").toString();
     m_prefs.s_mm4disabled = settings.value("s_mm4disabled", Constants::kUserDefaultMM4Disabled).toBool();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
@@ -1315,6 +1333,7 @@ void ArchSimian::saveSettings()
     settings.setValue("s_musiclibshortened",m_prefs.s_musiclibshortened);
     settings.setValue("s_mm4disabled",m_prefs.s_mm4disabled);
     settings.setValue("s_androidpathname",m_prefs.s_androidpathname);
+    settings.setValue("s_syncthingpathname",m_prefs.s_syncthingpathname);
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
@@ -1793,12 +1812,14 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
         // Finalize playlist loading
         ui->currentplsizeLabel->setText(tr("Current playlist size is ") + QString::number(s_playlistSize)+tr(" tracks, "));
         ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
-        std::string MMdbDate = getMMdbDate(s_mmBackupDBDir);
+        std::string MMdbDate;
+        if (!s_mm4disabled) {MMdbDate = getMMdbDate(s_mmBackupDBDir);}
         std::string LastTableDate = getLastTableDate();
         ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(MMdbDate)+
                                        tr(", Library date: ")+ QString::fromStdString(LastTableDate));
-        ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(MMdbDate)+
-                                       tr(", Library date: ")+ QString::fromStdString(LastTableDate));
+        if (s_mm4disabled){
+        ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
+        }
         if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
             s_uniqueCode1ArtistCount = 0;
             s_code1PlaylistCount = 0;
@@ -1868,12 +1889,14 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") + QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
     ui->addtrksspinBox->setValue(30);
     ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-    std::string MMdbDate = getMMdbDate(s_mmBackupDBDir);
+    std::string MMdbDate;
+    if (!s_mm4disabled) {MMdbDate = getMMdbDate(s_mmBackupDBDir);}
     std::string LastTableDate = getLastTableDate();
     ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(MMdbDate)+
                                    tr(", Library date: ")+ QString::fromStdString(LastTableDate));
-    ui->updatestatusLabel->setText(tr("MM.DB date: ") + QString::fromStdString(MMdbDate)+
-                                   tr(", Library date: ")+ QString::fromStdString(LastTableDate));
+    if (s_mm4disabled){
+        ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
+    }
     if (s_includeNewTracks){  // If user is including new tracks, determine if a code 1 track should be added for this particular selection
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
@@ -1994,7 +2017,9 @@ void ArchSimian::on_mmdisabledradioButton_clicked()
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
     ui->updateASDBButton->setDisabled(false);
+    ui->syncthingButton->setDisabled(false);
     ui->selectAndroidDeviceButton->setDisabled(false);
+    ui->syncPlaylistButton->setDisabled(false);
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to true: "<<s_mm4disabled << std::endl;}
     ui->statusBar->showMessage("Changed database from MediaMonkey to ArchSimian.",4000);
 }
@@ -2005,7 +2030,9 @@ void ArchSimian::on_mmenabledradioButton_2_clicked()
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
     ui->updateASDBButton->setDisabled(true);
+    ui->syncthingButton->setDisabled(true);
     ui->selectAndroidDeviceButton->setDisabled(true);
+    ui->syncPlaylistButton->setDisabled(true);
     removeAppData("cleanlib.dsv"); // Remove cleanlib.dsv to force regeneration
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to false: "<<s_mm4disabled << std::endl;}
     ui->statusBar->showMessage("Changed database from ArchSimian to MediaMonkey.",4000);   
@@ -2023,6 +2050,14 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
                 "/"
                 );
     ui->androiddevicebuttonlabel->setText(QString(s_androidpathname));
+    if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons
+                ui->updateASDBButton->setDisabled(true);
+                ui->syncPlaylistButton->setDisabled(true);
+    }
+    if ((s_androidpathname != "" ) && (s_syncthingpathname != "")) { // If both of the 2 sync paths have been established enable two action buttons
+                ui->updateASDBButton->setDisabled(false);
+                ui->syncPlaylistButton->setDisabled(false);
+    }
     // Write description note and directory configuration to archsimian.conf
     m_prefs.s_androidpathname = s_androidpathname;
     saveSettings();
@@ -2031,9 +2066,11 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
 
 void ArchSimian::on_updateASDBButton_clicked()
 {
-getLastPlayedDates(s_androidpathname);
-updateCleanLibDates();
+getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
+updateCleanLibDates(); // Update cleanlib.dsv wih new dates
 // Need to reprocess functions associated with a cleanlib.dsv change.
+std::string LastTableDate = getLastTableDate();
+ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
 ui->statusBar->showMessage("Processed lastplayed dates from Android device and updated Archsimian.",4000);
 }
 
@@ -2044,10 +2081,43 @@ void ArchSimian::on_actionUpdateLastPlayed_triggered()
 
 void ArchSimian::on_actionExport_Playlist_to_Linux_triggered()
 {
-    exportPlaylistToLinux();
+    removeLinuxPlaylistFile(); // First delete old playlist file
+    exportPlaylistToLinux(); // Export new one.
+    ui->statusBar->showMessage("Playlist named cleanedplaylist.m3u with linux path exported to home folder.",4000);
 }
 
 void ArchSimian::on_syncPlaylistButton_clicked()
 {
     syncPlaylistWithSyncthing();
+}
+
+void ArchSimian::on_syncthingButton_clicked()
+{
+    QFileDialog selectsyncthingButton;
+    selectsyncthingButton.setFileMode(QFileDialog::Directory);
+    selectsyncthingButton.setOption(QFileDialog::ShowDirsOnly);
+    s_syncthingpathname= QFileDialog::getExistingDirectory(
+                this,
+                tr("Select Path of Syncthing shared folder"),
+                "/"
+                );
+    ui->syncthinglabel->setText(QString(s_syncthingpathname));
+    // Write description note and directory configuration to archsimian.conf
+    m_prefs.s_syncthingpathname = s_syncthingpathname;
+    saveSettings();
+    if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons
+                ui->updateASDBButton->setDisabled(true);
+                ui->syncPlaylistButton->setDisabled(true);
+    }
+    if ((s_androidpathname != "" ) && (s_syncthingpathname != "")) { // If both of the 2 sync paths have been established enable two action buttons
+                ui->updateASDBButton->setDisabled(false);
+                ui->syncPlaylistButton->setDisabled(false);
+    }
+    ui->statusBar->showMessage("Saved folder location in ArchSimian.",4000);
+}
+
+
+void ArchSimian::on_actionsyncAudaciousLog_triggered()
+{
+    syncAudaciousLog();
 }
