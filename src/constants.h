@@ -62,6 +62,7 @@ const int kUserDefaultMintracks{8};
 const QString kWindowsTopFolder{""};
 const QString kMusicLibShortened{""};
 const int kPlaylistActualCntSelCode{0};
+const bool kAudaciouslogenabled{0};
 
 // Constants for bound limits for setting by user in ui
 const int kRatingCode3MinDays{10};

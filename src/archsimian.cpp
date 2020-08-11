@@ -150,6 +150,7 @@ static std::string playlistpath{""};
 static int s_PlaylistLimit{0};
 static int s_OpenPlaylistLimit{0};
 static bool diagsran(0);
+static bool s_audaciouslogenabled{0};
 
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -191,6 +192,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_mm4disabled = m_prefs.s_mm4disabled;
     s_androidpathname = m_prefs.s_androidpathname;
     s_syncthingpathname = m_prefs.s_syncthingpathname;
+    s_audaciouslogenabled = m_prefs.s_audaciouslogenabled;
 
     // Set up the UI
     ui->setupUi(this);
@@ -225,6 +227,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->selectAndroidDeviceButton->setDisabled(true);
             ui->syncPlaylistButton->setDisabled(true);
             ui->mmenabledradioButton_2->setChecked(true);
+            ui->enableAudaciousLogButton->setDisabled(true);
+            ui->enableAIMPOnlyradioButton->setDisabled(true);
         }
         if (s_mm4disabled){ // MM4 is disabled, enable (set disabled to false) sync buttons
             ui->updateASDBButton->setDisabled(false);
@@ -232,10 +236,22 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->selectAndroidDeviceButton->setDisabled(false);
             ui->syncPlaylistButton->setDisabled(false);
             ui->mmdisabledradioButton->setChecked(true);
+            ui->enableAudaciousLogButton->setDisabled(false);
+            ui->enableAIMPOnlyradioButton->setDisabled(false);
         }
-        if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons
+        if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons and 2 radio buttons
                     ui->updateASDBButton->setDisabled(true);
                     ui->syncPlaylistButton->setDisabled(true);
+                    ui->enableAudaciousLogButton->setDisabled(true);
+                    ui->enableAIMPOnlyradioButton->setDisabled(true);
+        }
+        if (s_audaciouslogenabled == false){
+            ui->enableAIMPOnlyradioButton->setChecked(true);
+            ui->enableAudaciousLogButton->setChecked(false);
+        }
+        if (s_audaciouslogenabled == true){
+            ui->enableAIMPOnlyradioButton->setChecked(false);
+            ui->enableAudaciousLogButton->setChecked(true);
         }
         if (s_includeNewTracks) {ui->InclNewcheckbox->setChecked(true);}
         if (s_includeAlbumVariety) {
@@ -1303,6 +1319,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_androidpathname = settings.value("s_androidpathname","").toString();
     m_prefs.s_syncthingpathname = settings.value("s_syncthingpathname","").toString();
     m_prefs.s_mm4disabled = settings.value("s_mm4disabled", Constants::kUserDefaultMM4Disabled).toBool();
+    m_prefs.s_audaciouslogenabled = settings.value("s_audaciouslogenabled", Constants::kAudaciouslogenabled).toBool();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -1334,6 +1351,7 @@ void ArchSimian::saveSettings()
     settings.setValue("s_mm4disabled",m_prefs.s_mm4disabled);
     settings.setValue("s_androidpathname",m_prefs.s_androidpathname);
     settings.setValue("s_syncthingpathname",m_prefs.s_syncthingpathname);
+    settings.setValue("s_audaciouslogenabled",m_prefs.s_audaciouslogenabled);
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
@@ -2038,7 +2056,6 @@ void ArchSimian::on_mmenabledradioButton_2_clicked()
     ui->statusBar->showMessage("Changed database from ArchSimian to MediaMonkey.",4000);   
 }
 
-
 void ArchSimian::on_selectAndroidDeviceButton_clicked()
 {
     QFileDialog selectAndroidDeviceButton;
@@ -2067,6 +2084,7 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
 void ArchSimian::on_updateASDBButton_clicked()
 {
 getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
+if (s_audaciouslogenabled == true) {syncAudaciousLog();} // If Audacious logging enabled, process its play history
 updateCleanLibDates(); // Update cleanlib.dsv wih new dates
 // Need to reprocess functions associated with a cleanlib.dsv change.
 std::string LastTableDate = getLastTableDate();
@@ -2074,7 +2092,7 @@ ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QStri
 ui->statusBar->showMessage("Processed lastplayed dates from Android device and updated Archsimian.",4000);
 }
 
-void ArchSimian::on_actionUpdateLastPlayed_triggered()
+void ArchSimian::on_actionUpdateLastPlayed_triggered() // already included on button for on_updateASDBButton_clicked() above - remove from menu
 {
     updateCleanLibDates();
 }
@@ -2116,8 +2134,27 @@ void ArchSimian::on_syncthingButton_clicked()
     ui->statusBar->showMessage("Saved folder location in ArchSimian.",4000);
 }
 
-
-void ArchSimian::on_actionsyncAudaciousLog_triggered()
+void ArchSimian::on_actionsyncAudaciousLog_triggered() // Need to add to on_updateASDBButton_clicked() process if enabled separately
 {
     syncAudaciousLog();
+}
+
+void ArchSimian::on_enableAudaciousLogButton_clicked()
+{
+    s_audaciouslogenabled = true;
+    ui->enableAudaciousLogButton->setChecked(true);
+    m_prefs.s_audaciouslogenabled = s_audaciouslogenabled;
+    saveSettings();
+    if (Constants::kVerbose){std::cout << "s_audaciouslogenabled changed to true: "<<s_audaciouslogenabled << std::endl;}
+    ui->statusBar->showMessage("Enabled play history logging from Audacious.",4000);
+}
+
+void ArchSimian::on_enableAIMPOnlyradioButton_clicked()
+{
+    s_audaciouslogenabled = false;
+    ui->enableAIMPOnlyradioButton->setChecked(true);
+    m_prefs.s_audaciouslogenabled = s_audaciouslogenabled;
+    saveSettings();
+    if (Constants::kVerbose){std::cout << "s_audaciouslogenabled changed to false: "<<s_audaciouslogenabled << std::endl;}
+    ui->statusBar->showMessage("Disabled play history logging from Audacious.",4000);
 }

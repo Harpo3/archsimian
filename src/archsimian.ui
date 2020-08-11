@@ -2332,7 +2332,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </font>
         </property>
         <property name="text">
-         <string>WARNING: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP log and ArchSimian. If changed back, play history logged by AIMP will not be transferred to MediaMonkey.</string>
+         <string>WARNING: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP/Audacious log and ArchSimian. If changed back, this external play history will not be automatically transferred to MediaMonkey.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2371,7 +2371,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>250</y>
+          <y>310</y>
           <width>311</width>
           <height>51</height>
          </rect>
@@ -2387,7 +2387,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>260</y>
+          <y>320</y>
           <width>141</width>
           <height>31</height>
          </rect>
@@ -2424,6 +2424,9 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="toolTip">
          <string>For AIMP Android players, updates last played history to the ArchSimian database instead updating from the MediaMonkey database. Changes are not synced to the MM4 database.</string>
         </property>
+        <property name="statusTip">
+         <string extracomment="Open Android device folder in Dolphin first and ensure kdeconnect is paired first."/>
+        </property>
         <property name="text">
          <string>Update ArchSimian Database</string>
         </property>
@@ -2449,6 +2452,9 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="text">
          <string>Set ArchSimian to sync and manage database (using Syncthing and AIMP player). </string>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup_2</string>
+        </attribute>
        </widget>
        <widget class="QRadioButton" name="mmenabledradioButton_2">
         <property name="geometry">
@@ -2463,8 +2469,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <string>Set MediaMonkey to manage database (default)</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup_2</string>
+        </attribute>
        </widget>
        <widget class="QPushButton" name="syncthingButton">
         <property name="geometry">
@@ -2506,6 +2515,57 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
         <property name="text">
          <string>Reads lastplayed dates from Android device and updates play history in Archsiman.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="enableAudaciousLogButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>250</y>
+          <width>481</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Including logging from Audacious desktop (requires add-on script - see Github)</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+       <widget class="QRadioButton" name="enableAIMPOnlyradioButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>280</y>
+          <width>461</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Update database only with AIMP (default)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+       <widget class="QLabel" name="label_14">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>450</y>
+          <width>421</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>NOTE: app will crash if you attempt to update ArchSimian without first ensuring KDEconnect is paired to the desktop, and the Android device 'primary' folder is opened in Dolphin. Connection dbus coding is still in work...</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2559,11 +2619,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <property name="title">
      <string>Android</string>
     </property>
-    <addaction name="actionSyncPlaylist"/>
     <addaction name="actionIterate_tag"/>
     <addaction name="actionGet_Last_Played_Dates"/>
-    <addaction name="actionDate_Conversion"/>
-    <addaction name="actionRemove_mp3s"/>
     <addaction name="actionUpdateLastPlayed"/>
     <addaction name="actionsyncAudaciousLog"/>
    </widget>
@@ -2878,4 +2935,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

@@ -159,8 +159,7 @@ void testid3tag(){
 }
 
 void getLastPlayedDates(QString &s_androidpathname){
-    // Gets lastplayed history from AIMP log and saves it to lastplayeddates.txt
-    // Add code here to check kdeconnect setting?
+    // Gets lastplayed history from AIMP log and save it to lastplayeddates.txt
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
     std::fstream debuglog;
     debuglog.open (s_androidpathname.toStdString() + Constants::kAIMPLogPath);
@@ -189,6 +188,10 @@ void getLastPlayedDates(QString &s_androidpathname){
     int albumline ={0};
     std::string str2{""};
     std::string str3{""};
+    std::vector<std::string>combinedvect;
+    std::vector<std::string>finalvect;
+    std::vector<std::string>outputvect;
+    std::string str4;
     while (std::getline(debug, str1)) {
         std::size_t found = str1.find(lastplayedmarker);
         // Beginning of first section
@@ -196,7 +199,6 @@ void getLastPlayedDates(QString &s_androidpathname){
             // meaning a match was FOUND for the current line; Next get the date from that same line
             //define start and end positions for date string, then save date string
             str2 = str1;
-            std::cout << "Match found at line: " << linecount << '\n';
             std::size_t foundstart = str2.find(begpos);
             std::size_t foundend1 = str2.find(endpos1);
             std::size_t foundend2 = str2.find(endpos2);
@@ -265,7 +267,10 @@ void getLastPlayedDates(QString &s_androidpathname){
                 // to export or push into vector, then reset variables and continue going through the log
                 lastplayedentry = artistentry + "," + albumentry+ "," + songentry+ "," +collecteddate;
                 //std::cout << "lastplayedentry string is: " << lastplayedentry << '\n';
-                dateslist << lastplayedentry<<"\n";
+                combinedvect.push_back(lastplayedentry);
+
+                //dateslist << lastplayedentry<<"\n";
+
                 collecteddate = "";
                 artistline = 0;
                 albumline = 0;
@@ -275,9 +280,67 @@ void getLastPlayedDates(QString &s_androidpathname){
             ++linecount;
         }
     }
-    dateslist.close();
     debug.close();
-    // Test whether a non-empty log for Audacious exists. If true launch syncAudaciousLog() function
+    std::sort (combinedvect.begin(), combinedvect.end(), std::greater<>()); // Do a reverse sort to put newer dates first
+    std::map<std::string, std::string> map; // map used to remove duplicates
+    for(auto& el: combinedvect){
+        auto it = el.find_last_of(',');           // find last ","
+        auto key = el.substr(0, it);              // extract the key
+        auto value = std::string(el.substr(it+1));  // extract the last value
+        // if it does not exist already, or if it exists and has a value greater than the one inserted:
+        if(map.find(key) == map.end() || (map.find(key) != map.end() && map[key] < value))
+            map[key] = value; // change the value
+    }
+    for(auto& [k, combinedvect]: map){
+        finalvect.push_back(k+","+combinedvect+"\n"); // Push back unique entries to new vector finalvect
+    }
+    std::string selectedLPLArtistToken; // Artist variable from lastplayeddates.txt
+    std::string selectedLPLTitleToken; // Title variable from lastplayeddates.txt
+    std::string selectedLPLAlbumToken; // Title variable from lastplayeddates.txt
+    std::string selectedLPLSQLDateToken; // SQL Date variable from lastplayeddates.txt
+    for (auto & d : finalvect){ // Iterate through finalvect for each line d
+        std::stringstream s_streamd(d); //create string stream with line d
+        std::vector<std::string> resulttemp; // create temp vector resulttemp to store tokens
+        int tokenCount{0}; //token count is the number of delimiter characters within str
+        while(s_streamd.good()) { // Iterate the string and parse tokens
+            std::string token;
+            while (std::getline(s_streamd, token, ','))
+            {
+                if (tokenCount == 0) {selectedLPLArtistToken = token;}
+                if (tokenCount == 1) {selectedLPLAlbumToken = token;}
+                if (tokenCount == 2) {selectedLPLTitleToken = token;}
+                if (tokenCount == 3) {selectedLPLSQLDateToken = token;}
+                ++ tokenCount;
+            }
+        }
+        //Send all tokens to the new output vector with the date token placed at the front
+        str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
+        outputvect.push_back(str4);
+        resulttemp.shrink_to_fit();
+    }
+    std::sort (outputvect.begin(), outputvect.end()); // Now, sort the output vector by date
+    // Now, output order to move the date back to the last element when writing file
+    for (auto & j : outputvect) {// Iterate through the vector for each line j
+        std::stringstream s_stream(j); //create string stream with line j
+        std::vector<std::string> result; // create temp vector result
+        std::string datetemp;
+        std::string resttemp;
+        while(s_stream.good()) {
+            std::string substr;
+            getline(s_stream, substr, ','); //get token (substr) delimited by comma
+            result.push_back(substr); // populate result vector with tokens
+        }
+        for(unsigned long i = 0; i<result.size(); i++) {    // now reorder tokens from result with date in correct position
+            datetemp = result.at(0);
+            resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
+        }
+        dateslist << resttemp <<","<< datetemp; // Write reordered tokens to file
+        result.shrink_to_fit();
+    }
+    combinedvect.shrink_to_fit();
+    finalvect.shrink_to_fit();
+    outputvect.shrink_to_fit();
+    dateslist.close();
 }
 
 void updateCleanLibDates(){
@@ -323,9 +386,6 @@ void updateCleanLibDates(){
         std::vector<std::string> tokens;
         std::stringstream check1(str);// stringstream for parsing carat delimiter
         std::string intermediate; // intermediate value for parsing carat delimiter
-        double SQLDateLib{0.0};
-        double SQLDateLog{0.0};
-
         // Open tokens vector to tokenize current string using carat '^' delimiter
         while(getline(check1, intermediate, '^')) // Inner loop: iterate through tokens of string using tokens vector
         {
@@ -335,16 +395,14 @@ void updateCleanLibDates(){
         selectedLibAlbumToken = tokens[Constants::kColumn3];
         selectedLibTitleToken = tokens[Constants::kColumn7];
         selectedLibSQLDateToken = tokens[Constants::kColumn17];
-        SQLDateLib = std::stod(selectedLibSQLDateToken);
         for(auto & i : lastplayedvec){ // read each row element from the lastplayedvec into variables for comparison with Lib tokens
             selectedArtistToken = i[Constants::kColumn0];
             selectedAlbumToken = i[Constants::kColumn1];
             selectedTitleToken = i[Constants::kColumn2];
             selectedSQLDateToken = i[Constants::kColumn3];
-            SQLDateLog = std::stod(selectedSQLDateToken);
             // Match Artist and title in cleanLib from lastplayedvec and change SQL date for each if log date is newer
             if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken)
-                    && (selectedTitleToken == selectedLibTitleToken) && (SQLDateLog > SQLDateLib)){
+                    && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
                 tokens.at(Constants::kColumn17) = selectedSQLDateToken;
                 str = getChgdDSVStr(tokens,str); // recompile str with changed token
                 continue;
@@ -363,20 +421,6 @@ void removeLinuxPlaylistFile(){
     const std::string linuxplpathdirname = getenv("HOME");
     std::string plfile(linuxplpathdirname + "/cleanedplaylist.m3u");
     remove (plfile.c_str());// remove old exported playlist from home directory
-}
-
-void splitsort(const std::string &s, std::string &mycombinedtext, std::string &selectedLPLSQLDate) {
-   size_t idx = s.find(',');
-   mycombinedtext= s.substr(0, idx+2);
-   selectedLPLSQLDate = s.substr(idx+3);
-}
-
-bool mapFunc(const std::string &a, const std::string &b) {
-   std::string selectedLPLSQLDate1, selectedLPLSQLDate2;
-   std::string mycombinedtext1, mycombinedtext2;
-   splitsort(a, mycombinedtext1, selectedLPLSQLDate1);
-   splitsort(b, mycombinedtext2, selectedLPLSQLDate2 );
-   return selectedLPLSQLDate1 < selectedLPLSQLDate2;
 }
 
 void syncAudaciousLog(){

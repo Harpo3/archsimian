@@ -90,6 +90,10 @@ private slots:
 
     void on_actionsyncAudaciousLog_triggered();
 
+    void on_enableAudaciousLogButton_clicked();
+
+    void on_enableAIMPOnlyradioButton_clicked();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
@@ -126,6 +130,7 @@ private:
         int s_mintrackseach{};
         int s_mintracks{};
         bool s_mm4disabled{};
+        bool s_audaciouslogenabled;
     };
 
     void loadSettings();
