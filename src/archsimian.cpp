@@ -1629,7 +1629,7 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.05"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.06"
                                                  "\n\nThis program is free software: you can redistribute it and/or modify"
                                                  " it under the terms of the GNU General Public License as published by"
                                                  " the Free Software Foundation, either version 3 of the License, or"
@@ -1888,11 +1888,6 @@ void ArchSimian::on_windowsDriveLtrEdit_textChanged(const QString &arg1)
     s_winDriveLtr = m_prefs.s_WindowsDriveLetter;
     saveSettings();
 }
-
-//void ArchSimian::on_playlistLimitSlider_valueChanged(int value)
-//{
-// Adjustment for track limit percentage. Set variable by dividing slider value by 100.
-//}
 
 void ArchSimian::on_actionExport_Playlist_to_Linux_triggered()
 {

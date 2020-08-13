@@ -294,37 +294,48 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file (514)." << std::endl;}
+    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file (297)." << std::endl;}
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
-        std::cout << "selectTrack: Error opening ratedabbr2.txt (518)." << std::endl;
+        std::cout << "selectTrack: Error opening ratedabbr2.txt (301)." << std::endl;
         std::exit(EXIT_FAILURE);
     }
-    std::string str1; // store the string for ratedabbr2.txt
-    std::string str2; // store the string for artistexcludes.txt
-    std::string str3; // store the string for finalids.txt
-    bool notInPlaylist{false};
-    std::string currentArtistInterval; // token is the contents of each column of data
-    std::string currentArtist; // Artist variable from
+    std::string str1; // for ratedabbr2.txt
+    std::string str2; // for finalids.txt
+    std::string currentArtistInterval;
+    std::string currentArtist;
     std::string tokenLTP;
-    std::string selectedArtistToken; // Artist variable from
+    std::string selectedArtistToken;
     std::string ratingCode;
     std::string songPath;
     std::string artistInterval;
     std::string playlistPos;
-    std::string songLengtha; //just added
+    std::string songLengtha;
     std::string artistIntervala;
     std::string albumID;
     static bool s_excludeMatch{false};
     static bool s_excludeMatch2{false};
-    std::vector<std::string>finaltracksvect; // New vector to store final selections
+    std::vector<std::string>finaltracksvect; // Vector to store final selections
     finaltracksvect.reserve(10000);
-    if (Constants::kVerbose) std::cout << "selectTrack function: Created new vector to store final selections" << std::endl;
-    // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"    
+
+    // Create a vector for list of excluded artists
+    std::vector<std::string> artistsexcludedvec;
+    std::string artistexcludes2 = appDataPathstr.toStdString()+"/artistexcludes.txt";
+    std::ifstream artexcludes(artistexcludes2); // Open artistexcludes.txt as ifstream
+    std::string line;
+    while ( std::getline(artexcludes, line) ) { // Populate vector
+        if ( !line.empty() )
+            artistsexcludedvec.push_back(line);
+    }
+
+    /* Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt" and for each string, identify each token
+    to screen out songs with (a) rating codes that do not match: ratingCode token, (b) an existing position on the
+    playlist: playlistPos token, (c) artists that are on the excluded artists list: selectedArtistToken token, and if
+    selected by user, (d) albums that are on the album excludes list: albumID token. */
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
-        std::istringstream iss(str1); // str is the string of each row
-        std::string token; // token is the contents of each column of data
+        std::istringstream iss(str1); // string of each row
+        std::string token{""}; // token is the contents of each column of data
         int tokenCount{0}; //token count is the number of delimiter characters within str
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ',')) {
@@ -338,40 +349,35 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             if (tokenCount == Constants::kColumn7)  {playlistPos = token;}
             ++ tokenCount;
         }
-        if (playlistPos == "0") {notInPlaylist = true;} // Set variable to check whether item is or is not in the playlist
-        else {notInPlaylist = false;} // Set variable to check whether item is or is not in the playlist
-        if (notInPlaylist == 0) {continue;} // If item is already on the playlist, continue to next str1
-        if (ratingCode != std::to_string(s_ratingNextTrack)) {continue;} // If item does not have the rating selected, continue to next str1
+        // If track does not have the rating selected or have a playlist position (already on the playlist, continue to next str1
+        if ((ratingCode != std::to_string(s_ratingNextTrack)) || (playlistPos != "0")) {continue;}
+
         /*
-         If str1 has not yet been skipped, a track has been found with the rating selected and is not yet been placed on the playlist
-         Now, open an inner loop and iterate through artistexcludes.txt, comparing each 'exclude' entry against the artist token.
-         Continue to next str1 if a match found (meaning it identifies an excluded artist).
-        */        
-        QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-        std::ifstream artistexcludes;  // Next ensure artistexcludes.txt is ready to open
-        artistexcludes.open (appDataPathstr.toStdString()+"/artistexcludes.txt");
-        if (artistexcludes.is_open()) {artistexcludes.close();}
-        else {std::cout << "selectTrack: Error opening artistexcludes.txt file." << std::endl;}
-        std::string artistexcludes2 = appDataPathstr.toStdString()+"/artistexcludes.txt"; // now we can use it as input file
-        std::ifstream artexcludes(artistexcludes2); // Open artistexcludes.txt as ifstream
-        if (!artexcludes.is_open()) {
-            std::cout << "selectTrack: Error opening artistexcludes.txt." << std::endl;
-            std::exit(EXIT_FAILURE);
+         If str1 has not yet been skipped, a track has been found with the rating selected and it has not yet been placed on the playlist.
+         Now, check all elements in the artistexcludes.txt vector, comparing each 'exclude' entry against the artist token.
+         Continue to next str1 if a match found (meaning it identified an excluded artist).
+        */
+        trim_cruft(selectedArtistToken);
+        bool excludedartistfound = false;
+        // Iterate over all elements in Vector
+        for (auto & elem : artistsexcludedvec)
+        {
+            if (elem == selectedArtistToken)
+            {
+                excludedartistfound = true;
+                break;
+            }
         }
-        s_excludeMatch = false; // set default to not exclude based on artist
-        while (std::getline(artexcludes, str2)) {
-            if (std::string(str2) == selectedArtistToken) {s_excludeMatch = true;} // If excluded artist found, set bool to true
-        }
-        if (s_excludeMatch){
-            artexcludes.close();
-            continue;} // if an excluded artist is found continue to next str1
+        if(excludedartistfound){continue;}
         artexcludes.close();
+
         /*
            If not yet skipped (!s_excludeMatch), and if the user has enabled the album variety feature, open another inner loop and iterate through
            finalids.txt (which contains the album IDs which are to be excluded) and compare each ID to the str1 albumID token.
            Continue to next str1 if a match found (meaning it identifies an excluded album ID).
         */
-        if ((s_includeAlbumVariety) && (!s_excludeMatch)){ // added condition on 11 Apr 2020 ---> && (!s_excludeMatch)           
+
+        if ((s_includeAlbumVariety) && (!s_excludeMatch)){
             QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
@@ -384,30 +390,31 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
                 std::exit(EXIT_FAILURE);
             }
             s_excludeMatch2 = false;
-            while (std::getline(artalbexcludes, str3)) {
-                trim_cruft(str3);
+            while (std::getline(artalbexcludes, str2)) {
+                trim_cruft(str2);
                 trim_cruft(albumID);
-                if (std::string(str3) == albumID) {
-                    s_excludeMatch2 = true; // If excluded album found, set bool to true                    
-                }                
+                if (std::string(str2) == albumID) {
+                    s_excludeMatch2 = true; // If excluded album found, set bool to true
+                }
             }
             if (s_excludeMatch2){
                 artalbexcludes.close();
-                continue;}// if an excluded artist is found continue to next str1
+                continue;}// if an excluded album is found continue to next str1
             artalbexcludes.close();
-        } 
+        }
         finaltracksvect.push_back(tokenLTP+","+songPath); // If not skipped by now, add the track to the final list
         // end of the str1 while block, continue to next str1
     }
+    artistsexcludedvec.shrink_to_fit();
     ratedSongsTable.close();
     std::sort (finaltracksvect.begin(), finaltracksvect.end()); // sorts vector by LTP so the oldest track is first
     std::string fullstring = finaltracksvect.front(); // Saves the first item in vector to a variable
     std::vector<std::string> splittedStrings = split(fullstring, ','); // Function splits the variable and leaves the track path only
     *s_selectedTrackPath = splittedStrings[1];
-    if (Constants::kVerbose) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
-    std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
+    if (Constants::kVerbose) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
+    std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Append new s_selectedTrackPath to cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
-    playlist.close();    
+    playlist.close();
     std::string selectedTrackPathshort;
     if (Constants::kVerbose) std::cout << "selectTrack function: Track selected and added (non-code-1): " << *s_selectedTrackPath  << std::endl;
     finaltracksvect.shrink_to_fit();
