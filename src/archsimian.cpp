@@ -1,6 +1,3 @@
-//archsimian.cpp is equivalent to MainWindow.cpp. This and archsimian.h are
-// where the UI code resides. The main () function is located at main.cpp
-
 #include <QSettings>
 #include <QtWidgets>
 #include <QPalette>
@@ -99,11 +96,11 @@ s_rCode1TotTrackQty{0}, s_rCode1MsTotTime{0},s_rCode3TotTrackQty{0},s_rCode3MsTo
 s_rCode4TotTrackQty{0}, s_rCode4MsTotTime{0},s_rCode5TotTrackQty{0},s_rCode5MsTotTime{0},
 s_rCode6TotTrackQty{0},s_rCode6MsTotTime{0},s_rCode7TotTrackQty{0},s_rCode7MsTotTime{0},
 s_rCode8TotTrackQty{0},s_rCode8MsTotTime{0};
-// Second group is declared to get recently played statistics for last six 10-day periods
-// First range is between yesterday and eleven days ago, so first count is
-// all values between (currSQLDate - 1) and (currSQLDate - 10.999)
-// then (currSQLDate - 11) and (currSQLDate - 20.999) and so on to 60.999
-// so anything greater than currSQLDate - 60.999 is counted, then subcounted to each 10 day period
+/* Second group is declared to get recently played statistics for last six 10-day periods
+ First range is between yesterday and eleven days ago, so first count is
+ all values between (currSQLDate - 1) and (currSQLDate - 10.999)
+ then (currSQLDate - 11) and (currSQLDate - 20.999) and so on to 60.999
+ so anything greater than currSQLDate - 60.999 is counted, then subcounted to each 10 day period */
 static int s_SQL10TotTimeListened{0},s_SQL10DayTracksTot{0},s_SQL20DayTracksTot{0},
 s_SQL30DayTracksTot{0},s_SQL40DayTracksTot{0},s_SQL50DayTracksTot{0},s_SQL60DayTracksTot{0};
 static double s_SQL20TotTimeListened{0},s_SQL30TotTimeListened{0},s_SQL40TotTimeListened{0},
@@ -198,15 +195,15 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->setupUi(this);
     ui->mainQTabWidget->setCurrentIndex(0);
 
-    // Step 1. Determine if user configuration exists:
-    //
-    // Use QSettings archsimian.conf file entries to check entries for mmBackupDBDir, mmPlaylistDir, and musicLibraryDir
-    // If any are blank, or the dir found does not exist, or file MM.DB does not exist at the location specified, then
-    // launch child window for user to set the locations prior to launch of main window. When child window
-    // is closed verify the locations and files selected exist.
-    //
-    // UI configuration: determine state of user config
-    //
+    /* Step 1. Determine if user configuration exists:
+
+     Use QSettings archsimian.conf file entries to check entries for mmBackupDBDir, mmPlaylistDir, and musicLibraryDir
+     If any are blank, or the dir found does not exist, or file MM.DB does not exist at the location specified, then
+     launch child window for user to set the locations prior to launch of main window. When child window
+     is closed verify the locations and files selected exist.
+
+     UI configuration: determine state of user config */
+
     if ((s_mmBackupDBDir != nullptr) && (s_musiclibrarydirname != nullptr) && (s_mmPlaylistDir != nullptr) &&(s_winDriveLtr != nullptr)){
         if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 1. The locations s_mmBackupDBDir, s_musiclibrarydirname & mmPlaylistDir have all been set up." << std::endl;}
         s_bool_IsUserConfigSet = true;
@@ -340,10 +337,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                          "(7) Close (which saves the locations and settings) and restart the program."));
     }
 
-    // Step 3. Determine if Archsimian songs table exists. If it does not, run diagnostics. If user configuration exists
-    // and MM4 data exists (s_bool_IsUserConfigSet and s_bool_MMdbExist are true),
-    // determine if cleanlib.dsv songs table (cleanLibFile) exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
-    // imported from MM.DB) (sets s_bool_CleanLibExist)
+    /* Step 3. Determine if Archsimian songs table exists. If it does not, run diagnostics. If user configuration exists
+     and MM4 data exists (s_bool_IsUserConfigSet and s_bool_MMdbExist are true),
+     determine if cleanlib.dsv songs table (cleanLibFile) exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
+     imported from MM.DB) (sets s_bool_CleanLibExist) */
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (!s_mm4disabled)) {
         bool tmpbool{true};
         tmpbool = doesFileExist(cleanLibFile);
@@ -378,10 +375,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((Constants::kVerbose)&&(s_bool_IsUserConfigSet)) std::cout << "Archsimian.cpp: Step 3. Does CleanLibFile exist. s_bool_CleanLibExist result: "
                                                                    << s_bool_CleanLibExist << std::endl;
 
-    // Step 3a. If MM4 update is disabled (s_mm4disabled is true), determine if Archsimian songs table exists. If it does not, run diagnostics. If user
-    //  configuration exists (s_bool_IsUserConfigSet and s_mm4disabled are true),
-    // determine if cleanlib.dsv songs table (cleanLibFile) exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
-    // imported from MM.DB) (sets s_bool_CleanLibExist)
+    /* Step 3a. If MM4 update is disabled (s_mm4disabled is true), determine if Archsimian songs table exists. If it does not, run diagnostics. If user
+     configuration exists (s_bool_IsUserConfigSet and s_mm4disabled are true),
+     determine if cleanlib.dsv songs table (cleanLibFile) exists in AS, function doesFileExist (const std::string& name)  (dir paths corrected,
+     imported from MM.DB) (sets s_bool_CleanLibExist) */
     if ((s_bool_IsUserConfigSet) && (s_mm4disabled)) {
         bool tmpbool{true};
         tmpbool = doesFileExist(cleanLibFile);
@@ -413,9 +410,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
     if ((Constants::kVerbose)&&(s_bool_IsUserConfigSet)) std::cout << "Archsimian.cpp: Step 3a. Does CleanLibFile exist. s_bool_CleanLibExist result: "
                                                                    << s_bool_CleanLibExist << std::endl;
 
-    // 4. Determine if MM.DB was recently updated unless MM4 update has been disabled. s_bool_MMdbUpdated is set by comparing MM.DB file date
-    // to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
-    // will need to run diagnostics and update.
+    /* 4. Determine if MM.DB was recently updated unless MM4 update has been disabled. s_bool_MMdbUpdated is set by comparing MM.DB file date
+     to CleanLib (songs table) file date. If the MM.DB file date is newer (greater) than the CleanLib file date
+     will need to run diagnostics and update. */
 
     if ((s_bool_IsUserConfigSet) && (!s_mm4disabled)) {
         s_bool_MMdbUpdated = recentlyUpdated(s_mmBackupDBDir);
@@ -447,15 +444,15 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
      }
 
-    // Step 5. Unless MM4 update has been disabled, if user configuration and MM4 data exist, but the songs table does not, import songs table (from MM.DB to libtable.dsv to cleanlib.dsv)
-    // into Archsimian: If user configuration and MM4 data exist, but the songs table does not (bool_IsUserConfigSet, s_bool_MMdbExist are true,
-    // s_bool_CleanLibExist is false), import songs table into AS, by running writeSQLFile() function, which creates the temporary basic table file
-    // libtable.dsv; then run the getLibrary() function, which creates the refined table file cleanlib.dsv The getLibrary() function completes the
-    // following refinements: (a) corrects the directory paths to Linux, (b) adds random lastplayed dates for rated or "new-need-to-be-rated"
-    // tracks that have no play history, (c) creates rating codes for any blank values found in GroupDesc col, using POPM values,
-    // and (d) creates Artist codes (using col 1) and places the code in Custom2 if Custom2 is blank. Then set s_bool_CleanLibExist to true, rechecking,
-    // run doesFileExist (const std::string& name) function. After verifying  cleanlib.dsv exists, remove temporary basic table file
-    // libtable.dsv Evaluates s_bool_CleanLibExist for existence of cleanlib.dsv (cleanLibFile)
+    /* Step 5. Unless MM4 update has been disabled, if user configuration and MM4 data exist, but the songs table does not, import songs table (from MM.DB to libtable.dsv to cleanlib.dsv)
+     into Archsimian: If user configuration and MM4 data exist, but the songs table does not (bool_IsUserConfigSet, s_bool_MMdbExist are true,
+     s_bool_CleanLibExist is false), import songs table into AS, by running writeSQLFile() function, which creates the temporary basic table file
+     libtable.dsv; then run the getLibrary() function, which creates the refined table file cleanlib.dsv The getLibrary() function completes the
+     following refinements: (a) corrects the directory paths to Linux, (b) adds random lastplayed dates for rated or "new-need-to-be-rated"
+     tracks that have no play history, (c) creates rating codes for any blank values found in GroupDesc col, using POPM values,
+     and (d) creates Artist codes (using col 1) and places the code in Custom2 if Custom2 is blank. Then set s_bool_CleanLibExist to true, rechecking,
+     run doesFileExist (const std::string& name) function. After verifying  cleanlib.dsv exists, remove temporary basic table file
+     libtable.dsv Evaluates s_bool_CleanLibExist for existence of cleanlib.dsv (cleanLibFile) */
 
     if ((Constants::kVerbose)&&(!s_bool_MMdbUpdated)&&(s_bool_CleanLibExist)&&(s_bool_IsUserConfigSet)&&(!s_mm4disabled)){
         std::cout << "Archsimian.cpp: Step 5. CleanLib file exists and MM.DB was not recently updated. Skip to Step 6."<< std::endl;}
@@ -480,9 +477,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
             if (execvp("sqlite3", argv) == -1)
                 exit(EXIT_FAILURE);
         }
-        else if (c_pid > 0){  // Parent process starts here. Write from libtable.dsv and gather stats
-            // First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
-            //Check to ensure the file has finshed being written
+        else if (c_pid > 0){  /* Parent process starts here. Write from libtable.dsv and gather stats
+            First, reopen libtable.dsv, clean track paths, and output to cleanlib.dsv
+            Check to ensure the file has finshed being written */
             if( (c_pid = wait(&status)) < 0){
                 perror("wait");
                 _exit(1);
@@ -506,10 +503,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_CleanLibExist = false;
     }
 
-    // Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
-    // songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), run function to process/update statistics getDBStats()
+    /* Step 6. If user configuration exists, MM.DB exists and songs table exists, process/update statistics: If user configuration exists, MM4 data exists,
+     songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), run function to process/update statistics getDBStats()
 
-    // Treat MM.DB as true and needs update if MM4 is disabled, for rest of setup
+    Treat MM.DB as true and needs update if MM4 is disabled, for rest of setup */
     if (s_mm4disabled){
         s_bool_MMdbExist = true;
         s_bool_MMdbUpdated = false;
@@ -657,9 +654,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-    // Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
-    // MM.DB was not recently updated, check for state of s_bool_artistsadjExist (artistsadj.txt).
-    // If file is missing or empty, create file with artist statistics
+    /* Step 7a. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
+     MM.DB was not recently updated, check for state of s_bool_artistsadjExist (artistsadj.txt).
+     If file is missing or empty, create file with artist statistics */
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) &&
             (s_bool_dbStatsCalculated) && (!s_bool_MMdbUpdated)) {
@@ -729,8 +726,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
 
-    // Step 7b. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
-    // MM.DB was recently updated, create file with artist statistics
+    /* Step 7b. If user configuration exists, MM.DB exists, songs table exists, statistics are processed, and
+     MM.DB was recently updated, create file with artist statistics */
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) &&
             (s_bool_dbStatsCalculated) && (s_bool_MMdbUpdated)) {
@@ -744,11 +741,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7b. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
     }
 
-    // 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
-    // a modified database with only rated tracks and which include artist intervals calculated for each: If user configuration exists,
-    // MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist,
-    // s_bool_dbStatsCalculated, bool10 are all true), run function getSubset() to create a modified database file with rated tracks
-    // only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist)
+    /* 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
+     a modified database with only rated tracks and which include artist intervals calculated for each: If user configuration exists,
+     MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist,
+     s_bool_dbStatsCalculated, bool10 are all true), run function getSubset() to create a modified database file with rated tracks
+     only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist) */
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist)  && (s_bool_dbStatsCalculated)
             && (s_bool_artistsadjExist) && ((!s_bool_RatedAbbrExist) || (s_mm4disabled))) {
@@ -770,11 +767,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 9. Default playlist found and selected." << std::endl;}
 
-    // 10. If a playlist was identified in the user config (step 9), generate the playlist file: If user configuration
-    // exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
-    // (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
-    // then set s_bool_PlaylistExist to true, rechecking, run doesFileExist (const std::string& name) function. Evaluates s_bool_PlaylistExist and sets to true
-    // (after running getPlaylist) if initially false
+    /* 10. If a playlist was identified in the user config (step 9), generate the playlist file: If user configuration
+     exists, MM4 data exists, songs table exists (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist are all true), and playlist from user config exists
+     (s_bool_PlaylistSelected is true), run function to generate cleaned playlist file getPlaylist()
+     then set s_bool_PlaylistExist to true, rechecking, run doesFileExist (const std::string& name) function. Evaluates s_bool_PlaylistExist and sets to true
+     (after running getPlaylist) if initially false */
 
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist) && (s_bool_PlaylistSelected) && (s_topLevelFolderExists)){
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 10. Regenerating 'cleanedplaylist' file for editing using default playlist identified in user config." << std::endl;}
@@ -799,8 +796,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         QMainWindow::setWindowTitle("ArchSimian - No playlist selected");
     }
 
-    //11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
-    // using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist); And, get the Windows drive letter.
+    /* 11. If playlist exists, calculate the playlist size: If cleaned playlist exists (s_bool_PlaylistExist is true), obtain playlist size
+     using function cstyleStringCount(),  s_playlistSize = cstyleStringCount(cleanedPlaylist); And, get the Windows drive letter.*/
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
         if (s_playlistSize < 2) {
@@ -814,13 +811,13 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                               "as: "<< s_winDriveLtr.toStdString() << std::endl;}
     }
 
-    // 12. If playlist exists, obtain the historical count (in addition to the playlist count) up to the sequential track limit:
-    // If cleaned playlist exists (s_bool_PlaylistExist is true), obtain the historical count (in addition to the playlist count) up to the
-    // sequential track limit. A variable is needed (which later will be used to obtain additional play history outside of
-    // playlist, as part of a later function to make a new track selection), using the variable s_histCount. The value is
-    // calculated [ can be modified to use the function  to added function void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
-    // or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
-    // and SequentialTrackLimit obtained with data from function getDBStats()
+    /* 12. If playlist exists, obtain the historical count (in addition to the playlist count) up to the sequential track limit:
+     If cleaned playlist exists (s_bool_PlaylistExist is true), obtain the historical count (in addition to the playlist count) up to the
+     sequential track limit. A variable is needed (which later will be used to obtain additional play history outside of
+     playlist, as part of a later function to make a new track selection), using the variable s_histCount. The value is
+     calculated [ can be modified to use the function to an added function like void getHistCount(&s_SequentialTrackLimit,&s_playlistSize),
+     or just: s_histCount = long(s_SequentialTrackLimit) – long(s_playlistSize); this uses both playlist size from 10
+     and SequentialTrackLimit obtained with data from function getDBStats() */
 
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)) {
         s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
@@ -828,11 +825,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 12. s_histCount is: "<< s_histCount << std::endl;}
     }
 
-    //13. If playlist exists, artist statistics are processed, and modified database exists, create/update excluded artists
-    // list. Creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
-    //ratingCodeSelected and selectTrack: If cleaned playlist exists (s_bool_PlaylistExist is true), and artistsadj.txt exists (s_bool_artistsadjExist is true) and modified database exists
-    // (s_bool_RatedAbbrExist), run function getExcludedArtists() to create/update excluded artists list using vectors
-    // read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt.
+    /* 13. If playlist exists, artist statistics are processed, and modified database exists, create/update excluded artists
+     list. Creates temporary database (ratedabbr2.txt) with playlist position numbers for use in subsequent functions,
+     ratingCodeSelected and selectTrack: If cleaned playlist exists (s_bool_PlaylistExist is true), and artistsadj.txt exists (s_bool_artistsadjExist is true) and modified database exists
+     (s_bool_RatedAbbrExist), run function getExcludedArtists() to create/update excluded artists list using vectors
+     read in from the following files: cleanlib.dsv, artistsadj.txt, and cleanedplaylist.txt. Writes artistexcludes.txt. */
 
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 13. Processing artist stats and excluded artists list. Creating temporary database (ratedabbr2.txt)"<< std::endl;}
     if (Constants::kVerbose){std::cout << "                         with playlist position numbers for use in subsequent functions, ratingCodeSelected and selectTrack."<< std::endl;}
@@ -952,6 +949,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->albumsTab->setEnabled(true);
     }
     // 15. Sets the playlist size limit to restrict how many total tracks can be added to any playlist
+
     if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. Run setPlaylistLimitCount to set the initial count for playlistLimitCount." << std::endl;}
     // Set variables for playlist limit applicable for all playlists created
     if (s_bool_IsUserConfigSet)
@@ -974,8 +972,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
     {
-        // If a default playlist is found, set s_OpenPlaylistLimit to the s_PlaylistLimit
-        // Then, set s_MaxAvailableToAdd, using the s_OpenPlaylistLimit less the number of tracks already in the playlist
+        /* If a default playlist is found, set s_OpenPlaylistLimit to the s_PlaylistLimit
+         Then, set s_MaxAvailableToAdd, using the s_OpenPlaylistLimit less the number of tracks already in the playlist */
         s_OpenPlaylistLimit = s_PlaylistLimit;
         s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist found. Setting "
@@ -1028,13 +1026,13 @@ void ArchSimian::on_addsongsButton_released(){
     std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    // If adding the first song to an empty playlist, open an empty playlist (cleanedplaylist.txt) and
-    // and set an arbitrary rating code (6) for s_ratingNextTrack, before beginning
+    /* If adding the first song to an empty playlist, open an empty playlist (cleanedplaylist.txt) and
+     and set an arbitrary rating code (6) for s_ratingNextTrack, before beginning */
     if (s_playlistSize == 0) {
         std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
         ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
         ofs.close();
-        {s_ratingNextTrack = 6;}
+        {s_ratingNextTrack = 6;}        
     }
     std::ofstream songtext(appDataPathstr.toStdString()+"/songtext.txt",std::ios::app); // output file append mode for writing final song selections (UI display)
     // Determine the rating for the track selection if there are already tracks in the playlist
@@ -1044,10 +1042,10 @@ void ArchSimian::on_addsongsButton_released(){
                                                s_ratingRatio7,s_ratingRatio8);
     }
     if (Constants::kVerbose) std::cout <<"on_addsongsButton_released: ratingCodeSelected function before loop completed. Result is: "<< s_ratingNextTrack <<
-                                         ". Now starting loop (913) to select tracks and add them to playlist..." <<std::endl;
+                                         ". Now starting loop (1047) to select tracks and add them to playlist..." <<std::endl;
     // Start loop for the number of tracks the user selected to add (numtracks)
     for (int i=0; i < numTracks; i++){
-        if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Top of Loop (914). Count: " <<i<<". Adding track "<< i + 1<<"." <<std::endl;
+        if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Top of Loop (1050). Count: " <<i<<". Adding track "<< i + 1<<"." <<std::endl;
         s_uniqueCode1ArtistCount = 0;
         s_code1PlaylistCount = 0;
         s_lowestCode1Pos = Constants::kMaxLowestCode1Pos;
@@ -1075,8 +1073,9 @@ void ArchSimian::on_addsongsButton_released(){
                 getTrimArtAlbmList();
                 getAlbumIDs();
             }
-            if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Now selecting track for non-code-1 track selection (function selectTrack)." << std::endl;
+            if (Constants::kVerbose) std::cout << "on_addsongsButton_released (1078): Now running selectTrack for non-code-1 track selection (function selectTrack). Clearing s_selectedTrackPath" << std::endl;
             try {
+                s_selectedTrackPath = "";
                 selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
             }
             catch (const std::bad_alloc& exception) {
@@ -1874,16 +1873,16 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     // Update excluded artists  (from step 13) by running function getExcludedArtists() which also recreates ratedabbr2, and check code1 stats
     if (Constants::kVerbose){std::cout << "on_actionNew_Playlist_triggered: Running getPlaylist." << std::endl;}
     getPlaylist(s_defaultPlaylist, s_musiclibrarydirname, s_musiclibshortened, s_topLevelFolderExists);
-    if (Constants::kVerbose){std::cout << "on_actionNew_Playlist_triggered: Running getExcludedArtists." << std::endl;}
     s_bool_PlaylistSelected = true;
     // Get playlist size  (from step 11)
     s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (s_playlistSize == 1) s_playlistSize = 0;
     if (Constants::kVerbose){std::cout << "on_actionNew_Playlist_triggered: Add/change playlist. s_playlistSize is: "<< s_playlistSize << std::endl;}
-    // Recalculate historical count  (from step 12)
-    s_histCount = int(s_SequentialTrackLimit - s_playlistSize);
+    // Recalculate historical count  (from step 12). Since it is a new playlist, set s_histCount = s_SequentialTrackLimit.
+    s_histCount = int(s_SequentialTrackLimit);
     if (Constants::kVerbose){std::cout << "on_actionNew_Playlist_triggered: Add/change playlist. s_histCount is: "<< s_histCount << std::endl;}
     // Update excluded artists  (from step 13) by running function getExcludedArtists() which also recreates ratedabbr2, and check code1 stats
+    if (Constants::kVerbose){std::cout << "on_actionNew_Playlist_triggered: Running getExcludedArtists." << std::endl;}
     getExcludedArtists(s_playlistSize);
     if (s_includeNewTracks){  // If user is including new tracks (from step 13), determine if a code 1 track should be added for this particular selection
         code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1);// Retrieve rating code 1 stats
@@ -2086,6 +2085,15 @@ void ArchSimian::on_updateASDBButton_clicked()
 getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
 if (s_audaciouslogenabled == true) {syncAudaciousLog();} // If Audacious logging enabled, process its play history
 updateCleanLibDates(); // Update cleanlib.dsv wih new dates
+getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
+           &s_rCode3TotTrackQty,&s_rCode3MsTotTime,&s_rCode4TotTrackQty,&s_rCode4MsTotTime,
+           &s_rCode5TotTrackQty,&s_rCode5MsTotTime,&s_rCode6TotTrackQty,&s_rCode6MsTotTime,
+           &s_rCode7TotTrackQty,&s_rCode7MsTotTime,&s_rCode8TotTrackQty,&s_rCode8MsTotTime,
+           &s_SQL10TotTimeListened,&s_SQL10DayTracksTot,&s_SQL20TotTimeListened,
+           &s_SQL20DayTracksTot,&s_SQL30TotTimeListened,&s_SQL30DayTracksTot,&s_SQL40TotTimeListened,
+           &s_SQL40DayTracksTot,&s_SQL50TotTimeListened,&s_SQL50DayTracksTot,&s_SQL60TotTimeListened,
+           &s_SQL60DayTracksTot);
+getExcludedArtists(s_playlistSize);
 // Need to reprocess functions associated with a cleanlib.dsv change.
 std::string LastTableDate = getLastTableDate();
 ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
