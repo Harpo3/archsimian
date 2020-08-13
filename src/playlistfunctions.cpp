@@ -377,7 +377,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
            Continue to next str1 if a match found (meaning it identifies an excluded album ID).
         */
 
-        if ((s_includeAlbumVariety) && (!s_excludeMatch)){ // added condition on 11 Apr 2020 ---> && (!s_excludeMatch)           
+        if ((s_includeAlbumVariety) && (!s_excludeMatch)){
             QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
