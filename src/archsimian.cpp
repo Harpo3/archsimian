@@ -2005,7 +2005,7 @@ void ArchSimian::on_windowsDriveLtrEdit_textChanged(const QString &arg1)
 
 void ArchSimian::on_actionIterate_tag_triggered()
 {
-    testid3tag();
+updateChangedTagRatings();
 }
 
 void ArchSimian::on_actionGet_Last_Played_Dates_triggered()

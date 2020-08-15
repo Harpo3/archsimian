@@ -17,6 +17,26 @@ bool comp(int a, int b)
     return (a < b);
 }
 
+bool IsSpecialChar(char c){
+    switch(c)
+    {
+    case '\?':
+    case '@':
+    case '&':
+    case '(':
+    case ')':
+    case '#':
+    case '\"':
+    case '+':
+    case '*':
+    case '!':
+    case ';':
+    return true;
+    default:
+        return false;
+    }
+}
+
 const std::string emptyString = "";
 std::string ExtractString( std::string source, std::string start, std::string end )
 {

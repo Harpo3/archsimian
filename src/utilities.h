@@ -9,6 +9,8 @@ using StringVector2D = std::vector<StringVector>;
 
 bool comp(int a, int b);
 
+bool IsSpecialChar(char c);
+
 const std::string emptyString = "";
 std::string ExtractString( std::string source, std::string start, std::string end );
 
