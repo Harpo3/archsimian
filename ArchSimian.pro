@@ -29,6 +29,7 @@ CONFIG += c++17
 SOURCES += \
     src/albumidandselect.cpp \
     src/archsimian.cpp \
+    src/archsimiantimer.cpp \
     src/basiclibfunctions.cpp \
     src/buildalbumexcllibrary.cpp \
     src/code1.cpp \
@@ -48,6 +49,7 @@ SOURCES += \
 HEADERS += \
     src/albumidandselect.h \
     src/archsimian.h \
+    src/archsimiantimer.h \
     src/basiclibfunctions.h \
     src/buildalbumexcllibrary.h \
     src/code1.h \

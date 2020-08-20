@@ -25,6 +25,10 @@ StringVector2D readCSV(const std::string& filename);
 
 void trim_cruft(std::string& buffer);
 
+std::string& ltrim(std::string& s);
+std::string& rtrim(std::string& s);
+std::string& trim(std::string& s);
+
 bool stringMatch(std::string s1, std::string s2);
 
 bool matchLineinIfstream(std::ifstream & stream, std::string str);

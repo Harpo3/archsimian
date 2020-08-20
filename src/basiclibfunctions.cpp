@@ -387,7 +387,7 @@ void getSubset()
     std::string s_selectedTrackPath;
     StringVector2D artistIntervalVec = readCSV(appDataPathstr.toStdString()+"/artistsadj.txt");
     std::vector<std::string>ratedabbrvect;
-    // Outer loop: iterate through ratedSongsTable in the file "ratedlib.dsv"
+    // Outer loop: iterate through ratedSongsTable in the file "cleanlib.dsv"
     // Need to store col values for song path (8), LastPlayedDate (17), playlist position (will be obtained from cleanedplaylist), artist (19),
     // rating (29); artist interval will be obtained from artistsadj.txt
     while (std::getline(primarySongsTable, str1)) {  // Declare variables applicable to all rows

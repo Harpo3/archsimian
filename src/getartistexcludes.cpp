@@ -8,12 +8,17 @@
 #include <set>
 
 
-// Function to create the artistexcludes file
+// Function to determine playlist positions and positions of earlier play history, then use it to determine excluded artists
+
+
+// NEW -revise to process differently if playlist new or no default playlist, add const variable to function for
+// whether playlist exists or not
+
 void getExcludedArtists(const int &s_playlistSize)
 {
-    // Using a vector of ratedabbr and reading cleanedplaylist, calculate each playlist position,
-    // then output each position, as duplicate of ratedabbr but with position column added, to playlistposlist.txt
-    // ratedabbr2
+    // Using a vector of ratedabbr and read of cleanedplaylist, calculate each playlist position,
+    // then output each position, as a duplicate of ratedabbr but with position number added, to both playlistposlist.txt
+    // playlistposlist.txt and ratedabbr2
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::fstream filestrinterval;
     int s_playlistPosition;
@@ -30,12 +35,13 @@ void getExcludedArtists(const int &s_playlistSize)
     StringVector2D ratedabbrVec = readCSV(appDataPathstr.toStdString()+"/ratedabbr.txt");
     ratedabbrVec.reserve(50000);
     std::vector<std::string>histvect; // Vector to collect excluded artists not in the playlist but whose intervals exclude them anyway
+    histvect.reserve(50000);
     std::vector<std::string> artistExcludesVec;// Vector to collect all excluded artists
     std::ofstream playlistPosList(appDataPathstr.toStdString()+"/playlistposlist.txt"); // Output file for writing ratedabbr.txt with added artist intervals
     std::ofstream ofs; //open the ratedabbr2 file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/ratedabbr2.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    std::ofstream ratedabbr2(appDataPathstr.toStdString()+"/ratedabbr2.txt"); // output file for writing ratedabbr.txt with added artist intervals
+    std::ofstream ratedabbr2(appDataPathstr.toStdString()+"/ratedabbr2.txt"); // ratedabbr2 is output file for ratedabbr.txt (w/ position numbers added)
     std::string str1; // store the string for ratedabbr.txt line
     std::string selectedArtistToken; // Artist variable from ratedabbrVec
     std::string tokenLTP; // LastPlayed Date in SQL Time from ratedabbrVec
@@ -109,8 +115,8 @@ void getExcludedArtists(const int &s_playlistSize)
     std::sort (histvect.begin(), histvect.end());
     std::reverse (histvect.begin(), histvect.end());
     std::sort (ratedabbrVec.begin(), ratedabbrVec.end());
-    // Write ratedabbrVec to ratedabbr2.txt as a comma separated value file (ratedabbr2.txt). This includes playlist posistion
-    //  numbers, but does not include excluded artists not in the playlist (but whose intervals exclude them anyway)
+    // Write (ratedabbrVec to) ratedabbr2.txt as a comma separated value file. This adds playlist posistion
+    //  numbers, but does account for those excluded artists 'outside' the playlist (but whose intervals exclude them)
     for ( const auto &row : ratedabbrVec )
     {
         bool first = true;

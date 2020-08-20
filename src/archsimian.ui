@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -531,6 +531,19 @@
             </property>
            </widget>
           </widget>
+          <widget class="QProgressBar" name="addsongsprogressBar">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>0</y>
+             <width>191</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="value">
+            <number>24</number>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -540,12 +553,15 @@
         <string>&amp;Settings</string>
        </attribute>
        <widget class="QLabel" name="instructionlabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>410</y>
+          <x>10</x>
+          <y>510</y>
           <width>451</width>
-          <height>161</height>
+          <height>101</height>
          </rect>
         </property>
         <property name="toolTip">
@@ -573,8 +589,8 @@
        <widget class="QCheckBox" name="InclNewcheckbox">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>190</y>
+          <x>20</x>
+          <y>180</y>
           <width>381</width>
           <height>21</height>
          </rect>
@@ -595,10 +611,10 @@
        <widget class="QCheckBox" name="albumscheckBox">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>210</y>
+          <x>20</x>
+          <y>200</y>
           <width>401</width>
-          <height>21</height>
+          <height>16</height>
          </rect>
         </property>
         <property name="focusPolicy">
@@ -620,8 +636,8 @@
        <widget class="QCheckBox" name="autosavecheckBox">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>230</y>
+          <x>20</x>
+          <y>250</y>
           <width>441</width>
           <height>41</height>
          </rect>
@@ -638,7 +654,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>280</y>
+          <y>290</y>
           <width>421</width>
           <height>21</height>
          </rect>
@@ -738,6 +754,9 @@ directory location settings) and quit program.</string>
             <property name="toolTipDuration">
              <number>-1</number>
             </property>
+            <property name="statusTip">
+             <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
+            </property>
             <property name="text">
              <string>Music library location</string>
             </property>
@@ -753,7 +772,7 @@ directory location settings) and quit program.</string>
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Set the home directory (top level) of the music library and store in user settings.</string>
+             <string>Set the home directory (top level) of the music library.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -795,7 +814,7 @@ directory location settings) and quit program.</string>
              <number>-1</number>
             </property>
             <property name="statusTip">
-             <string/>
+             <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
             </property>
             <property name="whatsThis">
              <string/>
@@ -850,6 +869,9 @@ directory location settings) and quit program.</string>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Do not select the actual MM.DB file in the Windows program directory for MediaMonkey. Create a backup in another directory and select that as the location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
+            <property name="statusTip">
+             <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
+            </property>
             <property name="text">
              <string>MM.db location</string>
             </property>
@@ -892,8 +914,8 @@ MediaMonkey database backup file</string>
        <widget class="QPushButton" name="saveConfigButton">
         <property name="geometry">
          <rect>
-          <x>110</x>
-          <y>370</y>
+          <x>20</x>
+          <y>220</y>
           <width>211</width>
           <height>31</height>
          </rect>
@@ -905,10 +927,10 @@ MediaMonkey database backup file</string>
        <widget class="QLineEdit" name="windowsDriveLtrEdit">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>160</y>
-          <width>16</width>
-          <height>21</height>
+          <x>15</x>
+          <y>156</y>
+          <width>21</width>
+          <height>20</height>
          </rect>
         </property>
         <property name="maxLength">
@@ -920,8 +942,8 @@ MediaMonkey database backup file</string>
          <rect>
           <x>50</x>
           <y>150</y>
-          <width>421</width>
-          <height>36</height>
+          <width>381</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="font">
@@ -931,6 +953,9 @@ MediaMonkey database backup file</string>
           <bold>false</bold>
          </font>
         </property>
+        <property name="statusTip">
+         <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
+        </property>
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
@@ -939,6 +964,125 @@ MediaMonkey database backup file</string>
         </property>
         <property name="text">
          <string>Enter the Windows drive letter associated with your music library.</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="selectAndroidDeviceButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>440</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Android Device</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="syncthinglabel">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>480</y>
+          <width>321</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select the shared folder Syncthing will use to sync playlist and music files to Android device.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="mmdisabledradioButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>390</y>
+          <width>491</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
+        </property>
+        <property name="statusTip">
+         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
+        </property>
+        <property name="text">
+         <string>Set ArchSimian to sync and manage database (using Syncthing and AIMP player). </string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="mmenabledradioButton_2">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>420</y>
+          <width>441</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set MediaMonkey to manage database (default)</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>340</y>
+          <width>491</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>WARNING: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP/Audacious log. If changed back, the play history will not be automatically transferred to MediaMonkey.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="androiddevicebuttonlabel">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>435</y>
+          <width>331</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select KDEConnect device to sync (requires KDEconnect and AIMP player on Android device with logging enabled.)</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="syncthingButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>480</y>
+          <width>151</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Syncthing Folder</string>
         </property>
        </widget>
       </widget>
@@ -1842,7 +1986,7 @@ MediaMonkey database backup file</string>
             <double>4.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.020000000000000</double>
            </property>
           </widget>
          </item>
@@ -1855,7 +1999,7 @@ MediaMonkey database backup file</string>
             <double>4.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.020000000000000</double>
            </property>
            <property name="value">
             <double>1.010000000000000</double>
@@ -1871,7 +2015,7 @@ MediaMonkey database backup file</string>
             <double>4.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.020000000000000</double>
            </property>
            <property name="value">
             <double>1.010000000000000</double>
@@ -1887,7 +2031,7 @@ MediaMonkey database backup file</string>
             <double>4.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.020000000000000</double>
            </property>
            <property name="value">
             <double>1.010000000000000</double>
@@ -1978,14 +2122,14 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="adjhrsLabel">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>30</x>
           <y>290</y>
           <width>441</width>
           <height>71</height>
          </rect>
         </property>
         <property name="text">
-         <string>For best results, adjust the factors above so that adjusted hours is close to total rated hours (both shown below). This ensures the ratio of tracks as a percentage matches the actual hours of music available. Percentages shown above represent percentage of time assigned in the playlist for each rating category.</string>
+         <string>Percentages shown above represent percentage of time assigned in the playlist for each rating category. If maximum playlist limit has been reached, increase code 3 days and weight more to lower rated tracks. </string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2075,101 +2219,6 @@ MediaMonkey database backup file</string>
         </property>
         <property name="text">
          <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QSlider" name="playlistLimitSlider">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>90</x>
-          <y>500</y>
-          <width>251</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>70</number>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="sliderPosition">
-         <number>95</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksBelow</enum>
-        </property>
-        <property name="tickInterval">
-         <number>5</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="playlistSliderLabel">
-        <property name="geometry">
-         <rect>
-          <x>90</x>
-          <y>440</y>
-          <width>291</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Playlist capacity adjustment - adjust down if program cashes at existing playlist capacity setting. Normally 95 is adequate. </string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="playlistLimitSliderValue">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>360</x>
-          <y>500</y>
-          <width>21</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>95</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="minPlaylistLimitLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>90</x>
-          <y>520</y>
-          <width>31</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>70</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="maxPlaylistLimitLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>320</x>
-          <y>520</y>
-          <width>31</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>100</string>
         </property>
        </widget>
       </widget>
@@ -2315,63 +2364,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <attribute name="title">
         <string>Sync</string>
        </attribute>
-       <widget class="QLabel" name="label_13">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>0</y>
-          <width>491</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <weight>50</weight>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>WARNING: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP/Audacious log and ArchSimian. If changed back, this external play history will not be automatically transferred to MediaMonkey.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="selectAndroidDeviceButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>120</y>
-          <width>141</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select Android Device</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="androiddevicebuttonlabel">
-        <property name="geometry">
-         <rect>
-          <x>160</x>
-          <y>115</y>
-          <width>331</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select KDEConnect device to sync (requires KDEconnect and AIMP player on Android device with logging enabled.)</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
        <widget class="QLabel" name="label_15">
         <property name="geometry">
          <rect>
           <x>160</x>
-          <y>310</y>
+          <y>90</y>
           <width>311</width>
           <height>51</height>
          </rect>
@@ -2387,7 +2384,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>320</y>
+          <y>100</y>
           <width>141</width>
           <height>31</height>
          </rect>
@@ -2400,7 +2397,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>370</y>
+          <y>460</y>
           <width>431</width>
           <height>81</height>
          </rect>
@@ -2416,7 +2413,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>210</y>
+          <y>10</y>
           <width>181</width>
           <height>31</height>
          </rect>
@@ -2431,90 +2428,17 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <string>Update ArchSimian Database</string>
         </property>
        </widget>
-       <widget class="QRadioButton" name="mmdisabledradioButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>491</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="toolTip">
-         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
-        </property>
-        <property name="statusTip">
-         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
-        </property>
-        <property name="text">
-         <string>Set ArchSimian to sync and manage database (using Syncthing and AIMP player). </string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">buttonGroup_2</string>
-        </attribute>
-       </widget>
-       <widget class="QRadioButton" name="mmenabledradioButton_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>90</y>
-          <width>441</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Set MediaMonkey to manage database (default)</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">buttonGroup_2</string>
-        </attribute>
-       </widget>
-       <widget class="QPushButton" name="syncthingButton">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>160</y>
-          <width>151</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select Syncthing Folder</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="syncthinglabel">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>160</y>
-          <width>321</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Select the shared folder Syncthing will use to sync playlist and music files to Android device.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_17">
+       <widget class="QLabel" name="updateASDBlabel">
         <property name="geometry">
          <rect>
           <x>200</x>
-          <y>210</y>
+          <y>10</y>
           <width>291</width>
           <height>31</height>
          </rect>
         </property>
         <property name="text">
-         <string>Reads lastplayed dates from Android device and updates play history in Archsiman.</string>
+         <string>Reads lastplayed dates from AIMP/Audacious and updates the play history in Archsiman.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2524,13 +2448,16 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>250</y>
-          <width>481</width>
+          <y>70</y>
+          <width>461</width>
           <height>21</height>
          </rect>
         </property>
+        <property name="statusTip">
+         <string extracomment="Requires a script which runs using an Audacious add-on. The ArchSimian Github page has instructions."/>
+        </property>
         <property name="text">
-         <string>Including logging from Audacious desktop (requires add-on script - see Github)</string>
+         <string>AIMP plus play history from Audacious (requires add-on script - see Github)</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup</string>
@@ -2540,13 +2467,13 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>280</y>
+          <y>50</y>
           <width>461</width>
           <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>Update database only with AIMP (default)</string>
+         <string>Play history from AIMP only (default)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -2559,7 +2486,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>450</y>
+          <y>550</y>
           <width>421</width>
           <height>51</height>
          </rect>
@@ -2569,6 +2496,71 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="updateratingsButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>140</y>
+          <width>161</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Update Ratings from Tags</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_18">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>140</y>
+          <width>301</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Scans all library tags and updates any changes to ratings in the ArchSimian database (takes time)</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QTextBrowser" name="updateDBtextBrowser">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>230</y>
+          <width>491</width>
+          <height>181</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="updateDBprogressBar">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>180</y>
+          <width>211</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="updateASDBprogressBar">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>40</y>
+          <width>211</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>24</number>
         </property>
        </widget>
       </widget>
@@ -2848,7 +2840,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <tabstop>viewplaylistButton</tabstop>
   <tabstop>saveConfigButton</tabstop>
   <tabstop>windowsDriveLtrEdit</tabstop>
-  <tabstop>playlistLimitSlider</tabstop>
  </tabstops>
  <resources>
   <include location="../systray.qrc"/>
@@ -2877,8 +2868,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>137</y>
+     <x>102</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
      <x>150</x>
@@ -2909,12 +2900,12 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>49</x>
-     <y>137</y>
+     <x>61</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
      <x>358</x>
-     <y>667</y>
+     <y>734</y>
     </hint>
    </hints>
   </connection>
@@ -2936,7 +2927,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

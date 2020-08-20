@@ -182,5 +182,6 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     artistcsv.close();
     outartists2.close();
     artists.shrink_to_fit();
-    //removeAppData("artists.txt");
+    removeAppData("artists.txt");
+    removeAppData("artists2.txt");
 }

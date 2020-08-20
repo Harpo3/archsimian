@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -366,7 +367,7 @@ void updateCleanLibDates(){
     QFile::copy(tempFileStr1,tempFileStr2);
     // Create vector for new lastplayed dates
     StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // open "lastplayeddates.txt" as 2D vector lastplayedvec
-    lastplayedvec.reserve(1000);
+    lastplayedvec.reserve(10000);
     std::string selectedArtistToken; // Artist variable from lastplayedvec
     std::string selectedTitleToken; // Title variable from lastplayedvec
     std::string selectedAlbumToken; // Title variable from lastplayedvec
@@ -375,55 +376,69 @@ void updateCleanLibDates(){
     std::string selectedLibTitleToken; // Title variable from cleanlib.dsv
     std::string selectedLibAlbumToken; // Title variable from cleanlib.dsv
     std::string selectedLibSQLDateToken; // SQL Date variable from cleanlib.dsv
-    // Open cleanlib.dsv as read file
-    std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
-    cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
-    if (cleanlib.is_open()) {cleanlib.close();}
-    else {std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;}
-    std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Now we can use it as input file
-    std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib.dsv as ifstream
-    if (!SongsTable.is_open())
-    {
-        std::cout << "updateCleanLibDates: Error opening SongsTable." << std::endl;
-        std::exit(EXIT_FAILURE); // Otherwise, quit
-    }
-    std::string str; // Create ostream file to update cleanLib
-    std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing revised lastplayed dates
-    // Loop through cleanlib and find matches in lastplayed vector; for matches revised string with new SQL date and push to new file
-    while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of cleanlib
-        std::istringstream iss(str);
-        std::string token;        
-        std::vector<std::string> tokens;// Vector of string to parse each line by carat to save tokens
-        std::stringstream check1(str);// stringstream for parsing carat delimiter
-        std::string intermediate; // intermediate value for parsing carat delimiter
-        // Open tokens vector to tokenize current string using carat '^' delimiter
-        while(getline(check1, intermediate, '^'))
+    try { // operation replaces cleanlib.dsv; need to protect data in event of a fatal error
+        // Open cleanlib2.dsv as read file
+        std::ifstream cleanlib;  // First ensure cleanlib2.dsv is ready to open
+        cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
+        if (cleanlib.is_open()) {cleanlib.close();}
+        else {std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;}
+        std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Now we can use it as input file
+        std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib2.dsv as ifstream
+        if (!SongsTable.is_open())
         {
-            tokens.push_back(intermediate); // Inner loop: populate tokens vector
+            std::cout << "updateCleanLibDates: Error opening SongsTable." << std::endl;
+            std::exit(EXIT_FAILURE); // Otherwise, quit
         }
-        selectedLibArtistToken = tokens[Constants::kColumn1];
-        selectedLibAlbumToken = tokens[Constants::kColumn3];
-        selectedLibTitleToken = tokens[Constants::kColumn7];
-        selectedLibSQLDateToken = tokens[Constants::kColumn17];
-        for(auto & i : lastplayedvec){ // assign row elements from lastplayedvec to variables to compare with Lib tokens
-            selectedArtistToken = i[Constants::kColumn0];
-            selectedAlbumToken = i[Constants::kColumn1];
-            selectedTitleToken = i[Constants::kColumn2];
-            selectedSQLDateToken = i[Constants::kColumn3];
-            // Match Artist and title in cleanLib from lastplayedvec and change SQL date for each if log date is newer
-            if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken)
-                    && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
-                tokens.at(Constants::kColumn17) = selectedSQLDateToken;
-                str = getChgdDSVStr(tokens,str); // recompile str with changed token
-                continue;
+        std::string str; // Create ostream file to update cleanLib
+        std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing revised lastplayed dates
+        // Loop through cleanlib and find matches in lastplayed vector; for matches revised string with new SQL date and push to new file
+        while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of cleanlib
+            std::istringstream iss(str);
+            std::string token;
+            std::vector<std::string> tokens;// Vector of string to parse each line by carat to save tokens
+            std::stringstream check1(str);// stringstream for parsing carat delimiter
+            std::string intermediate; // intermediate value for parsing carat delimiter
+            // Open tokens vector to tokenize current string using carat '^' delimiter
+            while(getline(check1, intermediate, '^'))
+            {
+                tokens.push_back(intermediate); // Inner loop: populate tokens vector
             }
+            selectedLibArtistToken = tokens[Constants::kColumn1];
+            selectedLibAlbumToken = tokens[Constants::kColumn3];
+            selectedLibTitleToken = tokens[Constants::kColumn7];
+            selectedLibSQLDateToken = tokens[Constants::kColumn17];
+            for(auto & i : lastplayedvec){ // assign row elements from lastplayedvec to variables to compare with Lib tokens
+                selectedArtistToken = i[Constants::kColumn0];
+                selectedAlbumToken = i[Constants::kColumn1];
+                selectedTitleToken = i[Constants::kColumn2];
+                selectedSQLDateToken = i[Constants::kColumn3];
+                // Match Artist and title in cleanLib from lastplayedvec and change SQL date for each if log date is newer
+                if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken)
+                        && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
+                    tokens.at(Constants::kColumn17) = selectedSQLDateToken;
+                    str = getChgdDSVStr(tokens,str); // recompile str with changed token
+                    if (Constants::kVerbose) std::cout << "str: " <<
+                                                          str<< std::endl;
+                    continue;
+                }
+            }
+            outf << str << "\n"; // The string is valid, write to clean file
+            tokens.shrink_to_fit();
         }
-        outf << token << "\n"; // The string is valid, write to clean file
-        tokens.shrink_to_fit();
+        SongsTable.close();
+        outf.close();
+        lastplayedvec.shrink_to_fit();
     }
-    SongsTable.close();
-    outf.close();
-    lastplayedvec.shrink_to_fit();
+    catch(const std::bad_alloc& exception) {
+        std::cerr << "updateCleanLibDates: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
+                     "/.local/share/archsimian/ and inspect file for errors." << exception.what();
+        QMessageBox msgBox;
+        QString msgboxtxt = "on_addsongsButton_released: Out of memory error (bad_alloc):failed during attempt to add tracks. Likely reason: "
+                            "Not enough available tracks found. Adjust factors on the frequency tab and restart.";
+        msgBox.setText(msgboxtxt);
+        msgBox.exec();
+        qApp->quit(); //Exit program
+    }
     removeAppData("cleanlib2.dsv"); // Remove cleanlib2.dsv
 }
 
@@ -465,6 +480,7 @@ void updateChangedTagRatings(){
     outf << str << "\n"; // Write column titles header string to first line of file
     // Loop through cleanlib and check each tag for changed ratings
     //  Outer loop: iterate through rows of SongsTable
+    try { // operation replaces cleanlib.dsv; need to protect data in event of a fatal error
     while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
         // Declare variables applicable to all rows
         std::istringstream iss(str);
@@ -498,20 +514,20 @@ void updateChangedTagRatings(){
         ID3_Frame *frame;
         if ( (frame = activeTag.Find ( ID3FID_LEADARTIST )) )
         {
-            char band[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( band, 1024 );
+            char band[ 2048 ];
+            frame->Field ( ID3FN_TEXT ).Get ( band, 2048 );
             bandToken = band;
         }
         if ( (frame = activeTag.Find ( ID3FID_TITLE )) )
         {
-            char title[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( title, 1024 );
+            char title[ 2048 ];
+            frame->Field ( ID3FN_TEXT ).Get ( title, 2048 );
             titleToken = title;
         }
         if ( (frame = activeTag.Find ( ID3FID_ALBUM )) )
         {
-            char album[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( album, 1024 );
+            char album[ 2048 ];
+            frame->Field ( ID3FN_TEXT ).Get ( album, 2048 );
             albumToken = album;
         }
         if ( (frame = activeTag.Find ( ID3FID_POPULARIMETER )) )
@@ -555,18 +571,20 @@ void updateChangedTagRatings(){
             ratingToken = ratingcode;
         }
         // Fix tag discrepancies for selectedLibArtistToken, titleToken, albumToken
+        trim(bandToken);
+        trim(titleToken);
+        trim(albumToken);
 
-        selectedLibArtistToken.erase(std::remove_if(selectedLibArtistToken.begin(), selectedLibArtistToken.end(), &IsSpecialChar), selectedLibArtistToken.end());
+        bandToken.erase(std::remove_if(bandToken.begin(), bandToken.end(), &IsSpecialChar), bandToken.end());
         titleToken.erase(std::remove_if(titleToken.begin(), titleToken.end(), &IsSpecialChar), titleToken.end());
         albumToken.erase(std::remove_if(albumToken.begin(), albumToken.end(), &IsSpecialChar), albumToken.end());
 
         if ( (bandToken == selectedLibArtistToken) && (titleToken == selectedLibTitleToken) && (albumToken == selectedLibAlbumToken)) {
             // If tag rating does not match cleanlib entry, change cleanlib variables to match before writing string
             if (selectedLibratingCode != ratingToken) {
-                if (Constants::kVerbose) std::cout << "cleanLib rating: " << selectedLibratingCode <<
-                                                      " does NOT match tag, which has a rating of "<< ratingToken<<" and a POPM of "<< popmToken;
-                selectedLibratingCode = ratingToken;
-                if (Constants::kVerbose) std::cout << ". Library rating token has been updated for: " <<
+                std::string tempoldrating = selectedLibratingCode;
+                if (ratingToken!=""){selectedLibratingCode = ratingToken;}
+                if (Constants::kVerbose) std::cout << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
                                                       selectedLibArtistToken <<" - "<<selectedLibTitleToken<< std::endl;
                 if (selectedLibArtistToken == "3"){selectedLibpopmRating = "100";}// Set MM4 code (40, 50, 60, etc) based on code or popm change
                 if (selectedLibArtistToken == "4"){selectedLibpopmRating = "90";}
@@ -581,19 +599,44 @@ void updateChangedTagRatings(){
                         tokens2.at(Constants::kColumn14)+"^"+tokens2.at(Constants::kColumn15)+"^"+tokens2.at(Constants::kColumn16)
                         +"^"+selectedLibSQLDateToken+longstring+"^"+selectedLibratingCode;
                 outf << str << "\n"; // The tag elements of artist, title, album match, and rating has been changed in cleanlib.
+                bandToken="";
+                titleToken="";
+                albumToken="";
+                ratingCode="";
+                ratingToken="";
+                popmToken="";
                 continue;
             }
             //outf2 << str << "\n"; // All tag elements of artist, title, album and rating match cleanlib entry.
         }
-        if ( (bandToken != selectedLibArtistToken) || (titleToken != selectedLibTitleToken) || (albumToken != selectedLibAlbumToken)) {
-            std::cout << "String found with mismatched tag elements: " <<  selectedLibArtistToken <<" - "<<selectedLibTitleToken<<" - "<<selectedLibAlbumToken<< std::endl;
-        }
-        outf << str << "\n"; // One or more tag elements (artist, title, album) do not match cleanlib entry, but rating does.
+        //if ( (bandToken != selectedLibArtistToken) || (titleToken != selectedLibTitleToken) || (albumToken != selectedLibAlbumToken)) {
+            //std::cout << "Tag Artist: "<<bandToken<<", Library Artist: "<<  selectedLibArtistToken <<". Tag Title: "<< titleToken<<
+                         //", Library Title: " <<selectedLibTitleToken<<". Tag Album: "<<albumToken<<", Library Album: "<<selectedLibAlbumToken<<"."<< std::endl;
+            //if (Constants::kVerbose) std::cout << "File is: " <<selectedLibsongPath<< std::endl;
+        //}
+
+        outf << str << "\n"; // One or more tag elements (artist, title, album) do NOT match cleanlib entry, but rating might match.
+        bandToken="";
+        titleToken="";
+        albumToken="";
+        ratingCode="";
+        ratingToken="";
+        popmToken="";
         tokens2.shrink_to_fit();
     }
     SongsTable.close();
     outf.close();
-    //outf2.close();
+    }
+    catch(const std::bad_alloc& exception) {
+            std::cerr << "updateChangedTagRatings: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
+                         "/.local/share/archsimian/ and inspect file for errors." << exception.what();
+            QMessageBox msgBox;
+            QString msgboxtxt = "on_addsongsButton_released: Out of memory error (bad_alloc):failed during attempt to add tracks. Likely reason: "
+                                "Not enough available tracks found. Adjust factors using the frequency tab and restart.";
+            msgBox.setText(msgboxtxt);
+            msgBox.exec();
+            qApp->quit(); //Exit program
+        }
     removeAppData("cleanlib2.dsv"); // Remove cleanlib2.dsv
 }
 

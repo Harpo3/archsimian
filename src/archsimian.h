@@ -5,10 +5,12 @@
 #include <QMainWindow>
 #include <QtWidgets/QToolBar>
 #include <QAction>
+#include <QLabel>
+#include <QProgressBar>
 
 namespace Ui {
 class ArchSimian;
-//class QAction;
+class Dialog;
 //class QMenu;
 }
 
@@ -61,46 +63,35 @@ private slots:
     void on_disablenotecheckBox_stateChanged(int disableNote);
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
-    //void on_playlistLimitSlider_valueChanged(int value);
-
     void on_actionIterate_tag_triggered();
     void on_actionGet_Last_Played_Dates_triggered();
     void on_actionDate_Conversion_triggered();
     void on_actionSyncPlaylist_triggered();
-
     void on_actionRemove_mp3s_triggered();
-
     void on_mmdisabledradioButton_clicked();
-
     void on_mmenabledradioButton_2_clicked();
-
-
-
     void on_selectAndroidDeviceButton_clicked();
-
     void on_updateASDBButton_clicked();
-
     void on_actionUpdateLastPlayed_triggered();
-
     void on_actionExport_Playlist_to_Linux_triggered();
-
     void on_syncPlaylistButton_clicked();
-
     void on_syncthingButton_clicked();
-
     void on_actionsyncAudaciousLog_triggered();
-
     void on_enableAudaciousLogButton_clicked();
-
     void on_enableAIMPOnlyradioButton_clicked();
+    void on_updateratingsButton_clicked();
+    void on_updateDBprogressBar_valueChanged(int value);    
+    void on_updateASDBprogressBar_valueChanged(int value);
+
+    void on_addsongsprogressBar_valueChanged(int value);
 
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
-//    QToolBar *mainToolBar;
-
+    QLabel *statusLabel;
+    QProgressBar *statusProgressBar;
 public:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;    
 
 private:
     struct SPreferences
@@ -138,6 +129,4 @@ private:
 
     SPreferences m_prefs;
     };
-
-
 #endif // ARCHSIMIAN_H
