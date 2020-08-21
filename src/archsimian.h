@@ -85,6 +85,8 @@ private slots:
 
     void on_addsongsprogressBar_valueChanged(int value);
 
+    void on_freqconfigButton_clicked();
+
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;

@@ -229,35 +229,45 @@ ArchSimian::ArchSimian(QWidget *parent) :
     {
         if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 1. Configuration was set. s_bool_IsUserConfigSet result: " << s_bool_IsUserConfigSet << std::endl;
         m_prefs.musicLibraryDir = s_musiclibrarydirname;
-        if (!s_mm4disabled){ // MM4 is enabled, disable sync buttons
-            ui->updateASDBButton->setDisabled(true);
+        ui->mmenabledradioButton_2->setEnabled(true);
+        ui->mmdisabledradioButton->setEnabled(true);
+        if (!m_prefs.s_mm4disabled){// MM4 is enabled, disable sync tab
+            ui->mmenabledradioButton_2->setChecked(true);
+            ui->mmdisabledradioButton->setChecked(false);
             ui->syncthingButton->setDisabled(true);
             ui->selectAndroidDeviceButton->setDisabled(true);
-            ui->syncPlaylistButton->setDisabled(true);
-            ui->mmenabledradioButton_2->setChecked(true);
-            ui->enableAudaciousLogButton->setDisabled(true);
+            ui->updateASDBButton->setDisabled(true);
             ui->enableAIMPOnlyradioButton->setDisabled(true);
+            ui->enableAudaciousLogButton->setDisabled(true);
+            ui->syncPlaylistButton->setDisabled(true);
+            ui->updateratingsButton->setDisabled(true);
+            ui->mainQTabWidget->setTabEnabled(5, false);
+            ui->syncTab->setEnabled(false);
         }
-        if (s_mm4disabled){ // MM4 is disabled, enable (set disabled to false) sync buttons
-            ui->updateASDBButton->setDisabled(false);
+        if (m_prefs.s_mm4disabled){// MM4 is disabled, enable (set disabled to false) sync tab
+            ui->mmenabledradioButton_2->setChecked(false);
+            ui->mmdisabledradioButton->setChecked(true);
             ui->syncthingButton->setDisabled(false);
             ui->selectAndroidDeviceButton->setDisabled(false);
-            ui->syncPlaylistButton->setDisabled(false);
-            ui->mmdisabledradioButton->setChecked(true);
-            ui->enableAudaciousLogButton->setDisabled(false);
+            ui->updateASDBButton->setDisabled(false);
             ui->enableAIMPOnlyradioButton->setDisabled(false);
+            ui->enableAudaciousLogButton->setDisabled(false);
+            ui->syncPlaylistButton->setDisabled(false);
+            ui->updateratingsButton->setDisabled(false);
+            ui->mainQTabWidget->setTabEnabled(5, true);
+            ui->syncTab->setEnabled(true);
         }
-        if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons and 2 radio buttons
+        if ((m_prefs.s_mm4disabled &&((s_androidpathname == "" ) || (s_syncthingpathname == "")))) { // If either of the 2 sync paths have not been established dim two action buttons and 2 radio buttons
                     ui->updateASDBButton->setDisabled(true);
                     ui->syncPlaylistButton->setDisabled(true);
                     ui->enableAudaciousLogButton->setDisabled(true);
                     ui->enableAIMPOnlyradioButton->setDisabled(true);
         }
-        if (s_audaciouslogenabled == false){
+        if (m_prefs.s_mm4disabled && !s_audaciouslogenabled){
             ui->enableAIMPOnlyradioButton->setChecked(true);
             ui->enableAudaciousLogButton->setChecked(false);
         }
-        if (s_audaciouslogenabled == true){
+        if (m_prefs.s_mm4disabled && s_audaciouslogenabled == true){
             ui->enableAIMPOnlyradioButton->setChecked(false);
             ui->enableAudaciousLogButton->setChecked(true);
         }
@@ -265,6 +275,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (s_includeAlbumVariety) {
             ui->albumscheckBox->setChecked(true);
             ui->mainQTabWidget->setTabEnabled(4, true);
+        }
+        if (!m_prefs.s_includeAlbumVariety){
+            ui->mainQTabWidget->setTabEnabled(4, false);
+            ui->albumsTab->setEnabled(false);
         }
         if (s_bool_CleanLibExist) {
             ui->mmdisabledradioButton->setEnabled(true);
@@ -286,6 +300,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         ui->instructionlabel->setText(tr(""));
         ui->addsongsLabel->setText(tr("tracks to selected playlist."));
+        ui->newmaxavailLabel->setText(tr("Estimated (restart after saving changes) playlist maximum tracks is: "));
         ui->statusBar->addPermanentWidget(statusLabel);
         ui->updateDBprogressBar->setVisible(false);
         ui->updateASDBprogressBar->setVisible(false);
@@ -931,7 +946,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->playlistTab->setEnabled(true);
         ui->statisticsTab->setEnabled(true);
         ui->frequencyTab->setEnabled(true);
-        ui->syncTab->setEnabled(true);
         if (m_prefs.s_includeAlbumVariety){
             ui->mainQTabWidget->setTabEnabled(4, true);
             ui->albumsTab->setEnabled(true);
@@ -940,7 +954,29 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->mainQTabWidget->setTabEnabled(4, false);
             ui->albumsTab->setEnabled(false);
         }
+        if (m_prefs.s_mm4disabled){
+            ui->mmenabledradioButton_2->setChecked(false);
+            ui->mmdisabledradioButton->setChecked(true);
+            ui->syncthingButton->setDisabled(false);
+            ui->selectAndroidDeviceButton->setDisabled(false);
+            ui->updateASDBButton->setDisabled(false);
+            ui->enableAIMPOnlyradioButton->setDisabled(false);
+            ui->enableAudaciousLogButton->setDisabled(false);
+            ui->syncPlaylistButton->setDisabled(false);
+            ui->updateratingsButton->setDisabled(false);
+            ui->mainQTabWidget->setTabEnabled(5, true);
+            ui->syncTab->setEnabled(true);
+        }
         if (!m_prefs.s_mm4disabled){
+            ui->mmenabledradioButton_2->setChecked(true);
+            ui->mmdisabledradioButton->setChecked(false);
+            ui->syncthingButton->setDisabled(true);
+            ui->selectAndroidDeviceButton->setDisabled(true);
+            ui->updateASDBButton->setDisabled(true);
+            ui->enableAIMPOnlyradioButton->setDisabled(true);
+            ui->enableAudaciousLogButton->setDisabled(true);
+            ui->syncPlaylistButton->setDisabled(true);
+            ui->updateratingsButton->setDisabled(true);
             ui->mainQTabWidget->setTabEnabled(5, false);
             ui->syncTab->setEnabled(false);
         }
@@ -967,7 +1003,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->disablenotecheckBox->setChecked(false);
         }
 
-        ui->mainQTabWidget->setTabEnabled(5, true);
+        //ui->mainQTabWidget->setTabEnabled(5, true);
     }
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
     ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
@@ -1562,7 +1598,7 @@ void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
     int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
     s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 20;
     s_MaxAvailableToAdd = s_PlaylistLimit;
-    ui->newmaxavailLabel->setText(tr("Max tracks is: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+    ui->newmaxavailLabel->setText(tr("Estimated (restart after saving changes) playlist maximum tracks is: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
@@ -2274,10 +2310,14 @@ void ArchSimian::on_mmdisabledradioButton_clicked()
     s_mm4disabled = true;
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
-    ui->updateASDBButton->setDisabled(false);
+    //    ui->updateASDBButton->setDisabled(false);
     ui->syncthingButton->setDisabled(false);
     ui->selectAndroidDeviceButton->setDisabled(false);
-    ui->syncPlaylistButton->setDisabled(false);
+    //    ui->syncPlaylistButton->setDisabled(false);
+
+    ui->mainQTabWidget->setTabEnabled(5, true);
+    ui->syncTab->setEnabled(true);
+
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to true: "<<s_mm4disabled << std::endl;}
     ui->statusBar->showMessage("Changed database from MediaMonkey to ArchSimian.",4000);
 }
@@ -2287,13 +2327,12 @@ void ArchSimian::on_mmenabledradioButton_2_clicked()
     s_mm4disabled = false;
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
-    ui->updateASDBButton->setDisabled(true);
     ui->syncthingButton->setDisabled(true);
     ui->selectAndroidDeviceButton->setDisabled(true);
-    ui->syncPlaylistButton->setDisabled(true);
-    //removeAppData("cleanlib.dsv"); // Remove cleanlib.dsv to force regeneration
+    ui->mainQTabWidget->setTabEnabled(5, false);
+    ui->syncTab->setEnabled(false);
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to false: "<<s_mm4disabled << std::endl;}
-    ui->statusBar->showMessage("Changed database from ArchSimian to MediaMonkey.",4000);   
+    ui->statusBar->showMessage("Changed database from ArchSimian to MediaMonkey.",4000);
 }
 
 void ArchSimian::on_selectAndroidDeviceButton_clicked()
@@ -2480,3 +2519,11 @@ void ArchSimian::on_updateDBprogressBar_valueChanged(int value)
     }    
 }
 
+void ArchSimian::on_freqconfigButton_clicked()
+{
+    ui->setFrqNextlabel->setText("");
+    s_initalpostsettingslaunch = false;
+    m_prefs.s_initalpostsettingslaunch =s_initalpostsettingslaunch;
+    saveSettings();
+    qApp->quit();
+}

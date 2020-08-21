@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -1041,7 +1041,7 @@ MediaMonkey database backup file</string>
          <string>Set MediaMonkey to manage database (default)</string>
         </property>
         <property name="checked">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QLabel" name="label_13">
@@ -2261,7 +2261,7 @@ MediaMonkey database backup file</string>
          <string>TextLabel</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="freqconfigButton">
         <property name="geometry">
          <rect>
           <x>40</x>
