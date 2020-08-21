@@ -180,7 +180,7 @@
              <number>100</number>
             </property>
             <property name="singleStep">
-             <number>10</number>
+             <number>20</number>
             </property>
             <property name="stepType">
              <enum>QAbstractSpinBox::DefaultStepType</enum>
@@ -559,10 +559,15 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>510</y>
+          <y>520</y>
           <width>451</width>
-          <height>101</height>
+          <height>81</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to ArchSimian!&lt;/span&gt; The program was created to improve the &amp;quot;primary&amp;quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;First, you need to identify the location where your music library is stored, then set the locations where you did backups for your M3U playlist and the MM.DB file. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Once you set these, you will be able to import the database and enable all the rest of the program's features!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -634,6 +639,9 @@
         </property>
        </widget>
        <widget class="QCheckBox" name="autosavecheckBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -648,6 +656,9 @@
         <property name="text">
          <string>Prompt to manually save user preferences on exit (turns off autosave)
  **Recommended when adjusting settings on the Frequency tab**</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="disablenotecheckBox">
@@ -970,7 +981,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>440</y>
+          <y>450</y>
           <width>141</width>
           <height>31</height>
          </rect>
@@ -983,7 +994,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>180</x>
-          <y>480</y>
+          <y>490</y>
           <width>321</width>
           <height>31</height>
          </rect>
@@ -1002,7 +1013,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>390</y>
+          <y>400</y>
           <width>491</width>
           <height>20</height>
          </rect>
@@ -1021,7 +1032,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>420</y>
+          <y>430</y>
           <width>441</width>
           <height>20</height>
          </rect>
@@ -1060,7 +1071,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>170</x>
-          <y>435</y>
+          <y>445</y>
           <width>331</width>
           <height>41</height>
          </rect>
@@ -1076,13 +1087,29 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>480</y>
+          <y>490</y>
           <width>151</width>
           <height>31</height>
          </rect>
         </property>
         <property name="text">
          <string>Select Syncthing Folder</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="setFrqNextlabel">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>220</y>
+          <width>241</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </widget>
@@ -2129,7 +2156,7 @@ MediaMonkey database backup file</string>
          </rect>
         </property>
         <property name="text">
-         <string>Percentages shown above represent percentage of time assigned in the playlist for each rating category. If maximum playlist limit has been reached, increase code 3 days and weight more to lower rated tracks. </string>
+         <string>Percentages shown above represent percentage of time assigned in the playlist for each rating category.  Adjust the above factors so that total adjusted time is close to total time. If maximum playlist limit has been reached, increase code 3 days and weight more to lower rated tracks.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2219,6 +2246,32 @@ MediaMonkey database backup file</string>
         </property>
         <property name="text">
          <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="newmaxavailLabel">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>440</y>
+          <width>411</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>490</y>
+          <width>201</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Save configuration and exit</string>
         </property>
        </widget>
       </widget>

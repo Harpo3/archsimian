@@ -48,7 +48,7 @@ const QString kUserDefaultDefaultPlaylist{};
 const bool kUserDefaultIncludeNewTracks{false};
 const bool kUserDefaultIncludeAlbumVariety{false};
 const bool kUserDefaultNoAutoSave{false};
-const bool kUserDefaultDisableNotificationAddTracks{true};
+const bool kUserDefaultDisableNotificationAddTracks{false};
 const double kUserDefaultDaysTillRepeatCode3{65};
 const double kUserDefaultRepeatFactorCode4{2.7};
 const double kUserDefaultRepeatFactorCode5{2.1};
@@ -63,6 +63,7 @@ const QString kWindowsTopFolder{""};
 const QString kMusicLibShortened{""};
 const int kPlaylistActualCntSelCode{0};
 const bool kAudaciouslogenabled{0};
+const bool k_initalpostsettingslaunch{0};
 
 // Constants for bound limits for setting by user in ui
 const int kRatingCode3MinDays{10};

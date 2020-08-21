@@ -19,7 +19,12 @@
 #include <id3/tag.h>
 #include <id3/misc_support.h>
 #include <taglib/tag.h>
+#include <sys/stat.h>
 
+bool doesFileExist3 (const std::string& name) {
+    struct stat buffer{};
+    return (stat (name.c_str(), &buffer) == 0);
+}
 
 // Convert standard (format: "Jul 26, 2020 1:30:42 PM") date/time string variable and return SQL time
 double logdateconversion(std::string chkthis){
@@ -212,12 +217,18 @@ void getLastPlayedDates(QString &s_androidpathname){
     std::vector<std::string>finalvect;
     std::vector<std::string>outputvect;
     std::string str4;
+    bool matchinfile{0};
     while (std::getline(debug, str1)) {
         std::size_t found = str1.find(lastplayedmarker);
+        //if ((found=std::string::npos)){continue;}
         // Beginning of first section
         if (found!=std::string::npos) {  // found!= (not found) means the function did not return string::npos,
             // meaning a match was FOUND for the current line; Next get the date from that same line
             //define start and end positions for date string, then save date string
+            matchinfile = true;
+            if (matchinfile == true){
+                if(Constants::kVerbose){std::cout << "getLastPlayedDates: At lease one entry found."<< std::endl;}
+            }
             str2 = str1;
             std::size_t foundstart = str2.find(begpos);
             std::size_t foundend1 = str2.find(endpos1);
@@ -295,6 +306,13 @@ void getLastPlayedDates(QString &s_androidpathname){
             }
             ++linecount;
         }
+    }
+    if (matchinfile == false){ // Log has no entries with completed songs
+        if (Constants::kVerbose){std::cout << "getLastPlayedDates: Terminating function. No entries found."<< std::endl;}
+        dateslist.close();
+        debug.close();
+        combinedvect.shrink_to_fit();
+        return;
     }
     debug.close();
     std::sort (combinedvect.begin(), combinedvect.end(), std::greater<>()); // Do a reverse sort to put newer dates first
@@ -647,20 +665,46 @@ void removeLinuxPlaylistFile(){
 }
 
 void syncAudaciousLog(){
-    // Concatenate Audacious log with a copy of lastplayeddates.txt, sort it by date, then
-    // remove duplicate entries that have earlier dates
-    // Uses lastplayeddates.txt to update last played dates in cleanlib.dsv for songs played and logged by AIMP
-    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
+    // Check to see if the the AIMP log is empty
+    bool isempty{false};
     QString tempFileStr1a = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates.txt";
-    QString tempFileStr1b = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
-    QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
-    std::ifstream SongsTable1(tempFileStr1a.toStdString());    // Open lastplayeddates.txt as ifstream
-    std::ifstream SongsTable2(tempFileStr2.toStdString());    // Open audacioushist.log.txt as ifstream
-    std::ofstream combined_file(appDataPathstr.toStdString()+"/lastplayeddates2.txt"); // Create output file for combined
-    combined_file << SongsTable1.rdbuf() << SongsTable2.rdbuf(); // Combine AIMP and Audacious logs as lastplayeddates2.txt
-    SongsTable1.close();
-    SongsTable2.close();
-    combined_file.close();
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
+    //Check whether lastplayeddates currently has any data in it
+    std::streampos aimplog;
+    char * memblock;
+    std:: ifstream file (tempFileStr1a.toStdString()+"/lastplayeddates.txt", std::ios::in|std::ios::binary|std::ios::ate);
+    if (file.is_open())
+    {
+        aimplog = file.tellg();
+        memblock = new char [static_cast<unsigned long>(aimplog)];
+        file.seekg (0, std::ios::beg);
+        file.read (memblock, aimplog);
+        file.close();
+        delete[] memblock;
+    }
+    if (aimplog == 0) { // If there is no AIMP log, copy audacioushist.log as lastplayeddates2.txt
+        isempty = true;
+        if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was empty."<< std::endl;}
+        QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
+        QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
+        QFile::copy(tempFileStr1,tempFileStr2);
+    }
+    if (isempty == false){ // Else, combine the two files
+        if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was not empty."<< std::endl;}
+        // Concatenate Audacious log with a copy of lastplayeddates.txt, sort it by date, then
+        // remove duplicate entries that have earlier dates
+        // Uses lastplayeddates.txt to update last played dates in cleanlib.dsv for songs played and logged by AIMP
+
+        QString tempFileStr1b = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
+        QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
+        std::ifstream SongsTable1(tempFileStr1a.toStdString());    // Open lastplayeddates.txt as ifstream
+        std::ifstream SongsTable2(tempFileStr2.toStdString());    // Open audacioushist.log.txt as ifstream
+        std::ofstream combined_file(appDataPathstr.toStdString()+"/lastplayeddates2.txt"); // Create output file for combined
+        combined_file << SongsTable1.rdbuf() << SongsTable2.rdbuf(); // Combine AIMP and Audacious logs as lastplayeddates2.txt
+        SongsTable1.close();
+        SongsTable2.close();
+        combined_file.close();
+    }
     // Next, open and read combined file into a vector. Sort it by date, remove dups, then rewrite lastplayeddates.txt
     std::vector<std::string>combinedvect;
     std::vector<std::string>finalvect;
@@ -727,6 +771,7 @@ void syncAudaciousLog(){
         }
         //Send all tokens to the new output vector with the date token placed at the front
         str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
+        //if (Constants::kVerbose) std::cout << "syncAudaciousLog: Full output is: " <<str4<< std::endl;
         outputvect.push_back(str4);
         resulttemp.shrink_to_fit();
     }

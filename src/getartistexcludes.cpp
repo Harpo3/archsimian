@@ -7,12 +7,10 @@
 #include "constants.h"
 #include <set>
 
-
-// Function to determine playlist positions and positions of earlier play history, then use it to determine excluded artists
-
-
-// NEW -revise to process differently if playlist new or no default playlist, add const variable to function for
-// whether playlist exists or not
+// Functions to determine playlist positions and positions of earlier play history, then use it to determine excluded artists
+// First function, getExcludedArtists, uses ratedabbr.txt to create ratedabbr2.txt adding playlist position numbers to last column.
+// Second function, getExcludedArtistsRedux, uses ratedabbr2.txt to determine excluded artist both inside and outside the
+// playlist. Creates artistexcludes.txt.
 
 void getExcludedArtists(const int &s_playlistSize)
 {
@@ -20,6 +18,21 @@ void getExcludedArtists(const int &s_playlistSize)
     // then output each position, as a duplicate of ratedabbr but with position number added, to both playlistposlist.txt
     // playlistposlist.txt and ratedabbr2
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+
+
+    // If playlist size is zero, copy ratedabbr.txt to ratedabbr2.txt and return
+    if (s_playlistSize == 0) { // If there is no playlist
+        if(Constants::kVerbose){std::cout << "getExcludedArtists: There is no playlist. Copied ratedabbr.txt to ratedabbr2.txt. Exiting function"<< std::endl;}
+        QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/ratedabbr.txt";
+        QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/ratedabbr2.txt";
+        QFile::copy(tempFileStr1,tempFileStr2);
+        while (!QFile::copy(tempFileStr1,tempFileStr2))
+        {
+            QFile::remove(tempFileStr2);
+        }
+        return;
+    }
+    if(Constants::kVerbose){std::cout << "getExcludedArtists: There is a playlist with entries. Continuing function."<< std::endl;}
     std::fstream filestrinterval;
     int s_playlistPosition;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr.txt");
@@ -93,8 +106,6 @@ void getExcludedArtists(const int &s_playlistSize)
                 histvect.push_back(vectorstring);
                 continue;
             }
-            //for (auto i = histvect.begin(); i != histvect.end(); ++i)
-            //    std::cout << *i << ','<< std::endl;
             // RatedabbrVec - if path in ratedabbrVec row matches a cleanedplaylist entry, remove zero from col 7 and emplace
             // playlist position number in ratedabbrVec
             if (song == pathinlib){
@@ -127,45 +138,76 @@ void getExcludedArtists(const int &s_playlistSize)
         }
         ratedabbr2 << std::endl;
     }
-    ratedabbr2.close();
-    // Make a copy of histvect as new_histvect (why?) and use to write a comma separated value file (playlistposlist.txt).
-    std::vector<std::string> new_histvect;
-    new_histvect.reserve(50000);
-    new_histvect = histvect;
-    for (std::size_t i = 0 ;  i < new_histvect.size(); i++){
-        playlistPosList << new_histvect[i] << "," << i + 1 + static_cast<unsigned long>(s_playlistSize) << "\n";
+    ratedabbr2.close();   
+    ratedSongsTable.close(); // Close ratedabbr.txt and output file    
+    ratedabbrVec.shrink_to_fit();
+    histvect.shrink_to_fit();
+    artistExcludesVec.shrink_to_fit();
+}
+
+void getExcludedArtistsRedux(const int &s_playlistSize, const int &s_histCount){
+    // Using a vector of ratedabbr2 calculate availability for each artist in and outside of the playlist.
+    // then output to artistexcludes.txt.
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    std::fstream filestrinterval;
+    filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
+    if (filestrinterval.is_open()) {filestrinterval.close();}
+    else {std::cout << "getExcludedArtists: Error opening ratedabbr2.txt file ." << std::endl;}
+    std::string ratedlibrary2 = appDataPathstr.toStdString()+"/ratedabbr2.txt";
+    std::ifstream ratedSongsTable2(ratedlibrary2);
+    if (!ratedSongsTable2.is_open())
+    {
+        std::cout << "getExcludedArtists: Error opening ratedSongsTable." << std::endl;
+        std::exit(EXIT_FAILURE);
     }
-    playlistPosList.close();
-    // Calculate the extended play history for infrequently played artists, but who were played within their high interval
-    // value (ex. position 452 and interval 487). Where found, add them to the artistExcludesVec
-    std::ofstream artistExcList(appDataPathstr.toStdString()+"/artistexcludes.txt"); // Output file for writing final exclude list
-    StringVector2D finalhistvec = readCSV(appDataPathstr.toStdString()+"/playlistposlist.txt"); // Open "playlistposlist.txt" as 2D vector finalhistvec
-    for (auto & i : finalhistvec){
-        for(int j=0;j<6;j++){
-            if (stoi(i[4]) > stoi(i[6])){ // If playlist pos [6] is less than interval [4],
-                artistExcludesVec.push_back(i[1]); // then pushback artist (finalhistvec[i][1]) to artistExcludesVec
+    std::string selectedArtistToken2; // Artist variable from ratedabbrVec
+    //std::string tokenLTP2; // LastPlayed Date in SQL Time from ratedabbrVec
+    //std::string ratingCode2; // Rating code from ratedabbrVec
+    //std::string songLength2; // Song length from ratedabbrVec
+    std::string artistInterval2; // Artist interval from ratedabbrVec
+    //std::string pathinlib2;
+    //std::string albumID2; // Album ID from ratedabbrVec
+    std::string playlistposition2;
+    std::vector<std::string> artistexclistVec;
+    std::ofstream artistExcList2(appDataPathstr.toStdString()+"/artistexcludes.txt"); // Output file for writing final exclude list ,std::ios::app
+    StringVector2D ratedabbrVec2 = readCSV(appDataPathstr.toStdString()+"/ratedabbr2.txt");
+    ratedabbrVec2.reserve(50000);
+    for(auto & i : ratedabbrVec2){ // Read each row element from ratedabbrVec2 to compare with each historical entry
+        //tokenLTP2 = i[Constants::kColumn0];
+        //ratingCode2 = i[Constants::kColumn1];
+        selectedArtistToken2 = i[Constants::kColumn2];
+        //pathinlib2 = i[Constants::kColumn3];
+        //songLength2 = i[Constants::kColumn4];
+        artistInterval2 = i[Constants::kColumn5];
+        //albumID2 = i[Constants::kColumn6];
+        playlistposition2 = i[Constants::kColumn7];
+    }
+    std::reverse (ratedabbrVec2.begin(), ratedabbrVec2.end()); // Sort starting with most recently played
+    // Starting with s_playlistSize then increasing by 1 for each row, number the sequences of last played
+    // entries, then compare with artist interval to determien availability.
+    // If playlist pos is less than interval, output to excluded artist vector
+    //startingplaylistPosition = s_playlistSize + 1;
+    for (int i = 0; i < int(ratedabbrVec2.size()); i++) { // Look at all rows of ratedabbr2 up to the histCount limit
+        for (int j = 0; j < int(ratedabbrVec2[i].size()); j++)
+        // Consider entries that are not on the playlist, within the historical count, and count is less than interval
+        if ((ratedabbrVec2[i][7] == "0")&&(i < s_histCount)&&((stoi(ratedabbrVec2[i][5]) > i+1+s_playlistSize))){
+            artistexclistVec.push_back(ratedabbrVec2[i][2]);
+        }
+        else { // Otherwise, the row may be a playlist item if it has a playlist position number
+            if (ratedabbrVec2[i][7] != "0"){
+                if ((stoi(ratedabbrVec2[i][5]) > (stoi(ratedabbrVec2[i][7])))){
+                    artistexclistVec.push_back(ratedabbrVec2[i][2]);
+                }
             }
         }
     }
-    // Compile all of the entries of the artistExcludesVec, sort and remove duplicates, then write the vector to the excluded artists file
-    std::vector<std::string>fsexclvec;
-    fsexclvec.reserve(10000);
-    fsexclvec = artistExcludesVec;
-    std::vector<std::string>::iterator ip;
-    std::sort (fsexclvec.begin(), fsexclvec.end());
-    std::set<std::string> s;
-    unsigned long myvecsz = fsexclvec.size();
-    for (unsigned long i = 0; i < myvecsz; ++i) s.insert(fsexclvec[i]);
-    fsexclvec.assign (s.begin(), s.end());
-    for (ip = fsexclvec.begin(); ip != fsexclvec.end(); ++ip) {
-        artistExcList << *ip << "\n";
-    }
-    ratedSongsTable.close(); // Close ratedabbr.txt and output file    
-    artistExcList.close();
-    ratedabbrVec.shrink_to_fit();
-    new_histvect.shrink_to_fit();
-    histvect.shrink_to_fit();
-    artistExcludesVec.shrink_to_fit();
-    fsexclvec.shrink_to_fit();
-    finalhistvec.shrink_to_fit();
+    // Sort excluded artist vector alphabetically
+    std::sort(artistexclistVec.begin(), artistexclistVec.end());
+    artistexclistVec.erase(std::unique(artistexclistVec.begin(),artistexclistVec.end()),artistexclistVec.end());
+    //Now print excluded artist vector to artistExcList2
+    for (const auto & i : artistexclistVec){
+        artistExcList2 << i << "\n";}
+    artistExcList2.close();
+    ratedabbrVec2.shrink_to_fit();
+    artistexclistVec.shrink_to_fit();
 }

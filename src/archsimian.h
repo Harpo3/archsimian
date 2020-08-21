@@ -122,6 +122,7 @@ private:
         int s_mintracks{};
         bool s_mm4disabled{};
         bool s_audaciouslogenabled;
+        bool s_initalpostsettingslaunch;
     };
 
     void loadSettings();
