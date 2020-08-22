@@ -31,9 +31,6 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
         struct stat stbuf1{};
         stat(mmpath.c_str(), &stbuf1);
         localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want
-        if (Constants::kVerbose) {std::cout << "recentlyUpdated: localtime stbuf1: "<<std::endl;
-           //std::cout <<std::string(stbuf1.st_mtime,10);
-        }
         struct stat stbuf2{}; // Now get the date for the cleanlib.csv file
         std::string mmpath99 = appDataPathstr.toStdString()+"/cleanlib.dsv";
         stat(mmpath99.c_str(), &stbuf2);

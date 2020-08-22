@@ -269,7 +269,7 @@ void removeAppData(std::string str)
     if (existResult == 1) {
         remove (str.c_str());  // remove file referenced by str from the AppData directory
         if(remove( str.c_str() ) != 0 ) {
-            std::cout <<"removeAppData: Error deleting file: "<< str << std::endl;
+            //std::cout <<"removeAppData: Error deleting file: "<< str << std::endl;
         }
         else
             puts( "removeAppData: File successfully deleted" );

@@ -300,12 +300,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         ui->instructionlabel->setText(tr(""));
         ui->addsongsLabel->setText(tr("tracks to selected playlist."));
-        ui->newmaxavailLabel->setText(tr("Estimated (restart after saving changes) playlist maximum tracks is: "));
+        ui->newmaxavailLabel->setText(tr("Maximum (est.) tracks available is: "));
         ui->statusBar->addPermanentWidget(statusLabel);
-        ui->updateDBprogressBar->setVisible(false);
+        ui->updateTagsprogressBar->setVisible(false);
         ui->updateASDBprogressBar->setVisible(false);
         ui->addsongsprogressBar->setVisible(false);
-        ui->newmaxavailLabel->setText(tr("Estimated (restart after saving changes) playlist maximum tracks is: "));
+        ui->newmaxavailLabel->setText(tr("Maximum (est.) tracks available is: "));
         ui->androiddevicebuttonlabel->setText(tr("Select Android device (for syncing play history using AIMP - requires KDEconnect and AIMP with logging enabled.)"));
         if (s_androidpathname != ""){ui->androiddevicebuttonlabel->setText(s_androidpathname);}
         ui->syncthinglabel->setText(tr("Select the shared folder Syncthing will use to sync playlist and music files to Android device.)"));
@@ -1008,7 +1008,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
     ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
     ui->mintrackseachspinBox->setValue(m_prefs.s_mintrackseach);
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -1598,7 +1598,7 @@ void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
     int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
     s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 20;
     s_MaxAvailableToAdd = s_PlaylistLimit;
-    ui->newmaxavailLabel->setText(tr("Estimated (restart after saving changes) playlist maximum tracks is: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+    ui->newmaxavailLabel->setText(tr("Maximum (est.) tracks available is: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
@@ -1615,7 +1615,7 @@ void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -1649,7 +1649,7 @@ void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -1708,7 +1708,7 @@ void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -1765,7 +1765,7 @@ void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -1822,7 +1822,7 @@ void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -1881,7 +1881,7 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     ui->factor8label->setText(QString::number(argfact8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is: " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
+    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
     ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
@@ -2313,8 +2313,11 @@ void ArchSimian::on_mmdisabledradioButton_clicked()
     //    ui->updateASDBButton->setDisabled(false);
     ui->syncthingButton->setDisabled(false);
     ui->selectAndroidDeviceButton->setDisabled(false);
-    //    ui->syncPlaylistButton->setDisabled(false);
-
+    ui->updateASDBButton->setDisabled(false);
+    ui->enableAIMPOnlyradioButton->setDisabled(false);
+    ui->enableAudaciousLogButton->setDisabled(false);
+    ui->syncPlaylistButton->setDisabled(false);
+    ui->updateratingsButton->setDisabled(false);
     ui->mainQTabWidget->setTabEnabled(5, true);
     ui->syncTab->setEnabled(true);
 
@@ -2329,6 +2332,11 @@ void ArchSimian::on_mmenabledradioButton_2_clicked()
     saveSettings();
     ui->syncthingButton->setDisabled(true);
     ui->selectAndroidDeviceButton->setDisabled(true);
+    ui->updateASDBButton->setDisabled(true);
+    ui->enableAIMPOnlyradioButton->setDisabled(true);
+    ui->enableAudaciousLogButton->setDisabled(true);
+    ui->syncPlaylistButton->setDisabled(true);
+    ui->updateratingsButton->setDisabled(true);
     ui->mainQTabWidget->setTabEnabled(5, false);
     ui->syncTab->setEnabled(false);
     if (Constants::kVerbose){std::cout << "s_mm4disabled changed to false: "<<s_mm4disabled << std::endl;}
@@ -2392,9 +2400,9 @@ void ArchSimian::on_updateASDBButton_clicked()
     ui->updateASDBButton->setText("Update ArchSimian Database");
     ui->updateASDBButton->setDisabled(false); // Reenable button after updating
     ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
-    ui->statusBar->showMessage("Completed getting lastplayed dates and updating Archsimian.",4000);
+    ui->statusBar->showMessage("Completed getting lastplayed dates and updating Archsimian.",8000);
     //ui->updateASDBprogressBar->setVisible(false);
-    ui->statusBar->showMessage("Finished updating play history to the database",4000);
+    ui->statusBar->showMessage("Finished updating play history to the database",8000);
 }
 
 void ArchSimian::on_updateASDBprogressBar_valueChanged(int value)
@@ -2484,39 +2492,31 @@ void ArchSimian::on_enableAIMPOnlyradioButton_clicked()
 }
 
 void ArchSimian::on_updateratingsButton_clicked()
-{
-    ui->updateDBprogressBar->setVisible(true);
-    ui->updateDBprogressBar->setRange(0, 100);
-    ui->updateDBprogressBar->setValue(0);
-    //statusProgressBar->setValue(0);
-    //statusProgressBar->show();
+{    
+    ui->updateTagsprogressBar->setVisible(true);
+    ui->updateTagsprogressBar->setValue(0);
     statusLabel->setText("Update ratings");
-
-    //timerfactor = int(100/(s_totalLibQty/193330));
-    //ASTimer updateratingstimer;
-    //updateratingstimer.startTimer(timerfactor);
-    //connect(&updateratingstimer, SIGNAL(timeout()),ui->updateDBprogressBar,SLOT(setValue(int)));
-
+    ui->statusBar->showMessage("Scanning library files for changed tags (takes time)...",30000);
     updateChangedTagRatings();
-    //statusProgressBar->setValue(100);
     statusLabel->setText("");
-    ui->updateDBprogressBar->setVisible(false);
+    ui->updateTagsprogressBar->setVisible(false);
     ui->updateratingsButton->setText("Update Ratings from Tags");
     ui->updateratingsButton->setDisabled(false);
-    //statusProgressBar->hide();
-    ui->statusBar->showMessage("Finished updating tag ratings to the database",4000);
+    ui->statusBar->showMessage("Finished updating tag ratings to the database",8000);
 }
 
-void ArchSimian::on_updateDBprogressBar_valueChanged(int value)
+void ArchSimian::on_updateTagsprogressBar_valueChanged(int value)
 {
-    //timerfactor = int(100/(s_totalLibQty/193330));
     if (value == 0){
-    //ui->statusBar->showMessage("Updating ratings by scanning library files for changed tags (takes time).",80000);
     ui->updateratingsButton->setText("Updating...please wait");
     ui->updateratingsButton->setDisabled(true);
-    ui->updateDBprogressBar->setValue(+1);
+    ui->updateTagsprogressBar->setValue(+1);
     //statusProgressBar->setTextVisible(true);
-    }    
+    }
+    if (value == 1){
+        ui->statusBar->showMessage("Scanning library files for changed tags (takes time)...",80000);
+        //ui->updateTagsprogressBar->setVisible(false);
+    }
 }
 
 void ArchSimian::on_freqconfigButton_clicked()

@@ -22,7 +22,6 @@ void getExcludedArtists(const int &s_playlistSize)
 
     // If playlist size is zero, copy ratedabbr.txt to ratedabbr2.txt and return
     if (s_playlistSize == 0) { // If there is no playlist
-        if(Constants::kVerbose){std::cout << "getExcludedArtists: There is no playlist. Copied ratedabbr.txt to ratedabbr2.txt. Exiting function"<< std::endl;}
         QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/ratedabbr.txt";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/ratedabbr2.txt";
         QFile::copy(tempFileStr1,tempFileStr2);
@@ -30,9 +29,9 @@ void getExcludedArtists(const int &s_playlistSize)
         {
             QFile::remove(tempFileStr2);
         }
-        return;
+        return; // end function if no playlist entries exist.
     }
-    if(Constants::kVerbose){std::cout << "getExcludedArtists: There is a playlist with entries. Continuing function."<< std::endl;}
+    // If there is a playlist with entries, continue
     std::fstream filestrinterval;
     int s_playlistPosition;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr.txt");

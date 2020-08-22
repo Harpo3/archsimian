@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -2165,8 +2165,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totratedtimefreqLabel">
         <property name="geometry">
          <rect>
-          <x>65</x>
-          <y>400</y>
+          <x>30</x>
+          <y>390</y>
           <width>251</width>
           <height>21</height>
          </rect>
@@ -2178,8 +2178,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totadjhoursfreqLabel">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>380</y>
+          <x>30</x>
+          <y>370</y>
           <width>261</width>
           <height>16</height>
          </rect>
@@ -2252,20 +2252,20 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>440</y>
+          <y>410</y>
           <width>411</width>
           <height>31</height>
          </rect>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Maximum (est.) tracks available is: </string>
         </property>
        </widget>
        <widget class="QPushButton" name="freqconfigButton">
         <property name="geometry">
          <rect>
-          <x>40</x>
-          <y>490</y>
+          <x>30</x>
+          <y>450</y>
           <width>201</width>
           <height>31</height>
          </rect>
@@ -2427,7 +2427,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
         <property name="text">
-         <string>Syncs currently selected playlist and associated mp3 files with selected Android device, using Syncthing.</string>
+         <string>Sync the currently selected playlist and associated mp3 files with Android device, using Syncthing.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2491,7 +2491,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
         <property name="text">
-         <string>Reads lastplayed dates from AIMP/Audacious and updates the play history in Archsiman.</string>
+         <string>Read lastplayed dates from AIMP/Audacious and update the play history in the Archsiman database.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2574,7 +2574,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
         <property name="text">
-         <string>Scans all library tags and updates any changes to ratings in the ArchSimian database (takes time)</string>
+         <string>Scan all library tags and update any changes to ratings in the ArchSimian database (takes time)</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2590,7 +2590,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
        </widget>
-       <widget class="QProgressBar" name="updateDBprogressBar">
+       <widget class="QProgressBar" name="updateTagsprogressBar">
         <property name="geometry">
          <rect>
           <x>260</x>

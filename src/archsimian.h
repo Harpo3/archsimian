@@ -80,7 +80,7 @@ private slots:
     void on_enableAudaciousLogButton_clicked();
     void on_enableAIMPOnlyradioButton_clicked();
     void on_updateratingsButton_clicked();
-    void on_updateDBprogressBar_valueChanged(int value);    
+    void on_updateTagsprogressBar_valueChanged(int value);
     void on_updateASDBprogressBar_valueChanged(int value);
 
     void on_addsongsprogressBar_valueChanged(int value);
