@@ -64,6 +64,12 @@ static int s_lowestCode1Pos{Constants::kMaxLowestCode1Pos};
 static std::string s_artistLastCode1;
 static std::string s_selectedCode1Path;
 static std::string s_selectedTrackPath;
+static std::string s_selectedRatingUpdate;
+static std::string s_selectedTagUpdate;
+
+
+
+
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
 static double s_daysTillRepeatCode3 = Constants::kUserDefaultDaysTillRepeatCode3;
@@ -2384,16 +2390,16 @@ void ArchSimian::on_updateASDBButton_clicked()
     ui->updateASDBprogressBar->setValue(80);
     if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting updateCleanLibDates."<< std::endl;}
     updateCleanLibDates(); // Update cleanlib.dsv wih new dates
-    ui->updateASDBButton->setText("Reprocessing stats...please wait");
-    if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting getDBStats."<< std::endl;}
-    getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
+    //ui->updateASDBButton->setText("Reprocessing stats...please wait");
+    //if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting getDBStats."<< std::endl;}
+    /*getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
                &s_rCode3TotTrackQty,&s_rCode3MsTotTime,&s_rCode4TotTrackQty,&s_rCode4MsTotTime,
                &s_rCode5TotTrackQty,&s_rCode5MsTotTime,&s_rCode6TotTrackQty,&s_rCode6MsTotTime,
                &s_rCode7TotTrackQty,&s_rCode7MsTotTime,&s_rCode8TotTrackQty,&s_rCode8MsTotTime,
                &s_SQL10TotTimeListened,&s_SQL10DayTracksTot,&s_SQL20TotTimeListened,
                &s_SQL20DayTracksTot,&s_SQL30TotTimeListened,&s_SQL30DayTracksTot,&s_SQL40TotTimeListened,
                &s_SQL40DayTracksTot,&s_SQL50TotTimeListened,&s_SQL50DayTracksTot,&s_SQL60TotTimeListened,
-               &s_SQL60DayTracksTot);
+               &s_SQL60DayTracksTot);*/
     //getExcludedArtists(s_playlistSize);
     // Need to reprocess functions associated with a cleanlib.dsv change.
     std::string LastTableDate = getLastTableDate();
@@ -2402,6 +2408,11 @@ void ArchSimian::on_updateASDBButton_clicked()
     ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
     ui->statusBar->showMessage("Completed getting lastplayed dates and updating Archsimian.",8000);
     //ui->updateASDBprogressBar->setVisible(false);
+    QFile ratingupdate(appDataPathstr+"/syncdisplay.txt");
+    if(!ratingupdate.open(QIODevice::ReadOnly))
+        QMessageBox::information(nullptr,"info",ratingupdate.errorString());
+    QTextStream in(&ratingupdate);
+    ui->updateDBtextBrowser->setText(in.readAll());
     ui->statusBar->showMessage("Finished updating play history to the database",8000);
 }
 
@@ -2502,6 +2513,11 @@ void ArchSimian::on_updateratingsButton_clicked()
     ui->updateTagsprogressBar->setVisible(false);
     ui->updateratingsButton->setText("Update Ratings from Tags");
     ui->updateratingsButton->setDisabled(false);
+    QFile ratingupdate(appDataPathstr+"/syncdisplay.txt");
+    if(!ratingupdate.open(QIODevice::ReadOnly))
+        QMessageBox::information(nullptr,"info",ratingupdate.errorString());
+    QTextStream in(&ratingupdate);
+    ui->updateDBtextBrowser->setText(in.readAll());
     ui->statusBar->showMessage("Finished updating tag ratings to the database",8000);
 }
 
@@ -2511,11 +2527,9 @@ void ArchSimian::on_updateTagsprogressBar_valueChanged(int value)
     ui->updateratingsButton->setText("Updating...please wait");
     ui->updateratingsButton->setDisabled(true);
     ui->updateTagsprogressBar->setValue(+1);
-    //statusProgressBar->setTextVisible(true);
     }
     if (value == 1){
         ui->statusBar->showMessage("Scanning library files for changed tags (takes time)...",80000);
-        //ui->updateTagsprogressBar->setVisible(false);
     }
 }
 

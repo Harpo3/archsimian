@@ -383,6 +383,12 @@ void updateCleanLibDates(){
     QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib.dsv";
     QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib2.dsv";
     QFile::copy(tempFileStr1,tempFileStr2);
+    // Open log for reporting changes to UI
+    std::ofstream ofs; //open the lastplayedupdate file for writing with the truncate option to delete the content.
+    ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    std::ofstream lastplayedupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // output file append mode for writing final rating selections (UI display)
+    lastplayedupdate << "Last played entries updated to the ArchSimian database: "<< '\n';
     // Create vector for new lastplayed dates
     StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // open "lastplayeddates.txt" as 2D vector lastplayedvec
     lastplayedvec.reserve(10000);
@@ -435,8 +441,8 @@ void updateCleanLibDates(){
                         && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
                     tokens.at(Constants::kColumn17) = selectedSQLDateToken;
                     str = getChgdDSVStr(tokens,str); // recompile str with changed token
-                    if (Constants::kVerbose) std::cout << "str: " <<
-                                                          str<< std::endl;
+                    //if (Constants::kVerbose) {std::cout << "str: " << str<< std::endl;}
+                    lastplayedupdate << selectedLibArtistToken <<" - "<<selectedLibTitleToken<<"; SQL Date: "<<selectedSQLDateToken<< '\n';
                     continue;
                 }
             }
@@ -445,6 +451,7 @@ void updateCleanLibDates(){
         }
         SongsTable.close();
         outf.close();
+        lastplayedupdate.close();
         lastplayedvec.shrink_to_fit();
     }
     catch(const std::bad_alloc& exception) {
@@ -479,6 +486,11 @@ void updateChangedTagRatings(){
     std::string ratingToken{" "};
     std::string popmToken{" "};
     std::string longstring{" "};
+    // Open log for reporting changes to UI
+    std::ofstream ofs; //open the ratingupdate file for writing with the truncate option to delete the content.
+    ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+    std::ofstream ratingupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // output file append mode for writing final rating selections (UI display)
     // Open cleanlib.dsv as read file
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
@@ -524,7 +536,7 @@ void updateChangedTagRatings(){
                 +tokens2[Constants::kColumn23]+"^"+tokens2[Constants::kColumn24]+"^"+tokens2[Constants::kColumn25]+"^"
                 +tokens2[Constants::kColumn26]+"^"+tokens2[Constants::kColumn27]+"^"+tokens2[Constants::kColumn28];
         if (selectedLibratingCode == "0"){
-            outf << str << "\n"; // The string is valid if unrated, write to clean file
+            outf << str << "\n"; // The string is valid if unrated, write unchanged to cleanlib file
             continue;
         }
         ID3_Tag activeTag; // Get tag info using id3/tag.h
@@ -592,7 +604,6 @@ void updateChangedTagRatings(){
         trim(bandToken);
         trim(titleToken);
         trim(albumToken);
-
         bandToken.erase(std::remove_if(bandToken.begin(), bandToken.end(), &IsSpecialChar), bandToken.end());
         titleToken.erase(std::remove_if(titleToken.begin(), titleToken.end(), &IsSpecialChar), titleToken.end());
         albumToken.erase(std::remove_if(albumToken.begin(), albumToken.end(), &IsSpecialChar), albumToken.end());
@@ -602,8 +613,8 @@ void updateChangedTagRatings(){
             if (selectedLibratingCode != ratingToken) {
                 std::string tempoldrating = selectedLibratingCode;
                 if (ratingToken!=""){selectedLibratingCode = ratingToken;}
-                if (Constants::kVerbose) std::cout << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
-                                                      selectedLibArtistToken <<" - "<<selectedLibTitleToken<< std::endl;
+                ratingupdate << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
+                                                                      selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
                 if (selectedLibArtistToken == "3"){selectedLibpopmRating = "100";}// Set MM4 code (40, 50, 60, etc) based on code or popm change
                 if (selectedLibArtistToken == "4"){selectedLibpopmRating = "90";}
                 if (selectedLibArtistToken == "5"){selectedLibpopmRating = "70";}
@@ -625,14 +636,7 @@ void updateChangedTagRatings(){
                 popmToken="";
                 continue;
             }
-            //outf2 << str << "\n"; // All tag elements of artist, title, album and rating match cleanlib entry.
         }
-        //if ( (bandToken != selectedLibArtistToken) || (titleToken != selectedLibTitleToken) || (albumToken != selectedLibAlbumToken)) {
-            //std::cout << "Tag Artist: "<<bandToken<<", Library Artist: "<<  selectedLibArtistToken <<". Tag Title: "<< titleToken<<
-                         //", Library Title: " <<selectedLibTitleToken<<". Tag Album: "<<albumToken<<", Library Album: "<<selectedLibAlbumToken<<"."<< std::endl;
-            //if (Constants::kVerbose) std::cout << "File is: " <<selectedLibsongPath<< std::endl;
-        //}
-
         outf << str << "\n"; // One or more tag elements (artist, title, album) do NOT match cleanlib entry, but rating might match.
         bandToken="";
         titleToken="";
@@ -644,6 +648,7 @@ void updateChangedTagRatings(){
     }
     SongsTable.close();
     outf.close();
+    ratingupdate.close();
     }
     catch(const std::bad_alloc& exception) {
             std::cerr << "updateChangedTagRatings: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
