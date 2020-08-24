@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -1724,7 +1724,7 @@ MediaMonkey database backup file</string>
        <widget class="QWidget" name="layoutWidget2">
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>170</x>
           <y>10</y>
           <width>321</width>
           <height>24</height>
@@ -1952,7 +1952,7 @@ MediaMonkey database backup file</string>
          <rect>
           <x>200</x>
           <y>90</y>
-          <width>42</width>
+          <width>51</width>
           <height>191</height>
          </rect>
         </property>
@@ -1997,9 +1997,9 @@ MediaMonkey database backup file</string>
        <widget class="QWidget" name="layoutWidget5">
         <property name="geometry">
          <rect>
-          <x>240</x>
+          <x>250</x>
           <y>90</y>
-          <width>74</width>
+          <width>91</width>
           <height>191</height>
          </rect>
         </property>
@@ -2089,9 +2089,9 @@ MediaMonkey database backup file</string>
        <widget class="QWidget" name="layoutWidget6">
         <property name="geometry">
          <rect>
-          <x>320</x>
+          <x>350</x>
           <y>90</y>
-          <width>81</width>
+          <width>71</width>
           <height>191</height>
          </rect>
         </property>
@@ -2156,7 +2156,7 @@ MediaMonkey database backup file</string>
          </rect>
         </property>
         <property name="text">
-         <string>Percentages shown above represent percentage of time assigned in the playlist for each rating category.  Adjust the above factors so that total adjusted time is close to total time. If maximum playlist limit has been reached, increase code 3 days and weight more to lower rated tracks.</string>
+         <string>Percentages shown above represent percentage of time assigned in the playlist for each rating category.  Adjust the above factors so that total adjusted time is close to total time. Save configuration and exit for changes to take effect.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -2165,35 +2165,41 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totratedtimefreqLabel">
         <property name="geometry">
          <rect>
-          <x>30</x>
-          <y>390</y>
-          <width>251</width>
+          <x>10</x>
+          <y>360</y>
+          <width>211</width>
           <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>Total time (in hours) is:</string>
+         <string>Total time (in hours):</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QLabel" name="totadjhoursfreqLabel">
         <property name="geometry">
          <rect>
-          <x>30</x>
-          <y>370</y>
-          <width>261</width>
-          <height>16</height>
+          <x>0</x>
+          <y>380</y>
+          <width>231</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>Total adjusted time (in hours) is: </string>
+         <string>Total adjusted time (in hours): </string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QWidget" name="verticalLayoutWidget">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>430</x>
           <y>90</y>
-          <width>91</width>
+          <width>71</width>
           <height>191</height>
          </rect>
         </property>
@@ -2248,24 +2254,11 @@ MediaMonkey database backup file</string>
          <string>TextLabel</string>
         </property>
        </widget>
-       <widget class="QLabel" name="newmaxavailLabel">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>410</y>
-          <width>411</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Maximum (est.) tracks available is: </string>
-        </property>
-       </widget>
        <widget class="QPushButton" name="freqconfigButton">
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>450</y>
+          <y>520</y>
           <width>201</width>
           <height>31</height>
          </rect>
@@ -2584,18 +2577,18 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>230</y>
+          <y>180</y>
           <width>491</width>
-          <height>181</height>
+          <height>291</height>
          </rect>
         </property>
        </widget>
        <widget class="QProgressBar" name="updateTagsprogressBar">
         <property name="geometry">
          <rect>
-          <x>260</x>
-          <y>180</y>
-          <width>211</width>
+          <x>490</x>
+          <y>600</y>
+          <width>16</width>
           <height>16</height>
          </rect>
         </property>
@@ -2614,6 +2607,307 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
         <property name="value">
          <number>24</number>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Freq2Tab">
+       <attribute name="title">
+        <string>Freq2</string>
+       </attribute>
+       <widget class="QSlider" name="factor3ahorizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>76</y>
+          <width>311</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <number>33</number>
+        </property>
+        <property name="value">
+         <number>25</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedAppearance">
+         <bool>false</bool>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>4</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider5yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>170</y>
+          <width>80</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider8label">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>300</y>
+          <width>32</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider4yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>120</y>
+          <width>80</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider4label">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>120</y>
+          <width>32</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider7yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>270</y>
+          <width>80</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider3label">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>80</y>
+          <width>32</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider3yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>80</y>
+          <width>80</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor5horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>170</y>
+          <width>301</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>4</number>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor6horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>220</y>
+          <width>301</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>4</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider7label">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>270</y>
+          <width>32</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor4horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>120</y>
+          <width>311</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <number>33</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>4</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider5label">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>170</y>
+          <width>32</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor7horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>270</y>
+          <width>301</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>4</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider8yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>300</y>
+          <width>80</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider6label">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>220</y>
+          <width>32</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider6yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>400</x>
+          <y>220</y>
+          <width>80</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
         </property>
        </widget>
       </widget>
@@ -2660,18 +2954,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     </property>
     <addaction name="actionSave_Settings"/>
    </widget>
-   <widget class="QMenu" name="menuAndroid">
-    <property name="title">
-     <string>Android</string>
-    </property>
-    <addaction name="actionIterate_tag"/>
-    <addaction name="actionGet_Last_Played_Dates"/>
-    <addaction name="actionUpdateLastPlayed"/>
-    <addaction name="actionsyncAudaciousLog"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
-   <addaction name="menuAndroid"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -2738,14 +3022,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="actionSave_Settings3">
-   <property name="text">
-    <string>Save Settings</string>
-   </property>
-   <property name="toolTip">
-    <string>Save Settings</string>
    </property>
   </action>
   <action name="actionExport_Playlist">
@@ -2816,49 +3092,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
-   </property>
-  </action>
-  <action name="actionSyncPlaylist">
-   <property name="text">
-    <string>Sync Playlist</string>
-   </property>
-   <property name="toolTip">
-    <string>Syncs playlist and mp3s to Syncthing folder</string>
-   </property>
-  </action>
-  <action name="actionIterate_tag">
-   <property name="text">
-    <string>Iterate tag</string>
-   </property>
-  </action>
-  <action name="actionGet_Last_Played_Dates">
-   <property name="text">
-    <string>Get Last Played Dates</string>
-   </property>
-  </action>
-  <action name="actionDate_Conversion">
-   <property name="text">
-    <string>Date Conversion</string>
-   </property>
-  </action>
-  <action name="actionCopy_mp3s_to_Android">
-   <property name="text">
-    <string>Copy mp3s to Android</string>
-   </property>
-  </action>
-  <action name="actionRemove_mp3s">
-   <property name="text">
-    <string>Remove mp3s</string>
-   </property>
-  </action>
-  <action name="actionUpdateLastPlayed">
-   <property name="text">
-    <string>UpdateLastPlayed</string>
-   </property>
-  </action>
-  <action name="actionsyncAudaciousLog">
-   <property name="text">
-    <string>syncAudaciousLog</string>
    </property>
   </action>
  </widget>

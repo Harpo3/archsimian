@@ -63,7 +63,10 @@ const QString kWindowsTopFolder{""};
 const QString kMusicLibShortened{""};
 const int kPlaylistActualCntSelCode{0};
 const bool kAudaciouslogenabled{0};
-const bool k_initalpostsettingslaunch{0};
+const int k_initialpostsettingslaunch{0};
+const int k_playlistListeningDaysLimit {21};
+const double k_code3PlaylistPercentageMax{0.33};
+const double k_code3PlaylistPercentageMin{0.1};
 
 // Constants for bound limits for setting by user in ui
 const int kRatingCode3MinDays{10};

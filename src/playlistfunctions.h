@@ -4,8 +4,8 @@
 #include <vector>
 
 //void getExcludedArtists(const int &s_playlistSize);
-int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
-                       double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8);
+int ratingCodeSelected(double &s_playlistPercentage3, double &s_playlistPercentage4, double &s_playlistPercentage5,
+                       double &s_playlistPercentage6, double &s_playlistPercentage7, double &s_playlistPercentage8);
 
 std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath, bool &s_includeAlbumVariety);
 

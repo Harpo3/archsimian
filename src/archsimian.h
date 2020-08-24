@@ -63,11 +63,6 @@ private slots:
     void on_disablenotecheckBox_stateChanged(int disableNote);
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
-    void on_actionIterate_tag_triggered();
-    void on_actionGet_Last_Played_Dates_triggered();
-    void on_actionDate_Conversion_triggered();
-    void on_actionSyncPlaylist_triggered();
-    void on_actionRemove_mp3s_triggered();
     void on_mmdisabledradioButton_clicked();
     void on_mmenabledradioButton_2_clicked();
     void on_selectAndroidDeviceButton_clicked();
@@ -82,10 +77,14 @@ private slots:
     void on_updateratingsButton_clicked();
     void on_updateTagsprogressBar_valueChanged(int value);
     void on_updateASDBprogressBar_valueChanged(int value);
-
     void on_addsongsprogressBar_valueChanged(int value);
-
     void on_freqconfigButton_clicked();
+    void on_factor4horizontalSlider_valueChanged(int value);
+    void on_factor5horizontalSlider_valueChanged(int value);
+    void on_horizontalSlider_valueChanged(int value);
+    void on_factor7horizontalSlider_valueChanged(int value);
+    void on_factor3ahorizontalSlider_valueChanged(int value);
+
 
 private:
     Ui::ArchSimian *ui;
@@ -124,7 +123,7 @@ private:
         int s_mintracks{};
         bool s_mm4disabled{};
         bool s_audaciouslogenabled;
-        bool s_initalpostsettingslaunch;
+        int s_initialpostsettingslaunch;
     };
 
     void loadSettings();

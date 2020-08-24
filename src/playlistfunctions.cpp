@@ -14,8 +14,8 @@ inline bool isEqual(double x, double y){
     // see http://www.cs.technion.ac.il/users/yechiel/c++-faq/floating-point-arith.html
 }
 
-int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
-                       double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8){
+int ratingCodeSelected(double &s_playlistPercentage3, double &s_playlistPercentage4, double &s_playlistPercentage5,
+                       double &s_playlistPercentage6, double &s_playlistPercentage7, double &s_playlistPercentage8){
     //Lookup the rating codes for last two tracks on the playlist;
     if (Constants::kVerbose) std::cout << "ratingCodeSelected function started." << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
@@ -111,21 +111,21 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
     if (Constants::kVerbose) {
-    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_ratingRatio3 << std::endl;
-    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_ratingRatio4<< std::endl;
-    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << s_ratingRatio5<< std::endl;
-    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << s_ratingRatio6<< std::endl;
-    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_ratingRatio7<< std::endl;
-    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_ratingRatio8<< std::endl;
+    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_playlistPercentage3 << std::endl;
+    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_playlistPercentage4<< std::endl;
+    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << s_playlistPercentage5<< std::endl;
+    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << s_playlistPercentage6<< std::endl;
+    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_playlistPercentage7<< std::endl;
+    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_playlistPercentage8<< std::endl;
     }
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
-    double varianceRatioTime3 = (s_ratingRatio3 - ratioTime3) / s_ratingRatio3;
-    double varianceRatioTime4 = (s_ratingRatio4 - ratioTime4) / s_ratingRatio4;
-    double varianceRatioTime5 = (s_ratingRatio5 - ratioTime5) / s_ratingRatio5;
-    double varianceRatioTime6 = (s_ratingRatio6 - ratioTime6) / s_ratingRatio6;
-    double varianceRatioTime7 = (s_ratingRatio7 - ratioTime7) / s_ratingRatio7;
-    double varianceRatioTime8 = (s_ratingRatio8 - ratioTime8) / s_ratingRatio8;
+    double varianceRatioTime3 = (s_playlistPercentage3 - ratioTime3) / s_playlistPercentage3;
+    double varianceRatioTime4 = (s_playlistPercentage4 - ratioTime4) / s_playlistPercentage4;
+    double varianceRatioTime5 = (s_playlistPercentage5 - ratioTime5) / s_playlistPercentage5;
+    double varianceRatioTime6 = (s_playlistPercentage6 - ratioTime6) / s_playlistPercentage6;
+    double varianceRatioTime7 = (s_playlistPercentage7 - ratioTime7) / s_playlistPercentage7;
+    double varianceRatioTime8 = (s_playlistPercentage8 - ratioTime8) / s_playlistPercentage8;
     if (Constants::kVerbose) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;

@@ -28,8 +28,6 @@
 #include "playlistcontentdialog.h"
 #include "diagnostics.h"
 #include "exporttoandroidaimp.h"
-#include "archsimiantimer.h"
-#include <id3/tag.h>
 #include <filesystem>
 
 template <std::size_t N>
@@ -66,10 +64,6 @@ static std::string s_selectedCode1Path;
 static std::string s_selectedTrackPath;
 static std::string s_selectedRatingUpdate;
 static std::string s_selectedTagUpdate;
-
-
-
-
 // Repeat factor codes used to calculate repeat rate in years
 static double s_SequentialTrackLimit = 0;
 static double s_daysTillRepeatCode3 = Constants::kUserDefaultDaysTillRepeatCode3;
@@ -98,8 +92,8 @@ static int s_minalbums;
 static int s_mintrackseach;
 static int s_mintracks;
 // Variables declared to calculate rating ratios
-static double s_ratingRatio3{0.0},s_ratingRatio4{0.0},s_ratingRatio5{0.0},
-s_ratingRatio6{0.0},s_ratingRatio7{0.0},s_ratingRatio8{0.0};
+static double s_playlistPercentage3{0.0},s_playlistPercentage4{0.0},s_playlistPercentage5{0.0},
+s_playlistPercentage6{0.0},s_playlistPercentage7{0.0},s_playlistPercentage8{0.0};
 // Declare statistical variables to be collected
 // First group is declared to get times and track quantities by rating group
 static int s_rCode0TotTrackQty{0}, s_rCode0MsTotTime{0},
@@ -150,19 +144,14 @@ static QDir appDataPath = appDataPathstr;
 static std::string cleanLibFile = appDataPathstr.toStdString()+"/cleanlib.dsv";
 static int selectedTrackLimitCode{3};
 static int selTrackLimitCodeTotTrackQty{0};
-static double selTrackLimitCodeRatingRatio{0};
+static double selTrackLimitCodeRatingRatio{0.0};
+static double s_listeningRateSongsPerYr{0.0};
 static int s_MaxAvailableToAdd{0};
 static bool s_topLevelFolderExists{false};
 static std::string playlistpath{""};
-static int s_PlaylistLimit{0};
-static int s_OpenPlaylistLimit{0};
 static bool diagsran(0);
 static bool s_audaciouslogenabled{0};
-static bool s_initalpostsettingslaunch{0};
-
-
-//static int timerfactor{0}; // take into account library size to determine timing interval
-
+static int s_initialpostsettingslaunch{0};
 
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
@@ -205,7 +194,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_androidpathname = m_prefs.s_androidpathname;
     s_syncthingpathname = m_prefs.s_syncthingpathname;
     s_audaciouslogenabled = m_prefs.s_audaciouslogenabled;
-    s_initalpostsettingslaunch = m_prefs.s_initalpostsettingslaunch;
+    s_initialpostsettingslaunch = m_prefs.s_initialpostsettingslaunch;
 
     // Set up the UI
     ui->setupUi(this);
@@ -306,12 +295,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->viewplaylistLabel->setText(tr("View currently selected playlist"));
         ui->instructionlabel->setText(tr(""));
         ui->addsongsLabel->setText(tr("tracks to selected playlist."));
-        ui->newmaxavailLabel->setText(tr("Maximum (est.) tracks available is: "));
         ui->statusBar->addPermanentWidget(statusLabel);
         ui->updateTagsprogressBar->setVisible(false);
         ui->updateASDBprogressBar->setVisible(false);
         ui->addsongsprogressBar->setVisible(false);
-        ui->newmaxavailLabel->setText(tr("Maximum (est.) tracks available is: "));
         ui->androiddevicebuttonlabel->setText(tr("Select Android device (for syncing play history using AIMP - requires KDEconnect and AIMP with logging enabled.)"));
         if (s_androidpathname != ""){ui->androiddevicebuttonlabel->setText(s_androidpathname);}
         ui->syncthinglabel->setText(tr("Select the shared folder Syncthing will use to sync playlist and music files to Android device.)"));
@@ -620,17 +607,18 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_adjHoursCode7 = (1 / s_yrsTillRepeatCode7) * s_rCode7TotTime;
         s_adjHoursCode8 = (1 / s_yrsTillRepeatCode8) * s_rCode8TotTime;
         s_totAdjHours = s_adjHoursCode3 + s_adjHoursCode4 + s_adjHoursCode5 + s_adjHoursCode6 +s_adjHoursCode7 + s_adjHoursCode8;
-        s_ratingRatio3 = s_adjHoursCode3 / s_totAdjHours;
-        s_ratingRatio4 = s_adjHoursCode4 / s_totAdjHours;
-        s_ratingRatio5 = s_adjHoursCode5 / s_totAdjHours;
-        s_ratingRatio6 = s_adjHoursCode6 / s_totAdjHours;
-        s_ratingRatio7 = s_adjHoursCode7 / s_totAdjHours;
-        s_ratingRatio8 = s_adjHoursCode8 / s_totAdjHours;
+        s_playlistPercentage3 = s_adjHoursCode3 / s_totAdjHours;
+        s_playlistPercentage4 = s_adjHoursCode4 / s_totAdjHours;
+        s_playlistPercentage5 = s_adjHoursCode5 / s_totAdjHours;
+        s_playlistPercentage6 = s_adjHoursCode6 / s_totAdjHours;
+        s_playlistPercentage7 = s_adjHoursCode7 / s_totAdjHours;
+        s_playlistPercentage8 = s_adjHoursCode8 / s_totAdjHours;
         s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / Constants::kFractionOneDay; // fraction for one day (1/365)
         s_totalRatedTime = s_rCode1TotTime + s_rCode3TotTime + s_rCode4TotTime + s_rCode5TotTime + s_rCode6TotTime +
                 s_rCode7TotTime + s_rCode8TotTime;
         s_AvgMinsPerSong = (s_totalRatedTime / s_totalRatedQty) * Constants::kSecondsToMins;
         s_avgListeningRateInMins = s_listeningRate * Constants::kSecondsToMins;
+        s_listeningRateSongsPerYr = int((s_listeningRate * 60 * 365)/s_AvgMinsPerSong);
         s_SequentialTrackLimit = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * s_DaysBeforeRepeatCode3);
         s_totalAdjRatedQty = (s_yrsTillRepeatCode3factor * s_rCode3TotTrackQty)+(s_yrsTillRepeatCode4factor * s_rCode4TotTrackQty)
                 + (s_yrsTillRepeatCode5factor * s_rCode5TotTrackQty) +(s_yrsTillRepeatCode6factor * s_rCode6TotTrackQty)
@@ -641,7 +629,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (selTrackLimitCodeTotTrackQty == s_rCode3TotTrackQty)
         {
             selectedTrackLimitCode = 3;
-            selTrackLimitCodeRatingRatio = s_ratingRatio3;
+            selTrackLimitCodeRatingRatio = s_playlistPercentage3;
         }
         if (Constants::kVerbose) { //Print verbose results to console
             std::cout << "Archsimian.cpp: Step 6. selTrackLimitCodeTotTrackQty is: "<< selTrackLimitCodeTotTrackQty << std::endl;
@@ -672,6 +660,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Archsimian.cpp: Step 6. Total tracks played in the sixth period is - s_SQL60DayTracksTot : " << s_SQL60DayTracksTot << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Total time listened for the last 60 days is (hrs) - s_totHrsLast60Days : " << s_totHrsLast60Days << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Calculated daily listening rate is (hrs) - s_listeningRate : "<< s_listeningRate << std::endl;
+
+            std::cout << "Archsimian.cpp: Step 6. Songs per year based on listening rate : "<< s_listeningRateSongsPerYr << std::endl;
+
+
             std::cout << "Archsimian.cpp: Step 6. Years between repeats code 3 - s_yrsTillRepeatCode3 : "<< s_yrsTillRepeatCode3 << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Years between repeats code 4 - s_yrsTillRepeatCode4 : "<< s_yrsTillRepeatCode4 << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Years between repeats code 5 - s_yrsTillRepeatCode5 : "<< s_yrsTillRepeatCode5 << std::endl;
@@ -686,12 +678,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
             std::cout << "Archsimian.cpp: Step 6. Adjusted hours code 8 - s_adjHoursCode8 : "<< s_adjHoursCode8 << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Total Adjusted Hours - s_totAdjHours : "<< s_totAdjHours << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Total Adjusted Quantity - s_totalAdjRatedQty : "<< s_totalAdjRatedQty << std::endl;
-            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 3 - s_ratingRatio3 * 100 : "<< s_ratingRatio3 * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
-            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 4 - s_ratingRatio4 * 100 : "<< s_ratingRatio4  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
-            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 5 - s_ratingRatio5 * 100 : "<< s_ratingRatio5  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
-            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 6 - s_ratingRatio6 * 100 : "<< s_ratingRatio6 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
-            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 7 - s_ratingRatio7 * 100 : "<< s_ratingRatio7 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
-            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 8 - s_ratingRatio8 * 100 : "<< s_ratingRatio8 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 3 - s_playlistPercentage3 * 100 : "<< s_playlistPercentage3 * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 4 - s_playlistPercentage4 * 100 : "<< s_playlistPercentage4  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 5 - s_playlistPercentage5 * 100 : "<< s_playlistPercentage5  * Constants::kConvertDecimalToPercentDisplay << "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 6 - s_playlistPercentage6 * 100 : "<< s_playlistPercentage6 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 7 - s_playlistPercentage7 * 100 : "<< s_playlistPercentage7 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
+            std::cout << "Archsimian.cpp: Step 6. Percentage of track time for scheduling rating code 8 - s_playlistPercentage8 * 100 : "<< s_playlistPercentage8 * Constants::kConvertDecimalToPercentDisplay <<  "%" << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Number of days until track repeat under rating code 3 - s_DaysBeforeRepeatCode3 : "<< s_DaysBeforeRepeatCode3 << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Average length of rated songs in fractional minutes - s_AvgMinsPerSong : "<< s_AvgMinsPerSong << std::endl;
             std::cout << "Archsimian.cpp: Step 6. Calculated daily listening rate in mins - s_avgListeningRateInMins : "<< s_avgListeningRateInMins << std::endl;
@@ -922,6 +914,46 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
         ui->addtrksspinBox->setMaximum(100);
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
+
+
+        // NEW *********************
+
+
+
+
+
+        ui->slider4label->setText(QString::number((s_playlistPercentage4) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->slider5label->setText(QString::number((s_playlistPercentage5) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->slider6label->setText(QString::number((s_playlistPercentage6) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->slider7label->setText(QString::number((s_playlistPercentage7) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->slider8label->setText(QString::number((s_playlistPercentage8) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+
+        ui->slider4yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+        ui->slider5yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+        ui->slider6yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+        ui->slider7yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+        ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+
+
+        ui->factor4horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor4horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+
+
+
+        ui->factor5horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor5horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+
+
+        ui->factor6horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor6horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+
+
+        ui->factor7horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor7horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+
+
+        // *************************
+
         ui->factor3horizontalSlider->setMinimum(Constants::kRatingCode3MinDays);
         ui->factor3horizontalSlider->setMaximum(Constants::kRatingCode3MaxDays);
         ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
@@ -949,6 +981,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->label_perc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->label_perc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->yearsradioButton->click();
+
+
         ui->playlistTab->setEnabled(true);
         ui->statisticsTab->setEnabled(true);
         ui->frequencyTab->setEnabled(true);
@@ -1007,9 +1041,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
         if (!m_prefs.s_disableNotificationAddTracks){
             ui->disablenotecheckBox->setChecked(false);
-        }
-
-        //ui->mainQTabWidget->setTabEnabled(5, true);
+        }        
     }
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
     ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
@@ -1023,13 +1055,12 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     // Calculated daily listening rate in hrs * 365 = listening hours per year
     // s_listeningRate * 365
-    //     ui->totallisteninghrsyrlabel->setText("Total projected listening time (in hours) per year is: " + QString::fromStdString(std::to_string(int(s_listeningRate * 365))));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc5->setText(QString::number(((365/s_DaysBeforeRepeatCode3)*selTrackLimitCodeTotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     if (!s_bool_IsUserConfigSet){
         ui->mainQTabWidget->setTabEnabled(0, false);
         ui->mainQTabWidget->setTabEnabled(2, false);
@@ -1039,8 +1070,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->settingsTab->setEnabled(true);
     }
 
-    // If an initial lauch after user setup completed, launch with only the Frequency tab enabled
-    if (s_initalpostsettingslaunch == true){
+    // If an initial launch after user setup completed, launch with only the Frequency tab enabled
+    if (s_initialpostsettingslaunch == 1){
         ui->mainQTabWidget->setTabEnabled(0, false);
         ui->mainQTabWidget->setTabEnabled(1, false);
         ui->mainQTabWidget->setTabEnabled(2, false);
@@ -1050,11 +1081,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->frequencyTab->setEnabled(true);
     }
 
-    // If the above ui config was for initial config with only the Frequency tab set the variable to disable next launch
-    if (s_initalpostsettingslaunch == true){
-        s_initalpostsettingslaunch = false;
-        m_prefs.s_initalpostsettingslaunch = s_initalpostsettingslaunch;
-    }
+    // Temporarily disable the Frequency tab:
+    ui->mainQTabWidget->setTabEnabled(3, false);
 
 
     /* 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary(const int &s_minalbums,
@@ -1069,36 +1097,35 @@ ArchSimian::ArchSimian(QWidget *parent) :
         buildAlbumExclLibrary(s_minalbums, s_mintrackseach, s_mintracks);
         ui->albumsTab->setEnabled(true);
     }
-    // 15. Sets the playlist size limit to restrict how many total tracks can be added to any playlist
 
-    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. Run setPlaylistLimitCount to set the initial count for playlistLimitCount." << std::endl;}
-    // Set variables for playlist limit applicable for all playlists created
+    /*
+
+    15.  Determine playlist track limit applicable to all playlists created
+
+    The formula for playlist track limit can be written using only two independent variables:
+    s_MaxAvailableToAdd = s_listeningRate * Constants::k_playlistListeningDaysLimit
+
+    The existing user setting for s_daysTillRepeatCode3 can be used to set new parameters for fixing this logic. For example, if s_daysTillRepeatCode3 = 68,
+    and if s_MaxAvailableToAdd is 523, then we can establish new variables for percentages for each rating code.
+
+    */
+
     if (s_bool_IsUserConfigSet)
     {
-        double tracksPerDay = (s_avgListeningRateInMins) / (s_AvgMinsPerSong);
-        double interim1 = (tracksPerDay * selTrackLimitCodeRatingRatio * s_DaysBeforeRepeatCode3);
-        int firstlimittest = int((selTrackLimitCodeTotTrackQty - interim1)/selTrackLimitCodeRatingRatio);
-        int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
-        s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 20; //
-        s_MaxAvailableToAdd = s_PlaylistLimit; // In case there is no default playlist, set s_MaxAvailableToAdd to calculated limit
-
+        double tracksPerDay = (s_avgListeningRateInMins / s_AvgMinsPerSong);
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. Tracks Per Day (s_avgListeningRateInMins/s_AvgMinsPerSong) is "<< tracksPerDay << std::endl;}
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. k_playlistListeningDaysLimit is "<< Constants::k_playlistListeningDaysLimit << std::endl;}
+        s_MaxAvailableToAdd = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * Constants::k_playlistListeningDaysLimit);
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. At initial launch, s_MaxAvailableToAdd is "<< s_MaxAvailableToAdd << std::endl;}
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. selTrackLimitCodeTotTrackQty: "<< selTrackLimitCodeTotTrackQty << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. tracksPerDay:(s_avgListeningRateInMins) / (s_AvgMinsPerSong)-> "<< tracksPerDay << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. selTrackLimitCodeRatingRatio: "<< selTrackLimitCodeRatingRatio << std::endl;}
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_DaysBeforeRepeatCode3: "<< s_DaysBeforeRepeatCode3 << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. interim1: "<< interim1 << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. firstlimittest: "<< firstlimittest << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. secondlimittest: "<< secondlimittest << std::endl;}
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 15. s_PlaylistLimit = smaller of firstlimittest and secondlimittest: "<< s_PlaylistLimit << std::endl;}
     }
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet))
     {
-        /* If a default playlist is found, set s_OpenPlaylistLimit to the s_PlaylistLimit
-         Then, set s_MaxAvailableToAdd, using the s_OpenPlaylistLimit less the number of tracks already in the playlist */
-        s_OpenPlaylistLimit = s_PlaylistLimit;
-        s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist found. Setting "
-                                              "s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize: "<< s_MaxAvailableToAdd << std::endl;
+        /* If a default playlist is found, reduce s_MaxAvailableToAdd by the number of tracks already in the playlist */
+        s_MaxAvailableToAdd = s_MaxAvailableToAdd - s_playlistSize;
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist found. Reduced "
+                                              "s_MaxAvailableToAdd by playlist size, to: "<< s_MaxAvailableToAdd << std::endl;
         // Set labels, UI settings for when playlist is full
         if (s_MaxAvailableToAdd < 1){
             s_MaxAvailableToAdd = 0;
@@ -1114,7 +1141,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
     }
     if ((!s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet)){
-        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist not found. s_MaxAvailableToAdd at program launch is: "<< s_MaxAvailableToAdd << std::endl;
+        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 15. Default playlist not found. s_MaxAvailableToAdd at program"
+                                              " launch remains unchanged at "<< s_MaxAvailableToAdd << std::endl;
     }
     // End setup of UI
 }
@@ -1163,8 +1191,8 @@ void ArchSimian::on_addsongsButton_released(){
     // Determine the rating for the track selection if there are already tracks in the playlist
     if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Running ratingCodeSelected function before loop."<< std::endl;
     if (s_playlistSize > 0) {
-        s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
-                                               s_ratingRatio7,s_ratingRatio8);
+        s_ratingNextTrack = ratingCodeSelected(s_playlistPercentage3,s_playlistPercentage4,s_playlistPercentage5,s_playlistPercentage6,
+                                               s_playlistPercentage7,s_playlistPercentage8);
     }
     if (Constants::kVerbose) std::cout <<"on_addsongsButton_released: ratingCodeSelected function before loop completed. Result is: "<< s_ratingNextTrack <<
                                          ". Now starting loop (1047) to select tracks and add them to playlist..." <<std::endl;
@@ -1262,8 +1290,8 @@ void ArchSimian::on_addsongsButton_released(){
         getExcludedArtistsRedux(s_playlistSize, int(s_histCount));
          // Recalc excluded artists
         if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Running ratingCodeSelected function in loop."<< std::endl;
-        s_ratingNextTrack = ratingCodeSelected(s_ratingRatio3,s_ratingRatio4,s_ratingRatio5,s_ratingRatio6,
-                                               s_ratingRatio7,s_ratingRatio8); // Recalc rating selection
+        s_ratingNextTrack = ratingCodeSelected(s_playlistPercentage3,s_playlistPercentage4,s_playlistPercentage5,s_playlistPercentage6,
+                                               s_playlistPercentage7,s_playlistPercentage8); // Recalc rating selection
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: ratingCodeSelected function in loop completed. Result: " << s_ratingNextTrack << ". Count "
                                                                                                                                                            "at end (1006) is now: "<< i<< std::endl;
         if (Constants::kVerbose) std::cout<< "on_addsongsButton_released: *****************************************************************" << std::endl;
@@ -1427,12 +1455,12 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
                                                                                ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
         ui->totadjtracksLabel->setText("Tot adjusted tracks: " + QString::number(s_totalAdjRatedQty));
-        ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->labelfreqperc5->setText(QString::number(((365/s_DaysBeforeRepeatCode3)*selTrackLimitCodeTotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+        ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
     }
 }
 
@@ -1479,7 +1507,7 @@ void ArchSimian::loadSettings()
     m_prefs.s_syncthingpathname = settings.value("s_syncthingpathname","").toString();
     m_prefs.s_mm4disabled = settings.value("s_mm4disabled", Constants::kUserDefaultMM4Disabled).toBool();
     m_prefs.s_audaciouslogenabled = settings.value("s_audaciouslogenabled", Constants::kAudaciouslogenabled).toBool();
-    m_prefs.s_initalpostsettingslaunch = settings.value("s_initalpostsettingslaunch", Constants::k_initalpostsettingslaunch).toBool();
+    m_prefs.s_initialpostsettingslaunch = settings.value("s_initialpostsettingslaunch", Constants::k_initialpostsettingslaunch).toInt();
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
 }
 
@@ -1512,7 +1540,7 @@ void ArchSimian::saveSettings()
     settings.setValue("s_androidpathname",m_prefs.s_androidpathname);
     settings.setValue("s_syncthingpathname",m_prefs.s_syncthingpathname);
     settings.setValue("s_audaciouslogenabled",m_prefs.s_audaciouslogenabled);
-    settings.setValue("s_initalpostsettingslaunch",m_prefs.s_initalpostsettingslaunch);
+    settings.setValue("s_initialpostsettingslaunch",m_prefs.s_initialpostsettingslaunch);
 }
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
@@ -1586,26 +1614,20 @@ void ArchSimian::on_yearsradioButton_clicked()
 
 void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
 {
+    // reset display of rating code controls
     ui->factor4doubleSpinBox->setEnabled(true);
     ui->factor5doubleSpinBox->setEnabled(true);
     ui->factor6doubleSpinBox->setEnabled(true);
     ui->factor7doubleSpinBox->setEnabled(true);
+    // slider value changes s_daysTillRepeatCode3 and m_prefs.s_daysTillRepeatCode3
     m_prefs.s_daysTillRepeatCode3 = value;
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
     s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / Constants::kFractionOneDay;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
     s_adjHoursCode3 = (1 / s_yrsTillRepeatCode3) * s_rCode3TotTime;
-    s_ratingRatio3 = s_adjHoursCode3 / s_totAdjHours;
-    selTrackLimitCodeRatingRatio = s_ratingRatio3;
-    double tracksPerDay = (s_avgListeningRateInMins) / (s_AvgMinsPerSong);
-    double interim1 = (tracksPerDay * selTrackLimitCodeRatingRatio * s_DaysBeforeRepeatCode3);
-    int firstlimittest = int((selTrackLimitCodeTotTrackQty - interim1)/selTrackLimitCodeRatingRatio);
-    int secondlimittest = int(tracksPerDay * s_DaysBeforeRepeatCode3 * 0.95);
-    s_PlaylistLimit = std::min(firstlimittest,secondlimittest) - 20;
-    s_MaxAvailableToAdd = s_PlaylistLimit;
-    ui->newmaxavailLabel->setText(tr("Maximum (est.) tracks available is: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
-    ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
+    s_playlistPercentage3 = s_adjHoursCode3 / s_totAdjHours;
+    selTrackLimitCodeRatingRatio = s_playlistPercentage3;
     ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
     s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
@@ -1629,11 +1651,11 @@ void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
                                                                                               ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
 }
 
 void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
@@ -1663,11 +1685,13 @@ void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
                                                                                               ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+
+
     double test1{0.0};
     double test2{0.0};
     test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
@@ -1722,11 +1746,12 @@ void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
                                                                                               ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+
     double test1{0.0};
     double test2{0.0};
     test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
@@ -1779,11 +1804,12 @@ void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
                                                                                               ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+
     double test1{0.0};
     double test2{0.0};
     test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
@@ -1792,7 +1818,7 @@ void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
             ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
             ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
             ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime);
-    test2=s_totalRatedTime;
+    test2=s_listeningRate*365;
     if(test1 < test2){
         m_prefs.s_repeatFactorCode6 = argfact6;
         ui->factor4doubleSpinBox->setEnabled(true);
@@ -1836,11 +1862,11 @@ void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
                                                                                               ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
     ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
 
     double test1{0.0};
     double test2{0.0};
@@ -1850,7 +1876,7 @@ void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
             ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
             ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
             ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime);
-    test2=s_totalRatedTime;
+    test2=s_listeningRate*365;
     if(test1 < test2){
         m_prefs.s_repeatFactorCode7 = argfact7;
         ui->factor4doubleSpinBox->setEnabled(true);
@@ -1894,12 +1920,12 @@ void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
                                                                                               ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                               ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number((((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number((((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number((((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc5->setText(QString::number(((365/s_DaysBeforeRepeatCode3)*selTrackLimitCodeTotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
 }
 
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
@@ -2086,8 +2112,8 @@ void ArchSimian::on_actionOpen_Playlist_triggered()
             ui->albumsTab->setEnabled(true);
         }
         //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
-        s_OpenPlaylistLimit = s_PlaylistLimit;
-        s_MaxAvailableToAdd = s_OpenPlaylistLimit - s_playlistSize;
+        s_MaxAvailableToAdd = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * Constants::k_playlistListeningDaysLimit);
+        s_MaxAvailableToAdd = s_MaxAvailableToAdd - s_playlistSize;
         if (s_MaxAvailableToAdd < 1){
             s_MaxAvailableToAdd = 0;
             ui->addsongsButton->setEnabled(false);
@@ -2171,8 +2197,8 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     //Sets the playlist size limit to restrict how many tracks can be added to the playlist (from step 15)
     s_playlistSize = 0;
     // Set s_MaxAvailableToAdd to s_OpenPlaylistLimit without adjustment since new playlist is empty
-    s_OpenPlaylistLimit = s_PlaylistLimit;
-    s_MaxAvailableToAdd = s_OpenPlaylistLimit;
+    s_MaxAvailableToAdd = int((s_avgListeningRateInMins / s_AvgMinsPerSong) * Constants::k_playlistListeningDaysLimit);
+    s_MaxAvailableToAdd = s_MaxAvailableToAdd - s_playlistSize;
     ui->addtrksspinBox->setMaximum(s_MaxAvailableToAdd);
     if (s_MaxAvailableToAdd > 9) { ui->addtrksspinBox->setValue(50);}
     ui->addsongsLabel->setText(tr(" tracks to selected playlist. May add a max of: ") + QString::number(s_MaxAvailableToAdd,'g', 3));
@@ -2209,7 +2235,6 @@ void ArchSimian::on_actionNew_Playlist_triggered()
 void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
 {
     ui->autosavecheckBox->checkState();
-    //s_noAutoSave = autosave;
     m_prefs.s_noAutoSave = autosave;
     if (ui->autosavecheckBox->checkState() == 2){
         m_prefs.s_noAutoSave = true;
@@ -2272,43 +2297,12 @@ void ArchSimian::on_viewplaylistButton_clicked()
 void ArchSimian::on_saveConfigButton_released()
 {
     ui->setFrqNextlabel->setText("");
-    s_initalpostsettingslaunch = true;
-    m_prefs.s_initalpostsettingslaunch =s_initalpostsettingslaunch;
+    if (s_initialpostsettingslaunch == 0){ // Initial setup indicator
+        s_initialpostsettingslaunch = 1; // Launch with Frequency tab only. Saving from that tab then changes this value to 2
+        m_prefs.s_initialpostsettingslaunch =s_initialpostsettingslaunch;
+    }
     saveSettings();
     qApp->quit();
-}
-
-
-
-//void ArchSimian::on_playlistLimitSlider_valueChanged(int value)
-//{
-// Adjustment for track limit percentage. Set variable by dividing slider value by 100.
-//}
-
-
-void ArchSimian::on_actionIterate_tag_triggered()
-{
-updateChangedTagRatings();
-}
-
-void ArchSimian::on_actionGet_Last_Played_Dates_triggered()
-{
-    getLastPlayedDates(s_androidpathname);
-}
-
-void ArchSimian::on_actionDate_Conversion_triggered()
-{
-    //logdateconversion();
-}
-
-void ArchSimian::on_actionSyncPlaylist_triggered()
-{
-    syncPlaylistWithSyncthing();
-}
-
-void ArchSimian::on_actionRemove_mp3s_triggered()
-{
-    removeMP3sSyncthing();
 }
 
 void ArchSimian::on_mmdisabledradioButton_clicked()
@@ -2316,7 +2310,6 @@ void ArchSimian::on_mmdisabledradioButton_clicked()
     s_mm4disabled = true;
     m_prefs.s_mm4disabled = s_mm4disabled;
     saveSettings();
-    //    ui->updateASDBButton->setDisabled(false);
     ui->syncthingButton->setDisabled(false);
     ui->selectAndroidDeviceButton->setDisabled(false);
     ui->updateASDBButton->setDisabled(false);
@@ -2376,38 +2369,22 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
 
 void ArchSimian::on_updateASDBButton_clicked()
 {
-    //ui->updateASDBprogressBar->setVisible(true);
-    //ui->updateASDBprogressBar->setRange(0, 100);
-    //ui->updateASDBprogressBar->setValue(10);
     if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting getLastPlayedDates."<< std::endl;}
     getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
     ui->updateASDBButton->toggle();
     if (s_audaciouslogenabled == true) { // If Audacious logging enabled, process its play history
-        //ui->updateASDBprogressBar->setValue(50);
         if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting syncAudaciousLog."<< std::endl;}
         syncAudaciousLog();
     }
     ui->updateASDBprogressBar->setValue(80);
     if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting updateCleanLibDates."<< std::endl;}
     updateCleanLibDates(); // Update cleanlib.dsv wih new dates
-    //ui->updateASDBButton->setText("Reprocessing stats...please wait");
-    //if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting getDBStats."<< std::endl;}
-    /*getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
-               &s_rCode3TotTrackQty,&s_rCode3MsTotTime,&s_rCode4TotTrackQty,&s_rCode4MsTotTime,
-               &s_rCode5TotTrackQty,&s_rCode5MsTotTime,&s_rCode6TotTrackQty,&s_rCode6MsTotTime,
-               &s_rCode7TotTrackQty,&s_rCode7MsTotTime,&s_rCode8TotTrackQty,&s_rCode8MsTotTime,
-               &s_SQL10TotTimeListened,&s_SQL10DayTracksTot,&s_SQL20TotTimeListened,
-               &s_SQL20DayTracksTot,&s_SQL30TotTimeListened,&s_SQL30DayTracksTot,&s_SQL40TotTimeListened,
-               &s_SQL40DayTracksTot,&s_SQL50TotTimeListened,&s_SQL50DayTracksTot,&s_SQL60TotTimeListened,
-               &s_SQL60DayTracksTot);*/
-    //getExcludedArtists(s_playlistSize);
     // Need to reprocess functions associated with a cleanlib.dsv change.
     std::string LastTableDate = getLastTableDate();
     ui->updateASDBButton->setText("Update ArchSimian Database");
     ui->updateASDBButton->setDisabled(false); // Reenable button after updating
     ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
     ui->statusBar->showMessage("Completed getting lastplayed dates and updating Archsimian.",8000);
-    //ui->updateASDBprogressBar->setVisible(false);
     QFile ratingupdate(appDataPathstr+"/syncdisplay.txt");
     if(!ratingupdate.open(QIODevice::ReadOnly))
         QMessageBox::information(nullptr,"info",ratingupdate.errorString());
@@ -2536,8 +2513,47 @@ void ArchSimian::on_updateTagsprogressBar_valueChanged(int value)
 void ArchSimian::on_freqconfigButton_clicked()
 {
     ui->setFrqNextlabel->setText("");
-    s_initalpostsettingslaunch = false;
-    m_prefs.s_initalpostsettingslaunch =s_initalpostsettingslaunch;
+    if (s_initialpostsettingslaunch == 1){ // Launch with Frequency tab only indicator
+    s_initialpostsettingslaunch = 2; // Change to normal use
+    m_prefs.s_initialpostsettingslaunch = s_initialpostsettingslaunch;
+}
     saveSettings();
     qApp->quit();
+}
+
+void ArchSimian::on_factor3ahorizontalSlider_valueChanged(int value)
+{
+
+    //s_playlistPercentage3 = value / 100;
+    std::cout<< " The value in the new code 3 slider is "<<value<<std::endl;
+    ui->slider3label->setText(QString::number((value ),'g', 3) + "%");
+    // Calculate s_daysTillRepeatCode3 using recalculation of change in slider value
+    //double dammit = 100.0;
+    double temp = value/100.0;
+    double temp1 = (s_avgListeningRateInMins / s_AvgMinsPerSong) * 365;
+    s_daysTillRepeatCode3 = int(365/((temp * temp1) /selTrackLimitCodeTotTrackQty));
+    m_prefs.s_daysTillRepeatCode3 = s_daysTillRepeatCode3; // 72
+    std::cout<< " The new value for s_daysTillRepeatCode3 is "<<s_daysTillRepeatCode3<<std::endl;
+    // set slider3yrslabel to new s_daysTillRepeatCode3 value
+    ui->slider3yrslabel->setText(QString::number((s_daysTillRepeatCode3),'g', 3) + " days");
+}
+
+void ArchSimian::on_factor4horizontalSlider_valueChanged(int value)
+{
+
+}
+
+void ArchSimian::on_factor5horizontalSlider_valueChanged(int value)
+{
+
+}
+
+void ArchSimian::on_horizontalSlider_valueChanged(int value)
+{
+
+}
+
+void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
+{
+
 }
