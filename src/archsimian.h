@@ -79,12 +79,11 @@ private slots:
     void on_updateASDBprogressBar_valueChanged(int value);
     void on_addsongsprogressBar_valueChanged(int value);
     void on_freqconfigButton_clicked();
+    void on_factor3ahorizontalSlider_valueChanged(int value);
     void on_factor4horizontalSlider_valueChanged(int value);
     void on_factor5horizontalSlider_valueChanged(int value);
-    void on_horizontalSlider_valueChanged(int value);
+    void on_factor6horizontalSlider_valueChanged(int value);
     void on_factor7horizontalSlider_valueChanged(int value);
-    void on_factor3ahorizontalSlider_valueChanged(int value);
-
 
 private:
     Ui::ArchSimian *ui;

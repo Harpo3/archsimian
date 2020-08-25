@@ -2623,14 +2623,20 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
           <height>20</height>
          </rect>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
-         <number>10</number>
+         <number>100</number>
         </property>
         <property name="maximum">
-         <number>33</number>
+         <number>330</number>
         </property>
         <property name="value">
-         <number>25</number>
+         <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -2645,13 +2651,13 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>4</number>
+         <number>0</number>
         </property>
        </widget>
        <widget class="QLabel" name="slider5yrslabel">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>420</x>
           <y>170</y>
           <width>80</width>
           <height>14</height>
@@ -2666,7 +2672,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <rect>
           <x>360</x>
           <y>300</y>
-          <width>32</width>
+          <width>55</width>
           <height>16</height>
          </rect>
         </property>
@@ -2677,7 +2683,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QLabel" name="slider4yrslabel">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>420</x>
           <y>120</y>
           <width>80</width>
           <height>14</height>
@@ -2692,7 +2698,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <rect>
           <x>360</x>
           <y>120</y>
-          <width>32</width>
+          <width>55</width>
           <height>16</height>
          </rect>
         </property>
@@ -2703,7 +2709,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QLabel" name="slider7yrslabel">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>420</x>
           <y>270</y>
           <width>80</width>
           <height>14</height>
@@ -2718,7 +2724,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <rect>
           <x>360</x>
           <y>80</y>
-          <width>32</width>
+          <width>55</width>
           <height>16</height>
          </rect>
         </property>
@@ -2729,7 +2735,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QLabel" name="slider3yrslabel">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>420</x>
           <y>80</y>
           <width>80</width>
           <height>16</height>
@@ -2742,17 +2748,20 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QSlider" name="factor5horizontalSlider">
         <property name="geometry">
          <rect>
-          <x>40</x>
+          <x>30</x>
           <y>170</y>
           <width>301</width>
           <height>20</height>
          </rect>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>50</number>
         </property>
         <property name="maximum">
-         <number>20</number>
+         <number>250</number>
+        </property>
+        <property name="sliderPosition">
+         <number>50</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -2761,23 +2770,23 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>4</number>
+         <number>10</number>
         </property>
        </widget>
        <widget class="QSlider" name="factor6horizontalSlider">
         <property name="geometry">
          <rect>
-          <x>40</x>
+          <x>30</x>
           <y>220</y>
           <width>301</width>
           <height>20</height>
          </rect>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>20</number>
         </property>
         <property name="maximum">
-         <number>20</number>
+         <number>220</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -2789,7 +2798,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>4</number>
+         <number>10</number>
         </property>
        </widget>
        <widget class="QLabel" name="slider7label">
@@ -2797,7 +2806,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <rect>
           <x>360</x>
           <y>270</y>
-          <width>32</width>
+          <width>55</width>
           <height>14</height>
          </rect>
         </property>
@@ -2815,10 +2824,10 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
         <property name="minimum">
-         <number>10</number>
+         <number>100</number>
         </property>
         <property name="maximum">
-         <number>33</number>
+         <number>300</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -2830,7 +2839,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>4</number>
+         <number>10</number>
         </property>
        </widget>
        <widget class="QLabel" name="slider5label">
@@ -2838,7 +2847,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <rect>
           <x>360</x>
           <y>170</y>
-          <width>32</width>
+          <width>55</width>
           <height>14</height>
          </rect>
         </property>
@@ -2849,17 +2858,17 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QSlider" name="factor7horizontalSlider">
         <property name="geometry">
          <rect>
-          <x>40</x>
+          <x>30</x>
           <y>270</y>
           <width>301</width>
           <height>20</height>
          </rect>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>20</number>
         </property>
         <property name="maximum">
-         <number>20</number>
+         <number>220</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -2868,13 +2877,13 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>4</number>
+         <number>10</number>
         </property>
        </widget>
        <widget class="QLabel" name="slider8yrslabel">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>420</x>
           <y>300</y>
           <width>80</width>
           <height>14</height>
@@ -2889,7 +2898,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          <rect>
           <x>360</x>
           <y>220</y>
-          <width>32</width>
+          <width>55</width>
           <height>14</height>
          </rect>
         </property>
@@ -2900,7 +2909,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QLabel" name="slider6yrslabel">
         <property name="geometry">
          <rect>
-          <x>400</x>
+          <x>420</x>
           <y>220</y>
           <width>80</width>
           <height>14</height>
@@ -2908,6 +2917,186 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
         <property name="text">
          <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_17">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>10%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_19">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>70</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>33%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_20">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>110</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>10%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_21">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>110</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>30%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_22">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>160</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>5%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_23">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>160</y>
+          <width>41</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>25%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_24">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>210</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>2%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_25">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>210</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>22%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_26">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>260</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>2%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_27">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>260</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>22%</string>
         </property>
        </widget>
       </widget>
@@ -3174,8 +3363,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
      <y>191</y>
     </hint>
     <hint type="destinationlabel">
-     <x>341</x>
-     <y>189</y>
+     <x>362</x>
+     <y>203</y>
     </hint>
    </hints>
   </connection>
@@ -3208,6 +3397,22 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <hint type="destinationlabel">
      <x>282</x>
      <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>factor3ahorizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>factor3ahorizontalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>175</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>

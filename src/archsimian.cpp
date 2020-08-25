@@ -935,21 +935,20 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
 
 
-        ui->factor4horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
-        ui->factor4horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor4horizontalSlider->setMinimum(100);
+        ui->factor4horizontalSlider->setMaximum(300);
 
 
-
-        ui->factor5horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
-        ui->factor5horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
-
-
-        ui->factor6horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
-        ui->factor6horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor5horizontalSlider->setMinimum(50);
+        ui->factor5horizontalSlider->setMaximum(250);
 
 
-        ui->factor7horizontalSlider->setMinimum(int(.05 * Constants::kConvertDecimalToPercentDisplay));
-        ui->factor7horizontalSlider->setMaximum(int(.3 * Constants::kConvertDecimalToPercentDisplay));
+        ui->factor6horizontalSlider->setMinimum(20);
+        ui->factor6horizontalSlider->setMaximum(220);
+
+
+        ui->factor7horizontalSlider->setMinimum(20);
+        ui->factor7horizontalSlider->setMaximum(220);
 
 
         // *************************
@@ -2523,37 +2522,216 @@ void ArchSimian::on_freqconfigButton_clicked()
 
 void ArchSimian::on_factor3ahorizontalSlider_valueChanged(int value)
 {
-
-    //s_playlistPercentage3 = value / 100;
-    std::cout<< " The value in the new code 3 slider is "<<value<<std::endl;
-    ui->slider3label->setText(QString::number((value ),'g', 3) + "%");
-    // Calculate s_daysTillRepeatCode3 using recalculation of change in slider value
-    //double dammit = 100.0;
-    double temp = value/100.0;
-    double temp1 = (s_avgListeningRateInMins / s_AvgMinsPerSong) * 365;
-    s_daysTillRepeatCode3 = int(365/((temp * temp1) /selTrackLimitCodeTotTrackQty));
-    m_prefs.s_daysTillRepeatCode3 = s_daysTillRepeatCode3; // 72
-    std::cout<< " The new value for s_daysTillRepeatCode3 is "<<s_daysTillRepeatCode3<<std::endl;
-    // set slider3yrslabel to new s_daysTillRepeatCode3 value
+    // Convert (integer) slider value (to its decimal value) for calculation
+    double temp = double(value/1000.0); // Convert slider value to a decimal
+    // Set variables for s_playlistPercentage3, s_daysTillRepeatCode3, and s_yrsTillRepeatCode3
+    s_playlistPercentage3 = temp;
+    double temp1 = (s_avgListeningRateInMins / s_AvgMinsPerSong) * 365; // Calculate total tracks per year based on listening rate
+    s_daysTillRepeatCode3 = int(365/((s_playlistPercentage3 * temp1) /selTrackLimitCodeTotTrackQty)); // Calculate s_daysTillRepeatCode3
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
+    m_prefs.s_daysTillRepeatCode3 = s_daysTillRepeatCode3;
+    // Populate labels for current slider
+    double tempa = s_playlistPercentage3 * 100.0;
+    ui->slider3label->setText(QString::number(tempa,'f', 1) + "%");
     ui->slider3yrslabel->setText(QString::number((s_daysTillRepeatCode3),'g', 3) + " days");
+
+    // Calculate percentage of playlist remaining unassigned
+    double unassigned = double(1.0-s_playlistPercentage3);
+
+    // Assign initial slider values for remaining (lower) rating codes
+    // Build variables to convert to integer values use descending values (sum of the digits: 15)
+    int unassigned4 = int(double(unassigned * double(5.0/15.0)) * 1000.0);
+    int unassigned5 = int(double(unassigned * double(4.0/15.0)) * 1000.0);
+    int unassigned6 = int(double(unassigned * double(3.0/15.0)) * 1000.0);
+    int unassigned7 = int(double(unassigned * double(2.0/15.0)) * 1000.0);
+    int unassigned8 = int(double(unassigned * double(1.0/15.0)) * 1000.0);
+    s_playlistPercentage5 = double(unassigned5 / 1000.0);
+    s_playlistPercentage6 = double(unassigned6 / 1000.0);
+    s_playlistPercentage7 = double(unassigned7 / 1000.0);
+    s_playlistPercentage8 = double(unassigned8 / 1000.0);
+
+    // Set initial slider positions for remaining (lower) rating codes
+    ui->factor4horizontalSlider->setValue(unassigned4);
+    ui->factor5horizontalSlider->setValue(unassigned5);
+    ui->factor6horizontalSlider->setValue(unassigned6);
+    ui->factor7horizontalSlider->setValue(unassigned7);
+    // Code 8 is the final remainder (no slider, just the remaining value)
+
+    // Recalculate s_yrsTillRepeatCode values using remaining (lower) rating codes
+    s_yrsTillRepeatCode5 = s_rCode5TotTrackQty / (s_playlistPercentage5 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode6 = s_rCode6TotTrackQty / (s_playlistPercentage6 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+
+    // Set label values for remaining (lower) rating codes
+    ui->slider4label->setText(QString::number((double(unassigned4 / 10.0)),'f', 2) + "%");
+    ui->slider5label->setText(QString::number((double(unassigned5 / 10.0)),'f', 2) + "%");
+    ui->slider6label->setText(QString::number((double(unassigned6 / 10.0)),'f', 2) + "%");
+    ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
+    ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
+    ui->slider4yrslabel->setText(QString::number((s_yrsTillRepeatCode4),'f', 2) + " years");
+    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5),'f', 2) + " years");
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
 }
 
 void ArchSimian::on_factor4horizontalSlider_valueChanged(int value)
 {
+    // Convert (integer) slider value (to its decimal value) for calculation
+    double temp = double(value/1000.0);
+    // Set variables for s_playlistPercentage4 and s_yrsTillRepeatCode4
+    s_playlistPercentage4 = temp;
+    s_yrsTillRepeatCode4 = s_rCode4TotTrackQty / (s_playlistPercentage4 * s_listeningRateSongsPerYr);
+    // Populate labels for current slider
+    double tempa = double(value/10.0); // Convert slider value for display
+    ui->slider4label->setText(QString::number(tempa,'f', 1) + "%");
+    ui->slider4yrslabel->setText(QString::number((s_yrsTillRepeatCode4),'f', 2) + " years");
 
+    // Calculate percentage of playlist remaining unassigned
+    double unassigned = double(1.0-s_playlistPercentage4-s_playlistPercentage3);
+
+    // Assign initial slider values for remaining (lower) rating codes
+    // Build variables to convert to integer values use descending values (sum of the digits: 10)
+    int unassigned5 = int(double(unassigned * double(4.0/10.0)) * 1000.0);
+    int unassigned6 = int(double(unassigned * double(3.0/10.0)) * 1000.0);
+    int unassigned7 = int(double(unassigned * double(2.0/10.0)) * 1000.0);
+    int unassigned8 = int(double(unassigned * double(1.0/10.0)) * 1000.0);
+    s_playlistPercentage5 = double(unassigned5 / 1000.0);
+    s_playlistPercentage6 = double(unassigned6 / 1000.0);
+    s_playlistPercentage7 = double(unassigned7 / 1000.0);
+    s_playlistPercentage8 = double(unassigned8 / 1000.0);
+
+    // Set initial slider positions for remaining (lower) rating codes
+    ui->factor5horizontalSlider->setValue(unassigned5);
+    ui->factor6horizontalSlider->setValue(unassigned6);
+    ui->factor7horizontalSlider->setValue(unassigned7);
+    // Code 8 is the final remainder (no slider, just the remaining value)
+
+    // Recalculate s_yrsTillRepeatCode values using remaining (lower) rating codes
+    s_yrsTillRepeatCode5 = s_rCode5TotTrackQty / (s_playlistPercentage5 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode6 = s_rCode6TotTrackQty / (s_playlistPercentage6 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+
+    // Set label values for remaining (lower) rating codes
+    ui->slider5label->setText(QString::number((double(unassigned5 / 10.0)),'f', 2) + "%");
+    ui->slider6label->setText(QString::number((double(unassigned6 / 10.0)),'f', 2) + "%");
+    ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
+    ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
+    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5),'f', 2) + " years");
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
 }
 
 void ArchSimian::on_factor5horizontalSlider_valueChanged(int value)
 {
+    // Convert (integer) slider value (to its decimal value) for calculation
+    double temp = double(value/1000.0);
+    // Set variables for s_playlistPercentage5 and s_yrsTillRepeatCode5
+    s_playlistPercentage5 = temp;
+    s_yrsTillRepeatCode5 = s_rCode5TotTrackQty / (s_playlistPercentage5 * s_listeningRateSongsPerYr);
+    // Populate labels for current slider
+    double tempa = double(value/10.0); // Convert slider value for display
+    ui->slider5label->setText(QString::number(tempa,'f', 1) + "%");
+    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5),'f', 2) + " years");
 
+    double unassigned = double(1.0-s_playlistPercentage5-s_playlistPercentage4-s_playlistPercentage3);
+
+    // Assign initial slider values for remaining (lower) rating codes
+    // Build variables to convert to integer values use descending values (sum of the digits: 6)
+    int unassigned6 = int(double(unassigned * double(3.0/6.0)) * 1000.0);
+    int unassigned7 = int(double(unassigned * double(2.0/6.0)) * 1000.0);
+    int unassigned8 = int(double(unassigned * double(1.0/6.0)) * 1000.0);
+    s_playlistPercentage6 = double(unassigned6 / 1000.0);
+    s_playlistPercentage7 = double(unassigned7 / 1000.0);
+    s_playlistPercentage8 = double(unassigned8 / 1000.0);
+
+    // Set initial slider positions for remaining (lower) rating codes
+    ui->factor6horizontalSlider->setValue(unassigned6);
+    ui->factor7horizontalSlider->setValue(unassigned7);
+    // Code 8 is the final remainder (no slider, just the remaining value)
+
+    // Recalculate s_yrsTillRepeatCode values using remaining (lower) rating codes
+    s_yrsTillRepeatCode6 = s_rCode6TotTrackQty / (s_playlistPercentage6 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+
+    // Set label values for remaining (lower) rating codes
+    ui->slider6label->setText(QString::number((double(unassigned6 / 10.0)),'f', 2) + "%");
+    ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
+    ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
 }
 
-void ArchSimian::on_horizontalSlider_valueChanged(int value)
+void ArchSimian::on_factor6horizontalSlider_valueChanged(int value)
 {
+    // Convert (integer) slider value (to its decimal value) for calculation
+    double temp = double(value/1000.0);
+    // Set variables for s_playlistPercentage6 and s_yrsTillRepeatCode6
+    s_playlistPercentage6 = temp;
+    s_yrsTillRepeatCode6 = s_rCode6TotTrackQty / (s_playlistPercentage6 * s_listeningRateSongsPerYr);
+    // Populate labels for current slider
+    double tempa = double(value/10.0); // Convert slider value for display
+    ui->slider6label->setText(QString::number(tempa,'f', 1) + "%");
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
 
+    double unassigned = double(1.0-s_playlistPercentage6-s_playlistPercentage5-s_playlistPercentage4-s_playlistPercentage3);
+
+    // Assign initial slider values for remaining (lower) rating codes
+    // Build variables to convert to integer values use descending values (sum of the digits: 3)
+    int unassigned7 = int(double(unassigned * double(2.0/3.0)) * 1000.0);
+    int unassigned8 = int(double(unassigned * double(1.0/3.0)) * 1000.0);
+    s_playlistPercentage7 = double(unassigned7 / 1000.0);
+    s_playlistPercentage8 = double(unassigned8 / 1000.0);
+
+    // Set initial slider positions for remaining (lower) rating codes
+    ui->factor7horizontalSlider->setValue(unassigned7);
+    // Code 8 is the final remainder (no slider, just the remaining value)
+
+    // Recalculate s_yrsTillRepeatCode values using remaining (lower) rating codes
+    s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+
+    // Set label values for remaining (lower) rating codes
+    ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
+    ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
 }
 
 void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
 {
+    // Convert (integer) slider value (to its decimal value) for calculation
+    double temp = double(value/1000.0);
+    // Set variables for s_playlistPercentage7 and s_yrsTillRepeatCode7
+    s_playlistPercentage7 = temp;
+    s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    // Populate labels for current slider
+    double tempa = double(value/10.0); // Convert slider value for display
+    ui->slider7label->setText(QString::number(tempa,'f', 1) + "%");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
 
+    double unassigned = double(1.0-s_playlistPercentage7-s_playlistPercentage6-s_playlistPercentage5-s_playlistPercentage4-s_playlistPercentage3);
+
+    // Assign initial slider values for remaining (lower) rating codes
+    // Build variables to convert to integer values use descending values (sum of the digits: 2)
+    int unassigned8 = int(double(unassigned * double(1.0-s_playlistPercentage7)) * 1000.0);
+    s_playlistPercentage8 = double(unassigned8 / 1000.0);
+
+    // Set initial slider positions for remaining (lower) rating codes
+    // Code 8 is the final remainder (no slider, just the remaining value)
+
+    // Recalculate s_yrsTillRepeatCode values using remaining (lower) rating codes
+    s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+
+    // Set label values for remaining (lower) rating codes
+    ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
 }
+
+
