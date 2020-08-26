@@ -183,7 +183,7 @@ void testid3tag(){
     }
 }
 
-void getLastPlayedDates(QString &s_androidpathname){
+void getLastPlayedDates(QString s_androidpathname){
     // Gets lastplayed history from AIMP log and save it to lastplayeddates.txt
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
     std::fstream debuglog;
@@ -227,7 +227,7 @@ void getLastPlayedDates(QString &s_androidpathname){
             //define start and end positions for date string, then save date string
             matchinfile = true;
             if (matchinfile == true){
-                if(Constants::kVerbose){std::cout << "getLastPlayedDates: At lease one entry found."<< std::endl;}
+                if(Constants::kVerbose){std::cout << "getLastPlayedDates: At least one entry found."<< std::endl;}
             }
             str2 = str1;
             std::size_t foundstart = str2.find(begpos);
@@ -269,6 +269,7 @@ void getLastPlayedDates(QString &s_androidpathname){
                 }),
                                   artistentry.end());
             }
+
             if ((linecount == albumline) && (collecteddate != "")){
                 // get album string if it is two lines after lastplayed date found
                 std::size_t strlength = str1.length();
@@ -280,6 +281,7 @@ void getLastPlayedDates(QString &s_androidpathname){
                     return specchars.find(c) != std::string::npos;
                 }),
                                 albumentry.end());
+                std::cout << "getLastPlayedDates: albumentry: " <<albumentry<< std::endl;
             }
             if ((linecount == songline) && (collecteddate != "")){
                 // get song string if it is two lines after lastplayed date found
@@ -292,6 +294,7 @@ void getLastPlayedDates(QString &s_androidpathname){
                     return specchars.find(c) != std::string::npos;
                 }),
                                 songentry.end());
+                std::cout << "getLastPlayedDates: songentry: " <<songentry<< std::endl;
             }
             if ((linecount == songline +1) && (collecteddate != "")){
                 // If the line after completing assignment of the 3 variables: date, artist and song, save all three into one csv line
@@ -312,7 +315,7 @@ void getLastPlayedDates(QString &s_androidpathname){
         dateslist.close();
         debug.close();
         combinedvect.shrink_to_fit();
-        return;
+        return ;
     }
     debug.close();
     std::sort (combinedvect.begin(), combinedvect.end(), std::greater<>()); // Do a reverse sort to put newer dates first
@@ -349,6 +352,7 @@ void getLastPlayedDates(QString &s_androidpathname){
         }
         //Send all tokens to the new output vector with the date token placed at the front
         str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
+        std::cout << "getLastPlayedDates: str4: " <<str4<< std::endl;
         outputvect.push_back(str4);
         resulttemp.shrink_to_fit();
     }
@@ -369,12 +373,14 @@ void getLastPlayedDates(QString &s_androidpathname){
             resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
         }
         dateslist << resttemp <<","<< datetemp; // Write reordered tokens to file
+        std::cout << "getLastPlayedDates: resttemp: " <<resttemp<< ", "<<datetemp<< std::endl;
         result.shrink_to_fit();
     }
     combinedvect.shrink_to_fit();
     finalvect.shrink_to_fit();
     outputvect.shrink_to_fit();
     dateslist.close();
+    return ;
 }
 
 void updateCleanLibDates(){
@@ -669,37 +675,23 @@ void removeLinuxPlaylistFile(){
     remove (plfile.c_str());// remove old exported playlist from home directory
 }
 
+
 void syncAudaciousLog(){
-    // Check to see if the the AIMP log is empty
-    bool isempty{false};
     QString tempFileStr1a = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates.txt";
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
-    //Check whether lastplayeddates currently has any data in it
-    std::streampos aimplog;
-    char * memblock;
-    std:: ifstream file (tempFileStr1a.toStdString()+"/lastplayeddates.txt", std::ios::in|std::ios::binary|std::ios::ate);
-    if (file.is_open())
-    {
-        aimplog = file.tellg();
-        memblock = new char [static_cast<unsigned long>(aimplog)];
-        file.seekg (0, std::ios::beg);
-        file.read (memblock, aimplog);
-        file.close();
-        delete[] memblock;
-    }
-    if (aimplog == 0) { // If there is no AIMP log, copy audacioushist.log as lastplayeddates2.txt
-        isempty = true;
+    //Check whether lastplayeddates currently has any data in it to see if the the AIMP log was empty of played entries
+    QString DBfile = tempFileStr1a;
+    QFile newFile(DBfile);
+    newFile.open( QIODevice::WriteOnly|QIODevice::Append );
+    if (newFile.pos() == 0) {
+      // is empty
         if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was empty."<< std::endl;}
         QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QFile::copy(tempFileStr1,tempFileStr2);
-    }
-    if (isempty == false){ // Else, combine the two files
+    } else {
+      // some data inside
         if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was not empty."<< std::endl;}
-        // Concatenate Audacious log with a copy of lastplayeddates.txt, sort it by date, then
-        // remove duplicate entries that have earlier dates
-        // Uses lastplayeddates.txt to update last played dates in cleanlib.dsv for songs played and logged by AIMP
-
         QString tempFileStr1b = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
         std::ifstream SongsTable1(tempFileStr1a.toStdString());    // Open lastplayeddates.txt as ifstream

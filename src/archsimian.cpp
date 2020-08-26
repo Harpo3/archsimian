@@ -7,6 +7,7 @@
 #include <QProgressBar>
 #include <QTimeLine>
 #include <QProgressDialog>
+#include <QFile>
 #include <fstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -393,22 +394,18 @@ ArchSimian::ArchSimian(QWidget *parent) :
             generateDiagsLog();
             diagsran = true;
         }
-        if (tmpbool){ // check that file is not empty
+        if (tmpbool){
             //Check whether the songs table currently has any data in it
-            std::streampos cleanLibFilesize;
-            char * memblock;
-            std:: ifstream file (cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
-            if (file.is_open())
-            {
-                cleanLibFilesize = file.tellg();
-                memblock = new char [static_cast<unsigned long>(cleanLibFilesize)];
-                file.seekg (0, std::ios::beg);
-                file.read (memblock, cleanLibFilesize);
-                file.close();
-                delete[] memblock;
+            QString appDataPathstrcl = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib.dsv";
+            QString qcleanLibFile = appDataPathstrcl;
+            QFile newFile(qcleanLibFile);
+            newFile.open( QIODevice::WriteOnly|QIODevice::Append );
+            if (newFile.pos() == 0) {
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3. cleanLib file empty." << std::endl;
+            } else {
+                s_bool_CleanLibExist = true;
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3. cleanLib file not empty." << std::endl;
             }
-            if (cleanLibFilesize != 0) {s_bool_CleanLibExist = true;}
-            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3. cleanLib file not empty result: " << cleanLibFilesize << std::endl;
         }
     }
     if ((Constants::kVerbose)&&(s_bool_IsUserConfigSet)&& (!s_mm4disabled)) std::cout << "Archsimian.cpp: Step 3. Does CleanLibFile exist. s_bool_CleanLibExist result: "
@@ -429,27 +426,20 @@ ArchSimian::ArchSimian(QWidget *parent) :
         // }
         if (tmpbool){ // check that file is not empty
             //Check whether the songs table currently has any data in it
-            std::streampos cleanLibFilesize;
-            char * memblock;
-            std:: ifstream file (cleanLibFile, std::ios::in|std::ios::binary|std::ios::ate);
-            if (file.is_open())
-            {
-                cleanLibFilesize = file.tellg();
-                memblock = new char [static_cast<unsigned long>(cleanLibFilesize)];
-                file.seekg (0, std::ios::beg);
-                file.read (memblock, cleanLibFilesize);
-                file.close();
-                delete[] memblock;
+            QString appDataPathstrcl = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib.dsv";
+            QString qcleanLibFile = appDataPathstrcl;
+            QFile newFile(qcleanLibFile);
+            newFile.open( QIODevice::WriteOnly|QIODevice::Append );
+            if (newFile.pos() == 0) {
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3a. cleanLib file empty." << std::endl;
+            } else {
+                s_bool_CleanLibExist = true;
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3a. cleanLib file not empty." << std::endl;
             }
-            if (cleanLibFilesize != 0) {s_bool_CleanLibExist = true;}
-            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 3a. cleanLib file not empty result: " << cleanLibFilesize << std::endl;
         }
     }
 
-
     // Add NEW code here for restoring backup of cleanLibFile.
-
-
 
 
     /* 4. Determine if MM.DB was recently updated unless MM4 update has been disabled. s_bool_MMdbUpdated is set by comparing MM.DB file date
@@ -2372,7 +2362,7 @@ void ArchSimian::on_updateASDBButton_clicked()
     getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
     ui->updateASDBButton->toggle();
     if (s_audaciouslogenabled == true) { // If Audacious logging enabled, process its play history
-        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting syncAudaciousLog."<< std::endl;}
+        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Audacious logging enabled, starting syncAudaciousLog."<< std::endl;}
         syncAudaciousLog();
     }
     ui->updateASDBprogressBar->setValue(80);
