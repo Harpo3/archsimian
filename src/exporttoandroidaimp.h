@@ -7,7 +7,6 @@
 
 void syncPlaylistWithSyncthing();
 void removeMP3sSyncthing();
-void testid3tag();
 void getLastPlayedDates(QString s_androidpathname);
 double logdateconversion(std::string chkthis);
 void updateCleanLibDates();

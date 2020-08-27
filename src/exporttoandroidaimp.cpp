@@ -51,20 +51,19 @@ void removeMP3sSyncthing(){
 
 void syncPlaylistWithSyncthing(){
     // Open cleanedplaylist.txt as read file to convert the path of each track from
-    // "/mnt/vboxfiles/music/" to "/storage/emulated/0/Download/" - then write each to cleanedplaylist.m3u8
-    // and then, copy the resulting playlist and mp3s to the syncthing folder for use by android device
+    // music library location to Syncthing folder location - write each to cleanedplaylist.m3u8
+    // then copy the resulting playlist and mp3s to the Syncthing folder for android device access
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-    QString syncthingPathstr = QDir::homePath() + "/Sync/"; // Set syncthing path
-    // First, remove all existing mp3s from syncthing directory
-    removeMP3sSyncthing();
+    QString syncthingPathstr = QDir::homePath() + "/Sync/"; // Set Syncthing path
+    removeMP3sSyncthing(); // Remove all existing mp3s from syncthing directory
     std::ifstream linuxfilepath;
     linuxfilepath.open (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (linuxfilepath.is_open()) {linuxfilepath.close();}
     else {std::cout << "syncPlaylistWithSyncthing: Error opening cleanedplaylist.txt file ." << std::endl;}
     std::string playlist = appDataPathstr.toStdString()+"/cleanedplaylist.txt"; // now we can use it as input file
     std::ifstream readlist(playlist);
-    std::ofstream ofs1; //open the cleanedplaylist.m3u8 file for writing.
-    ofs1.open(syncthingPathstr.toStdString()+"syncplaylist.m3u8"); // open new m3u8 file to syncthing location
+    std::ofstream ofs1; // Open the cleanedplaylist.m3u8 file for writing.
+    ofs1.open(syncthingPathstr.toStdString()+"syncplaylist.m3u8"); // Open new m3u8 file to syncthing location
     std::string str1;
     std::string findstring("/mnt/vboxfiles/music/*/*/");
     std::string replacestring("/storage/emulated/0/Download/");
@@ -82,105 +81,12 @@ void syncPlaylistWithSyncthing(){
         filenameonly.replace(0,findstringlength2+2,replacestring2); // Get filename only and save as str1
         newdest = syncthingPathstr.toStdString()+filenameonly; // Builds filepath for syncthing
         QFile::copy(sourcepath, QString::fromUtf8(newdest.c_str())); // Copy mp3 from souce to syncthing destination
-        int findstringlength = positionOfXthDelimChar(androidstring, 5); // find position of sixth / delimiter
-        androidstring.replace(0,findstringlength+2,replacestring); // replace string with android path
-        ofs1 << androidstring << "\n"; // write revised path to output playlist file
+        int findstringlength = positionOfXthDelimChar(androidstring, 5); // Find position of sixth / delimiter
+        androidstring.replace(0,findstringlength+2,replacestring); // Replace string with android path
+        ofs1 << androidstring << "\n"; // Write revised path to output playlist file
     }
     ofs1.close();
     readlist.close();
-}
-
-void testid3tag(){
-    std::string selectedLibArtistToken{" "};
-    std::string selectedLibTitleToken{" "};
-    std::string selectedLibAlbumToken{" "};
-    std::string bandToken;
-    std::string titleToken;
-    std::string albumToken;
-    std::string ratingCode{" "};
-    std::string ratingToken;
-
-    ID3_Tag activeTag;
-    activeTag.Link("/mnt/vboxfiles/music/smash_mouth/astro_lounge/09_-_smash_mouth_-_then_the_morning_comes.mp3",ID3TT_ID3V2 | ID3TT_APPENDED);
-
-    ID3_Frame *frame;
-    if ( (frame = activeTag.Find ( ID3FID_LEADARTIST )) )
-    {
-        char band[ 1024 ];
-        frame->Field ( ID3FN_TEXT ).Get ( band, 1024 );
-        std::cout << "band: " << band << std::endl;
-        bandToken = band;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_TITLE )) )
-    {
-        char title[ 1024 ];
-        frame->Field ( ID3FN_TEXT ).Get ( title, 1024 );
-        titleToken = title;
-        std::cout << "title: " << title << std::endl;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_ALBUM )) )
-    {
-        char album[ 1024 ];
-        frame->Field ( ID3FN_TEXT ).Get ( album, 1024 );
-        std::cout << "album: " << album << std::endl;
-        albumToken = album;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_POPULARIMETER )) )
-    {
-        char *sEmail = ID3_GetString(frame, ID3FN_EMAIL);
-        size_t nRating = frame->GetField(ID3FN_RATING)->Get();
-        std::cout <<"popm: " << nRating << std::endl;
-        delete [] sEmail;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_COMMENT)) ) // Comment frame (needed to iterate to the next frame)
-    {
-        char  *sText = ID3_GetString(frame, ID3FN_TEXT);
-        char  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);
-        char *sLang = ID3_GetString(frame, ID3FN_LANGUAGE);
-        delete [] sText;
-        delete [] sDesc;
-        delete [] sLang;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_COMMENT)) ) // MusicMatch Frame (needed to iterate to the next frame)
-    {
-        char  *sText = ID3_GetString(frame, ID3FN_TEXT);
-        char  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);
-        char *sLang = ID3_GetString(frame, ID3FN_LANGUAGE);
-        delete [] sText;
-        delete [] sDesc;
-        delete [] sLang;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_COMMENT)) ) // ArchSimian artist grouping name
-    {
-        char  *sText = ID3_GetString(frame, ID3FN_TEXT);
-        char  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);
-        char *sLang = ID3_GetString(frame, ID3FN_LANGUAGE);
-        std::cout << "Artist Grouping: "
-                  << sText <<" for the custome description: "<<sDesc << std::endl;
-        delete [] sText;
-        delete [] sDesc;
-        delete [] sLang;
-    }
-    if ( (frame = activeTag.Find ( ID3FID_CONTENTGROUP )) )
-    {
-        char ratingcode[ 1024 ];
-        frame->Field ( ID3FN_TEXT ).Get ( ratingcode, 1024 );
-        std::cout << "ratingcode: " << ratingcode << std::endl;
-        ratingToken = ratingcode;
-    }
-    std::cout << "ratingCode is: " << ratingCode << ". ratingToken is: "<< ratingToken<<". bandToken/titleToken is: " << bandToken <<" - "<<titleToken<< std::endl;
-    if ( (bandToken == selectedLibArtistToken) && (titleToken == selectedLibTitleToken) && (albumToken == selectedLibAlbumToken)) {
-        if ( (bandToken == selectedLibArtistToken) && (titleToken == selectedLibTitleToken) && (albumToken == selectedLibAlbumToken)) {
-            if (ratingCode != ratingToken)               {
-                std::cout << "ratingCode: " << ratingCode << " does NOT match ratingToken: "<< ratingToken<<" for: " << selectedLibArtistToken <<" - "<<selectedLibTitleToken<< std::endl;
-            }
-            if (ratingCode == ratingToken)               {
-                std::cout << "ratingCode: " << ratingCode << " matches ratingToken: "<< ratingToken<<" for: " << selectedLibArtistToken <<" - "<<selectedLibTitleToken<< std::endl;
-            }
-        }
-        else
-            std::cout<<"not found\n";
-    }
 }
 
 void getLastPlayedDates(QString s_androidpathname){
