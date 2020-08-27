@@ -220,7 +220,6 @@ void getLastPlayedDates(QString s_androidpathname){
     bool matchinfile{0};
     while (std::getline(debug, str1)) {
         std::size_t found = str1.find(lastplayedmarker);
-        //if ((found=std::string::npos)){continue;}
         // Beginning of first section
         if (found!=std::string::npos) {  // found!= (not found) means the function did not return string::npos,
             // meaning a match was FOUND for the current line; Next get the date from that same line
@@ -256,9 +255,9 @@ void getLastPlayedDates(QString s_androidpathname){
          }
         // Beginning of 2nd section;
         if (found==std::string::npos) {  // found== means the function did return string::npos,
-            // meaning a match was NOT FOUND for the current line; Next
+                                         // meaning a match was NOT FOUND for the current line; Next,
             if ((linecount == artistline) && (collecteddate != "")){
-                // get artist string if it is two lines after lastplayed date found
+                // Get artist string if it is two lines after lastplayed date found
                 std::size_t strlength = str1.length();
                 artistentry = str1.substr (7,strlength-7);
                 // Remove certain special characters from the artistentry string before writing line to lastplayeddates.txt
@@ -270,7 +269,7 @@ void getLastPlayedDates(QString s_androidpathname){
                                   artistentry.end());
             }
             if ((linecount == albumline) && (collecteddate != "")){
-                // get album string if it is two lines after lastplayed date found
+                // Get album string if it is two lines after lastplayed date found
                 std::size_t strlength = str1.length();
                 albumentry = str1.substr (6,strlength-6);
                 // Remove certain special characters from the songentry string before writing line to lastplayeddates.txt
@@ -282,7 +281,7 @@ void getLastPlayedDates(QString s_androidpathname){
                                 albumentry.end());
             }
             if ((linecount == songline) && (collecteddate != "")){
-                // get song string if it is two lines after lastplayed date found
+                // Get song string if it is two lines after lastplayed date found
                 std::size_t strlength = str1.length();
                 songentry = str1.substr (6,strlength-6);
                 // Remove certain special characters from the songentry string before writing line to lastplayeddates.txt
@@ -316,14 +315,14 @@ void getLastPlayedDates(QString s_androidpathname){
     }
     debug.close();
     std::sort (combinedvect.begin(), combinedvect.end(), std::greater<>()); // Do a reverse sort to put newer dates first
-    std::map<std::string, std::string> map; // map used to remove duplicates
+    std::map<std::string, std::string> map; // Map used to remove duplicates
     for(auto& el: combinedvect){
-        auto it = el.find_last_of(',');           // find last ","
-        auto key = el.substr(0, it);              // extract the key
-        auto value = std::string(el.substr(it+1));  // extract the last value
-        // if it does not exist already, or if it exists and has a value greater than the one inserted:
+        auto it = el.find_last_of(',');           // Find last ","
+        auto key = el.substr(0, it);              // Extract the key
+        auto value = std::string(el.substr(it+1));  // Extract the last value
+        // If it does not exist already, or if it exists and has a value greater than the one inserted,
         if(map.find(key) == map.end() || (map.find(key) != map.end() && map[key] < value))
-            map[key] = value; // change the value
+            map[key] = value; // change the value.
     }
     for(auto& [k, combinedvect]: map){
         finalvect.push_back(k+","+combinedvect+"\n"); // Push back unique entries to new vector finalvect
@@ -333,9 +332,9 @@ void getLastPlayedDates(QString s_androidpathname){
     std::string selectedLPLAlbumToken; // Title variable from lastplayeddates.txt
     std::string selectedLPLSQLDateToken; // SQL Date variable from lastplayeddates.txt
     for (auto & d : finalvect){ // Iterate through finalvect for each line d
-        std::stringstream s_streamd(d); //create string stream with line d
-        std::vector<std::string> resulttemp; // create temp vector resulttemp to store tokens
-        int tokenCount{0}; //token count is the number of delimiter characters within str
+        std::stringstream s_streamd(d); // Create string stream with line d
+        std::vector<std::string> resulttemp; // Create temp vector resulttemp to store tokens
+        int tokenCount{0}; // Token count is the number of delimiter characters within str
         while(s_streamd.good()) { // Iterate the string and parse tokens
             std::string token;
             while (std::getline(s_streamd, token, ','))
@@ -347,24 +346,24 @@ void getLastPlayedDates(QString s_androidpathname){
                 ++ tokenCount;
             }
         }
-        //Send all tokens to the new output vector with the date token placed at the front
+        // Send all tokens to the new output vector with the date token placed at the front
         str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
         outputvect.push_back(str4);
         resulttemp.shrink_to_fit();
     }
-    std::sort (outputvect.begin(), outputvect.end()); // Now, sort the output vector by date
-    // Now, output order to move the date back to the last element when writing file
-    for (auto & j : outputvect) {// Iterate through the vector for each line j
-        std::stringstream s_stream(j); //create string stream with line j
-        std::vector<std::string> result; // create temp vector result
+    std::sort (outputvect.begin(), outputvect.end()); // Sort the output vector by date
+    // Output order to move the date back to the last element when writing file
+    for (auto & j : outputvect) { // Iterate through the vector for each line j
+        std::stringstream s_stream(j); //Create string stream with line j
+        std::vector<std::string> result; // Create temp vector result
         std::string datetemp;
         std::string resttemp;
         while(s_stream.good()) {
             std::string substr;
-            getline(s_stream, substr, ','); //get token (substr) delimited by comma
-            result.push_back(substr); // populate result vector with tokens
+            getline(s_stream, substr, ','); // Get token (substr) delimited by comma
+            result.push_back(substr); // Populate result vector with tokens
         }
-        for(unsigned long i = 0; i<result.size(); i++) {    // now reorder tokens from result with date in correct position
+        for(unsigned long i = 0; i<result.size(); i++) { // Reorder tokens from result with date in correct position
             datetemp = result.at(0);
             resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
         }
@@ -385,13 +384,13 @@ void updateCleanLibDates(){
     QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib2.dsv";
     QFile::copy(tempFileStr1,tempFileStr2);
     // Open log for reporting changes to UI
-    std::ofstream ofs; //open the lastplayedupdate file for writing with the truncate option to delete the content.
+    std::ofstream ofs; // Open syncdisplay.txt for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    std::ofstream lastplayedupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // output file append mode for writing final rating selections (UI display)
+    std::ofstream lastplayedupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // Output in append mode
     lastplayedupdate << "Last played entries updated to the ArchSimian database: "<< '\n';
     // Create vector for new lastplayed dates
-    StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // open "lastplayeddates.txt" as 2D vector lastplayedvec
+    StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // Open as 2D vector lastplayedvec
     lastplayedvec.reserve(10000);
     std::string selectedArtistToken; // Artist variable from lastplayedvec
     std::string selectedTitleToken; // Title variable from lastplayedvec
@@ -401,13 +400,13 @@ void updateCleanLibDates(){
     std::string selectedLibTitleToken; // Title variable from cleanlib.dsv
     std::string selectedLibAlbumToken; // Title variable from cleanlib.dsv
     std::string selectedLibSQLDateToken; // SQL Date variable from cleanlib.dsv
-    try { // operation replaces cleanlib.dsv; need to protect data in event of a fatal error
+    try { // Operation replaces cleanlib.dsv; need to protect data in event of a fatal error
         // Open cleanlib2.dsv as read file
         std::ifstream cleanlib;  // First ensure cleanlib2.dsv is ready to open
         cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
         if (cleanlib.is_open()) {cleanlib.close();}
         else {std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;}
-        std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Now we can use it as input file
+        std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Use as input file
         std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib2.dsv as ifstream
         if (!SongsTable.is_open())
         {
@@ -415,14 +414,14 @@ void updateCleanLibDates(){
             std::exit(EXIT_FAILURE); // Otherwise, quit
         }
         std::string str; // Create ostream file to update cleanLib
-        std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing revised lastplayed dates
+        std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // Output file for writing revised lastplayed dates
         // Loop through cleanlib and find matches in lastplayed vector; for matches revised string with new SQL date and push to new file
         while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of cleanlib
             std::istringstream iss(str);
             std::string token;
             std::vector<std::string> tokens;// Vector of string to parse each line by carat to save tokens
-            std::stringstream check1(str);// stringstream for parsing carat delimiter
-            std::string intermediate; // intermediate value for parsing carat delimiter
+            std::stringstream check1(str);// Stringstream for parsing carat delimiter
+            std::string intermediate; // Intermediate value for parsing carat delimiter
             // Open tokens vector to tokenize current string using carat '^' delimiter
             while(getline(check1, intermediate, '^'))
             {
@@ -432,7 +431,7 @@ void updateCleanLibDates(){
             selectedLibAlbumToken = tokens[Constants::kColumn3];
             selectedLibTitleToken = tokens[Constants::kColumn7];
             selectedLibSQLDateToken = tokens[Constants::kColumn17];
-            for(auto & i : lastplayedvec){ // assign row elements from lastplayedvec to variables to compare with Lib tokens
+            for(auto & i : lastplayedvec){ // Assign row elements from lastplayedvec to variables to compare with Lib tokens
                 selectedArtistToken = i[Constants::kColumn0];
                 selectedAlbumToken = i[Constants::kColumn1];
                 selectedTitleToken = i[Constants::kColumn2];
@@ -441,8 +440,7 @@ void updateCleanLibDates(){
                 if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken)
                         && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
                     tokens.at(Constants::kColumn17) = selectedSQLDateToken;
-                    str = getChgdDSVStr(tokens,str); // recompile str with changed token
-                    //if (Constants::kVerbose) {std::cout << "str: " << str<< std::endl;}
+                    str = getChgdDSVStr(tokens,str); // Recompile str with changed token
                     lastplayedupdate << selectedLibArtistToken <<" - "<<selectedLibTitleToken<<"; SQL Date: "<<selectedSQLDateToken<< '\n';
                     continue;
                 }
@@ -459,8 +457,8 @@ void updateCleanLibDates(){
         std::cerr << "updateCleanLibDates: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
                      "/.local/share/archsimian/ and inspect file for errors." << exception.what();
         QMessageBox msgBox;
-        QString msgboxtxt = "on_addsongsButton_released: Out of memory error (bad_alloc):failed during attempt to add tracks. Likely reason: "
-                            "Not enough available tracks found. Adjust factors on the frequency tab and restart.";
+        QString msgboxtxt = "updateCleanLibDates: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
+                            "/.local/share/archsimian/ and inspect file for errors.";
         msgBox.setText(msgboxtxt);
         msgBox.exec();
         qApp->quit(); //Exit program
@@ -488,37 +486,37 @@ void updateChangedTagRatings(){
     std::string popmToken{" "};
     std::string longstring{" "};
     // Open log for reporting changes to UI
-    std::ofstream ofs; //open the ratingupdate file for writing with the truncate option to delete the content.
+    std::ofstream ofs; // Open the ratingupdate file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    std::ofstream ratingupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // output file append mode for writing final rating selections (UI display)
+    std::ofstream ratingupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // Open in append mode
     // Open cleanlib.dsv as read file
-    std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
+    std::ifstream cleanlib;  // Ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
     if (cleanlib.is_open()) {cleanlib.close();}
     else {std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;}
-    std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Now we can use it as input file
-    std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib.dsv as ifstream
+    std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Use as input file
+    std::ifstream SongsTable(cleanlibSongsTable); // Open cleanlib.dsv as ifstream
     if (!SongsTable.is_open())
     {
         std::cout << "updateCleanLibDates: Error opening SongsTable." << std::endl;
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
     std::string str; // Create ostream file to update cleanLib
-    std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing revised lastplayed dates
-    std::getline(SongsTable, str); //Get column titles header string
+    std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // Output file for writing revised lastplayed dates
+    std::getline(SongsTable, str); // Get column titles header string
     outf << str << "\n"; // Write column titles header string to first line of file
     // Loop through cleanlib and check each tag for changed ratings
     //  Outer loop: iterate through rows of SongsTable
-    try { // operation replaces cleanlib.dsv; need to protect data in event of a fatal error
+    try { // Operation replaces cleanlib.dsv; need to protect data in event of a fatal error
     while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
         // Declare variables applicable to all rows
         std::istringstream iss(str);
         // Create a vector to parse each line by carat and do processing
         std::vector<std::string> tokens2; // Vector of string to save tokens
         tokens2.reserve(50000);
-        std::stringstream check1(str);// stringstream for parsing carat delimiter
-        std::string intermediate; // intermediate value for parsing carat delimiter
+        std::stringstream check1(str);// Stringstream for parsing carat delimiter
+        std::string intermediate; // Intermediate value for parsing carat delimiter
         // Open tokens vector to tokenize current string using carat '^' delimiter
         while(getline(check1, intermediate, '^')) // Inner loop: iterate through tokens of string using tokens vector
         {
@@ -615,7 +613,7 @@ void updateChangedTagRatings(){
                 if (ratingToken!=""){selectedLibratingCode = ratingToken;}
                 ratingupdate << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
                                                                       selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
-                if (selectedLibArtistToken == "3"){selectedLibpopmRating = "100";}// Set MM4 code (40, 50, 60, etc) based on code or popm change
+                if (selectedLibArtistToken == "3"){selectedLibpopmRating = "100";} // Set MM4 code (40, 50, 60, etc) based on code or popm change
                 if (selectedLibArtistToken == "4"){selectedLibpopmRating = "90";}
                 if (selectedLibArtistToken == "5"){selectedLibpopmRating = "70";}
                 if (selectedLibArtistToken == "6"){selectedLibpopmRating = "60";}
