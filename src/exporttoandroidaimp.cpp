@@ -269,7 +269,6 @@ void getLastPlayedDates(QString s_androidpathname){
                 }),
                                   artistentry.end());
             }
-
             if ((linecount == albumline) && (collecteddate != "")){
                 // get album string if it is two lines after lastplayed date found
                 std::size_t strlength = str1.length();
@@ -281,7 +280,6 @@ void getLastPlayedDates(QString s_androidpathname){
                     return specchars.find(c) != std::string::npos;
                 }),
                                 albumentry.end());
-                std::cout << "getLastPlayedDates: albumentry: " <<albumentry<< std::endl;
             }
             if ((linecount == songline) && (collecteddate != "")){
                 // get song string if it is two lines after lastplayed date found
@@ -294,7 +292,6 @@ void getLastPlayedDates(QString s_androidpathname){
                     return specchars.find(c) != std::string::npos;
                 }),
                                 songentry.end());
-                std::cout << "getLastPlayedDates: songentry: " <<songentry<< std::endl;
             }
             if ((linecount == songline +1) && (collecteddate != "")){
                 // If the line after completing assignment of the 3 variables: date, artist and song, save all three into one csv line
@@ -352,7 +349,6 @@ void getLastPlayedDates(QString s_androidpathname){
         }
         //Send all tokens to the new output vector with the date token placed at the front
         str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
-        std::cout << "getLastPlayedDates: str4: " <<str4<< std::endl;
         outputvect.push_back(str4);
         resulttemp.shrink_to_fit();
     }
@@ -373,7 +369,6 @@ void getLastPlayedDates(QString s_androidpathname){
             resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
         }
         dateslist << resttemp <<","<< datetemp; // Write reordered tokens to file
-        std::cout << "getLastPlayedDates: resttemp: " <<resttemp<< ", "<<datetemp<< std::endl;
         result.shrink_to_fit();
     }
     combinedvect.shrink_to_fit();
@@ -511,7 +506,6 @@ void updateChangedTagRatings(){
     }
     std::string str; // Create ostream file to update cleanLib
     std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing revised lastplayed dates
-    //std::ofstream outf2(appDataPathstr.toStdString()+"/cleanlibcheck.dsv"); // output file for writing revised lastplayed dates
     std::getline(SongsTable, str); //Get column titles header string
     outf << str << "\n"; // Write column titles header string to first line of file
     // Loop through cleanlib and check each tag for changed ratings
@@ -542,7 +536,7 @@ void updateChangedTagRatings(){
                 +tokens2[Constants::kColumn23]+"^"+tokens2[Constants::kColumn24]+"^"+tokens2[Constants::kColumn25]+"^"
                 +tokens2[Constants::kColumn26]+"^"+tokens2[Constants::kColumn27]+"^"+tokens2[Constants::kColumn28];
         if (selectedLibratingCode == "0"){
-            outf << str << "\n"; // The string is valid if unrated, write unchanged to cleanlib file
+            outf << str << "\n"; // The existing string is valid if unrated; if so, write unchanged string to cleanlib file
             continue;
         }
         ID3_Tag activeTag; // Get tag info using id3/tag.h
@@ -660,8 +654,8 @@ void updateChangedTagRatings(){
             std::cerr << "updateChangedTagRatings: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
                          "/.local/share/archsimian/ and inspect file for errors." << exception.what();
             QMessageBox msgBox;
-            QString msgboxtxt = "on_addsongsButton_released: Out of memory error (bad_alloc):failed during attempt to add tracks. Likely reason: "
-                                "Not enough available tracks found. Adjust factors using the frequency tab and restart.";
+            QString msgboxtxt = "updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
+                                "Replace with cleanlib2.dsv found in /.local/share/archsimian/ and inspect file for errors.";
             msgBox.setText(msgboxtxt);
             msgBox.exec();
             qApp->quit(); //Exit program
@@ -684,13 +678,13 @@ void syncAudaciousLog(){
     QFile newFile(DBfile);
     newFile.open( QIODevice::WriteOnly|QIODevice::Append );
     if (newFile.pos() == 0) {
-      // is empty
+      // If the file is empty, use only the Audacious log to write lastplayeddates.txt
         if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was empty."<< std::endl;}
         QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QFile::copy(tempFileStr1,tempFileStr2);
     } else {
-      // some data inside
+      // If the file is not empty, combine the AIMP (lastplayeddates2.txt) and Audacious logs to write as lastplayeddates2.txt
         if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was not empty."<< std::endl;}
         QString tempFileStr1b = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
@@ -702,7 +696,7 @@ void syncAudaciousLog(){
         SongsTable2.close();
         combined_file.close();
     }
-    // Next, open and read combined file into a vector. Sort it by date, remove dups, then rewrite lastplayeddates.txt
+    // Open and read combined file into a vector. Sort it by date, remove dups, then rewrite lastplayeddates.txt
     std::vector<std::string>combinedvect;
     std::vector<std::string>finalvect;
     std::vector<std::string>outputvect;
@@ -720,11 +714,9 @@ void syncAudaciousLog(){
         std::cout << "syncAudaciousLog: Error opening SongsTable." << std::endl;
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
-    // Create ostream file to replace lastplayeddates.txt
-    std::ofstream outf4(appDataPathstr.toStdString()+"/lastplayeddates.txt");
-    //  Iterate through rows of SongsTable3 (lastplayeddates2.txt)
-    while (std::getline(SongsTable3, str)) {
-        // Clean up special charaters that came from Audacious entries
+    std::ofstream outf4(appDataPathstr.toStdString()+"/lastplayeddates.txt"); // Create ostream file to replace lastplayeddates.txt
+    while (std::getline(SongsTable3, str)) { //  Iterate through rows of SongsTable3 (lastplayeddates2.txt)
+        // Clean up special charaters that came from Audacious tag entries
         std::string specchars = "\?@&()#\"+*!;"; /// Identify special characters to remove
         str.erase(remove_if(str.begin(), str.end(),
                             [&specchars](const char& c) {
@@ -768,23 +760,22 @@ void syncAudaciousLog(){
         }
         //Send all tokens to the new output vector with the date token placed at the front
         str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
-        //if (Constants::kVerbose) std::cout << "syncAudaciousLog: Full output is: " <<str4<< std::endl;
         outputvect.push_back(str4);
         resulttemp.shrink_to_fit();
     }
     std::sort (outputvect.begin(), outputvect.end()); // Now, sort the output vector by date
-    // Now, output order to move the date back to the last element when writing file
-    for (auto & j : outputvect) {// Iterate through the vector for each line j
-        std::stringstream s_stream(j); //create string stream with line j
-        std::vector<std::string> result; // create temp vector result
+    // Output order to move the date back to the last element when writing file
+    for (auto & j : outputvect) { // Iterate through the vector for each line j
+        std::stringstream s_stream(j); // Create string stream with line j
+        std::vector<std::string> result; // Create temp vector result
         std::string datetemp;
         std::string resttemp;
         while(s_stream.good()) {
             std::string substr;
-            getline(s_stream, substr, ','); //get token (substr) delimited by comma
-            result.push_back(substr); // populate result vector with tokens
+            getline(s_stream, substr, ','); // Get token (substr) delimited by comma
+            result.push_back(substr); // Populate result vector with tokens
         }
-        for(unsigned long i = 0; i<result.size(); i++) {    // now reorder tokens from result with date in correct position
+        for(unsigned long i = 0; i<result.size(); i++) {    // Reorder tokens from result with date in correct position
             datetemp = result.at(0);
             resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
         }
@@ -795,5 +786,5 @@ void syncAudaciousLog(){
     combinedvect.shrink_to_fit();
     finalvect.shrink_to_fit();
     outputvect.shrink_to_fit();
-    removeAppData("lastplayeddates2.txt"); // Remove lastplayeddates2.txt
+    removeAppData("lastplayeddates2.txt");
 }
