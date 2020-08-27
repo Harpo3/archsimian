@@ -131,9 +131,9 @@ void getLastPlayedDates(QString s_androidpathname){
             // meaning a match was FOUND for the current line; Next get the date from that same line
             //define start and end positions for date string, then save date string
             matchinfile = true;
-            if (matchinfile == true){
-                if(Constants::kVerbose){std::cout << "getLastPlayedDates: At least one entry found."<< std::endl;}
-            }
+            //if (matchinfile == true){
+                //if(Constants::kVerbose){std::cout << "getLastPlayedDates: At least one entry found."<< std::endl;}
+            //}
             str2 = str1;
             std::size_t foundstart = str2.find(begpos);
             std::size_t foundend1 = str2.find(endpos1);
@@ -341,13 +341,23 @@ void updateCleanLibDates(){
                 selectedArtistToken = i[Constants::kColumn0];
                 selectedAlbumToken = i[Constants::kColumn1];
                 selectedTitleToken = i[Constants::kColumn2];
-                selectedSQLDateToken = i[Constants::kColumn3];
+                selectedSQLDateToken = i[Constants::kColumn3];                
                 // Match Artist and title in cleanLib from lastplayedvec and change SQL date for each if log date is newer
                 if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken)
                         && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
+                    // Convert SQL date to a readable date for lastplayedupdate
+                    time_t x = time_t(std::stod(selectedSQLDateToken));
+                    x = (x - 25569) * 86400;
+
+                    char yourbuf[64];
+                    strftime(yourbuf, sizeof(yourbuf),
+                             "%m/%d/%Y",
+                             gmtime(&x));
+                    std::string datestring(yourbuf);
                     tokens.at(Constants::kColumn17) = selectedSQLDateToken;
                     str = getChgdDSVStr(tokens,str); // Recompile str with changed token
-                    lastplayedupdate << selectedLibArtistToken <<" - "<<selectedLibTitleToken<<"; SQL Date: "<<selectedSQLDateToken<< '\n';
+                    // Print a readable date to panel
+                    lastplayedupdate << selectedLibArtistToken <<" - "<<selectedLibTitleToken<<", played on "<<datestring<<" (GMT)"<< '\n';
                     continue;
                 }
             }
