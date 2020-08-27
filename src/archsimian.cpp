@@ -700,66 +700,55 @@ ArchSimian::ArchSimian(QWidget *parent) :
         bool tmpbool;
         bool tmpbool2;
         tmpbool = doesFileExist(appDataPathstr.toStdString()+"/artistsadj.txt");
-        if (tmpbool){ // check that file is not empty
-            //Check whether the songs table currently has any data in it
-            std::streampos artsistAdjsize;
-            char * memblock;
-            std:: ifstream file (appDataPathstr.toStdString()+"/artistsadj.txt", std::ios::in|std::ios::binary|std::ios::ate);
-            if (file.is_open())
-            {
-                artsistAdjsize = file.tellg();
-                memblock = new char [static_cast<unsigned long>(artsistAdjsize)];
-                file.seekg (0, std::ios::beg);
-                file.read (memblock, artsistAdjsize);
-                file.close();
-                delete[] memblock;
-            }
-            else std::cout << "Archsimian.cpp: Step 7a. ERROR: There was a problem opening artistsadj.txt" << std::endl;
-            if (artsistAdjsize != 0) {
+        if (tmpbool){ //Check whether the artistsadj.txt currently has any data in it
+            QString appDataPathstraa = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/artistsadj.txt";
+            QString qartistAdjFile = appDataPathstraa;
+            QFile newFile(qartistAdjFile);
+            newFile.open( QIODevice::WriteOnly|QIODevice::Append );
+            if (newFile.pos() == 0) {
+                s_bool_artistsadjExist = false;
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. artistsadj file empty." << std::endl;
+            } else {
+                if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. artistsadj file not empty." << std::endl;
                 s_bool_artistsadjExist = true;// file artistsadj.txt exists and is greater in size than zero, set to true
                 // If MM.DB not recently updated and artistsadj.txt does not need to be updated, check if ratedabbr.txt exists
                 // If it does set s_bool_RatedAbbrExist to true.
                 if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7a. MM.DB not recently updated and artistsadj.txt does not need to be updated. "
                                                        "Now checking s_bool_RatedAbbrExist." << std::endl;}
                 tmpbool2 = doesFileExist(appDataPathstr.toStdString()+"/ratedabbr.txt");
-                if (tmpbool2){ // check that file is not empty
-                    //Check whether the songs table currently has any data in it
-                    std::streampos ratedabbrsize;
-                    char * memblock;
-                    std:: ifstream file (appDataPathstr.toStdString()+"/ratedabbr.txt", std::ios::in|std::ios::binary|std::ios::ate);
-                    if (file.is_open())
-                    {
-                        ratedabbrsize = file.tellg();
-                        memblock = new char [static_cast<unsigned long>(ratedabbrsize)];
-                        file.seekg (0, std::ios::beg);
-                        file.read (memblock, ratedabbrsize);
-                        file.close();
-                        delete[] memblock;
-                    }
-                    else std::cout << "Archsimian.cpp: Step 7a. There was a problem opening ratedabbr.txt" << std::endl;
-                    if (ratedabbrsize != 0) {
+                if (tmpbool2){ //Check whether ratedabbr.txt currently has any data in it
+                    QString appDataPathstrra = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/ratedabbr.txt";
+                    QString qratedAbbrFile = appDataPathstrra;
+                    QFile newFile(qratedAbbrFile);
+                    newFile.open( QIODevice::WriteOnly|QIODevice::Append );
+                    if (newFile.pos() == 0) {
+                        s_bool_RatedAbbrExist = false;
+                        if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. ratedabbr file empty." << std::endl;
+                    } else {
                         s_bool_RatedAbbrExist = true;
                         if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7a. Set s_bool_RatedAbbrExist = true." << std::endl;}
                     }
                 }
             }
-            if (artsistAdjsize == 0) {s_bool_artistsadjExist = false;}// file exists but size is zero, set to false
         }
         if (!tmpbool){s_bool_artistsadjExist = false;} // file does not exist, set bool to false
         if (s_mm4disabled){
-            s_bool_artistsadjExist = false; // If MM4 is disabled, set bool to false
             if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. MM4 is disabled. s_bool_artistsadjExist set to false." << std::endl;
+            s_bool_artistsadjExist = false; // If MM4 is disabled, set bool to false
         }
         if (Constants::kVerbose) {std::cout << "Archsimian.cpp: Step 7a. MM.DB not recently updated. Verifying artistsadj.txt exists and is not zero. "
                                               "s_bool_artistsadjExist result: "<< s_bool_artistsadjExist << std::endl;}
         if (!s_bool_artistsadjExist){
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. s_bool_artistsadjExist set to false. Starting function getArtistAdjustedCount to"
+                                                  " regenerate artistsadj.txt." << std::endl;
             getArtistAdjustedCount(&s_yrsTillRepeatCode3factor,&s_yrsTillRepeatCode4factor,&s_yrsTillRepeatCode5factor,
                                    &s_yrsTillRepeatCode6factor,&s_yrsTillRepeatCode7factor,&s_yrsTillRepeatCode8factor,
                                    &s_rCode3TotTrackQty,&s_rCode4TotTrackQty,&s_rCode5TotTrackQty,
                                    &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
             s_bool_artistsadjExist = doesFileExist (appDataPathstr.toStdString()+"/artistsadj.txt");
+            if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. Regenerated artistsadj.txt. Setting s_bool_RatedAbbrExist to false." << std::endl;
             s_bool_RatedAbbrExist = false;
-            if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7a Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+            if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7a. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
         }
     }
 
@@ -783,9 +772,9 @@ ArchSimian::ArchSimian(QWidget *parent) :
      MM4 data exists, songs table exists, database statistics exist, and file artistsadj.txt is created (bool_IsUserConfigSet, s_bool_MMdbExist, s_bool_CleanLibExist,
      s_bool_dbStatsCalculated, bool10 are all true), run function getSubset() to create a modified database file with rated tracks
      only and artist intervals for each track, rechecking, run doesFileExist (const std::string& name) (ratedabbr.txt) function (s_bool_RatedAbbrExist) */
-
     if ((s_bool_IsUserConfigSet) && (s_bool_MMdbExist) && (s_bool_CleanLibExist)  && (s_bool_dbStatsCalculated)
             && (s_bool_artistsadjExist) && ((!s_bool_RatedAbbrExist) || (s_mm4disabled))) {
+        if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 8. Starting function getSubset to create ratedabbr.txt." << std::endl;}
         getSubset();
         s_bool_RatedAbbrExist = doesFileExist (appDataPathstr.toStdString()+"/ratedabbr.txt");
         if (!s_bool_RatedAbbrExist)  {std::cout << "Archsimian.cpp: Step 8. Something went wrong at the function getSubset(). ratedabbr.txt not created." << std::endl;}
