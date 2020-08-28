@@ -163,6 +163,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
     m_sSettingsFile = QApplication::applicationDirPath().left(1) + ":/archsimian.conf"; // sets the config file location for QSettings
     // QSettings: load user settings from archsimian.conf file
     loadSettings();
+
+    // NEW - comment out yrsTillRepeat lines and replace with playlist percentage calc, like:
+    //  s_yrsTillRepeatCode4 = s_rCode4TotTrackQty / (s_playlistPercentage4 * s_listeningRateSongsPerYr);
+    // and save playlist percentage variables to config file
     s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
@@ -175,6 +179,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
     s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
     s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
+
+
     sliderBaseVal3 = m_prefs.s_daysTillRepeatCode3 / Constants::kDaysInYear;
     s_mmBackupDBDir = m_prefs.mmBackupDBDir;
     s_musiclibrarydirname = m_prefs.musicLibraryDir;
@@ -898,9 +904,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         // NEW *********************
 
 
-
-
-
         ui->slider4label->setText(QString::number((s_playlistPercentage4) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->slider5label->setText(QString::number((s_playlistPercentage5) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->slider6label->setText(QString::number((s_playlistPercentage6) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
@@ -913,39 +916,42 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->slider7yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
         ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
 
-
+        // Set slider min and max values
         ui->factor4horizontalSlider->setMinimum(100);
         ui->factor4horizontalSlider->setMaximum(300);
-
-
         ui->factor5horizontalSlider->setMinimum(50);
         ui->factor5horizontalSlider->setMaximum(250);
-
-
         ui->factor6horizontalSlider->setMinimum(20);
         ui->factor6horizontalSlider->setMaximum(220);
-
-
         ui->factor7horizontalSlider->setMinimum(20);
         ui->factor7horizontalSlider->setMaximum(220);
 
+        // Set initial playlist percentage value for factor3ahorizontalSlider, using saved (or default) s_daysTillRepeatCode3
+        double temp1 = (s_avgListeningRateInMins / s_AvgMinsPerSong) * 365;
+        s_playlistPercentage3 = (365 * selTrackLimitCodeTotTrackQty) / (temp1 * s_daysTillRepeatCode3);
+        int temppp3 = int(1000 * s_playlistPercentage3);
+        ui->factor3ahorizontalSlider->setValue(temppp3);
+        // Set initial playlist percentage value for factor4horizontalSlider, using saved (or default) s_yrsTillRepeatCode4
+         s_playlistPercentage4 =  ((1/ s_yrsTillRepeatCode4) * s_rCode4TotTrackQty)/s_listeningRateSongsPerYr;
+        int temppp4 = int(1000 * s_playlistPercentage4);
+        ui->factor4horizontalSlider->setValue(temppp4);
+        // Set initial playlist percentage value for factor5horizontalSlider, using saved (or default) s_yrsTillRepeatCode5
+        s_playlistPercentage5 =  ((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr;
+        int temppp5 = int(1000 * s_playlistPercentage5);
+        ui->factor5horizontalSlider->setValue(temppp5);
+        // Set initial playlist percentage value for factor6horizontalSlider, using saved (or default) s_yrsTillRepeatCode6
+        s_playlistPercentage6 =  ((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr;
+        int temppp6 = int(1000 * s_playlistPercentage6);
+        ui->factor6horizontalSlider->setValue(temppp6);
+        // Set initial playlist percentage value for factor7horizontalSlider, using saved (or default) s_yrsTillRepeatCode7
+        s_playlistPercentage7 =  ((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr;
+        int temppp7 = int(1000 * s_playlistPercentage7);
+        ui->factor7horizontalSlider->setValue(temppp7);
 
         // *************************
 
-        ui->factor3horizontalSlider->setMinimum(Constants::kRatingCode3MinDays);
-        ui->factor3horizontalSlider->setMaximum(Constants::kRatingCode3MaxDays);
-        ui->factor3horizontalSlider->setValue(int(s_daysTillRepeatCode3));
-        ui->factor3IntTxtLabel->setNum(s_daysTillRepeatCode3);
-        ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-        ui->factor4doubleSpinBox->setValue(m_prefs.s_repeatFactorCode4);
-        ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-        ui->factor5doubleSpinBox->setValue(m_prefs.s_repeatFactorCode5);
-        ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-        ui->factor6doubleSpinBox->setValue(m_prefs.s_repeatFactorCode6);
-        ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-        ui->factor7doubleSpinBox->setValue(m_prefs.s_repeatFactorCode7);
-        ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-        ui->factor8doubleSpinBox->setValue(m_prefs.s_repeatFactorCode8);
+
+
         ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                        QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
         ui->daystoaddLabel->setText(tr("Based on a daily listening rate of ") + QString::number(s_avgListeningRateInMins,'g', 3)
@@ -1024,21 +1030,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
     ui->mintracksspinBox->setValue(m_prefs.s_mintracks);
     ui->mintrackseachspinBox->setValue(m_prefs.s_mintrackseach);
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    // Calculated daily listening rate in hrs * 365 = listening hours per year
-    // s_listeningRate * 365
-    ui->labelfreqperc5->setText(QString::number(((365/s_DaysBeforeRepeatCode3)*selTrackLimitCodeTotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+
     if (!s_bool_IsUserConfigSet){
         ui->mainQTabWidget->setTabEnabled(0, false);
         ui->mainQTabWidget->setTabEnabled(2, false);
@@ -1060,7 +1052,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
 
     // Temporarily disable the Frequency tab:
-    ui->mainQTabWidget->setTabEnabled(3, false);
+    ui->mainQTabWidget->setTabEnabled(3, true);
 
 
     /* 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary(const int &s_minalbums,
@@ -1433,12 +1425,7 @@ void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
                                                                                ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
                                                                                ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
         ui->totadjtracksLabel->setText("Tot adjusted tracks: " + QString::number(s_totalAdjRatedQty));
-        ui->labelfreqperc5->setText(QString::number(((365/s_DaysBeforeRepeatCode3)*selTrackLimitCodeTotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-        ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+
     }
 }
 
@@ -1544,11 +1531,11 @@ void ArchSimian::on_daysradioButton_clicked()
     dateTransTextVal = " days";
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
+    ui->slider4yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
+    ui->slider5yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
+    ui->slider6yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kDaysInYear,'g', 3) + dateTransTextVal);
 }
 
 void ArchSimian::on_weeksradioButton_clicked()
@@ -1557,11 +1544,11 @@ void ArchSimian::on_weeksradioButton_clicked()
     dateTransTextVal = " weeks";
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
+    ui->slider4yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
+    ui->slider5yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
+    ui->slider6yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kWeeksInYear,'g', 3) + dateTransTextVal);
 }
 
 void ArchSimian::on_monthsradioButton_clicked()
@@ -1570,11 +1557,11 @@ void ArchSimian::on_monthsradioButton_clicked()
     dateTransTextVal = " months";
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+    ui->slider4yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+    ui->slider5yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+    ui->slider6yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
 }
 
 void ArchSimian::on_yearsradioButton_clicked()
@@ -1583,327 +1570,11 @@ void ArchSimian::on_yearsradioButton_clicked()
     dateTransTextVal = " years";
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3,'g', 3) + dateTransTextVal);
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4,'g', 3) + dateTransTextVal);
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5,'g', 3) + dateTransTextVal);
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6,'g', 3) + dateTransTextVal);
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7,'g', 3) + dateTransTextVal);
-}
-
-void ArchSimian::on_factor3horizontalSlider_valueChanged(int value)
-{
-    // reset display of rating code controls
-    ui->factor4doubleSpinBox->setEnabled(true);
-    ui->factor5doubleSpinBox->setEnabled(true);
-    ui->factor6doubleSpinBox->setEnabled(true);
-    ui->factor7doubleSpinBox->setEnabled(true);
-    // slider value changes s_daysTillRepeatCode3 and m_prefs.s_daysTillRepeatCode3
-    m_prefs.s_daysTillRepeatCode3 = value;
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
-    s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
-    s_DaysBeforeRepeatCode3 = s_yrsTillRepeatCode3 / Constants::kFractionOneDay;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    s_adjHoursCode3 = (1 / s_yrsTillRepeatCode3) * s_rCode3TotTime;
-    s_playlistPercentage3 = s_adjHoursCode3 / s_totAdjHours;
-    selTrackLimitCodeRatingRatio = s_playlistPercentage3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
-    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
-    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
-    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
-    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-}
-
-void ArchSimian::on_factor4doubleSpinBox_valueChanged(double argfact4)
-{    
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(argfact4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode4 = argfact4;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
-    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
-    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
-    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
-    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-
-
-    double test1{0.0};
-    double test2{0.0};
-    test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-            ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-            ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-            ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-            ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-            ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime);
-    test2=s_totalRatedTime;
-    if(test1 < test2){
-        m_prefs.s_repeatFactorCode4 = argfact4;
-        ui->factor4doubleSpinBox->setEnabled(true);
-        ui->factor5doubleSpinBox->setEnabled(true);
-        ui->factor6doubleSpinBox->setEnabled(true);
-        ui->factor7doubleSpinBox->setEnabled(true);
-    }
-    if(test1 > test2){
-        ui->factor4doubleSpinBox->setEnabled(false);
-        if ((ui->factor4doubleSpinBox->isEnabled() == false)&&(ui->factor5doubleSpinBox->isEnabled() == false)&&
-                (ui->factor6doubleSpinBox->isEnabled() == false)&&(ui->factor7doubleSpinBox->isEnabled() == false)) {
-            ui->factor3horizontalSlider->setValue((ui->factor3horizontalSlider->value()+1));
-            ui->factor3IntTxtLabel->setNum(ui->factor3horizontalSlider->value());
-        }
-    }
-}
-
-void ArchSimian::on_factor5doubleSpinBox_valueChanged(double argfact5)
-{
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    ui->factor5label->setText(QString::number(argfact5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode5 = argfact5;
-    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
-    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
-    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode8 = m_prefs.s_repeatFactorCode8;
-    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-
-    double test1{0.0};
-    double test2{0.0};
-    test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-            ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-            ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-            ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-            ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-            ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime);
-    test2=s_totalRatedTime;
-    if(test1 < test2){
-        m_prefs.s_repeatFactorCode5 = argfact5;
-        ui->factor4doubleSpinBox->setEnabled(true);
-        ui->factor5doubleSpinBox->setEnabled(true);
-        ui->factor6doubleSpinBox->setEnabled(true);
-        ui->factor7doubleSpinBox->setEnabled(true);
-    }
-    if(test1 > test2){
-        ui->factor5doubleSpinBox->setEnabled(false);
-        if ((ui->factor4doubleSpinBox->isEnabled() == false)&&(ui->factor5doubleSpinBox->isEnabled() == false)&&
-                (ui->factor6doubleSpinBox->isEnabled() == false)&&(ui->factor7doubleSpinBox->isEnabled() == false)) {
-            ui->factor3horizontalSlider->setValue((ui->factor3horizontalSlider->value()+1));
-            ui->factor3IntTxtLabel->setNum(ui->factor3horizontalSlider->value());
-        }
-    }
-}
-
-void ArchSimian::on_factor6doubleSpinBox_valueChanged(double argfact6)
-{
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
-    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-    ui->factor6label->setText(QString::number(argfact6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode6 = argfact6;
-    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
-    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-
-    double test1{0.0};
-    double test2{0.0};
-    test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-            ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-            ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-            ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-            ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-            ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime);
-    test2=s_listeningRate*365;
-    if(test1 < test2){
-        m_prefs.s_repeatFactorCode6 = argfact6;
-        ui->factor4doubleSpinBox->setEnabled(true);
-        ui->factor5doubleSpinBox->setEnabled(true);
-        ui->factor6doubleSpinBox->setEnabled(true);
-        ui->factor7doubleSpinBox->setEnabled(true);
-    }
-    if(test1 > test2){
-        ui->factor6doubleSpinBox->setEnabled(false);
-        if ((ui->factor4doubleSpinBox->isEnabled() == false)&&(ui->factor5doubleSpinBox->isEnabled() == false)&&
-                (ui->factor6doubleSpinBox->isEnabled() == false)&&(ui->factor7doubleSpinBox->isEnabled() == false)) {
-            ui->factor3horizontalSlider->setValue((ui->factor3horizontalSlider->value()+1));
-            ui->factor3IntTxtLabel->setNum(ui->factor3horizontalSlider->value());
-        }
-    }
-}
-
-void ArchSimian::on_factor7doubleSpinBox_valueChanged(double argfact7)
-{    
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
-    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
-    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    ui->factor7label->setText(QString::number(argfact7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode7 = argfact7;
-    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    ui->factor8label->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number((((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime)/s_totAdjHours)* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-
-    double test1{0.0};
-    double test2{0.0};
-    test1=((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-            ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-            ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-            ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-            ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-            ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime);
-    test2=s_listeningRate*365;
-    if(test1 < test2){
-        m_prefs.s_repeatFactorCode7 = argfact7;
-        ui->factor4doubleSpinBox->setEnabled(true);
-        ui->factor5doubleSpinBox->setEnabled(true);
-        ui->factor6doubleSpinBox->setEnabled(true);
-        ui->factor7doubleSpinBox->setEnabled(true);
-    }
-    if(test1 > test2){
-        ui->factor7doubleSpinBox->setEnabled(false);
-        if ((ui->factor4doubleSpinBox->isEnabled() == false)&&(ui->factor5doubleSpinBox->isEnabled() == false)&&
-                (ui->factor6doubleSpinBox->isEnabled() == false)&&(ui->factor7doubleSpinBox->isEnabled() == false)) {
-            ui->factor3horizontalSlider->setValue((ui->factor3horizontalSlider->value()+1));
-            ui->factor3IntTxtLabel->setNum(ui->factor3horizontalSlider->value());
-        }
-    }
-}
-
-void ArchSimian::on_factor8doubleSpinBox_valueChanged(double argfact8)
-{
-    m_prefs.s_repeatFactorCode8 = argfact8;
-    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
-    sliderBaseVal3 = s_yrsTillRepeatCode3;
-    ui->factor4label->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
-    s_yrsTillRepeatCode4 = s_yrsTillRepeatCode3 * s_repeatFactorCode4;
-    ui->factor5label->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode5 = m_prefs.s_repeatFactorCode5;
-    s_yrsTillRepeatCode5 = s_yrsTillRepeatCode4 * s_repeatFactorCode5;
-    ui->factor6label->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode6 = m_prefs.s_repeatFactorCode6;
-    s_yrsTillRepeatCode6 = s_yrsTillRepeatCode5 * s_repeatFactorCode6;
-    ui->factor7label->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_repeatFactorCode7 = m_prefs.s_repeatFactorCode7;
-    s_yrsTillRepeatCode7 = s_yrsTillRepeatCode6 * s_repeatFactorCode7;
-    ui->factor8label->setText(QString::number(argfact8 * s_yrsTillRepeatCode7 * s_dateTranslation,'g', 3) + dateTransTextVal);
-    s_yrsTillRepeatCode8 = s_yrsTillRepeatCode7 * s_repeatFactorCode8;
-    ui->totratedtimefreqLabel->setText("Total time (in hours) is:               " + QString::fromStdString(std::to_string(int(s_totalRatedTime))));
-    ui->totadjhoursfreqLabel->setText("Total adjusted time (in hours) is: " + QString::number(((1 / s_yrsTillRepeatCode3) * s_rCode3TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode4) * s_rCode4TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode5) * s_rCode5TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode6) * s_rCode6TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime) +
-                                                                                              ((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)));
-    ui->labelfreqperc5->setText(QString::number(((365/s_DaysBeforeRepeatCode3)*selTrackLimitCodeTotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc4->setText(QString::number(((1/ s_yrsTillRepeatCode4)*s_rCode4TotTrackQty)/s_listeningRateSongsPerYr*Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc35->setText(QString::number(((1/ s_yrsTillRepeatCode5) * s_rCode5TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc3->setText(QString::number(((1/ s_yrsTillRepeatCode6) * s_rCode6TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc25->setText(QString::number(((1/ s_yrsTillRepeatCode7) * s_rCode7TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-    ui->labelfreqperc2->setText(QString::number(((1/ s_yrsTillRepeatCode8) * s_rCode8TotTrackQty)/s_listeningRateSongsPerYr* Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
+    ui->slider4yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3,'g', 3) + dateTransTextVal);
+    ui->slider5yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4,'g', 3) + dateTransTextVal);
+    ui->slider6yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5,'g', 3) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode7 * s_yrsTillRepeatCode6,'g', 3) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode8 * s_yrsTillRepeatCode7,'g', 3) + dateTransTextVal);
 }
 
 void ArchSimian::on_InclNewcheckbox_stateChanged(int inclNew)
@@ -2548,11 +2219,11 @@ void ArchSimian::on_factor3ahorizontalSlider_valueChanged(int value)
     ui->slider6label->setText(QString::number((double(unassigned6 / 10.0)),'f', 2) + "%");
     ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
     ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
-    ui->slider4yrslabel->setText(QString::number((s_yrsTillRepeatCode4),'f', 2) + " years");
-    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5),'f', 2) + " years");
-    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
-    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
-    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
+    ui->slider4yrslabel->setText(QString::number((s_yrsTillRepeatCode4 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8 * s_dateTranslation),'f', 2) + dateTransTextVal);
 }
 
 void ArchSimian::on_factor4horizontalSlider_valueChanged(int value)
@@ -2562,10 +2233,14 @@ void ArchSimian::on_factor4horizontalSlider_valueChanged(int value)
     // Set variables for s_playlistPercentage4 and s_yrsTillRepeatCode4
     s_playlistPercentage4 = temp;
     s_yrsTillRepeatCode4 = s_rCode4TotTrackQty / (s_playlistPercentage4 * s_listeningRateSongsPerYr);
+    s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
+    s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
+    s_repeatFactorCode4 = s_yrsTillRepeatCode4 / s_yrsTillRepeatCode3;
+    m_prefs.s_repeatFactorCode4 = s_repeatFactorCode4;
     // Populate labels for current slider
     double tempa = double(value/10.0); // Convert slider value for display
     ui->slider4label->setText(QString::number(tempa,'f', 1) + "%");
-    ui->slider4yrslabel->setText(QString::number((s_yrsTillRepeatCode4),'f', 2) + " years");
+    ui->slider4yrslabel->setText(QString::number((s_yrsTillRepeatCode4 * s_dateTranslation),'f', 2) + dateTransTextVal);
 
     // Calculate percentage of playlist remaining unassigned
     double unassigned = double(1.0-s_playlistPercentage4-s_playlistPercentage3);
@@ -2598,10 +2273,11 @@ void ArchSimian::on_factor4horizontalSlider_valueChanged(int value)
     ui->slider6label->setText(QString::number((double(unassigned6 / 10.0)),'f', 2) + "%");
     ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
     ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
-    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5),'f', 2) + " years");
-    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
-    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
-    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
+    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8 * s_dateTranslation),'f', 2) + dateTransTextVal);
+
 }
 
 void ArchSimian::on_factor5horizontalSlider_valueChanged(int value)
@@ -2611,10 +2287,13 @@ void ArchSimian::on_factor5horizontalSlider_valueChanged(int value)
     // Set variables for s_playlistPercentage5 and s_yrsTillRepeatCode5
     s_playlistPercentage5 = temp;
     s_yrsTillRepeatCode5 = s_rCode5TotTrackQty / (s_playlistPercentage5 * s_listeningRateSongsPerYr);
+    s_repeatFactorCode5 = s_yrsTillRepeatCode5 / s_yrsTillRepeatCode4;
+    m_prefs.s_repeatFactorCode5 = s_repeatFactorCode5;
+
     // Populate labels for current slider
     double tempa = double(value/10.0); // Convert slider value for display
     ui->slider5label->setText(QString::number(tempa,'f', 1) + "%");
-    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5),'f', 2) + " years");
+    ui->slider5yrslabel->setText(QString::number((s_yrsTillRepeatCode5 * s_dateTranslation),'f', 2) + dateTransTextVal);
 
     double unassigned = double(1.0-s_playlistPercentage5-s_playlistPercentage4-s_playlistPercentage3);
 
@@ -2641,9 +2320,9 @@ void ArchSimian::on_factor5horizontalSlider_valueChanged(int value)
     ui->slider6label->setText(QString::number((double(unassigned6 / 10.0)),'f', 2) + "%");
     ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
     ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
-    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
-    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
-    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8 * s_dateTranslation),'f', 2) + dateTransTextVal);
 }
 
 void ArchSimian::on_factor6horizontalSlider_valueChanged(int value)
@@ -2653,10 +2332,12 @@ void ArchSimian::on_factor6horizontalSlider_valueChanged(int value)
     // Set variables for s_playlistPercentage6 and s_yrsTillRepeatCode6
     s_playlistPercentage6 = temp;
     s_yrsTillRepeatCode6 = s_rCode6TotTrackQty / (s_playlistPercentage6 * s_listeningRateSongsPerYr);
+    s_repeatFactorCode6 = s_yrsTillRepeatCode6 / s_yrsTillRepeatCode5;
+    m_prefs.s_repeatFactorCode6 = s_repeatFactorCode6;
     // Populate labels for current slider
     double tempa = double(value/10.0); // Convert slider value for display
     ui->slider6label->setText(QString::number(tempa,'f', 1) + "%");
-    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6),'f', 2) + " years");
+    ui->slider6yrslabel->setText(QString::number((s_yrsTillRepeatCode6 * s_dateTranslation),'f', 2) + dateTransTextVal);
 
     double unassigned = double(1.0-s_playlistPercentage6-s_playlistPercentage5-s_playlistPercentage4-s_playlistPercentage3);
 
@@ -2673,13 +2354,17 @@ void ArchSimian::on_factor6horizontalSlider_valueChanged(int value)
 
     // Recalculate s_yrsTillRepeatCode values using remaining (lower) rating codes
     s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_repeatFactorCode7 = s_yrsTillRepeatCode7 / s_yrsTillRepeatCode6;
+    m_prefs.s_repeatFactorCode7 = s_repeatFactorCode7;
     s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+    s_repeatFactorCode8 = s_yrsTillRepeatCode8 / s_yrsTillRepeatCode7;
+    m_prefs.s_repeatFactorCode8 = s_repeatFactorCode8;
 
     // Set label values for remaining (lower) rating codes
     ui->slider7label->setText(QString::number((double(unassigned7 / 10.0)),'f', 2) + "%");
     ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
-    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
-    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7 * s_dateTranslation),'f', 2) + dateTransTextVal);
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8 * s_dateTranslation),'f', 2) + dateTransTextVal);
 }
 
 void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
@@ -2689,10 +2374,12 @@ void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
     // Set variables for s_playlistPercentage7 and s_yrsTillRepeatCode7
     s_playlistPercentage7 = temp;
     s_yrsTillRepeatCode7 = s_rCode7TotTrackQty / (s_playlistPercentage7 * s_listeningRateSongsPerYr);
+    s_repeatFactorCode7 = s_yrsTillRepeatCode7 / s_yrsTillRepeatCode6;
+    m_prefs.s_repeatFactorCode7 = s_repeatFactorCode7;
     // Populate labels for current slider
     double tempa = double(value/10.0); // Convert slider value for display
     ui->slider7label->setText(QString::number(tempa,'f', 1) + "%");
-    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7),'f', 2) + " years");
+    ui->slider7yrslabel->setText(QString::number((s_yrsTillRepeatCode7 * s_dateTranslation),'f', 2) + dateTransTextVal);
 
     double unassigned = double(1.0-s_playlistPercentage7-s_playlistPercentage6-s_playlistPercentage5-s_playlistPercentage4-s_playlistPercentage3);
 
@@ -2700,6 +2387,9 @@ void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
     // Build variables to convert to integer values use descending values (sum of the digits: 2)
     int unassigned8 = int(double(unassigned * double(1.0-s_playlistPercentage7)) * 1000.0);
     s_playlistPercentage8 = double(unassigned8 / 1000.0);
+    s_yrsTillRepeatCode8 = s_rCode8TotTrackQty / (s_playlistPercentage8 * s_listeningRateSongsPerYr);
+    s_repeatFactorCode8 = s_yrsTillRepeatCode8 / s_yrsTillRepeatCode7;
+    m_prefs.s_repeatFactorCode8 = s_repeatFactorCode8;
 
     // Set initial slider positions for remaining (lower) rating codes
     // Code 8 is the final remainder (no slider, just the remaining value)
@@ -2710,7 +2400,7 @@ void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
 
     // Set label values for remaining (lower) rating codes
     ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
-    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8),'f', 2) + " years");
+    ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8 * s_dateTranslation),'f', 2) + dateTransTextVal);
 }
 
 

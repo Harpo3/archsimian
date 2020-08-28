@@ -39,14 +39,8 @@ private slots:
     void on_repeatFreq1SpinBox_valueChanged(int myvalue);
     void on_weeksradioButton_clicked();
     void on_monthsradioButton_clicked();
-    void on_factor3horizontalSlider_valueChanged(int value);
     void on_daysradioButton_clicked();
     void on_yearsradioButton_clicked();
-    void on_factor4doubleSpinBox_valueChanged(double argfact4);
-    void on_factor5doubleSpinBox_valueChanged(double argfact5);
-    void on_factor6doubleSpinBox_valueChanged(double argfact6);
-    void on_factor7doubleSpinBox_valueChanged(double argfact7);
-    void on_factor8doubleSpinBox_valueChanged(double argfact8);
     void on_InclNewcheckbox_stateChanged(int inclNew);
     void on_albumscheckBox_stateChanged(int inclAlbums);
     void on_minalbumsspinBox_valueChanged(int arg1);
