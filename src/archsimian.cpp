@@ -1187,11 +1187,12 @@ void ArchSimian::on_addsongsButton_released(){
                 selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
             }
             catch (const std::bad_alloc& exception) {
-                std::cerr << "on_addsongsButton_released: bad_alloc detected: Maximum playlist length has been reached. Exiting program." << exception.what();
+                std::cerr << "on_addsongsButton_released: Maximum playlist length was reached. Exiting program." << exception.what();
                 i = numTracks;
                 QMessageBox msgBox;
-                QString msgboxtxt = "on_addsongsButton_released: Out of memory error (bad_alloc):failed during attempt to add tracks. Likely reason: "
-                                    "Not enough available tracks found. Adjust factors on the frequency tab and restart.";
+                QString msgboxtxt = "on_addsongsButton_released: Failed during attempt to add tracks. Likely reason: "
+                                    "Not enough available tracks found. Weight playlist percentages (Frequency tab) to lower rated tracks, then restart."
+                                    "If playlist percentage adjustment fails and album-level variety was enabled, modify or disable.";
                 msgBox.setText(msgboxtxt);
                 msgBox.exec();
                 if(s_mm4disabled == 0) {

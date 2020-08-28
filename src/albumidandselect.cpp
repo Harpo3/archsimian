@@ -94,6 +94,11 @@ void getAlbumIDs(){
     }
     artistTable1.close();
     trimmedlist.close();
+    // Remove temp files generated in buildalbumexcllibrary.cpp
+    removeAppData("tmpcount1.txt");
+    removeAppData("tmpcount2.txt");
+    removeAppData("tmpcount3.txt");
+    removeAppData("tmpcount4.txt");
 }
 
 /*
