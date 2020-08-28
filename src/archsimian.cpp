@@ -56,7 +56,6 @@ static bool s_bool_ExcludedArtistsProcessed{false};
 static bool s_includeNewTracks{true};
 static bool s_includeAlbumVariety{true};
 static bool s_noAutoSave{false};
-static bool s_disableNotificationAddTracks{false};
 static int s_uniqueCode1ArtistCount{0};
 static int s_code1PlaylistCount{0};
 static int s_lowestCode1Pos{Constants::kMaxLowestCode1Pos};
@@ -189,7 +188,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_includeNewTracks = m_prefs.s_includeNewTracks;
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
     s_noAutoSave = m_prefs.s_noAutoSave;
-    s_disableNotificationAddTracks = m_prefs.s_disableNotificationAddTracks;
     s_minalbums = m_prefs.s_minalbums;
     s_mintrackseach= m_prefs.s_mintrackseach;
     s_mintracks = m_prefs.s_mintracks;
@@ -1019,12 +1017,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         }
         if (!m_prefs.s_noAutoSave){
             ui->autosavecheckBox->setChecked(false);
-        }
-        if (m_prefs.s_disableNotificationAddTracks){
-            ui->disablenotecheckBox->setChecked(true);
-        }
-        if (!m_prefs.s_disableNotificationAddTracks){
-            ui->disablenotecheckBox->setChecked(false);
         }        
     }
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
@@ -1137,15 +1129,7 @@ void ArchSimian::on_addsongsButton_released(){
         s_MaxAvailableToAdd = 0;
         ui->addsongsButton->setEnabled(false);
         ui->addsongsLabel->setText(tr("Playlist is already at maximum size."));
-    }
-    if (numTracks > Constants::kNotifyTrackThreshold) {
-        if (!s_disableNotificationAddTracks){
-            QMessageBox msgBox;
-            QString msgboxtxt = "This can take some time since you are adding " + QString::number(numTracks) + " tracks.";
-            msgBox.setText(msgboxtxt);
-            msgBox.exec();
-        }
-    }
+    }  
     std::ofstream ofs; //open the songtext file for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/songtext.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
@@ -1455,7 +1439,6 @@ void ArchSimian::loadSettings()
     m_prefs.s_includeNewTracks = settings.value("includeNewTracks", Constants::kUserDefaultIncludeNewTracks).toBool();
     m_prefs.s_includeAlbumVariety = settings.value("s_includeAlbumVariety", Constants::kUserDefaultIncludeAlbumVariety).toBool();
     m_prefs.s_noAutoSave = settings.value("s_noAutoSave", Constants::kUserDefaultNoAutoSave).toBool();
-    m_prefs.s_disableNotificationAddTracks = settings.value("s_disableNotificationAddTracks", Constants::kUserDefaultDisableNotificationAddTracks).toBool();
     m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", Constants::kUserDefaultDaysTillRepeatCode3).toDouble();
     m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", Constants::kUserDefaultRepeatFactorCode4).toDouble();
     m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", Constants::kUserDefaultRepeatFactorCode5).toDouble();
@@ -1487,7 +1470,6 @@ void ArchSimian::saveSettings()
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
     settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
     settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);
-    settings.setValue("s_disableNotificationAddTracks",m_prefs.s_disableNotificationAddTracks);
     settings.setValue("s_includeAlbumVariety",m_prefs.s_includeAlbumVariety);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
     settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
@@ -1895,20 +1877,6 @@ void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
     }
 }
 
-void ArchSimian::on_disablenotecheckBox_stateChanged(int disableNote)
-{
-    ui->disablenotecheckBox->checkState();
-    m_prefs.s_disableNotificationAddTracks = disableNote;
-    if (ui->disablenotecheckBox->checkState() == 2){
-        m_prefs.s_disableNotificationAddTracks = true;
-        QWidget::repaint();
-    }
-    if (ui->disablenotecheckBox->checkState() == 0){
-        m_prefs.s_disableNotificationAddTracks = false;
-        QWidget::repaint();
-    }
-}
-
 void ArchSimian::on_resetpushButton_released()
 {
     if (QMessageBox::Yes == QMessageBox::question(this, "Reset Confirmation", "Are you sure you want to reset "
@@ -1920,7 +1888,6 @@ void ArchSimian::on_resetpushButton_released()
         m_prefs.s_includeNewTracks = Constants::kUserDefaultIncludeNewTracks;
         m_prefs.s_includeAlbumVariety =  Constants::kUserDefaultIncludeAlbumVariety;
         m_prefs.s_noAutoSave = Constants::kUserDefaultNoAutoSave;
-        m_prefs.s_disableNotificationAddTracks = Constants::kUserDefaultDisableNotificationAddTracks;
         m_prefs.s_daysTillRepeatCode3 = Constants::kUserDefaultDaysTillRepeatCode3;
         m_prefs.s_repeatFactorCode4 = Constants::kUserDefaultRepeatFactorCode4;
         m_prefs.s_repeatFactorCode5 = Constants::kUserDefaultRepeatFactorCode5;

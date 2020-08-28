@@ -8,12 +8,10 @@
 #include "utilities.h"
 #include "constants.h"
 
-// Function to adjust the number of tracks of each artist by weighting them using the assigned ratings of each track
-void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
-                            const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
-                            const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
-                            const int *_srCode6TotTrackQty,const int *_srCode7TotTrackQty,const int *_srCode8TotTrackQty)
-{
+
+// Function to get track count per artist
+
+void getArtistTrackCount(){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
@@ -26,8 +24,10 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         std::cout << "getArtistAdjustedCount: Error opening SongsTable." << std::endl;
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
-    std::string str; // Create ostream file to log artists and duplicates; dups will be used to create a vector with # tracks per artist
-    std::ofstream outartists(appDataPathstr.toStdString()+"/artists2.txt"); // output file for writing artists list with dups
+    std::string str;
+    std::vector<std::string> artistrawcountVec; // vector list of strings (artistrawcountVec) to output a count of duplicate entries
+    //std::vector<std::string> artistsongcountVec; // vector to store list of counts
+    std::ofstream artistList(appDataPathstr.toStdString()+"/artists.txt"); // output file for writing artists list without dups using vector
     //  Outer loop: iterate through rows of SongsTable
     while (std::getline(SongsTable, str))
     {   // Declare variables applicable to all rows
@@ -36,44 +36,121 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         bool ratingCode{false};
         std::string selectedArtistToken; //used to filter rows where track has a playlist position;
         int tokenCount{0}; //token count is the number of delimiter characters within str
-        // Inner loop: iterate through each column (token) of row
+        // Inner loop: iterate through each column (token) of row and push all rated artist entries into a vector of strings
         while (std::getline(iss, token, '^'))
         {
             if (tokenCount == Constants::kColumn19)  {selectedArtistToken = token;}//  artist grouping
-            if ((tokenCount == Constants::kColumn29) && (token != "0")) {ratingCode = true;}// if custom artist grouping is selected use this code
+            if ((tokenCount == Constants::kColumn29) && (token != "0")) {ratingCode = true;}// Determine if a rated track and set bool
             ++ tokenCount;
         }
-        if (ratingCode) {outartists << selectedArtistToken << "\n"; }// Write artist to clean file if rated
+        if (ratingCode) {artistrawcountVec.push_back(selectedArtistToken);}
     }
-    SongsTable.close();    // Close files opened for reading and writing. SongsTable will be reopened shortly as cleanlibSongsTable2
-    outartists.close();
-    std::map<std::string, int> countMap; // Create a map for two types, string and int
-    std::vector<std::string> artists; // Now create vector
-    std::ifstream myfile(appDataPathstr.toStdString()+"/artists2.txt"); // Input file for vector
-    std::ofstream artistList(appDataPathstr.toStdString()+"/artists.txt"); // output file for writing artists list without dups using vector
-    std::string line;
-    while ( std::getline(myfile, line) ) { //std::cout << "Vector Size is now " << artists.size() << " lines." << std::endl;
-        if ( !line.empty() )
-            artists.push_back(line);
-    }
-    for (auto & elem : artists)  // Iterate over the vector and store the frequency of each element in map
+    // Create a map to store the frequency of each element in vector
+    std::map<std::string, int> countMap;
+    // Iterate over the vector and store the frequency of each element in map
+    for (auto & elem : artistrawcountVec)
     {
         auto result = countMap.insert(std::pair<std::string, int>(elem, 1));
-        if (!result.second)
+        if (result.second == false)
             result.first->second++;
     }
-    // Iterate over the map
+    // Iterate over the map and print items whose value is greater than 0
     for (auto & elem : countMap)
     {
-        // If frequency count is greater than 0 then its element count is captured
+        // If frequency count is greater than 0 then consider it (even if count only 1) a duplicate element
         if (elem.second > 0)
         {
-            artistList << elem.first << "," << elem.second << "\n";
+            artistList << elem.first << "," << elem.second << '\n';
         }
     }
-    myfile.close();
+    artistrawcountVec.shrink_to_fit();
     artistList.close();
-    //removeAppData("artists2.txt");
+}
+
+// Function to read cleanlib.dsv
+/*
+
+void getArtistAdjustedCount2(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
+                            const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
+                            const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
+                             const int *_srCode6TotTrackQty,const int *_srCode7TotTrackQty,const int *_srCode8TotTrackQty)
+{
+    getArtistTrackCount(); // Get artists.txt file
+
+    // Open cleanlib.dsv into a vector cleanlibVec
+
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
+    std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
+    cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
+    if (cleanlib2.is_open()) {cleanlib2.close();}
+    else {std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;}
+    std::string cleanlibSongsTable2 = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
+    StringVector2D cleanlibVec = readDSV(appDataPathstr.toStdString()+"/cleanlib.dsv");
+    std::string selectedArtist; //used to store artist name read from token;
+    std::string selectedRating; //used to store rating for current row;
+    for(auto & i : cleanlibVec){ // Read each row element from cleanlibVec
+        selectedArtist = i[Constants::kColumn19];
+        selectedRating = i[Constants::kColumn29];
+    }
+
+    // Open artists.txt into vector artistsVec
+
+    StringVector2D artistsVec = readCSV(appDataPathstr.toStdString()+"/artists.txt");
+    std::string currentArtist; //used to store artist name read from token;
+    std::string currentArtistTrackCount; //used to store artist track count for current row;
+    for(auto & j : artistsVec){ // Read each row element from artistsVec
+        currentArtist = j[Constants::kColumn0];
+        currentArtistTrackCount = j[Constants::kColumn1];
+
+        // For the currently selected currentArtist and associated currentArtistTrackCount find matching artist
+        // in cleanlibVec
+
+        for (auto & i : cleanlibVec) {
+            selectedArtist == i[Constants::kColumn19])
+            selectedRating == i[Constants::kColumn29]
+            if (currentArtist == selectedArtist) {
+                    //set temp variable to check when the rating token is checked next
+                    -- countdown;
+
+
+                if (artistMatch == true) {
+                    //selectedRating = token;
+                    // Now evaluate the rating using factors and calculate adjusted track value
+                    // Increment adjusted values as each track is found using the rating factor stats collected
+                    if (selectedRating == "1") {interimAdjCount = interimAdjCount + 1;}
+                    if (selectedRating == "3") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode3factor;}
+                    if (selectedRating == "4") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode4factor;}
+                    if (selectedRating == "5") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode5factor;}
+                    if (selectedRating == "6") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode6factor;}
+                    if (selectedRating == "7") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode7factor;}
+                    if (selectedRating == "8") {interimAdjCount = interimAdjCount + *_syrsTillRepeatCode8factor;}
+                }
+              }
+            }
+            // Increment to the next column of row in cleanlib.dsv
+        }
+    }
+
+
+    // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
+    cleanlibVec.shrink_to_fit();
+    artistsVec.shrink_to_fit();
+    removeAppData("artists.txt");
+    removeAppData("artists2.txt");
+
+
+
+}
+*/
+
+// Function to claculate an adjusted track count for each artist using a weighting based on assigned rating for each track
+void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
+                            const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
+                            const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
+                            const int *_srCode6TotTrackQty,const int *_srCode7TotTrackQty,const int *_srCode8TotTrackQty)
+{
+    getArtistTrackCount();
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
     cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib2.is_open()) {cleanlib2.close();}
@@ -164,10 +241,16 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
             //continue; // Resume cleanlib.dsv next row, beginning with Col 0
         }
         // Completed all rows of cleanlib.dsv
+
         double s_totalAdjRatedQty = (*_syrsTillRepeatCode3factor * *_srCode3TotTrackQty)+(*_syrsTillRepeatCode4factor * *_srCode4TotTrackQty)
                 + (*_syrsTillRepeatCode5factor * *_srCode5TotTrackQty) +(*_syrsTillRepeatCode6factor * *_srCode6TotTrackQty)
                 +(*_syrsTillRepeatCode7factor * *_srCode7TotTrackQty) + (*_syrsTillRepeatCode8factor * *_srCode8TotTrackQty);
+
+        // NEW : this is what is slowing down the function. Should read clean.dsv into a vector instead.
+
         SongsTable2.close(); // Must close cleanlib.dsv here so it can reopen for the next artist on the artists.txt file
+
+
         if (interimAdjCount < currentArtistCount) {interimAdjCount = currentArtistCount;} // Adjusted count must be at least one if there is one track or more
         double currentArtistFactor = (interimAdjCount / s_totalAdjRatedQty); //percentage of total adjusted tracks
         int availInterval = int(1 / currentArtistFactor);
@@ -181,7 +264,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
     artistcsv.close();
     outartists2.close();
-    artists.shrink_to_fit();
+    //artists.shrink_to_fit();
     removeAppData("artists.txt");
     removeAppData("artists2.txt");
 }

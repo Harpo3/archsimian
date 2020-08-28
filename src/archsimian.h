@@ -54,7 +54,6 @@ private slots:
     void on_actionOpen_Playlist_triggered();
     void on_actionNew_Playlist_triggered();
     void on_autosavecheckBox_stateChanged(int autosave);
-    void on_disablenotecheckBox_stateChanged(int disableNote);
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
     void on_mmdisabledradioButton_clicked();

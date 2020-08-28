@@ -430,7 +430,7 @@ void getSubset()
             }
         }
     }
-    ratedabbrvect.shrink_to_fit();
+    //ratedabbrvect.shrink_to_fit();
     std::sort (ratedabbrvect.begin(), ratedabbrvect.end());
     for (const auto & i : ratedabbrvect){
         ratedabbr << i << "\n";}

@@ -48,7 +48,6 @@ const QString kUserDefaultDefaultPlaylist{};
 const bool kUserDefaultIncludeNewTracks{false};
 const bool kUserDefaultIncludeAlbumVariety{false};
 const bool kUserDefaultNoAutoSave{false};
-const bool kUserDefaultDisableNotificationAddTracks{false};
 const double kUserDefaultDaysTillRepeatCode3{65};
 const double kUserDefaultRepeatFactorCode4{2.7};
 const double kUserDefaultRepeatFactorCode5{2.1};

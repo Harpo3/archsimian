@@ -294,7 +294,7 @@ void updateCleanLibDates(){
     ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
     std::ofstream lastplayedupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // Output in append mode
-    lastplayedupdate << "Last played entries updated to the ArchSimian database: "<< '\n';
+    lastplayedupdate << "These last played entries were updated to ArchSimian database (Dates GMT): "<< '\n';
     // Create vector for new lastplayed dates
     StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // Open as 2D vector lastplayedvec
     lastplayedvec.reserve(10000);
@@ -357,7 +357,7 @@ void updateCleanLibDates(){
                     tokens.at(Constants::kColumn17) = selectedSQLDateToken;
                     str = getChgdDSVStr(tokens,str); // Recompile str with changed token
                     // Print a readable date to panel
-                    lastplayedupdate << selectedLibArtistToken <<" - "<<selectedLibTitleToken<<", played on "<<datestring<<" (GMT)"<< '\n';
+                    lastplayedupdate << selectedLibArtistToken <<" - "<<selectedLibTitleToken<<", played on "<<datestring<< '\n';
                     continue;
                 }
             }
@@ -380,6 +380,9 @@ void updateCleanLibDates(){
         qApp->quit(); //Exit program
     }
     removeAppData("cleanlib2.dsv"); // Remove cleanlib2.dsv
+    std::ofstream ofs2; // Open lastplayeddates.txt for writing with the truncate option to delete the content.
+    ofs2.open(appDataPathstr.toStdString()+"/lastplayeddates.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs2.close();
 }
 
 void updateChangedTagRatings(){
@@ -599,7 +602,7 @@ void syncAudaciousLog(){
         QFile::copy(tempFileStr1,tempFileStr2);
     } else {
       // If the file is not empty, combine the AIMP (lastplayeddates2.txt) and Audacious logs to write as lastplayeddates2.txt
-        if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was not empty."<< std::endl;}
+        if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was not empty: "<<newFile.pos()<< std::endl;}
         QString tempFileStr1b = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
         std::ifstream SongsTable1(tempFileStr1a.toStdString());    // Open lastplayeddates.txt as ifstream
@@ -610,6 +613,7 @@ void syncAudaciousLog(){
         SongsTable2.close();
         combined_file.close();
     }
+    newFile.close();
     // Open and read combined file into a vector. Sort it by date, remove dups, then rewrite lastplayeddates.txt
     std::vector<std::string>combinedvect;
     std::vector<std::string>finalvect;
@@ -701,4 +705,7 @@ void syncAudaciousLog(){
     finalvect.shrink_to_fit();
     outputvect.shrink_to_fit();
     removeAppData("lastplayeddates2.txt");
+    std::ofstream ofs; // Open audacioushist.log for writing with the truncate option to delete the content.
+    ofs.open(appDataPathstr.toStdString()+"/audacioushist.log", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
 }

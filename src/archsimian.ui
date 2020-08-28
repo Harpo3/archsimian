@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -559,14 +559,14 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>520</y>
+          <y>510</y>
           <width>451</width>
-          <height>81</height>
+          <height>101</height>
          </rect>
         </property>
         <property name="font">
          <font>
-          <pointsize>7</pointsize>
+          <pointsize>8</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -661,27 +661,11 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="disablenotecheckBox">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>290</y>
-          <width>421</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::TabFocus</enum>
-        </property>
-        <property name="text">
-         <string>Disable notification when adding a large quantity of tracks (&gt;29)</string>
-        </property>
-       </widget>
        <widget class="QSplitter" name="splitter_4">
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>320</y>
+          <y>290</y>
           <width>451</width>
           <height>27</height>
          </rect>
@@ -981,7 +965,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>450</y>
+          <y>430</y>
           <width>141</width>
           <height>31</height>
          </rect>
@@ -994,7 +978,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>180</x>
-          <y>490</y>
+          <y>470</y>
           <width>321</width>
           <height>31</height>
          </rect>
@@ -1013,7 +997,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>400</y>
+          <y>370</y>
           <width>491</width>
           <height>20</height>
          </rect>
@@ -1032,7 +1016,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>430</y>
+          <y>400</y>
           <width>441</width>
           <height>20</height>
          </rect>
@@ -1048,9 +1032,9 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>340</y>
+          <y>320</y>
           <width>491</width>
-          <height>61</height>
+          <height>51</height>
          </rect>
         </property>
         <property name="font">
@@ -1061,7 +1045,7 @@ MediaMonkey database backup file</string>
          </font>
         </property>
         <property name="text">
-         <string>WARNING: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP/Audacious log. If changed back, the play history will not be automatically transferred to MediaMonkey.</string>
+         <string>NOTE: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP/Audacious log. If changed back, this play history will not be updated in MediaMonkey.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -1071,7 +1055,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>170</x>
-          <y>445</y>
+          <y>425</y>
           <width>331</width>
           <height>41</height>
          </rect>
@@ -1087,7 +1071,7 @@ MediaMonkey database backup file</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>490</y>
+          <y>470</y>
           <width>151</width>
           <height>31</height>
          </rect>
@@ -2679,10 +2663,10 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QLabel" name="label_16">
         <property name="geometry">
          <rect>
-          <x>30</x>
-          <y>460</y>
-          <width>431</width>
-          <height>81</height>
+          <x>20</x>
+          <y>480</y>
+          <width>471</width>
+          <height>41</height>
          </rect>
         </property>
         <property name="text">
@@ -2768,14 +2752,14 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
        <widget class="QLabel" name="label_14">
         <property name="geometry">
          <rect>
-          <x>30</x>
-          <y>550</y>
-          <width>421</width>
-          <height>51</height>
+          <x>20</x>
+          <y>520</y>
+          <width>461</width>
+          <height>91</height>
          </rect>
         </property>
         <property name="text">
-         <string>NOTE: app will crash if you attempt to update ArchSimian without first ensuring KDEconnect is paired to the desktop, and the Android device 'primary' folder is opened in Dolphin. Connection dbus coding is still in work...</string>
+         <string>NOTE: This program may crash if you attempt to update ArchSimian without first ensuring KDEconnect is paired to the desktop, and the Android device 'primary' folder is open in Dolphin. If the AIMP lastplayed entries do not appear in the above panel after updating the database, try manually removing earlier history from the log, found at /primary/Android/data/com.aimp.player/cache, and update again.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -3043,7 +3027,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <tabstop>InclNewcheckbox</tabstop>
   <tabstop>albumscheckBox</tabstop>
   <tabstop>autosavecheckBox</tabstop>
-  <tabstop>disablenotecheckBox</tabstop>
   <tabstop>resetpushButton</tabstop>
   <tabstop>daysradioButton</tabstop>
   <tabstop>weeksradioButton</tabstop>
