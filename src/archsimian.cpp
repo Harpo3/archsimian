@@ -2004,13 +2004,6 @@ void ArchSimian::on_updateASDBprogressBar_valueChanged(int value)
     }
 }
 
-void ArchSimian::on_actionUpdateLastPlayed_triggered() // already included on button for on_updateASDBButton_clicked() above - remove from menu
-{
-    //updateCleanLibDates();
-    getExcludedArtists(s_playlistSize);
-    getExcludedArtistsRedux(s_playlistSize, int(s_histCount));
-}
-
 void ArchSimian::on_actionExport_Playlist_to_Linux_triggered()
 {
     removeLinuxPlaylistFile(); // First delete old playlist file
