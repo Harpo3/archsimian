@@ -1655,7 +1655,7 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.05"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.07"
                                                  "\n\nThis program is free software: you can redistribute it and/or modify"
                                                  " it under the terms of the GNU General Public License as published by"
                                                  " the Free Software Foundation, either version 3 of the License, or"
@@ -2043,6 +2043,7 @@ void ArchSimian::on_syncthingButton_clicked()
                 ui->updateASDBButton->setDisabled(false);
                 ui->syncPlaylistButton->setDisabled(false);
     }
+    saveSettings();
     ui->statusBar->showMessage("Saved folder location in ArchSimian.",4000);
 }
 

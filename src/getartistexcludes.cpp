@@ -172,32 +172,22 @@ void getExcludedArtistsRedux(const int &s_playlistSize, const int &s_histCount){
         std::exit(EXIT_FAILURE);
     }
     std::string selectedArtistToken2; // Artist variable from ratedabbrVec
-    //std::string tokenLTP2; // LastPlayed Date in SQL Time from ratedabbrVec
-    //std::string ratingCode2; // Rating code from ratedabbrVec
-    //std::string songLength2; // Song length from ratedabbrVec
     std::string artistInterval2; // Artist interval from ratedabbrVec
-    //std::string pathinlib2;
-    //std::string albumID2; // Album ID from ratedabbrVec
     std::string playlistposition2;
     std::vector<std::string> artistexclistVec;
     std::ofstream artistExcList2(appDataPathstr.toStdString()+"/artistexcludes.txt"); // Output file for writing final exclude list ,std::ios::app
     StringVector2D ratedabbrVec2 = readCSV(appDataPathstr.toStdString()+"/ratedabbr2.txt");
     ratedabbrVec2.reserve(50000);
     for(auto & i : ratedabbrVec2){ // Read each row element from ratedabbrVec2 to compare with each historical entry
-        //tokenLTP2 = i[Constants::kColumn0];
-        //ratingCode2 = i[Constants::kColumn1];
         selectedArtistToken2 = i[Constants::kColumn2];
-        //pathinlib2 = i[Constants::kColumn3];
-        //songLength2 = i[Constants::kColumn4];
         artistInterval2 = i[Constants::kColumn5];
-        //albumID2 = i[Constants::kColumn6];
         playlistposition2 = i[Constants::kColumn7];
     }
     std::reverse (ratedabbrVec2.begin(), ratedabbrVec2.end()); // Sort starting with most recently played
     // Starting with s_playlistSize then increasing by 1 for each row, number the sequences of last played
     // entries, then compare with artist interval to determien availability.
     // If playlist pos is less than interval, output to excluded artist vector
-    //startingplaylistPosition = s_playlistSize + 1;
+    // startingplaylistPosition = s_playlistSize + 1;
     for (int i = 0; i < int(ratedabbrVec2.size()); i++) { // Look at all rows of ratedabbr2 up to the histCount limit
         for (int j = 0; j < int(ratedabbrVec2[i].size()); j++)
         // Consider entries that are not on the playlist, within the historical count, and count is less than interval

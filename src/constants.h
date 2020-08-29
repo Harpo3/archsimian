@@ -56,7 +56,7 @@ const double kUserDefaultRepeatFactorCode8{1.4};
 const QString kUserDefaultWindowsDriveLetter{""};
 const int kUserDefaultMinalbums{2};
 const int kUserDefaultMintrackseach{4};
-const int kUserDefaultMintracks{8};
+const int kUserDefaultMintracks{12};
 const QString kWindowsTopFolder{""};
 const QString kMusicLibShortened{""};
 const int kPlaylistActualCntSelCode{0};
@@ -149,7 +149,7 @@ const int kRatingCode7{7};
 const int kRatingCode8{8};
 
 // Constant to turn on or off troubleshooting feedback in console
-const bool kVerbose{true};
+const bool kVerbose{false};
 }
 
 #endif // CONSTANTS_H
