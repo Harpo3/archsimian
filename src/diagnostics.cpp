@@ -26,10 +26,6 @@ void generateDiagsLog (){
     Logger(" ************************************************ ");
     Logger(" ********** ArchSimian Diagnostics Log ********** ");
     Logger(" ************************************************ ");
-    // Open configuration file
-    //QString configFilePath = QStandardPaths::locate(QStandardPaths::AppConfigLocation, QString(), QStandardPaths::LocateDirectory);
-    //std::string configFile = configFilePath.toStdString()+"archsimian/archsimian.conf";
-    //std::cout << configFile << std::endl;
     Logger("Looking for ArchSimian configuration file...");
     // Extract the paths used for mmBackupDBDir (mmdbPath), musicLibraryDir (musiclibPath) & mmPlaylistDir (pldirPath)
     bool configExist = doesFileExist2 (logd);

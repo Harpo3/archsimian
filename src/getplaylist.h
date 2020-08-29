@@ -3,8 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <QString>
-#include "utilities.h"
-
+double logdateconversion(std::string chkthis);
 int musicLibraryDirLen(QString &s_musiclibrarydirname);
 
 std::vector<std::string> getPlaylistVect(std::string fileName);

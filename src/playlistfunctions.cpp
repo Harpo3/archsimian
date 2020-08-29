@@ -14,8 +14,8 @@ inline bool isEqual(double x, double y){
     // see http://www.cs.technion.ac.il/users/yechiel/c++-faq/floating-point-arith.html
 }
 
-int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s_ratingRatio5,
-                       double &s_ratingRatio6, double &s_ratingRatio7, double &s_ratingRatio8){
+int ratingCodeSelected(double &s_playlistPercentage3, double &s_playlistPercentage4, double &s_playlistPercentage5,
+                       double &s_playlistPercentage6, double &s_playlistPercentage7, double &s_playlistPercentage8){
     //Lookup the rating codes for last two tracks on the playlist;
     if (Constants::kVerbose) std::cout << "ratingCodeSelected function started." << std::endl;
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
@@ -47,11 +47,15 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "ratingCodeSelected: Error opening ratedabbr2.txt file." << std::endl;}
+    else {
+        std::cout << "ratingCodeSelected: Error opening ratedabbr2.txt file." << std::endl;
+        Logger ("ratingCodeSelected: Error opening ratedabbr2.txt file.");
+    }
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "ratingCodeSelected: Error opening ratedSongsTable." << std::endl;
+        Logger ("ratingCodeSelected: Error opening ratedSongsTable.");
         std::exit(EXIT_FAILURE);
     }
     while (std::getline(ratedSongsTable, str)) { // Declare variables applicable to all rows
@@ -111,21 +115,21 @@ int ratingCodeSelected(double &s_ratingRatio3, double &s_ratingRatio4, double &s
     double ratioTime7 = totalPLTime7 / totalPlaylistTime;
     double ratioTime8 = totalPLTime8 / totalPlaylistTime;
     if (Constants::kVerbose) {
-    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_ratingRatio3 << std::endl;
-    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_ratingRatio4<< std::endl;
-    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << s_ratingRatio5<< std::endl;
-    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << s_ratingRatio6<< std::endl;
-    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_ratingRatio7<< std::endl;
-    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_ratingRatio8<< std::endl;
+    std::cout << "RatioTime3 is: " << ratioTime3 << " versus std: " << s_playlistPercentage3 << std::endl;
+    std::cout << "RatioTime4 is: " << ratioTime4 << " versus std: " << s_playlistPercentage4<< std::endl;
+    std::cout << "RatioTime5 is: " << ratioTime5 << " versus std: " << s_playlistPercentage5<< std::endl;
+    std::cout << "RatioTime6 is: " << ratioTime6 << " versus std: " << s_playlistPercentage6<< std::endl;
+    std::cout << "RatioTime7 is: " << ratioTime7 << " versus std: " << s_playlistPercentage7<< std::endl;
+    std::cout << "RatioTime8 is: " << ratioTime8 << " versus std: " << s_playlistPercentage8<< std::endl;
     }
     //Compare the ratio for each rating code on the playlist to the rating code standards set by the program.
     //variables:
-    double varianceRatioTime3 = (s_ratingRatio3 - ratioTime3) / s_ratingRatio3;
-    double varianceRatioTime4 = (s_ratingRatio4 - ratioTime4) / s_ratingRatio4;
-    double varianceRatioTime5 = (s_ratingRatio5 - ratioTime5) / s_ratingRatio5;
-    double varianceRatioTime6 = (s_ratingRatio6 - ratioTime6) / s_ratingRatio6;
-    double varianceRatioTime7 = (s_ratingRatio7 - ratioTime7) / s_ratingRatio7;
-    double varianceRatioTime8 = (s_ratingRatio8 - ratioTime8) / s_ratingRatio8;
+    double varianceRatioTime3 = (s_playlistPercentage3 - ratioTime3) / s_playlistPercentage3;
+    double varianceRatioTime4 = (s_playlistPercentage4 - ratioTime4) / s_playlistPercentage4;
+    double varianceRatioTime5 = (s_playlistPercentage5 - ratioTime5) / s_playlistPercentage5;
+    double varianceRatioTime6 = (s_playlistPercentage6 - ratioTime6) / s_playlistPercentage6;
+    double varianceRatioTime7 = (s_playlistPercentage7 - ratioTime7) / s_playlistPercentage7;
+    double varianceRatioTime8 = (s_playlistPercentage8 - ratioTime8) / s_playlistPercentage8;
     if (Constants::kVerbose) {
     std::cout << "varianceRatioTime3 is: " << varianceRatioTime3 << std::endl;
     std::cout << "varianceRatioTime4 is: " << varianceRatioTime4 << std::endl;
@@ -294,11 +298,15 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file (297)." << std::endl;}
+    else {
+        std::cout << "selectTrack: Error opening ratedabbr2.txt file." << std::endl;
+        Logger ("selectTrack: Error opening ratedabbr2.txt file.");
+    }
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
-        std::cout << "selectTrack: Error opening ratedabbr2.txt (301)." << std::endl;
+        std::cout << "selectTrack: Error opening ratedSongsTable." << std::endl;
+        Logger ("selectTrack: Error opening ratedSongsTable.");
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // for ratedabbr2.txt
@@ -382,11 +390,15 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
             if (artistalbexcludes.is_open()) {artistalbexcludes.close();}
-            else {std::cout << "selectTrack: Error opening finalids.txt file." << std::endl;}
+            else {
+                std::cout << "selectTrack: Error opening finalids.txt file." << std::endl;
+                Logger ("selectTrack: Error opening finalids.txt file.");
+            }
             std::string artistalbexcludes2 = appDataPathstr.toStdString()+"/finalids.txt"; // now we can use it as input file
             std::ifstream artalbexcludes(artistalbexcludes2); // Open artistalbexcludes.txt as ifstream
             if (!artalbexcludes.is_open()) {
-                std::cout << "selectTrack: Error opening finalids.txt." << std::endl;
+                std::cout << "selectTrack: Error opening artalbexcludes." << std::endl;
+                Logger ("selectTrack: Error opening artalbexcludes.");
                 std::exit(EXIT_FAILURE);
             }
             s_excludeMatch2 = false;
@@ -394,14 +406,14 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
                 trim_cruft(str2);
                 trim_cruft(albumID);
                 if (std::string(str2) == albumID) {
-                    s_excludeMatch2 = true; // If excluded album found, set bool to true
-                }
+                    s_excludeMatch2 = true; // If excluded album found, set bool to true                    
+                }                
             }
             if (s_excludeMatch2){
                 artalbexcludes.close();
                 continue;}// if an excluded album is found continue to next str1
             artalbexcludes.close();
-        }
+        } 
         finaltracksvect.push_back(tokenLTP+","+songPath); // If not skipped by now, add the track to the final list
         // end of the str1 while block, continue to next str1
     }
@@ -411,10 +423,10 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::string fullstring = finaltracksvect.front(); // Saves the first item in vector to a variable
     std::vector<std::string> splittedStrings = split(fullstring, ','); // Function splits the variable and leaves the track path only
     *s_selectedTrackPath = splittedStrings[1];
-    if (Constants::kVerbose) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;
+    if (Constants::kVerbose) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
     std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Append new s_selectedTrackPath to cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
-    playlist.close();
+    playlist.close();    
     std::string selectedTrackPathshort;
     if (Constants::kVerbose) std::cout << "selectTrack function: Track selected and added (non-code-1): " << *s_selectedTrackPath  << std::endl;
     finaltracksvect.shrink_to_fit();

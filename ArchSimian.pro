@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = archsimian
 TEMPLATE = app
-VERSION = 1.06
+VERSION = 1.07
 DEFINES += APP_VERSION=$$VERSION
 
 # The following define makes your compiler emit warnings if you use
@@ -24,7 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++14
+CONFIG += c++17
 
 SOURCES += \
     src/albumidandselect.cpp \
@@ -34,6 +34,7 @@ SOURCES += \
     src/code1.cpp \
     src/dependents.cpp \
     src/diagnostics.cpp \
+    src/exporttoandroidaimp.cpp \
     src/getartistadjustedcount.cpp \
     src/getplaylist.cpp \
     src/lastplayeddays.cpp \
@@ -53,6 +54,7 @@ HEADERS += \
     src/constants.h \
     src/dependents.h \
     src/diagnostics.h \
+    src/exporttoandroidaimp.h \
     src/getartistadjustedcount.h \
     src/getartistexcludes.h \
     src/getplaylist.h \
@@ -80,4 +82,12 @@ INSTALLS += target
 RESOURCES += \
     systray.qrc \    
 
-DISTFILES +=
+DISTFILES += \
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/release/ -lid3
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lid3
+else:unix: LIBS += -L$$PWD/../../../../../../lib/ -lid3
+
+INCLUDEPATH += $$PWD/../../../../../../usr/lib
+DEPENDPATH += $$PWD/../../../../../../usr/lib

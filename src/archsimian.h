@@ -5,10 +5,12 @@
 #include <QMainWindow>
 #include <QtWidgets/QToolBar>
 #include <QAction>
+#include <QLabel>
+#include <QProgressBar>
 
 namespace Ui {
 class ArchSimian;
-//class QAction;
+class Dialog;
 //class QMenu;
 }
 
@@ -37,14 +39,8 @@ private slots:
     void on_repeatFreq1SpinBox_valueChanged(int myvalue);
     void on_weeksradioButton_clicked();
     void on_monthsradioButton_clicked();
-    void on_factor3horizontalSlider_valueChanged(int value);
     void on_daysradioButton_clicked();
     void on_yearsradioButton_clicked();
-    void on_factor4doubleSpinBox_valueChanged(double argfact4);
-    void on_factor5doubleSpinBox_valueChanged(double argfact5);
-    void on_factor6doubleSpinBox_valueChanged(double argfact6);
-    void on_factor7doubleSpinBox_valueChanged(double argfact7);
-    void on_factor8doubleSpinBox_valueChanged(double argfact8);
     void on_InclNewcheckbox_stateChanged(int inclNew);
     void on_albumscheckBox_stateChanged(int inclAlbums);
     void on_minalbumsspinBox_valueChanged(int arg1);
@@ -57,21 +53,36 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionOpen_Playlist_triggered();
     void on_actionNew_Playlist_triggered();
-    void on_autosavecheckBox_stateChanged(int autosave);
-    void on_disablenotecheckBox_stateChanged(int disableNote);
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
-    //void on_playlistLimitSlider_valueChanged(int value);
-
+    void on_mmdisabledradioButton_clicked();
+    void on_mmenabledradioButton_2_clicked();
+    void on_selectAndroidDeviceButton_clicked();
+    void on_updateASDBButton_clicked();
     void on_actionExport_Playlist_to_Linux_triggered();
+    void on_syncPlaylistButton_clicked();
+    void on_syncthingButton_clicked();
+    void on_actionsyncAudaciousLog_triggered();
+    void on_enableAudaciousLogButton_clicked();
+    void on_enableAIMPOnlyradioButton_clicked();
+    void on_updateratingsButton_clicked();
+    void on_updateTagsprogressBar_valueChanged(int value);
+    void on_updateASDBprogressBar_valueChanged(int value);
+    void on_addsongsprogressBar_valueChanged(int value);
+    void on_freqconfigButton_clicked();
+    void on_factor3ahorizontalSlider_valueChanged(int value);
+    void on_factor4horizontalSlider_valueChanged(int value);
+    void on_factor5horizontalSlider_valueChanged(int value);
+    void on_factor6horizontalSlider_valueChanged(int value);
+    void on_factor7horizontalSlider_valueChanged(int value);
 
 private:
     Ui::ArchSimian *ui;
     QString m_sSettingsFile;
-//    QToolBar *mainToolBar;
-
+    QLabel *statusLabel;
+    QProgressBar *statusProgressBar;
 public:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;    
 
 private:
     struct SPreferences
@@ -84,10 +95,11 @@ private:
         QString mmPlaylistDir{};
         QString s_WindowsDriveLetter{};
         QString s_musiclibshortened{};
-        QString s_windowstopfolder;
+        QString s_windowstopfolder{};
+        QString s_androidpathname{};
+        QString s_syncthingpathname{};
         bool s_includeNewTracks{};
         bool s_includeAlbumVariety{};
-        bool s_noAutoSave{};
         bool s_disableNotificationAddTracks{};
         double s_daysTillRepeatCode3{};
         double s_repeatFactorCode4{};
@@ -98,6 +110,9 @@ private:
         int s_minalbums{};
         int s_mintrackseach{};
         int s_mintracks{};
+        bool s_mm4disabled{};
+        bool s_audaciouslogenabled;
+        int s_initialpostsettingslaunch;
     };
 
     void loadSettings();
@@ -105,6 +120,4 @@ private:
 
     SPreferences m_prefs;
     };
-
-
 #endif // ARCHSIMIAN_H

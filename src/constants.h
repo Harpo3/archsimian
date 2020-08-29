@@ -21,11 +21,17 @@ const double kEpochConv2{86400.00};
 const int kLowerRndBound{180};
 const int kUpperRndBound{700};
 
+// Constant used to enabled MM4 update
+const bool kUserDefaultMM4Disabled{false};
+
 // Constant used to standardize the user configuration file name for Arch
 const char kUserFileName[16]{"archsimian.conf"};  // user configuration and preferences filename
 const char kSqlFileName[19]{"/exportMMTable.sql"}; //SQL file to write so that the MM.DB Songs table can be exported
 const char kCleanLibFile[13]{"cleanlib.dsv"}; // filename for storing the ArchSimian basic database
 const char kCleanedPlaylist[20]("cleanedplaylist.txt"); //filename for storing the current playlist
+
+// Constant for specilized application paths
+const char kAIMPLogPath[46]("/Android/data/com.aimp.player/cache/debug.log");
 
 // Constants used to set the maximum size of a playlist or max Code1 position
 const int kMaxFinalPlaylistPos{99999};
@@ -41,8 +47,6 @@ const int kUserDefaultTracksToAdd{10};
 const QString kUserDefaultDefaultPlaylist{};
 const bool kUserDefaultIncludeNewTracks{false};
 const bool kUserDefaultIncludeAlbumVariety{false};
-const bool kUserDefaultNoAutoSave{false};
-const bool kUserDefaultDisableNotificationAddTracks{true};
 const double kUserDefaultDaysTillRepeatCode3{65};
 const double kUserDefaultRepeatFactorCode4{2.7};
 const double kUserDefaultRepeatFactorCode5{2.1};
@@ -52,10 +56,15 @@ const double kUserDefaultRepeatFactorCode8{1.4};
 const QString kUserDefaultWindowsDriveLetter{""};
 const int kUserDefaultMinalbums{2};
 const int kUserDefaultMintrackseach{4};
-const int kUserDefaultMintracks{8};
+const int kUserDefaultMintracks{12};
 const QString kWindowsTopFolder{""};
 const QString kMusicLibShortened{""};
 const int kPlaylistActualCntSelCode{0};
+const bool kAudaciouslogenabled{0};
+const int k_initialpostsettingslaunch{0};
+const int k_playlistListeningDaysLimit {21};
+const double k_code3PlaylistPercentageMax{0.33};
+const double k_code3PlaylistPercentageMin{0.1};
 
 // Constants for bound limits for setting by user in ui
 const int kRatingCode3MinDays{10};

@@ -9,6 +9,8 @@ using StringVector2D = std::vector<StringVector>;
 
 bool comp(int a, int b);
 
+bool IsSpecialChar(char c);
+
 const std::string emptyString = "";
 std::string ExtractString( std::string source, std::string start, std::string end );
 
@@ -16,10 +18,16 @@ int countBlankChars(std::string input);
 
 int countDelimChars(std::string input);
 
+int positionOfXthDelimChar(std::string input, int xthdelim);
+
 StringVector2D readDSV(const std::string& filename);
 StringVector2D readCSV(const std::string& filename);
 
 void trim_cruft(std::string& buffer);
+
+std::string& ltrim(std::string& s);
+std::string& rtrim(std::string& s);
+std::string& trim(std::string& s);
 
 bool stringMatch(std::string s1, std::string s2);
 

@@ -17,6 +17,26 @@ bool comp(int a, int b)
     return (a < b);
 }
 
+bool IsSpecialChar(char c){
+    switch(c)
+    {
+    case '\?':
+    case '@':
+    case '&':
+    case '(':
+    case ')':
+    case '#':
+    case '\"':
+    case '+':
+    case '*':
+    case '!':
+    case ';':
+    return true;
+    default:
+        return false;
+    }
+}
+
 const std::string emptyString = "";
 std::string ExtractString( std::string source, std::string start, std::string end )
 {
@@ -63,6 +83,22 @@ int countDelimChars(std::string input)
         return delims;
 }
 
+int positionOfXthDelimChar(std::string input, int xthdelim)
+{
+    int delims = 0;
+    unsigned long posnumber = 0;
+    unsigned long totalchars = input.length();
+    for (unsigned long i = 0; i< totalchars; ++i){
+        if (input[i] == '/')
+            ++delims;
+        if (delims == xthdelim){
+            // Set position number
+            posnumber = i;
+        }
+    }
+        return int(posnumber);
+}
+
 StringVector2D readDSV(const std::string& filename)
 {
     char separator = '^';
@@ -103,6 +139,31 @@ void trim_cruft(std::string& buffer)
 {
     static const char cruft[] = "\n\r";
     buffer.erase(buffer.find_last_not_of(cruft) + 1);
+}
+
+std::string& ltrim(std::string& s)
+{
+    auto it = std::find_if(s.begin(), s.end(),
+                    [](char c) {
+                        return !std::isspace<char>(c, std::locale::classic());
+                    });
+    s.erase(s.begin(), it);
+    return s;
+}
+
+std::string& rtrim(std::string& s)
+{
+    auto it = std::find_if(s.rbegin(), s.rend(),
+                    [](char c) {
+                        return !std::isspace<char>(c, std::locale::classic());
+                    });
+    s.erase(it.base(), s.end());
+    return s;
+}
+
+std::string& trim(std::string& s)
+{
+    return ltrim(rtrim(s));
 }
 
 // Compares two strings and returns bool for match result
@@ -208,7 +269,7 @@ void removeAppData(std::string str)
     if (existResult == 1) {
         remove (str.c_str());  // remove file referenced by str from the AppData directory
         if(remove( str.c_str() ) != 0 ) {
-            std::cout <<"removeAppData: Error deleting file: "<< str << std::endl;
+            //std::cout <<"removeAppData: Error deleting file: "<< str << std::endl;
         }
         else
             puts( "removeAppData: File successfully deleted" );

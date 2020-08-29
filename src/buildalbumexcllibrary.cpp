@@ -30,7 +30,8 @@ void findDuplicates(std::vector<T> & vecOfElements, std::map<T, int> & countMap)
     }
 }
 
-// Function to identify which albums should be excluded based on the album of the last track played for each artist meeting the user criteria selected
+// Function to identify which albums should be excluded based on the album of the last track played for each artist
+// meeting the user criteria selected
 void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, const int &s_mintracks)
 {
     // Open artadj.txt (contains total track count) to find which artists meet the minimum
@@ -47,6 +48,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     if (!artScreenTable.is_open())
     {
         std::cout << "buildAlbumExclLibrary: Error opening artScreenTable." << std::endl;
+        Logger ("buildAlbumExclLibrary: Error opening artScreenTable.");
         std::exit(EXIT_FAILURE);
     }
     std::map<std::string,int> trackCountMap; // Create a total track count map with string and int, for output
@@ -54,7 +56,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::string selectedArtistToken; // Artist variable from artScreenTable [0]
     std::string totalTracksToken; // Total tracks count variable from artScreenTable [1]
     while (getline(artScreenTable,artScreenLine)){
-        for(auto & i : artAdjVec1){ // read each row element into the variables needed
+        for(auto & i : artAdjVec1){ // Read each row element into the variables needed
             selectedArtistToken = i[0];
             totalTracksToken = i[1];
             int tmpttt = std::stoi(totalTracksToken);
@@ -63,7 +65,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
             }
         }
     }
-    artScreenTable.close(); // close ifstream file, leave vector trackCountMap open
+    artScreenTable.close(); // Close ifstream file, leave vector trackCountMap open
     std::ofstream totTrackCountList(appDataPathstr.toStdString()+"/tmpcount1.txt"); // tmp output file for writing vector
     //iterate and output to temp txt file
     auto it = trackCountMap.begin();
@@ -74,7 +76,7 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     }
     totTrackCountList.close();
     std::vector <std::string> albIDVect;
-    // add ostream for 2nd tmp file
+    // Add ostream for 2nd tmp file
     std::ofstream dupAlbumIDList(appDataPathstr.toStdString()+"/tmpcount2.txt"); // tmp output file for writing vector
     // Now, for each artist in the tmp file, iterate through the library file and push the artist and Album ID to a vector
     // including all the duplicate values for album ID
@@ -84,24 +86,31 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::fstream minalbadj;
     minalbadj.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (minalbadj.is_open()) {minalbadj.close();}
-    else {std::cout << "buildAlbumExclLibrary: Error opening cleanlib.dsv." << std::endl;}
-    std::string minAlbumsScreen = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
+    else {
+        std::cout << "buildAlbumExclLibrary: Error opening cleanlib.dsv." << std::endl;
+        Logger ("buildAlbumExclLibrary: Error opening cleanlib.dsv.");
+    }
+    std::string minAlbumsScreen = appDataPathstr.toStdString()+"/cleanlib.dsv"; // Now we can use it as input file
     // Then, the previous tmp file with the list of artists from the first screen: minAlbumsScreenTable1
     std::fstream totTrackCountList1;
     totTrackCountList1.open (appDataPathstr.toStdString()+"/tmpcount1.txt");
     if (totTrackCountList1.is_open()) {totTrackCountList1.close();}
-    else {std::cout << "buildAlbumExclLibrary: Error opening tmpcount1.txt." << std::endl;}
-    std::string minAlbumsScreen1 = appDataPathstr.toStdString()+"/tmpcount1.txt"; // now we can use it as input file
+    else {
+        std::cout << "buildAlbumExclLibrary: Error opening tmpcount1.txt." << std::endl;
+        Logger ("buildAlbumExclLibrary: Error opening tmpcount1.txt.");
+    }
+    std::string minAlbumsScreen1 = appDataPathstr.toStdString()+"/tmpcount1.txt"; // Now we can use it as input file
     std::ifstream minAlbumsScreenTable1(minAlbumsScreen1);
     if (!minAlbumsScreenTable1.is_open())
     {
         std::cout << "buildAlbumExclLibrary: Error opening minAlbumsScreenTable1." << std::endl;
+        Logger ("buildAlbumExclLibrary: Error opening minAlbumsScreenTable1.");
         std::exit(EXIT_FAILURE);
     }
-    // Outer loop (artist list) needs to be a while loop
+    // Outer loop (artist list)
     std::string str;
     int h = 0;
-    while(h < new_artistCount){ //iterate through length of artist list, store each artist as variable artist
+    while(h < new_artistCount){ // Iterate through length of artist list, store each artist as variable artist
         std::string str1;
         std::istringstream iss(artist);
         std::getline(minAlbumsScreenTable1,artist);
@@ -113,11 +122,11 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
         if (!minAlbumsScreenTable.is_open())
         {
             std::cout << "buildAlbumExclLibrary: Error opening minAlbumsScreenTable." << std::endl;
+            Logger ("buildAlbumExclLibrary: Error opening minAlbumsScreenTable.");
             std::exit(EXIT_FAILURE);
         }
         std::getline(minAlbumsScreenTable, str); //skip first row
         while (std::getline(minAlbumsScreenTable, str)) {   // Outer loop: // for each artist str, iterate through each row of library
-            // Declare variables applicable to all rows
             std::string token1;
             std::istringstream iss1(str1);
             std::getline(minAlbumsScreenTable, str1);
@@ -139,12 +148,10 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
         }
         ++h;
         minAlbumsScreenTable.close();
-    }
-    // write vector to 2nd tmp file
-    for (const auto & i : albIDVect){
-        dupAlbumIDList << i << "\n";}
-    // close two read files after 2nd tmp file is written
-    dupAlbumIDList.close();
+    }    
+    for (const auto & i : albIDVect){ // Write vector to 2nd tmp file
+        dupAlbumIDList << i << "\n";}    
+    dupAlbumIDList.close(); // Close two read files after 2nd tmp file is written
     minAlbumsScreenTable1.close();
     std::vector<std::string> mymap;
     std::string tmpfile = appDataPathstr.toStdString()+"/tmpcount2.txt";
@@ -152,9 +159,8 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::ifstream mytmpfile(tmpfile);
     std::ofstream tmp3{appDataPathstr.toStdString()+"/tmpcount3.txt"};
     while (std::getline(mytmpfile, stra))
-    {
-        // Line contains string of length > 0 then save it in multimap
-        if(!stra.empty())
+    {        
+        if(!stra.empty()) // Line contains string of length > 0 then save it in multimap
             mymap.push_back(stra);
     }
     std::map<std::string, int> duplicateElements;
@@ -181,21 +187,24 @@ void buildAlbumExclLibrary(const int &s_minalbums, const int &s_mintrackseach, c
     std::ifstream mytmpfile2(tmpfile2);
     std::ofstream finallist {appDataPathstr.toStdString()+"/artistalbmexcls.txt"};
     while (std::getline(mytmpfile2, str2))
-    {
-        // Line contains string of length > 0 then save it in multimap
-        if(!str2.empty()){
+    {        
+        if(!str2.empty()){ // Line contains string of length > 0 then save it in multimap
             mymap1.push_back(str2);
-            //std::cout << str2 << std::endl;
         }
     }
     std::map<std::string, int> duplicateElements1;
     findDuplicates(mymap1, duplicateElements1);
     for (auto & elem : duplicateElements1){
-        if (elem.second >= s_minalbums){                  // This is the minimum albums variable
+        if (elem.second >= s_minalbums){  // This is the minimum albums variable
             finallist << elem.first << std::endl;
         }
     }
     finallist.close();
     mytmpfile.close();
     mytmpfile2.close();
+    // Remove temp files generated
+    removeAppData("tmpcount1.txt");
+    removeAppData("tmpcount2.txt");
+    removeAppData("tmpcount3.txt");
+    removeAppData("tmpcount4.txt");
 }

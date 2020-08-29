@@ -30,12 +30,13 @@ bool recentlyUpdated(const QString &s_mmBackupDBDir)
         std::string mmpath = mmdbdir + "/MM.DB";
         struct stat stbuf1{};
         stat(mmpath.c_str(), &stbuf1);
-        localtime(&stbuf1.st_mtime); // or gmtime() depending on what you want        
+        localtime(&stbuf1.st_mtime); //
         struct stat stbuf2{}; // Now get the date for the cleanlib.csv file
         std::string mmpath99 = appDataPathstr.toStdString()+"/cleanlib.dsv";
         stat(mmpath99.c_str(), &stbuf2);
-        localtime(&stbuf2.st_mtime);        
-        double dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
+        localtime(&stbuf2.st_mtime);
+
+        long dateResult = stbuf1.st_mtime - stbuf2.st_mtime;
         if (dateResult > 0) {
             refreshNeededResult = true;
         }
@@ -73,8 +74,8 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
         myfile.close();
     }
     std::vector<std::string> temptokens;
-    std::stringstream tempcheck1(csvItem);// stringstream for parsing carat delimiter
-    std::string tempintermediate; // intermediate value for parsing carat delimiter
+    std::stringstream tempcheck1(csvItem);// For parsing carat delimiter
+    std::string tempintermediate; // Intermediate value for parsing carat delimiter
     while(getline(tempcheck1, tempintermediate, '^'))
     {
         temptokens.push_back(tempintermediate);
@@ -127,8 +128,8 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
     filestr1.open (appDataPathstr.toStdString()+"/libtable.dsv");
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getLibrary: Error opening libtable.dsv file." << std::endl;}
-    std::string databaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // now we can use it as a temporary input file
-    std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // output file for writing clean track paths
+    std::string databaseFile = appDataPathstr.toStdString()+"/libtable.dsv"; // Now we can use it as a temporary input file
+    std::ofstream outf(appDataPathstr.toStdString()+"/cleanlib.dsv"); // Output file for writing clean track paths
     std::ifstream primarySongsTable(databaseFile);
     if (!primarySongsTable.is_open())
     {
@@ -144,10 +145,10 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
         // Create a vector to parse each line by carat and do processing
         // Vector of string to save tokens
         std::vector<std::string> tokens;
-        std::vector<std::string> dirPathTokens;//separate vector for parsing the directory path
+        std::vector<std::string> dirPathTokens; // Separate vector for parsing the directory path
         // stringstream class check1
-        std::stringstream check1(str);// stringstream for parsing carat delimiter
-        std::string intermediate; // intermediate value for parsing carat delimiter
+        std::stringstream check1(str);// For parsing carat delimiter
+        std::string intermediate; // Intermediate value for parsing carat delimiter
         // Open tokens vector to tokenize current string using carat '^' delimiter
         while(getline(check1, intermediate, '^'))
         {
@@ -158,15 +159,15 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
         std::string songPath1;
         songPath1 = tokens[Constants::kColumn8];
         std::istringstream iss2(songPath1);
-        std::stringstream check2(songPath1);// stringstream for parsing \ delimiter of dir path
-        std::string intermediate2; // intermediate value for parsing \ delimiter of dir path
+        std::stringstream check2(songPath1);// For parsing \ delimiter of dir path
+        std::string intermediate2; // Intermediate value for parsing \ delimiter of dir path
         while(getline(check2, intermediate2, '\\'))
         {
             dirPathTokens.push_back(intermediate2);
         }
         dirPathTokens.at(Constants::kColumn0) = s_musiclibrarydirname.toStdString();
         songPath1 = getChgdDirStr(dirPathTokens,songPath1,musiclibshortened);
-        int zeroCount = countBlankChars(songPath1); // run function to identify any paths that have blank spaces
+        int zeroCount = countBlankChars(songPath1); // Run function to identify any paths that have blank spaces
         if (zeroCount > 0){
             QMessageBox msgBox;
             QString pathstr = QString::fromStdString(songPath1);
@@ -180,7 +181,7 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
         }
         tokens.at(Constants::kColumn8) = songPath1;
         dirPathTokens.shrink_to_fit();
-        //Adds a calculated rating code to Col 29 if Col 29 does not have a rating code already
+        // Adds a calculated rating code to Col 29 if Col 29 does not have a rating code already
         if (tokens[Constants::kColumn29].empty()) {
             std::string newstr;
             if (tokens[Constants::kColumn13] == "100") newstr = "3";
@@ -204,8 +205,8 @@ void getLibrary(const QString &s_musiclibrarydirname, QString *s_musiclibshorten
             rndresult = getNewRandomLPDate(rndresult);
             if (rndresult == 0.0)
             {std::cout << "getLibrary: Error obtaining random number." << std::endl;}
-            intconvert = int (rndresult); // convert the random number to an integer
-            strrandom = std::to_string(intconvert); // convert the integer to string
+            intconvert = int (rndresult); // Convert the random number to an integer
+            strrandom = std::to_string(intconvert); // Convert the integer to string
             tokens.at(Constants::kColumn17) = strrandom;
         }
         // Adds artist (without any spaces) to Col 19 if Col 19 does not have a custom value already
@@ -248,20 +249,19 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
     filestr1.open (combinedPath);
     if (filestr1.is_open()) {filestr1.close();}
     else {std::cout << "getDBStats: Error opening cleanlib.dsv file." << std::endl;}
-    const std::string &databaseFile = combinedPath; // now we can use it as input file
+    const std::string &databaseFile = combinedPath;
     std::ifstream primarySongsTable(databaseFile);
     double currDate = std::chrono::duration_cast<std::chrono::seconds>
             (std::chrono::system_clock::now().time_since_epoch()).count(); // This will go to lastplayed .cpp and .h
-    // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569  43441.4712847 43440.4712847
-    double currSQLDate = (currDate / Constants::kEpochConv2) + Constants::kEpochConv1;        // This will go to lastplayed .cpp and .h
+    // The conversion formula for epoch time to SQL time is: x = (x / 86400) + 25569
+    double currSQLDate = (currDate / Constants::kEpochConv2) + Constants::kEpochConv1; // This will go to lastplayed .cpp and .h
     if (!primarySongsTable.is_open())
     {
         std::exit(EXIT_FAILURE);
     }
     std::string str;
     int stringCount{0};
-    while (std::getline(primarySongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
-        // Declare variables applicable to all rows
+    while (std::getline(primarySongsTable, str)) { // Outer loop: iterate through rows of primary songs table
         std::istringstream iss(str);
         std::string strnew;
         std::string token;
@@ -354,28 +354,29 @@ void getDBStats(int *_srCode0TotTrackQty,int *_srCode0MsTotTime,int *_srCode1Tot
         }
         ++ stringCount;
     }
-    primarySongsTable.close();   // Close files opened for reading and writing
+    primarySongsTable.close();
 }
 
 // Function to create the file ratedabbr.txt which adds artist intervals, and which will then be used for track selection functions
 void getSubset()
 {
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
-    std::ofstream ratedabbr(appDataPathstr.toStdString()+"/ratedabbr.txt"); // output file for subset table
+    std::ofstream ratedabbr(appDataPathstr.toStdString()+"/ratedabbr.txt"); // Output file for subset table
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (filestrinterval.is_open()) {filestrinterval.close();}
     else {std::cout << "Error opening cleanLibFile." << std::endl;}
-    std::string ratedlibrary = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
+    std::string ratedlibrary = appDataPathstr.toStdString()+"/cleanlib.dsv"; // Now we can use it as input file
     std::ifstream primarySongsTable(ratedlibrary);
     if (!primarySongsTable.is_open()){
         std::cout << "Error opening cleanLibFile." << std::endl;
+        Logger ("getSubset: Error opening cleanLibFile.");
         std::exit(EXIT_FAILURE);
     }
-    std::string str1; // store the string for cleanLibFile
-    std::string str2; // store the string for playlistTable
-    std::string str3; // store the string for artistsadjVec
-    std::string str4; // store the string for vector parsing string of each artistadj line
+    std::string str1; // Store the string for cleanLibFile
+    std::string str2; // Store the string for playlistTable
+    std::string str3; // Store the string for artistsadjVec
+    std::string str4; // Store the string for vector parsing string of each artistadj line
     std::string selectedArtistToken; // Artist variable from
     std::string songPath;
     std::string tokenLTP;
@@ -387,22 +388,22 @@ void getSubset()
     std::string s_selectedTrackPath;
     StringVector2D artistIntervalVec = readCSV(appDataPathstr.toStdString()+"/artistsadj.txt");
     std::vector<std::string>ratedabbrvect;
-    // Outer loop: iterate through ratedSongsTable in the file "ratedlib.dsv"
+    // Outer loop: iterate through ratedSongsTable in the file "cleanlib.dsv"
     // Need to store col values for song path (8), LastPlayedDate (17), playlist position (will be obtained from cleanedplaylist), artist (19),
     // rating (29); artist interval will be obtained from artistsadj.txt
     while (std::getline(primarySongsTable, str1)) {  // Declare variables applicable to all rows
-        std::istringstream iss(str1); // str is the string of each row
-        std::string token; // token is the contents of each column of data
-        int tokenCount{0}; //token count is the number of delimiter characters within str
+        std::istringstream iss(str1); // str1 is the string of each row
+        std::string token; // Token is the contents of each column of data
+        int tokenCount{0}; // Token count is the number of delimiter characters within str
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, '^')) {
-            if (tokenCount == Constants::kColumn2){albumID = token;} // store albumID variable
-            if (tokenCount == Constants::kColumn8){songPath = token;} // store song path variable
-            if (tokenCount == Constants::kColumn12){songLength = token;} // store song length variable
-            if (tokenCount == Constants::kColumn13){popmRating = token;} // store song length variable
-            if ((tokenCount == Constants::kColumn17) && (popmRating != "0") && (token != "0")){tokenLTP = token;} // store LastPlayedDate in SQL Time
-            if (tokenCount == Constants::kColumn19) {selectedArtistToken = token;}// artist
-            if (tokenCount == Constants::kColumn29){ratingCode = token;} // store rating variable
+            if (tokenCount == Constants::kColumn2){albumID = token;}
+            if (tokenCount == Constants::kColumn8){songPath = token;}
+            if (tokenCount == Constants::kColumn12){songLength = token;}
+            if (tokenCount == Constants::kColumn13){popmRating = token;}
+            if ((tokenCount == Constants::kColumn17) && (popmRating != "0") && (token != "0")){tokenLTP = token;} // LastPlayedDate in SQL Time
+            if (tokenCount == Constants::kColumn19) {selectedArtistToken = token;}
+            if (tokenCount == Constants::kColumn29){ratingCode = token;}
             // Using 2D vector using artistIntervalVec, assign interval of artist matching
             // selectedArtistToken to s_artistInterval variable
             std::string artistsadjartGp;

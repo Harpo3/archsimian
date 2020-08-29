@@ -18,11 +18,15 @@ void getAlbumIDs(){
     std::fstream filestrartists;
     filestrartists.open (appDataPathstr.toStdString()+"/selalbmexcl.txt");
     if (filestrartists.is_open()) {filestrartists.close();}
-    else {std::cout << "Error opening selalbmexcl.txt file." << std::endl;}
+    else {
+        std::cout << "getAlbumIDs: Error opening selalbmexcl.txt file." << std::endl;
+        Logger ("getAlbumIDs: Error opening selalbmexcl.txt file.");
+    }
     std::string artistalbmexcls1 = appDataPathstr.toStdString()+"/selalbmexcl.txt";
     std::ifstream artistTable1(artistalbmexcls1);
     if (!artistTable1.is_open()) {
         std::cout << "getAlbumIDs: Error opening selalbmexcl.txt." << std::endl;
+        Logger ("getAlbumIDs: Error opening selalbmexcl.txt file.");
         std::exit(EXIT_FAILURE);
     }
     std::ofstream trimmedlist(appDataPathstr.toStdString()+"/finalids.txt");
@@ -39,11 +43,15 @@ void getAlbumIDs(){
         std::fstream filestrinterval;
         filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
         if (filestrinterval.is_open()) {filestrinterval.close();}
-        else {std::cout << "getAlbumIDs: Error opening ratedabbr2.txt file (42)." << std::endl;}
+        else {
+            std::cout << "getAlbumIDs: Error opening ratedabbr2.txt file." << std::endl;
+            Logger ("getAlbumIDs: Error opening ratedabbr2.txt file.");
+        }
         std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt";
         std::ifstream ratedSongsTable(ratedlibrary);
         if (!ratedSongsTable.is_open()) {
-            std::cout << "getAlbumIDs: Error opening ratedabbr2.txt (46)." << std::endl;
+            std::cout << "getAlbumIDs: Error opening ratedabbr2.txt." << std::endl;
+            Logger ("getAlbumIDs: Error opening ratedabbr2.txt file.");
             std::exit(EXIT_FAILURE);
         }
         // set variables used to compare element values in ratedabbr2 against this str1
@@ -111,6 +119,7 @@ void getTrimArtAlbmList(){
     std::ifstream artistTable1(artistalbmexcls1);
     if (!artistTable1.is_open()) {
         std::cout << "getTrimArtAlbmList: Error opening artistalbmexcls.txt." << std::endl;
+        Logger ("getTrimArtAlbmList: Error opening artistalbmexcls.txt.");
         std::exit(EXIT_FAILURE);
     }
     std::ofstream trimmedlist(appDataPathstr.toStdString()+"/selalbmexcl.txt");
@@ -124,7 +133,8 @@ void getTrimArtAlbmList(){
         std::string artistexcludes2 = appDataPathstr.toStdString()+"/artistexcludes.txt"; // now we can use it as input file
         std::ifstream artistTable2(artistexcludes2);
         if (!artistTable2.is_open()) {
-            std::cout << "getArtCompare: Error opening artistexcludes.txt." << std::endl;
+            std::cout << "getTrimArtAlbmList: Error opening artistexcludes.txt." << std::endl;
+            Logger ("getTrimArtAlbmList: Error opening artistexcludes.txt.");
             std::exit(EXIT_FAILURE);
         }
         int foundmatch{0};

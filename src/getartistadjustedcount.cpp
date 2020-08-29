@@ -8,26 +8,30 @@
 #include "utilities.h"
 #include "constants.h"
 
-// Function to adjust the number of tracks of each artist by weighting them using the assigned ratings of each track
-void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
-                            const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
-                            const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
-                            const int *_srCode6TotTrackQty,const int *_srCode7TotTrackQty,const int *_srCode8TotTrackQty)
-{
+
+// Function to get track count per artist
+
+void getArtistTrackCount(){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib.is_open()) {cleanlib.close();}
-    else {std::cout << "getArtistAdjustedCount: Error opening cleanlib.dsv file." << std::endl;}
+    else {
+        std::cout << "getArtistTrackCount: Error opening cleanlib.dsv file." << std::endl;
+        Logger ("getArtistTrackCount: Error opening cleanlib.dsv file.");
+    }
     std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib.dsv";    // Now we can use it as input file
     std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib.dsv as ifstream
     if (!SongsTable.is_open())
     {
-        std::cout << "getArtistAdjustedCount: Error opening SongsTable." << std::endl;
+        std::cout << "getArtistTrackCount: Error opening SongsTable." << std::endl;
+        Logger ("getArtistTrackCount: Error opening SongsTable.");
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
-    std::string str; // Create ostream file to log artists and duplicates; dups will be used to create a vector with # tracks per artist
-    std::ofstream outartists(appDataPathstr.toStdString()+"/artists2.txt"); // output file for writing artists list with dups
+    std::string str;
+    std::vector<std::string> artistrawcountVec; // vector list of strings (artistrawcountVec) to output a count of duplicate entries
+    //std::vector<std::string> artistsongcountVec; // vector to store list of counts
+    std::ofstream artistList(appDataPathstr.toStdString()+"/artists.txt"); // output file for writing artists list without dups using vector
     //  Outer loop: iterate through rows of SongsTable
     while (std::getline(SongsTable, str))
     {   // Declare variables applicable to all rows
@@ -36,58 +40,66 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         bool ratingCode{false};
         std::string selectedArtistToken; //used to filter rows where track has a playlist position;
         int tokenCount{0}; //token count is the number of delimiter characters within str
-        // Inner loop: iterate through each column (token) of row
+        // Inner loop: iterate through each column (token) of row and push all rated artist entries into a vector of strings
         while (std::getline(iss, token, '^'))
         {
             if (tokenCount == Constants::kColumn19)  {selectedArtistToken = token;}//  artist grouping
-            if ((tokenCount == Constants::kColumn29) && (token != "0")) {ratingCode = true;}// if custom artist grouping is selected use this code
+            if ((tokenCount == Constants::kColumn29) && (token != "0")) {ratingCode = true;}// Determine if a rated track and set bool
             ++ tokenCount;
         }
-        if (ratingCode) {outartists << selectedArtistToken << "\n"; }// Write artist to clean file if rated
+        if (ratingCode) {artistrawcountVec.push_back(selectedArtistToken);}
     }
-    SongsTable.close();    // Close files opened for reading and writing. SongsTable will be reopened shortly as cleanlibSongsTable2
-    outartists.close();
-    std::map<std::string, int> countMap; // Create a map for two types, string and int
-    std::vector<std::string> artists; // Now create vector
-    std::ifstream myfile(appDataPathstr.toStdString()+"/artists2.txt"); // Input file for vector
-    std::ofstream artistList(appDataPathstr.toStdString()+"/artists.txt"); // output file for writing artists list without dups using vector
-    std::string line;
-    while ( std::getline(myfile, line) ) { //std::cout << "Vector Size is now " << artists.size() << " lines." << std::endl;
-        if ( !line.empty() )
-            artists.push_back(line);
-    }
-    for (auto & elem : artists)  // Iterate over the vector and store the frequency of each element in map
+    // Create a map to store the frequency of each element in vector
+    std::map<std::string, int> countMap;
+    // Iterate over the vector and store the frequency of each element in map
+    for (auto & elem : artistrawcountVec)
     {
         auto result = countMap.insert(std::pair<std::string, int>(elem, 1));
-        if (!result.second)
+        if (result.second == false)
             result.first->second++;
     }
-    // Iterate over the map
+    // Iterate over the map and print items whose value is greater than 0
     for (auto & elem : countMap)
     {
-        // If frequency count is greater than 0 then its element count is captured
+        // If frequency count is greater than 0 then consider it (even if count only 1) a duplicate element
         if (elem.second > 0)
         {
-            artistList << elem.first << "," << elem.second << "\n";
+            artistList << elem.first << "," << elem.second << '\n';
         }
     }
-    myfile.close();
+    artistrawcountVec.shrink_to_fit();
     artistList.close();
-    //removeAppData("artists2.txt");
+}
+
+// Function to claculate an adjusted track count for each artist using a weighting based on assigned rating for each track
+void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
+                            const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
+                            const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
+                            const int *_srCode6TotTrackQty,const int *_srCode7TotTrackQty,const int *_srCode8TotTrackQty)
+{
+    getArtistTrackCount();
+    QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
     cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib2.is_open()) {cleanlib2.close();}
-    else {std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;}
+    else {
+        std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;
+        Logger ("getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file.");
+    }
     std::string cleanlibSongsTable2 = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open (appDataPathstr.toStdString()+"/artists.txt");
     if (artists2.is_open()) {artists2.close();}
-    else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file." << std::endl;}
+    else {
+        std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file." << std::endl;
+        Logger ("getArtistAdjustedCount: Error artists2 opening artists.txt file.");
+    }
     std::string artistsTable2 = appDataPathstr.toStdString()+"/artists.txt"; // now we can use it as input file
     std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
     {
         std::cout << "getArtistAdjustedCount: Error opening artists.txt." << std::endl;
+        Logger ("getArtistAdjustedCount: Error opening artists.txt file.");
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // store the string for artists.txt
@@ -123,6 +135,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         if (!SongsTable2.is_open())
         {
             std::cout << "getArtistAdjustedCount: Error opening SongsTable2." << std::endl;
+            Logger ("getArtistAdjustedCount: Error opening SongsTable2.");
             std::exit(EXIT_FAILURE);
         }
         while (std::getline(SongsTable2, str2) && countdown != 0) //Check every row until all artist's tracks found
@@ -164,10 +177,13 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
             //continue; // Resume cleanlib.dsv next row, beginning with Col 0
         }
         // Completed all rows of cleanlib.dsv
+
         double s_totalAdjRatedQty = (*_syrsTillRepeatCode3factor * *_srCode3TotTrackQty)+(*_syrsTillRepeatCode4factor * *_srCode4TotTrackQty)
                 + (*_syrsTillRepeatCode5factor * *_srCode5TotTrackQty) +(*_syrsTillRepeatCode6factor * *_srCode6TotTrackQty)
                 +(*_syrsTillRepeatCode7factor * *_srCode7TotTrackQty) + (*_syrsTillRepeatCode8factor * *_srCode8TotTrackQty);
+
         SongsTable2.close(); // Must close cleanlib.dsv here so it can reopen for the next artist on the artists.txt file
+
         if (interimAdjCount < currentArtistCount) {interimAdjCount = currentArtistCount;} // Adjusted count must be at least one if there is one track or more
         double currentArtistFactor = (interimAdjCount / s_totalAdjRatedQty); //percentage of total adjusted tracks
         int availInterval = int(1 / currentArtistFactor);
@@ -181,6 +197,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     // All entries in the artists.txt file completed and adjusted values written to new file. Close files opened for reading and writing
     artistcsv.close();
     outartists2.close();
-    artists.shrink_to_fit();
-    //removeAppData("artists.txt");
+    //artists.shrink_to_fit();
+    removeAppData("artists.txt");
+    removeAppData("artists2.txt");
 }

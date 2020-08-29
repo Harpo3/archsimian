@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -180,7 +180,7 @@
              <number>100</number>
             </property>
             <property name="singleStep">
-             <number>10</number>
+             <number>20</number>
             </property>
             <property name="stepType">
              <enum>QAbstractSpinBox::DefaultStepType</enum>
@@ -531,6 +531,19 @@
             </property>
            </widget>
           </widget>
+          <widget class="QProgressBar" name="addsongsprogressBar">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>0</y>
+             <width>191</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="value">
+            <number>24</number>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -540,13 +553,21 @@
         <string>&amp;Settings</string>
        </attribute>
        <widget class="QLabel" name="instructionlabel">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>410</y>
+          <x>10</x>
+          <y>510</y>
           <width>451</width>
-          <height>161</height>
+          <height>101</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Welcome to ArchSimian!&lt;/span&gt; The program was created to improve the &amp;quot;primary&amp;quot; playlist you use for daily listening so you can enjoy your large library. Get better use of your library than smart playlists alone, and ensure maximum variety and custom priority settings for your ratings. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;First, you need to identify the location where your music library is stored, then set the locations where you did backups for your M3U playlist and the MM.DB file. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Once you set these, you will be able to import the database and enable all the rest of the program's features!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -573,8 +594,8 @@
        <widget class="QCheckBox" name="InclNewcheckbox">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>190</y>
+          <x>20</x>
+          <y>183</y>
           <width>381</width>
           <height>21</height>
          </rect>
@@ -595,10 +616,10 @@
        <widget class="QCheckBox" name="albumscheckBox">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>210</y>
+          <x>20</x>
+          <y>206</y>
           <width>401</width>
-          <height>21</height>
+          <height>16</height>
          </rect>
         </property>
         <property name="focusPolicy">
@@ -617,44 +638,11 @@
          <string>Enable album-level variety (requires restart)</string>
         </property>
        </widget>
-       <widget class="QCheckBox" name="autosavecheckBox">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>230</y>
-          <width>441</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::TabFocus</enum>
-        </property>
-        <property name="text">
-         <string>Prompt to manually save user preferences on exit (turns off autosave)
- **Recommended when adjusting settings on the Frequency tab**</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="disablenotecheckBox">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>280</y>
-          <width>421</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::TabFocus</enum>
-        </property>
-        <property name="text">
-         <string>Disable notification when adding a large quantity of tracks (&gt;29)</string>
-        </property>
-       </widget>
        <widget class="QSplitter" name="splitter_4">
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>320</y>
+          <y>280</y>
           <width>451</width>
           <height>27</height>
          </rect>
@@ -738,6 +726,9 @@ directory location settings) and quit program.</string>
             <property name="toolTipDuration">
              <number>-1</number>
             </property>
+            <property name="statusTip">
+             <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
+            </property>
             <property name="text">
              <string>Music library location</string>
             </property>
@@ -753,7 +744,7 @@ directory location settings) and quit program.</string>
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="text">
-             <string>Set the home directory (top level) of the music library and store in user settings.</string>
+             <string>Set the home directory (top level) of the music library.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -795,7 +786,7 @@ directory location settings) and quit program.</string>
              <number>-1</number>
             </property>
             <property name="statusTip">
-             <string/>
+             <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
             </property>
             <property name="whatsThis">
              <string/>
@@ -850,6 +841,9 @@ directory location settings) and quit program.</string>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Do not select the actual MM.DB file in the Windows program directory for MediaMonkey. Create a backup in another directory and select that as the location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
+            <property name="statusTip">
+             <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
+            </property>
             <property name="text">
              <string>MM.db location</string>
             </property>
@@ -892,8 +886,8 @@ MediaMonkey database backup file</string>
        <widget class="QPushButton" name="saveConfigButton">
         <property name="geometry">
          <rect>
-          <x>110</x>
-          <y>370</y>
+          <x>20</x>
+          <y>234</y>
           <width>211</width>
           <height>31</height>
          </rect>
@@ -905,10 +899,10 @@ MediaMonkey database backup file</string>
        <widget class="QLineEdit" name="windowsDriveLtrEdit">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>160</y>
-          <width>16</width>
-          <height>21</height>
+          <x>19</x>
+          <y>156</y>
+          <width>21</width>
+          <height>20</height>
          </rect>
         </property>
         <property name="maxLength">
@@ -920,8 +914,8 @@ MediaMonkey database backup file</string>
          <rect>
           <x>50</x>
           <y>150</y>
-          <width>421</width>
-          <height>36</height>
+          <width>381</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="font">
@@ -930,6 +924,9 @@ MediaMonkey database backup file</string>
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="statusTip">
+         <string extracomment="ArchSimian Setup: \n(1) Identify the location where your music library is stored  \n(2) Set the location where you did backups for your M3U playlist \n(3) Set the location where you did backup of the MM.DB file \n(4) Check whether to enable new tracks \n(5) Check whether to enable album-level variety. \n(6) Restart the program."/>
         </property>
         <property name="autoFillBackground">
          <bool>false</bool>
@@ -941,6 +938,141 @@ MediaMonkey database backup file</string>
          <string>Enter the Windows drive letter associated with your music library.</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="selectAndroidDeviceButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>425</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Android Device</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="syncthinglabel">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>470</y>
+          <width>321</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select the shared folder Syncthing will use to sync playlist and music files to Android device.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="mmdisabledradioButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>370</y>
+          <width>491</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
+        </property>
+        <property name="statusTip">
+         <string extracomment="Logging must be enabled in AIMP app to capture play history."/>
+        </property>
+        <property name="text">
+         <string>Set ArchSimian to sync and manage database (using Syncthing and AIMP player). </string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="mmenabledradioButton_2">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>390</y>
+          <width>441</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set MediaMonkey to manage database (default)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_13">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>310</y>
+          <width>491</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>NOTE: If below is changed to ArchSimian, 'last played' history will no longer be updated via MediaMonkey (MM.DB). It will be updated via the AIMP/Audacious log. If changed back, this play history will not be updated in MediaMonkey.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="androiddevicebuttonlabel">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>420</y>
+          <width>331</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select KDEConnect device to sync (requires KDEconnect and AIMP player on Android device with logging enabled.)</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="syncthingButton">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>470</y>
+          <width>151</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Select Syncthing Folder</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="setFrqNextlabel">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>230</y>
+          <width>241</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="statisticsTab">
        <attribute name="title">
@@ -949,8 +1081,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="ybrLabel3">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>0</y>
+          <x>10</x>
+          <y>20</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -962,8 +1094,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="ybrLabel4">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>20</y>
+          <x>10</x>
+          <y>40</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -975,8 +1107,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="ybrLabel5">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>40</y>
+          <x>10</x>
+          <y>60</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -988,8 +1120,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="ybrLabel6">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>60</y>
+          <x>10</x>
+          <y>80</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -1001,8 +1133,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="ybrLabel7">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>80</y>
+          <x>10</x>
+          <y>100</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -1014,8 +1146,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="ybrLabel8">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>100</y>
+          <x>10</x>
+          <y>120</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -1027,8 +1159,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="tottracksLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>130</y>
+          <x>10</x>
+          <y>150</y>
           <width>470</width>
           <height>16</height>
          </rect>
@@ -1040,8 +1172,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totratedtracksLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>340</y>
+          <x>10</x>
+          <y>360</y>
           <width>241</width>
           <height>16</height>
          </rect>
@@ -1053,8 +1185,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totratedtimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>360</y>
+          <x>10</x>
+          <y>380</y>
           <width>241</width>
           <height>16</height>
          </rect>
@@ -1066,8 +1198,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="dailylistenLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>160</y>
+          <x>10</x>
+          <y>180</y>
           <width>470</width>
           <height>15</height>
          </rect>
@@ -1079,8 +1211,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd1trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>190</y>
+          <x>10</x>
+          <y>210</y>
           <width>481</width>
           <height>16</height>
          </rect>
@@ -1095,8 +1227,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd3trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>210</y>
+          <x>10</x>
+          <y>230</y>
           <width>471</width>
           <height>16</height>
          </rect>
@@ -1108,8 +1240,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd4trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>230</y>
+          <x>10</x>
+          <y>250</y>
           <width>481</width>
           <height>16</height>
          </rect>
@@ -1121,8 +1253,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd5trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>250</y>
+          <x>10</x>
+          <y>270</y>
           <width>481</width>
           <height>16</height>
          </rect>
@@ -1134,8 +1266,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd6trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>270</y>
+          <x>10</x>
+          <y>290</y>
           <width>481</width>
           <height>21</height>
          </rect>
@@ -1147,8 +1279,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd7trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>290</y>
+          <x>10</x>
+          <y>310</y>
           <width>481</width>
           <height>21</height>
          </rect>
@@ -1160,8 +1292,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="cd8trcktimeLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>310</y>
+          <x>10</x>
+          <y>330</y>
           <width>481</width>
           <height>21</height>
          </rect>
@@ -1173,8 +1305,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totadjtracksLabel">
         <property name="geometry">
          <rect>
-          <x>250</x>
-          <y>340</y>
+          <x>260</x>
+          <y>360</y>
           <width>221</width>
           <height>16</height>
          </rect>
@@ -1186,8 +1318,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="totadjhoursLabel">
         <property name="geometry">
          <rect>
-          <x>250</x>
-          <y>360</y>
+          <x>260</x>
+          <y>380</y>
           <width>241</width>
           <height>16</height>
          </rect>
@@ -1199,8 +1331,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="label_5">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>380</y>
+          <x>10</x>
+          <y>400</y>
           <width>121</width>
           <height>16</height>
          </rect>
@@ -1212,8 +1344,8 @@ MediaMonkey database backup file</string>
        <widget class="QLabel" name="label_6">
         <property name="geometry">
          <rect>
-          <x>150</x>
-          <y>380</y>
+          <x>160</x>
+          <y>400</y>
           <width>131</width>
           <height>21</height>
          </rect>
@@ -1225,8 +1357,8 @@ MediaMonkey database backup file</string>
        <widget class="QFrame" name="frame">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>400</y>
+          <x>10</x>
+          <y>420</y>
           <width>141</width>
           <height>171</height>
          </rect>
@@ -1397,8 +1529,8 @@ MediaMonkey database backup file</string>
        <widget class="QFrame" name="frame_2">
         <property name="geometry">
          <rect>
-          <x>150</x>
-          <y>400</y>
+          <x>160</x>
+          <y>420</y>
           <width>121</width>
           <height>171</height>
          </rect>
@@ -1498,65 +1630,21 @@ MediaMonkey database backup file</string>
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>151</width>
+          <width>161</width>
           <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>Show factor frequencies in: </string>
-        </property>
-       </widget>
-       <widget class="QSlider" name="factor3horizontalSlider">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>60</y>
-          <width>201</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>10</number>
-        </property>
-        <property name="maximum">
-         <number>120</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>60</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksBothSides</enum>
-        </property>
-        <property name="tickInterval">
-         <number>15</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="factor3IntTxtLabel">
-        <property name="geometry">
-         <rect>
-          <x>410</x>
-          <y>60</y>
-          <width>21</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>60</string>
+         <string>Show repeat interval in: </string>
         </property>
        </widget>
        <widget class="QWidget" name="layoutWidget2">
         <property name="geometry">
          <rect>
-          <x>160</x>
+          <x>170</x>
           <y>10</y>
           <width>321</width>
-          <height>24</height>
+          <height>22</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="radiobuttonshorizontalLayout">
@@ -1593,583 +1681,788 @@ MediaMonkey database backup file</string>
          </item>
         </layout>
        </widget>
-       <widget class="QFrame" name="starsFrame">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>50</y>
-          <width>151</width>
-          <height>231</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="starsVerticalLayout">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="fivestarLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/five.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="fourstarLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/four.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="threehalfLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/threeonehalf.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="threeLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/three.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="twohalfLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/twoonehalf.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="twoLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/two.png</pixmap>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget3">
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>50</y>
-          <width>54</width>
-          <height>231</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="codelabelsverticalLayout">
-         <item>
-          <widget class="QLabel" name="code3label">
-           <property name="text">
-            <string> (Code 3)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="code4label">
-           <property name="text">
-            <string> (Code 4)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="code5label">
-           <property name="text">
-            <string> (Code 5)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="code6label">
-           <property name="text">
-            <string> (Code 6)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="code7label">
-           <property name="text">
-            <string> (Code 7)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="code8label">
-           <property name="text">
-            <string> (Code 8)</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget4">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>90</y>
-          <width>42</width>
-          <height>191</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="factortxtverticalLayout_5">
-         <item>
-          <widget class="QLabel" name="factortxtlabel_21">
-           <property name="text">
-            <string>Factor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factortxtlabel_22">
-           <property name="text">
-            <string>Factor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factortxtlabel_23">
-           <property name="text">
-            <string>Factor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factortxtlabel_24">
-           <property name="text">
-            <string>Factor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factortxtlabel_25">
-           <property name="text">
-            <string>Factor</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget5">
-        <property name="geometry">
-         <rect>
-          <x>240</x>
-          <y>90</y>
-          <width>74</width>
-          <height>191</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="factorspinverticalLayout">
-         <item>
-          <widget class="QDoubleSpinBox" name="factor4doubleSpinBox">
-           <property name="minimum">
-            <double>1.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>4.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="factor5doubleSpinBox">
-           <property name="minimum">
-            <double>1.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>4.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.010000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="factor6doubleSpinBox">
-           <property name="minimum">
-            <double>1.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>4.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.010000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="factor7doubleSpinBox">
-           <property name="minimum">
-            <double>1.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>4.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.010000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="factor8doubleSpinBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="minimum">
-            <double>1.010000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>4.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.010000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget6">
-        <property name="geometry">
-         <rect>
-          <x>320</x>
-          <y>90</y>
-          <width>81</width>
-          <height>191</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="factorlabelsverticalLayout">
-         <item>
-          <widget class="QLabel" name="factor4label">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factor5label">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factor6label">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factor7label">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="factor8label">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLabel" name="factor3sliderLabel">
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>30</y>
-          <width>241</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Set repeat rate in days (Code 3) using slider:</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="adjhrsLabel">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>290</y>
-          <width>441</width>
-          <height>71</height>
+          <x>10</x>
+          <y>540</y>
+          <width>481</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>For best results, adjust the factors above so that adjusted hours is close to total rated hours (both shown below). This ensures the ratio of tracks as a percentage matches the actual hours of music available. Percentages shown above represent percentage of time assigned in the playlist for each rating category.</string>
+         <string>Save configuration and exit for changes to take effect. Otherwise, changes will be discarded.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="totratedtimefreqLabel">
+       <widget class="QPushButton" name="freqconfigButton">
         <property name="geometry">
          <rect>
-          <x>65</x>
-          <y>400</y>
-          <width>251</width>
-          <height>21</height>
+          <x>104</x>
+          <y>571</y>
+          <width>201</width>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
-         <string>Total time (in hours) is:</string>
+         <string>Save configuration and exit</string>
         </property>
        </widget>
-       <widget class="QLabel" name="totadjhoursfreqLabel">
+       <widget class="QLabel" name="slider3yrslabel">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>380</y>
-          <width>261</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Total adjusted time (in hours) is: </string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="verticalLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>400</x>
-          <y>90</y>
-          <width>91</width>
-          <height>191</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="labelfreqperc4">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelfreqperc35">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelfreqperc3">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelfreqperc25">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelfreqperc2">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLabel" name="labelfreqperc5">
-        <property name="geometry">
-         <rect>
-          <x>440</x>
-          <y>60</y>
-          <width>53</width>
-          <height>15</height>
+          <x>410</x>
+          <y>130</y>
+          <width>90</width>
+          <height>18</height>
          </rect>
         </property>
         <property name="text">
          <string>TextLabel</string>
         </property>
        </widget>
-       <widget class="QSlider" name="playlistLimitSlider">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QLabel" name="label_28">
         <property name="geometry">
          <rect>
-          <x>90</x>
+          <x>10</x>
+          <y>300</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>5%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider6yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>350</y>
+          <width>90</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_29">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>370</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>22%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider8yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
           <y>500</y>
-          <width>251</width>
+          <width>90</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_30">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>220</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>10%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider3label">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>130</y>
+          <width>55</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor5horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>310</y>
+          <width>471</width>
           <height>20</height>
          </rect>
         </property>
         <property name="minimum">
-         <number>70</number>
+         <number>50</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>250</number>
         </property>
         <property name="sliderPosition">
-         <number>95</number>
+         <number>50</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="tickPosition">
-         <enum>QSlider::TicksBelow</enum>
+         <enum>QSlider::TicksBothSides</enum>
         </property>
         <property name="tickInterval">
-         <number>5</number>
+         <number>10</number>
         </property>
        </widget>
-       <widget class="QLabel" name="playlistSliderLabel">
+       <widget class="QLabel" name="slider4label">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>440</y>
-          <width>291</width>
-          <height>51</height>
+          <x>320</x>
+          <y>200</y>
+          <width>55</width>
+          <height>18</height>
          </rect>
         </property>
         <property name="text">
-         <string>Playlist capacity adjustment - adjust down if program cashes at existing playlist capacity setting. Normally 95 is adequate. </string>
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor6horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>380</y>
+          <width>471</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>20</number>
+        </property>
+        <property name="maximum">
+         <number>220</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>10</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider4yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>200</y>
+          <width>90</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_31">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>440</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>2%</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor3ahorizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>160</y>
+          <width>471</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>330</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedAppearance">
+         <bool>false</bool>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_32">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>440</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>22%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider8label">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>500</y>
+          <width>55</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_33">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>300</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>25%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider7yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>420</y>
+          <width>90</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider5yrslabel">
+        <property name="geometry">
+         <rect>
+          <x>410</x>
+          <y>280</y>
+          <width>90</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider6label">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>350</y>
+          <width>55</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor4horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>230</y>
+          <width>471</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>300</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>10</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_34">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>220</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>30%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider5label">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>280</y>
+          <width>55</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QSlider" name="factor7horizontalSlider">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>450</y>
+          <width>471</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>20</number>
+        </property>
+        <property name="maximum">
+         <number>220</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::TicksBothSides</enum>
+        </property>
+        <property name="tickInterval">
+         <number>10</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_35">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>150</y>
+          <width>31</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>33%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="slider7label">
+        <property name="geometry">
+         <rect>
+          <x>320</x>
+          <y>420</y>
+          <width>55</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_36">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>150</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>10%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_37">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>370</y>
+          <width>55</width>
+          <height>14</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>7</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>2%</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="twoLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>500</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/two.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="code8label">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>500</y>
+          <width>161</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Two star tracks (Code 8)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="twohalfLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>420</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/twoonehalf.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="fivestarLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/five.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="code3label">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>130</y>
+          <width>161</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string> Five star tracks (Code 3)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="code4label">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>200</y>
+          <width>151</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Four star tracks (Code 4)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="code5label">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>280</y>
+          <width>191</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Three &amp; 1/2 star tracks (Code 5)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="code6label">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>350</y>
+          <width>191</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string> Three star tracks (Code 6)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="fourstarLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>200</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/four.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="threehalfLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>280</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/threeonehalf.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="threeLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>350</y>
+          <width>101</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../systray.qrc">:/&lt;qresource prefix=&quot;/&quot;&gt;/images/three.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="code7label">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>420</y>
+          <width>191</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Two &amp; 1/2 star tracks (Code 7)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="freqexplainlabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>481</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Adjust sliders to set desired percentage of playlist for each rating.  Selections indicate the estimated time interval between track repeats. Each slider indicates the percent range available for each. Slider 8 is not shown because it gets the remainder.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="playlistLimitSliderValue">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QLabel" name="label_38">
         <property name="geometry">
          <rect>
-          <x>360</x>
-          <y>500</y>
-          <width>21</width>
-          <height>16</height>
+          <x>270</x>
+          <y>90</y>
+          <width>131</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>95</string>
+         <string>Percentage of playlist</string>
         </property>
        </widget>
-       <widget class="QLabel" name="minPlaylistLimitLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QLabel" name="label_39">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>520</y>
-          <width>31</width>
-          <height>20</height>
+          <x>410</x>
+          <y>90</y>
+          <width>91</width>
+          <height>21</height>
          </rect>
         </property>
         <property name="text">
-         <string>70</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="maxPlaylistLimitLabel">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>320</x>
-          <y>520</y>
-          <width>31</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>100</string>
+         <string>Repeat Interval</string>
         </property>
        </widget>
       </widget>
@@ -2308,6 +2601,213 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="syncTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>Sync</string>
+       </attribute>
+       <widget class="QLabel" name="label_15">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>90</y>
+          <width>311</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Sync the currently selected playlist and associated mp3 files with Android device, using Syncthing.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="syncPlaylistButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>100</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Sync Playlist</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_16">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>480</y>
+          <width>471</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Kid3 is an effective Linux application for managing tags, filenames, and ArchSimian rating codes. Codes should be used because Kid3 cannot edit half stars.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="updateASDBButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>181</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>For AIMP Android players, updates last played history to the ArchSimian database instead updating from the MediaMonkey database. Changes are not synced to the MM4 database.</string>
+        </property>
+        <property name="statusTip">
+         <string extracomment="Open Android device folder in Dolphin first and ensure kdeconnect is paired first."/>
+        </property>
+        <property name="text">
+         <string>Update ArchSimian Database</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="updateASDBlabel">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>10</y>
+          <width>291</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Read lastplayed dates from AIMP/Audacious and update the play history in the Archsiman database.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="enableAudaciousLogButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>461</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="statusTip">
+         <string extracomment="Requires a script which runs using an Audacious add-on. The ArchSimian Github page has instructions."/>
+        </property>
+        <property name="text">
+         <string>AIMP plus play history from Audacious (requires add-on script - see Github)</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+       <widget class="QRadioButton" name="enableAIMPOnlyradioButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>461</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Play history from AIMP only (default)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+       <widget class="QLabel" name="label_14">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>520</y>
+          <width>461</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>NOTE: This program may crash if you attempt to update ArchSimian without first ensuring KDEconnect is paired to the desktop, and the Android device 'primary' folder is open in Dolphin. If the AIMP lastplayed entries do not appear in the above panel after updating the database, try manually removing earlier history from the log, found at /primary/Android/data/com.aimp.player/cache, and update again.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="updateratingsButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>140</y>
+          <width>161</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Update Ratings from Tags</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_18">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>140</y>
+          <width>301</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Scan all library tags and update any changes to ratings in the ArchSimian database (takes time)</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QTextBrowser" name="updateDBtextBrowser">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>180</y>
+          <width>491</width>
+          <height>291</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="updateTagsprogressBar">
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>600</y>
+          <width>16</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+       <widget class="QProgressBar" name="updateASDBprogressBar">
+        <property name="geometry">
+         <rect>
+          <x>260</x>
+          <y>40</y>
+          <width>211</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -2421,14 +2921,6 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="actionSave_Settings3">
-   <property name="text">
-    <string>Save Settings</string>
-   </property>
-   <property name="toolTip">
-    <string>Save Settings</string>
-   </property>
-  </action>
   <action name="actionExport_Playlist">
    <property name="icon">
     <iconset resource="../systray.qrc">
@@ -2511,19 +3003,11 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <tabstop>setmmdbButton</tabstop>
   <tabstop>InclNewcheckbox</tabstop>
   <tabstop>albumscheckBox</tabstop>
-  <tabstop>autosavecheckBox</tabstop>
-  <tabstop>disablenotecheckBox</tabstop>
   <tabstop>resetpushButton</tabstop>
   <tabstop>daysradioButton</tabstop>
   <tabstop>weeksradioButton</tabstop>
   <tabstop>monthsradioButton</tabstop>
   <tabstop>yearsradioButton</tabstop>
-  <tabstop>factor3horizontalSlider</tabstop>
-  <tabstop>factor4doubleSpinBox</tabstop>
-  <tabstop>factor5doubleSpinBox</tabstop>
-  <tabstop>factor6doubleSpinBox</tabstop>
-  <tabstop>factor7doubleSpinBox</tabstop>
-  <tabstop>factor8doubleSpinBox</tabstop>
   <tabstop>minalbumsspinBox</tabstop>
   <tabstop>mintracksspinBox</tabstop>
   <tabstop>mintrackseachspinBox</tabstop>
@@ -2531,25 +3015,24 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
   <tabstop>viewplaylistButton</tabstop>
   <tabstop>saveConfigButton</tabstop>
   <tabstop>windowsDriveLtrEdit</tabstop>
-  <tabstop>playlistLimitSlider</tabstop>
  </tabstops>
  <resources>
   <include location="../systray.qrc"/>
  </resources>
  <connections>
   <connection>
-   <sender>factor3horizontalSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>factor3IntTxtLabel</receiver>
-   <slot>setNum(int)</slot>
+   <sender>addsongsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>statusBar</receiver>
+   <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>322</x>
-     <y>147</y>
+     <x>61</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>441</x>
-     <y>148</y>
+     <x>358</x>
+     <y>734</y>
     </hint>
    </hints>
   </connection>
@@ -2560,8 +3043,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
    <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>137</y>
+     <x>102</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
      <x>150</x>
@@ -2569,53 +3052,8 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>factor4doubleSpinBox</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>factor4label</receiver>
-   <slot>repaint()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>309</x>
-     <y>191</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>341</x>
-     <y>189</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>addsongsButton</sender>
-   <signal>clicked()</signal>
-   <receiver>statusBar</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>49</x>
-     <y>137</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>358</x>
-     <y>667</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>factor3horizontalSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>factor4doubleSpinBox</receiver>
-   <slot>repaint()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>317</x>
-     <y>149</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>282</x>
-     <y>181</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
