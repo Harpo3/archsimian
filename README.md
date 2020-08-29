@@ -238,28 +238,9 @@ The Playlist will be saved as xxxxx.m3u, which can then be opened by another med
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying.
 
-6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". Write the following bash script and reference it under the plugin:
+6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". 
 
-#!/bin/bash
-tracklength=$(audtool --current-song-length-seconds) # length of track in seconds
-secselapsed=$(audtool --current-song-output-length-seconds) # seconds of track elapsed
-secondsremaining=$(($tracklength-$secselapsed))
-while  [ $(($secondsremaining > 7)) == 1 ]
-do
-    sleep 5    
-    playing=$(audtool --playback-status)
-    if [ $playing == "stopped" ]; then exit 0; fi
-    tracklength=$(audtool --current-song-length-seconds)
-    secselapsed=$(audtool --current-song-output-length-seconds)
-    secondsremaining=$((tracklength-secselapsed))
-done   
-artist=$(echo -n "$(audtool --current-song-tuple-data artist)")
-album=$(echo -n "$(audtool --current-song-tuple-data album)")
-title=$(echo -n "$(audtool --current-song-tuple-data title)")
-comma=$(echo -n ",")
-echo -n $artist$comma$album$comma$title$comma >>  ~/.local/share/archsimian/audacioushist.log
-mydate=$(echo "$(date +%s)/86400 + 25569"| bc -l)
-printf "%.6f\n" $mydate >>  ~/.local/share/archsimian/audacioushist.log
+
 
 
 
