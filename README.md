@@ -163,7 +163,7 @@ When you update MM4 (for tracks recently played, new tracks, changed ratings) an
 
 <b> Sync</b>
 
-<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without the MM app (or MediaMonkey). The user can also update lastplayed history from the Android AIMP music player, and from Audacious desktop player (if script is enabled). Rating changes to the mp3 tags can also be captured and updated without MM4.</p>
+<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without the MM app (or MediaMonkey). The user can also update lastplayed history from the Android AIMP music player (enable logging using the AIMP app), and from Audacious desktop player (See Note 6, a script is required). Rating changes to the mp3 tags can also be captured and updated without MM4.</p>
 <img src="http://imgur.com//ByYFT2c.png/..." data-canonical-src="http://imgur.com//ByYFT2c.png" width="502" height="600" />
 
 
@@ -228,3 +228,34 @@ First, sort all tracks by their star rating. Select all the tracks of a particul
 The Playlist will be saved as xxxxx.m3u, which can then be opened by another media player.</i>
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying.
+
+6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". Write the following bash script and reference it under the plugin:
+
+#!/bin/bash
+#
+# Runs immediately on a song change
+# Start logging procedure 
+tracklength=$(audtool --current-song-length-seconds) # length of track in seconds
+secselapsed=$(audtool --current-song-output-length-seconds) # seconds of track elapsed
+secondsremaining=$(($tracklength-$secselapsed))
+# Loop to determine status of playback until the track is within the last 7 seconds of the end
+# Wait until the last 7 seconds of track
+while  [ $(($secondsremaining > 7)) == 1 ]
+do
+    sleep 5    
+    playing=$(audtool --playback-status)
+    if [ $playing == "stopped" ]; then exit 0; fi
+    tracklength=$(audtool --current-song-length-seconds)
+    secselapsed=$(audtool --current-song-output-length-seconds)
+    secondsremaining=$((tracklength-secselapsed))
+done   
+artist=$(echo -n "$(audtool --current-song-tuple-data artist)")
+album=$(echo -n "$(audtool --current-song-tuple-data album)")
+title=$(echo -n "$(audtool --current-song-tuple-data title)")
+comma=$(echo -n ",")
+echo -n $artist$comma$album$comma$title$comma >>  ~/.local/share/archsimian/audacioushist.log
+mydate=$(echo "$(date +%s)/86400 + 25569"| bc -l)
+printf "%.6f\n" $mydate >>  ~/.local/share/archsimian/audacioushist.log
+
+
+
