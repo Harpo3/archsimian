@@ -127,12 +127,12 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 
 <b>The 3 directory locations and the Windows drive letter ALL must be identified during initial setup for the program to run.</b>  
 
-(windows drive letter location edit box is not shown in the photo) When complete press the button to "save the configuration and exit". </p>
+When complete press the button to "save the configuration and exit". </p>
 <img src="http://imgur.com/PWjKn3e.png/..." data-canonical-src="http://imgur.com/PWjKn3e.png" width="502" height="600" />
 
 <b> Troubleshooting</b>
 
-When you complete the setup menu, ArchSimian will run a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting. Diagnostics also run after every MM.DB update.
+When you complete the setup menu, ArchSimian will run a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting. Diagnostics also run after every MM.DB update. If you have a crash, check the log for details, then report what happened if you cannot correct the issue.
 
 <b> ArchSimian Configuration</b>
 
@@ -163,7 +163,7 @@ When you update MM4 (for tracks recently played, new tracks, changed ratings) an
 
 <b> Sync</b>
 
-<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. The user can update lastplayed history from the Android AIMP music player, and from Audacious desktop player (if script is enabled). Rating changes to the mp3 tags can also be captured and updated to the database.</p>
+<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without the MM app (or MediaMonkey). The user can also update lastplayed history from the Android AIMP music player, and from Audacious desktop player (if script is enabled). Rating changes to the mp3 tags can also be captured and updated without MM4.</p>
 <img src="http://imgur.com//ByYFT2c.png/..." data-canonical-src="http://imgur.com//ByYFT2c.png" width="502" height="600" />
 
 
