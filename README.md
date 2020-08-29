@@ -130,6 +130,15 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 When complete press the button to "save the configuration and exit". </p>
 <img src="http://imgur.com/PWjKn3e.png/..." data-canonical-src="http://imgur.com/PWjKn3e.png" width="502" height="600" />
 
+<b> Ditching MediaMonkey Entirely</b>
+
+There is a way to manage your library (including lastplayed data and rating changes) and sync to your Android device without losing all of the data collected using MediaMonkey. You must have the following before enabling this feature: KDE (with both kdeconnect and dolphin), Syncthing and the AIMP Android app (if you wish to sync to your Android device), and if you wish to log lastplayed data from Linux, Audacious. 
+
+Use Kid3 to manage your tags. 
+
+Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Note 1). They will appear in Kid3 as the "Work" field. Set all artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. 
+
+
 <b> Troubleshooting</b>
 
 When you complete the setup menu, ArchSimian will run a diagnostic routine. Review the log at <i>.local/share/archsimian/diagnosticslog.txt</i> for recommendations if you encounter problems when starting. Diagnostics also run after every MM.DB update. If you have a crash, check the log for details, then report what happened if you cannot correct the issue.
