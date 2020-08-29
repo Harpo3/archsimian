@@ -1,0 +1,20 @@
+#!/bin/bash
+tracklength=$(audtool --current-song-length-seconds) # length of track in seconds
+secselapsed=$(audtool --current-song-output-length-seconds) # seconds of track elapsed
+secondsremaining=$(($tracklength-$secselapsed))
+while  [ $(($secondsremaining > 7)) == 1 ]
+do
+    sleep 5    
+    playing=$(audtool --playback-status)
+    if [ $playing == "stopped" ]; then exit 0; fi
+    tracklength=$(audtool --current-song-length-seconds)
+    secselapsed=$(audtool --current-song-output-length-seconds)
+    secondsremaining=$((tracklength-secselapsed))
+done   
+artist=$(echo -n "$(audtool --current-song-tuple-data artist)")
+album=$(echo -n "$(audtool --current-song-tuple-data album)")
+title=$(echo -n "$(audtool --current-song-tuple-data title)")
+comma=$(echo -n ",")
+echo -n $artist$comma$album$comma$title$comma >>  ~/.local/share/archsimian/audacioushist.log
+mydate=$(echo "$(date +%s)/86400 + 25569"| bc -l)
+printf "%.6f\n" $mydate >>  ~/.local/share/archsimian/audacioushist.log
