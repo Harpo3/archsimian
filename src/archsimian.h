@@ -53,7 +53,6 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionOpen_Playlist_triggered();
     void on_actionNew_Playlist_triggered();
-    void on_autosavecheckBox_stateChanged(int autosave);
     void on_resetpushButton_released();
     void on_viewplaylistButton_clicked();   
     void on_mmdisabledradioButton_clicked();
@@ -102,7 +101,6 @@ private:
         QString s_syncthingpathname{};
         bool s_includeNewTracks{};
         bool s_includeAlbumVariety{};
-        bool s_noAutoSave{};
         bool s_disableNotificationAddTracks{};
         double s_daysTillRepeatCode3{};
         double s_repeatFactorCode4{};

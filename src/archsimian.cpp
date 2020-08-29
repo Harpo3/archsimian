@@ -55,7 +55,6 @@ static bool s_bool_PlaylistSelected{false};
 static bool s_bool_ExcludedArtistsProcessed{false};
 static bool s_includeNewTracks{true};
 static bool s_includeAlbumVariety{true};
-static bool s_noAutoSave{false};
 static int s_uniqueCode1ArtistCount{0};
 static int s_code1PlaylistCount{0};
 static int s_lowestCode1Pos{Constants::kMaxLowestCode1Pos};
@@ -163,9 +162,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     // QSettings: load user settings from archsimian.conf file
     loadSettings();
 
-    // NEW - comment out yrsTillRepeat lines and replace with playlist percentage calc, like:
-    //  s_yrsTillRepeatCode4 = s_rCode4TotTrackQty / (s_playlistPercentage4 * s_listeningRateSongsPerYr);
-    // and save playlist percentage variables to config file
     s_daysTillRepeatCode3 = m_prefs.s_daysTillRepeatCode3;
     s_yrsTillRepeatCode3 = s_daysTillRepeatCode3 / Constants::kDaysInYear;
     s_repeatFactorCode4 = m_prefs.s_repeatFactorCode4;
@@ -187,7 +183,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
     s_mmPlaylistDir = m_prefs.mmPlaylistDir;
     s_includeNewTracks = m_prefs.s_includeNewTracks;
     s_includeAlbumVariety = m_prefs.s_includeAlbumVariety;
-    s_noAutoSave = m_prefs.s_noAutoSave;
     s_minalbums = m_prefs.s_minalbums;
     s_mintrackseach= m_prefs.s_mintrackseach;
     s_mintracks = m_prefs.s_mintracks;
@@ -291,6 +286,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setlibrarylabel->setText(QString(s_musiclibrarydirname));
         ui->windowsDriveLtrEdit->setText(QString(s_winDriveLtr));
         ui->setlibraryButton->setEnabled(true);
+        ui->setFrqNextlabel->setText("");
         ui->setmmpllabel->setText(QString(s_defaultPlaylist));
         ui->setmmplButton->setEnabled(true);
         ui->setmmdblabel->setText(s_mmBackupDBDir);
@@ -358,7 +354,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->setmmdbButton->setEnabled(false);
         ui->saveConfigButton->setEnabled(false);
         ui->menuBar->setDisabled(true);
-        ui->autosavecheckBox->setChecked(true);
         ui->windowsDriveLtrEdit->setText(tr(""));
         ui->windowsDriveLtrEdit->setEnabled(false);
         ui->mmdisabledradioButton->setEnabled(false);
@@ -463,10 +458,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             removeAppData("ratedabbr2.txt");
             removeAppData("artistsadj.txt");
             s_bool_artistsadjExist = false;
-            //removeAppData("playlistposlist.txt");
-
-            //removeAppData("artistexcludes.txt");
-
             s_bool_ExcludedArtistsProcessed = false;
             removeAppData("cleanedplaylist.txt");
             s_bool_PlaylistExist = false;
@@ -897,17 +888,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->addtrksspinBox->setValue(m_prefs.tracksToAdd);
         ui->addtrksspinBox->setMaximum(100);
         ui->newtracksqtyLabel->setText(tr("New tracks qty not in playlist: ") + QString::number(s_rCode1TotTrackQty - s_code1PlaylistCount));
-
-
-        // NEW *********************
-
-
         ui->slider4label->setText(QString::number((s_playlistPercentage4) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->slider5label->setText(QString::number((s_playlistPercentage5) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->slider6label->setText(QString::number((s_playlistPercentage6) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->slider7label->setText(QString::number((s_playlistPercentage7) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->slider8label->setText(QString::number((s_playlistPercentage8) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
-
         ui->slider4yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode4 * s_yrsTillRepeatCode3 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
         ui->slider5yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode5 * s_yrsTillRepeatCode4 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
         ui->slider6yrslabel->setText(QString::number(m_prefs.s_repeatFactorCode6 * s_yrsTillRepeatCode5 * Constants::kMonthsInYear,'g', 3) + dateTransTextVal);
@@ -946,11 +931,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         int temppp7 = int(1000 * s_playlistPercentage7);
         ui->factor7horizontalSlider->setValue(temppp7);
 
-        // *************************
-
-
-
-        ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
+         ui->playlistdaysLabel->setText(tr("and playlist length in listening days is ") +
                                        QString::number(s_playlistSize/(s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3));
         ui->daystoaddLabel->setText(tr("Based on a daily listening rate of ") + QString::number(s_avgListeningRateInMins,'g', 3)
                                     + tr(" minutes per day, tracks per day is ") + QString::number((s_avgListeningRateInMins / s_AvgMinsPerSong),'g', 3)+tr(", so"));
@@ -963,7 +944,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->label_perc25->setText(QString::number((((1 / s_yrsTillRepeatCode7) * s_rCode7TotTime)/s_totAdjHours) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->label_perc2->setText(QString::number((((1 / s_yrsTillRepeatCode8) * s_rCode8TotTime)/s_totAdjHours) * Constants::kConvertDecimalToPercentDisplay,'g', 3) + "%");
         ui->yearsradioButton->click();
-
 
         ui->playlistTab->setEnabled(true);
         ui->statisticsTab->setEnabled(true);
@@ -1011,12 +991,6 @@ ArchSimian::ArchSimian(QWidget *parent) :
             ui->repeatFreq1SpinBox->setEnabled(true);
             ui->newtracksqtyLabel->setDisabled(false);
             ui->repeatfreqtxtLabel->setDisabled(false);
-        }
-        if (m_prefs.s_noAutoSave){
-            ui->autosavecheckBox->setChecked(true);
-        }
-        if (!m_prefs.s_noAutoSave){
-            ui->autosavecheckBox->setChecked(false);
         }        
     }
     ui->minalbumsspinBox->setValue(m_prefs.s_minalbums);
@@ -1365,8 +1339,7 @@ void ArchSimian::on_windowsDriveLtrEdit_textChanged(const QString &arg1)
 
 void ArchSimian::on_mainQTabWidget_tabBarClicked(int index)
 {
-    if (index == 0) { // if the Playlist tab is selected, save and reload settings since rating code values may have been changed
-        saveSettings();
+    if (index == 0) { // if the Playlist tab is selected, reload settings since rating code values may have been changed and saved
         loadSettings();
     }
     if (index == 2) // if the Statistics tab is selected, refresh stats
@@ -1439,7 +1412,6 @@ void ArchSimian::loadSettings()
     m_prefs.mmPlaylistDir = settings.value("mmPlaylistDir", "").toString();
     m_prefs.s_includeNewTracks = settings.value("includeNewTracks", Constants::kUserDefaultIncludeNewTracks).toBool();
     m_prefs.s_includeAlbumVariety = settings.value("s_includeAlbumVariety", Constants::kUserDefaultIncludeAlbumVariety).toBool();
-    m_prefs.s_noAutoSave = settings.value("s_noAutoSave", Constants::kUserDefaultNoAutoSave).toBool();
     m_prefs.s_daysTillRepeatCode3 = settings.value("s_daysTillRepeatCode3", Constants::kUserDefaultDaysTillRepeatCode3).toDouble();
     m_prefs.s_repeatFactorCode4 = settings.value("s_repeatFactorCode4", Constants::kUserDefaultRepeatFactorCode4).toDouble();
     m_prefs.s_repeatFactorCode5 = settings.value("s_repeatFactorCode5", Constants::kUserDefaultRepeatFactorCode5).toDouble();
@@ -1470,7 +1442,6 @@ void ArchSimian::saveSettings()
     settings.setValue("mmBackupDBDir",m_prefs.mmBackupDBDir);
     settings.setValue("mmPlaylistDir",m_prefs.mmPlaylistDir);
     settings.setValue("includeNewTracks",m_prefs.s_includeNewTracks);
-    settings.setValue("s_noAutoSave",m_prefs.s_noAutoSave);
     settings.setValue("s_includeAlbumVariety",m_prefs.s_includeAlbumVariety);
     settings.setValue("s_daysTillRepeatCode3",m_prefs.s_daysTillRepeatCode3);
     settings.setValue("s_repeatFactorCode4",m_prefs.s_repeatFactorCode4);
@@ -1493,16 +1464,28 @@ void ArchSimian::saveSettings()
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
     event->ignore();
-    if (s_noAutoSave == 1){
-        saveSettings();
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. Settings are not saved automatically on exit. Checking for changes..." << std::endl;}
+    // Compare current user-set configuration to stored user set. If any differences found, prompt user to save changes.
+
+    if ((s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_mmBackupDBDir == m_prefs.mmBackupDBDir) && (s_musiclibrarydirname == m_prefs.musicLibraryDir) &&
+            (s_mmPlaylistDir == m_prefs.mmPlaylistDir) && (s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_includeAlbumVariety == m_prefs.s_includeAlbumVariety)
+            && (s_minalbums == m_prefs.s_minalbums) && (s_mintrackseach == m_prefs.s_mintrackseach) && (s_mintracks == m_prefs.s_mintracks) &&
+            (s_repeatFreqForCode1 == m_prefs.repeatFreqCode1) && (s_winDriveLtr == m_prefs.s_WindowsDriveLetter) && (s_mm4disabled == m_prefs.s_mm4disabled) &&
+            (s_androidpathname == m_prefs.s_androidpathname) && (s_syncthingpathname == m_prefs.s_syncthingpathname) && (s_audaciouslogenabled == m_prefs.s_audaciouslogenabled))
+    {
         event->accept();
     }
-    if (s_noAutoSave == 0){
-        if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes made to settings before exit?",
-                                                      QMessageBox::Yes | QMessageBox::No))
+    else {
+        if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes to "
+                                                      "the configuration settings before quitting?", QMessageBox::Yes | QMessageBox::No))
         {
             saveSettings();
             event->accept();
+            std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
+            ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
+            ofs.close();
+            s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+            if (Constants::kVerbose){std::cout << "Archsimian.cpp: closeEvent. cleanedplaylist should be zero now: "<< s_playlistSize << std::endl;}
         }
         event->accept();
     }
@@ -1619,24 +1602,24 @@ void ArchSimian::on_actionExport_Playlist_triggered()
     playlistpath = s_defaultPlaylist.toStdString();
     if (Constants::kVerbose){std::cout << "on_actionExport_Playlist_triggered: s_defaultPlaylist save is to: "<< s_defaultPlaylist.toStdString() << std::endl;}
     exportPlaylistToWindows(s_musicdirlength, s_mmPlaylistDir,  s_winDriveLtr,  s_musiclibrarydirname, playlistpath);
-    saveSettings();
+    //saveSettings();
     ui->statusBar->showMessage("Saved Archsimian-modified playlist in Windows directory format",4000);
 }
 
 void ArchSimian::on_actionExit_triggered()
 {
-    if (!s_noAutoSave){
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. noAutoSave is set to false, meaning settings are saved automatically on exit. " << std::endl;}
-        saveSettings();
-        std::ofstream ofs; //open the cleanedplaylist file for writing with the truncate option to delete the content.
-        ofs.open(appDataPathstr.toStdString()+"/cleanedplaylist.txt", std::ofstream::out | std::ofstream::trunc);
-        ofs.close();
-        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. cleanedplaylist should be zero now: "<< s_playlistSize << std::endl;}
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. Settings are not saved automatically on exit. Checking for changes..." << std::endl;}
+    // Compare current user-set configuration to stored user set. If any differences found, prompt user to save changes.
+
+    if ((s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_mmBackupDBDir == m_prefs.mmBackupDBDir) && (s_musiclibrarydirname == m_prefs.musicLibraryDir) &&
+            (s_mmPlaylistDir == m_prefs.mmPlaylistDir) && (s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_includeAlbumVariety == m_prefs.s_includeAlbumVariety)
+            && (s_minalbums == m_prefs.s_minalbums) && (s_mintrackseach == m_prefs.s_mintrackseach) && (s_mintracks == m_prefs.s_mintracks) &&
+            (s_repeatFreqForCode1 == m_prefs.repeatFreqCode1) && (s_winDriveLtr == m_prefs.s_WindowsDriveLetter) && (s_mm4disabled == m_prefs.s_mm4disabled) &&
+            (s_androidpathname == m_prefs.s_androidpathname) && (s_syncthingpathname == m_prefs.s_syncthingpathname) && (s_audaciouslogenabled == m_prefs.s_audaciouslogenabled))
+    {
         qApp->quit();
     }
-    if (s_noAutoSave){
-        if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. noAutoSave is set to true, meaning settings are not saved automatically on exit. " << std::endl;}
+    else {
         if (QMessageBox::Yes == QMessageBox::question(this, "Close Confirmation", "Do you wish to save any changes to "
                                                       "the configuration settings before quitting?", QMessageBox::Yes | QMessageBox::No))
         {
@@ -1864,19 +1847,7 @@ void ArchSimian::on_actionNew_Playlist_triggered()
     QMainWindow::setWindowTitle("ArchSimian - "+justname);
 }
 
-void ArchSimian::on_autosavecheckBox_stateChanged(int autosave)
-{
-    ui->autosavecheckBox->checkState();
-    m_prefs.s_noAutoSave = autosave;
-    if (ui->autosavecheckBox->checkState() == 2){
-        m_prefs.s_noAutoSave = true;
-        QWidget::repaint();
-    }
-    if (ui->autosavecheckBox->checkState() == 0){
-        m_prefs.s_noAutoSave = false;
-        QWidget::repaint();
-    }
-}
+
 
 void ArchSimian::on_resetpushButton_released()
 {
@@ -1888,7 +1859,6 @@ void ArchSimian::on_resetpushButton_released()
         m_prefs.defaultPlaylist = Constants::kUserDefaultDefaultPlaylist;
         m_prefs.s_includeNewTracks = Constants::kUserDefaultIncludeNewTracks;
         m_prefs.s_includeAlbumVariety =  Constants::kUserDefaultIncludeAlbumVariety;
-        m_prefs.s_noAutoSave = Constants::kUserDefaultNoAutoSave;
         m_prefs.s_daysTillRepeatCode3 = Constants::kUserDefaultDaysTillRepeatCode3;
         m_prefs.s_repeatFactorCode4 = Constants::kUserDefaultRepeatFactorCode4;
         m_prefs.s_repeatFactorCode5 = Constants::kUserDefaultRepeatFactorCode5;
@@ -1926,7 +1896,6 @@ void ArchSimian::on_mmdisabledradioButton_clicked()
 {
     s_mm4disabled = true;
     m_prefs.s_mm4disabled = s_mm4disabled;
-    saveSettings();
     ui->syncthingButton->setDisabled(false);
     ui->selectAndroidDeviceButton->setDisabled(false);
     ui->updateASDBButton->setDisabled(false);
@@ -1945,7 +1914,6 @@ void ArchSimian::on_mmenabledradioButton_2_clicked()
 {
     s_mm4disabled = false;
     m_prefs.s_mm4disabled = s_mm4disabled;
-    saveSettings();
     ui->syncthingButton->setDisabled(true);
     ui->selectAndroidDeviceButton->setDisabled(true);
     ui->updateASDBButton->setDisabled(true);
@@ -2059,7 +2027,6 @@ void ArchSimian::on_syncthingButton_clicked()
                 );
     ui->syncthinglabel->setText(QString(s_syncthingpathname));    
     m_prefs.s_syncthingpathname = s_syncthingpathname; // Write description note and directory configuration to archsimian.conf
-    saveSettings();
     if ((s_androidpathname == "" ) || (s_syncthingpathname == "")) { // If either of the 2 sync paths have not been established dim two action buttons
                 ui->updateASDBButton->setDisabled(true);
                 ui->syncPlaylistButton->setDisabled(true);
@@ -2081,7 +2048,6 @@ void ArchSimian::on_enableAudaciousLogButton_clicked()
     s_audaciouslogenabled = true;
     ui->enableAudaciousLogButton->setChecked(true);
     m_prefs.s_audaciouslogenabled = s_audaciouslogenabled;
-    saveSettings();
     if (Constants::kVerbose){std::cout << "s_audaciouslogenabled changed to true: "<<s_audaciouslogenabled << std::endl;}
     ui->statusBar->showMessage("Enabled play history logging from Audacious.",4000);
 }
@@ -2091,7 +2057,6 @@ void ArchSimian::on_enableAIMPOnlyradioButton_clicked()
     s_audaciouslogenabled = false;
     ui->enableAIMPOnlyradioButton->setChecked(true);
     m_prefs.s_audaciouslogenabled = s_audaciouslogenabled;
-    saveSettings();
     if (Constants::kVerbose){std::cout << "s_audaciouslogenabled changed to false: "<<s_audaciouslogenabled << std::endl;}
     ui->statusBar->showMessage("Disabled play history logging from Audacious.",4000);
 }
