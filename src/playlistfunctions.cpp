@@ -47,11 +47,15 @@ int ratingCodeSelected(double &s_playlistPercentage3, double &s_playlistPercenta
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "ratingCodeSelected: Error opening ratedabbr2.txt file." << std::endl;}
+    else {
+        std::cout << "ratingCodeSelected: Error opening ratedabbr2.txt file." << std::endl;
+        Logger ("ratingCodeSelected: Error opening ratedabbr2.txt file.");
+    }
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "ratingCodeSelected: Error opening ratedSongsTable." << std::endl;
+        Logger ("ratingCodeSelected: Error opening ratedSongsTable.");
         std::exit(EXIT_FAILURE);
     }
     while (std::getline(ratedSongsTable, str)) { // Declare variables applicable to all rows
@@ -294,11 +298,15 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "selectTrack: Error opening ratedabbr2.txt file (297)." << std::endl;}
+    else {
+        std::cout << "selectTrack: Error opening ratedabbr2.txt file." << std::endl;
+        Logger ("selectTrack: Error opening ratedabbr2.txt file.");
+    }
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
-        std::cout << "selectTrack: Error opening ratedabbr2.txt (301)." << std::endl;
+        std::cout << "selectTrack: Error opening ratedSongsTable." << std::endl;
+        Logger ("selectTrack: Error opening ratedSongsTable.");
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // for ratedabbr2.txt
@@ -382,11 +390,15 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
             std::ifstream artistalbexcludes;  // Next ensure artistalbexcludes.txt is ready to open
             artistalbexcludes.open (appDataPathstr.toStdString()+"/finalids.txt");
             if (artistalbexcludes.is_open()) {artistalbexcludes.close();}
-            else {std::cout << "selectTrack: Error opening finalids.txt file." << std::endl;}
+            else {
+                std::cout << "selectTrack: Error opening finalids.txt file." << std::endl;
+                Logger ("selectTrack: Error opening finalids.txt file.");
+            }
             std::string artistalbexcludes2 = appDataPathstr.toStdString()+"/finalids.txt"; // now we can use it as input file
             std::ifstream artalbexcludes(artistalbexcludes2); // Open artistalbexcludes.txt as ifstream
             if (!artalbexcludes.is_open()) {
-                std::cout << "selectTrack: Error opening finalids.txt." << std::endl;
+                std::cout << "selectTrack: Error opening artalbexcludes." << std::endl;
+                Logger ("selectTrack: Error opening artalbexcludes.");
                 std::exit(EXIT_FAILURE);
             }
             s_excludeMatch2 = false;

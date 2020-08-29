@@ -4,6 +4,7 @@
 #include <fstream>
 #include "constants.h"
 #include <cstdio>
+#include "utilities.h"
 
 void writeSQLFile(){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
@@ -28,7 +29,10 @@ void writeSQLFile(){
     std::ifstream sqlfile3;
     sqlfile3.open(sqlfile2.c_str());
     if (sqlfile3.is_open()) {sqlfile3.close();}
-    else {std::cout << "Error opening SQL file after it was created by writeSQL()." << std::endl;}
+    else {
+        std::cout << "writeSQLFile: Error opening SQL file after it was created by writeSQL()." << std::endl;
+        Logger ("writeSQLFile: Error opening SQL file after it was created by writeSQL().");
+    }
 }
 
 void removeSQLFile(){

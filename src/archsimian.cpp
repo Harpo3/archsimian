@@ -682,6 +682,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         s_bool_dbStatsCalculated = false;
         if (s_bool_IsUserConfigSet){
             std::cout << "Archsimian.cpp: Step 6. ERROR: Something went wrong processing the function getDBStats." << std::endl;
+            Logger ("Archsimian.cpp: Step 6. ERROR: Something went wrong processing the function getDBStats.");
         }
     }
 
@@ -743,7 +744,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
             s_bool_artistsadjExist = doesFileExist (appDataPathstr.toStdString()+"/artistsadj.txt");
             if (Constants::kVerbose) std::cout << "Archsimian.cpp: Step 7a. Regenerated artistsadj.txt. Setting s_bool_RatedAbbrExist to false." << std::endl;
             s_bool_RatedAbbrExist = false;
-            if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7a. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+            if (!s_bool_artistsadjExist)  {
+                std::cout << "Archsimian.cpp: Step 7a. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;
+                Logger ("Archsimian.cpp: Step 7a. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created.");
+            }
         }
     }
 
@@ -759,7 +763,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
                                &s_rCode6TotTrackQty,&s_rCode7TotTrackQty,&s_rCode8TotTrackQty);
         s_bool_RatedAbbrExist = false;
         s_bool_artistsadjExist = doesFileExist (appDataPathstr.toStdString()+"/artistsadj.txt");
-        if (!s_bool_artistsadjExist)  {std::cout << "Archsimian.cpp: Step 7b. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;}
+        if (!s_bool_artistsadjExist)  {
+            std::cout << "Archsimian.cpp: Step 7b. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created." << std::endl;
+            Logger ("Archsimian.cpp: Step 7b. Something went wrong at the function getArtistAdjustedCount. artistsadj.txt not created.");
+        }
     }
 
     /* 8.  If user configuration exists, MM.DB exists, songs table exists, database statistics exist, artist statistics are processed, create
@@ -772,7 +779,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 8. Starting function getSubset to create ratedabbr.txt." << std::endl;}
         getSubset();
         s_bool_RatedAbbrExist = doesFileExist (appDataPathstr.toStdString()+"/ratedabbr.txt");
-        if (!s_bool_RatedAbbrExist)  {std::cout << "Archsimian.cpp: Step 8. Something went wrong at the function getSubset(). ratedabbr.txt not created." << std::endl;}
+        if (!s_bool_RatedAbbrExist)  {
+            std::cout << "Archsimian.cpp: Step 8. Something went wrong at the function getSubset(). ratedabbr.txt not created." << std::endl;
+            Logger ("Archsimian.cpp: Step 8. Something went wrong at the function getSubset(). ratedabbr.txt not created.");
+        }
         if ((s_bool_RatedAbbrExist) && (Constants::kVerbose)){std::cout << "Archsimian.cpp: Step 8. ratedabbr.txt was created." << std::endl;}
     }
     else {
@@ -809,7 +819,10 @@ ArchSimian::ArchSimian(QWidget *parent) :
         QFileInfo fi(s_defaultPlaylist);
         QString justname = fi.fileName();
         QMainWindow::setWindowTitle("ArchSimian - "+justname);
-        if (!s_bool_PlaylistExist) {std::cout << "Archsimian.cpp: Step 10. Something went wrong at the function getPlaylist." << std::endl;}
+        if (!s_bool_PlaylistExist) {
+            std::cout << "Archsimian.cpp: Step 10. Something went wrong at the function getPlaylist." << std::endl;
+            Logger ("Archsimian.cpp: Step 10. Something went wrong at the function getPlaylist.");
+        }
     }
 
     // 10a. If a playlist was not identified in the user config, adjust the UI accordingly
@@ -1026,7 +1039,8 @@ ArchSimian::ArchSimian(QWidget *parent) :
       (at startup), this function gets artists meeting the screening criteria if the user selected album-level variety.
       This generates the file artistalbmexcls.txt (see albumexcludes project) */
 
-    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary."<< s_includeAlbumVariety << std::endl;}
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: Step 14. If user selects bool for s_includeAlbumVariety, run function buildAlbumExclLibrary."
+                                       << s_includeAlbumVariety << std::endl;}
 
     if ((s_bool_PlaylistExist)&&(s_bool_IsUserConfigSet) && (s_includeAlbumVariety))
     {
@@ -1035,15 +1049,11 @@ ArchSimian::ArchSimian(QWidget *parent) :
     }
 
     /*
-
     15.  Determine playlist track limit applicable to all playlists created
-
     The formula for playlist track limit can be written using only two independent variables:
     s_MaxAvailableToAdd = s_listeningRate * Constants::k_playlistListeningDaysLimit
-
     The existing user setting for s_daysTillRepeatCode3 can be used to set new parameters for fixing this logic. For example, if s_daysTillRepeatCode3 = 68,
     and if s_MaxAvailableToAdd is 523, then we can establish new variables for percentages for each rating code.
-
     */
 
     if (s_bool_IsUserConfigSet)
@@ -1151,11 +1161,13 @@ void ArchSimian::on_addsongsButton_released(){
         if ((!s_includeNewTracks)||(s_ratingNextTrack != 1)) { // If user excluded new tracks, or set rating code is not 1, do normal selection
             if ((Constants::kVerbose)&&(!s_includeNewTracks)) std::cout << "User excluding new tracks. Check whether user selected album variety " << std::endl;
             if (s_includeAlbumVariety){ // If not 1, and user has selected album variety, get album ID stats
-                if (Constants::kVerbose) std::cout << "on_addsongsButton_released: User selected album variety. Getting functions getTrimArtAlbmList and getAlbumIDs." << std::endl;
+                if (Constants::kVerbose) std::cout << "on_addsongsButton_released: User selected album variety. Getting functions getTrimArtAlbmList "
+                                                      "and getAlbumIDs." << std::endl;
                 getTrimArtAlbmList();
                 getAlbumIDs();
             }
-            if (Constants::kVerbose) std::cout << "on_addsongsButton_released (1078): Now running selectTrack for non-code-1 track selection (function selectTrack). Clearing s_selectedTrackPath" << std::endl;
+            if (Constants::kVerbose) std::cout << "on_addsongsButton_released (1078): Now running selectTrack for non-code-1 track selection "
+                                                  "(function selectTrack). Clearing s_selectedTrackPath" << std::endl;
             try {
                 s_selectedTrackPath = "";
                 selectTrack(s_ratingNextTrack,&s_selectedTrackPath,s_includeAlbumVariety); // Select track if not a code 1 selection
@@ -1163,6 +1175,8 @@ void ArchSimian::on_addsongsButton_released(){
             catch (const std::bad_alloc& exception) {
                 std::cerr << "on_addsongsButton_released: Maximum playlist length was reached. Exiting program." << exception.what();
                 i = numTracks;
+                Logger ("Archsimian.cpp: on_addsongsButton_released: Maximum playlist length was reached. Weight playlist percentages (Frequency tab) to "
+                        "lower rated tracks, then restart. If playlist percentage adjustment fails and album-level variety was enabled, modify or disable it.");
                 QMessageBox msgBox;
                 QString msgboxtxt = "on_addsongsButton_released: Failed during attempt to add tracks. Likely reason: "
                                     "Not enough available tracks found. Weight playlist percentages (Frequency tab) to lower rated tracks, then restart."
@@ -1173,7 +1187,7 @@ void ArchSimian::on_addsongsButton_released(){
                 removeAppData("cleanlib.dsv");
                 }
                 removeAppData("playlistposlist.txt");
-                qApp->quit(); //Exit program
+                qApp->quit(); // Exit program
             }
         }
         // Collect and collate 'track selected' info for (UI display of) final song selections
@@ -1279,8 +1293,6 @@ void ArchSimian::on_addsongsprogressBar_valueChanged(int value)
     }
 }
 
-
-
 void ArchSimian::on_setlibraryButton_clicked(){
     QFileDialog setlibraryButton;
     setlibraryButton.setFileMode(QFileDialog::Directory);
@@ -1295,9 +1307,6 @@ void ArchSimian::on_setlibraryButton_clicked(){
     m_prefs.musicLibraryDir = s_musiclibrarydirname;
     ui->setmmplButton->setEnabled(true);
 }
-
-
-
 
 void ArchSimian::on_setmmplButton_clicked(){
     QFileDialog setmmpldialog;
@@ -1464,7 +1473,7 @@ void ArchSimian::saveSettings()
 void ArchSimian::closeEvent(QCloseEvent *event)
 {
     event->ignore();
-    if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. Settings are not saved automatically on exit. Checking for changes..." << std::endl;}
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. Settings are not saved automatically on exit." << std::endl;}
     // Compare current user-set configuration to stored user set. If any differences found, prompt user to save changes.
 
     if ((s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_mmBackupDBDir == m_prefs.mmBackupDBDir) && (s_musiclibrarydirname == m_prefs.musicLibraryDir) &&
@@ -1608,9 +1617,8 @@ void ArchSimian::on_actionExport_Playlist_triggered()
 
 void ArchSimian::on_actionExit_triggered()
 {
-    if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. Settings are not saved automatically on exit. Checking for changes..." << std::endl;}
+    if (Constants::kVerbose){std::cout << "Archsimian.cpp: on_actionExit_triggered. Settings are not saved automatically on exit." << std::endl;}
     // Compare current user-set configuration to stored user set. If any differences found, prompt user to save changes.
-
     if ((s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_mmBackupDBDir == m_prefs.mmBackupDBDir) && (s_musiclibrarydirname == m_prefs.musicLibraryDir) &&
             (s_mmPlaylistDir == m_prefs.mmPlaylistDir) && (s_includeNewTracks == m_prefs.s_includeNewTracks) && (s_includeAlbumVariety == m_prefs.s_includeAlbumVariety)
             && (s_minalbums == m_prefs.s_minalbums) && (s_mintrackseach == m_prefs.s_mintrackseach) && (s_mintracks == m_prefs.s_mintracks) &&
@@ -2335,5 +2343,3 @@ void ArchSimian::on_factor7horizontalSlider_valueChanged(int value)
     ui->slider8label->setText(QString::number((double(unassigned8 / 10.0)),'f', 2) + "%");
     ui->slider8yrslabel->setText(QString::number((s_yrsTillRepeatCode8 * s_dateTranslation),'f', 2) + dateTransTextVal);
 }
-
-

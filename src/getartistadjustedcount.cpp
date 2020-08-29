@@ -16,12 +16,16 @@ void getArtistTrackCount(){
     std::ifstream cleanlib;  // First ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib.is_open()) {cleanlib.close();}
-    else {std::cout << "getArtistAdjustedCount: Error opening cleanlib.dsv file." << std::endl;}
+    else {
+        std::cout << "getArtistTrackCount: Error opening cleanlib.dsv file." << std::endl;
+        Logger ("getArtistTrackCount: Error opening cleanlib.dsv file.");
+    }
     std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib.dsv";    // Now we can use it as input file
     std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib.dsv as ifstream
     if (!SongsTable.is_open())
     {
-        std::cout << "getArtistAdjustedCount: Error opening SongsTable." << std::endl;
+        std::cout << "getArtistTrackCount: Error opening SongsTable." << std::endl;
+        Logger ("getArtistTrackCount: Error opening SongsTable.");
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
     std::string str;
@@ -154,17 +158,24 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
     std::ifstream cleanlib2;  // Ensure cleanlib.dsv is ready to open
     cleanlib2.open (appDataPathstr.toStdString()+"/cleanlib.dsv");
     if (cleanlib2.is_open()) {cleanlib2.close();}
-    else {std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;}
+    else {
+        std::cout << "getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file." << std::endl;
+        Logger ("getArtistAdjustedCount: Error cleanlib2 opening cleanlib.dsv file.");
+    }
     std::string cleanlibSongsTable2 = appDataPathstr.toStdString()+"/cleanlib.dsv"; // now we can use it as input file
     std::ifstream artists2;  // Next ensure artists.txt is ready to open
     artists2.open (appDataPathstr.toStdString()+"/artists.txt");
     if (artists2.is_open()) {artists2.close();}
-    else {std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file." << std::endl;}
+    else {
+        std::cout << "getArtistAdjustedCount: Error artists2 opening artists.txt file." << std::endl;
+        Logger ("getArtistAdjustedCount: Error artists2 opening artists.txt file.");
+    }
     std::string artistsTable2 = appDataPathstr.toStdString()+"/artists.txt"; // now we can use it as input file
     std::ifstream artistcsv(artistsTable2); // Open artists.txt as ifstream
     if (!artistcsv.is_open())
     {
         std::cout << "getArtistAdjustedCount: Error opening artists.txt." << std::endl;
+        Logger ("getArtistAdjustedCount: Error opening artists.txt file.");
         std::exit(EXIT_FAILURE);
     }
     std::string str1; // store the string for artists.txt
@@ -200,6 +211,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
         if (!SongsTable2.is_open())
         {
             std::cout << "getArtistAdjustedCount: Error opening SongsTable2." << std::endl;
+            Logger ("getArtistAdjustedCount: Error opening SongsTable2.");
             std::exit(EXIT_FAILURE);
         }
         while (std::getline(SongsTable2, str2) && countdown != 0) //Check every row until all artist's tracks found

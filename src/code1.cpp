@@ -19,11 +19,15 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "code1stats: Error opening ratedabbr2.txt file." << std::endl;}
+    else {
+        std::cout << "code1stats: Error opening ratedabbr2.txt file." << std::endl;
+        Logger ("code1stats: Error opening ratedabbr2.txt file.");
+    }
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr2.txt"; // now we can use it as input file
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "code1stats: Error opening ratedabbr2.txt." << std::endl;
+        Logger ("code1stats: Error opening ratedabbr2.txt file.");
         std::exit(EXIT_FAILURE);
     }
     while (std::getline(ratedSongsTable, str)) {  // Declare variables applicable to all rows
@@ -67,12 +71,13 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open()) {
         std::cout << "getNewTrack: Error opening ratedabbr2.txt." << std::endl;
+        Logger ("getNewTrack: Error opening ratedabbr2.txt file.");
         std::exit(EXIT_FAILURE);
     }
-    std::string str1; // store the string for ratedabbr2.txt
+    std::string str1; // Store the string for ratedabbr2.txt
     std::string tokenLTP;
     std::string ratingCode;
-    std::string selectedArtistToken; // Artist variable
+    std::string selectedArtistToken;
     std::string songPath;
     std::string playlistPos;
     std::string albumID;
@@ -80,21 +85,21 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     // Outer loop: iterate through ratedSongsTable in the file "ratedabbr2.txt"
     while (std::getline(ratedSongsTable, str1)) {  // Declare variables applicable to all rows
         std::istringstream iss(str1); // str is the string of each row
-        std::string token; // token is the contents of each column of data
-        int tokenCount{0}; //token count is the number of delimiter characters within str
+        std::string token;
+        int tokenCount{0}; // Token count is the number of delimiter characters within str
         // Inner loop: iterate through each column (token) of row
         while (std::getline(iss, token, ',')) {
-            if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;}// get LastPlayedDate in SQL Time
-            if (tokenCount == Constants::kColumn1) {ratingCode = token;}// store rating variable
-            if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;} //Selected artist token
-            if (tokenCount == Constants::kColumn3) {songPath = token;}// store song path variable
-            if (tokenCount == Constants::kColumn6) {albumID = token;}// store album ID variable
+            if ((tokenCount == Constants::kColumn0) && (token != "0")) {tokenLTP = token;} // LastPlayedDate in SQL Time
+            if (tokenCount == Constants::kColumn1) {ratingCode = token;}
+            if (tokenCount == Constants::kColumn2) {selectedArtistToken = token;}
+            if (tokenCount == Constants::kColumn3) {songPath = token;}
+            if (tokenCount == Constants::kColumn6) {albumID = token;}
             if (tokenCount == Constants::kColumn7)  {playlistPos = token;}
             ++ tokenCount;
         }
         if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1)) {
-            // if a code 1 track is not
-            //in the playlist and not the last artist selected, add to vector used to return track path to s_selectedCode1Path        
+            // If a code 1 track is not in the playlist and not the last artist selected,
+            // add to vector used to return track path to s_selectedCode1Path
             std::string commatxt{","};
             std::string vectorstring;
             vectorstring.append(tokenLTP).append(commatxt).append(selectedArtistToken).append(commatxt).append(songPath).append(commatxt).append(playlistPos);
@@ -106,7 +111,7 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
     returntrack = splittedStrings[2];
     *s_selectedCode1Path = returntrack;
     //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
-    std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Write/append s_selectedTrackPath to the cleanedplaylist.txt file.
+    std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app);
     playlist << *s_selectedCode1Path << "\n";
     playlist.close();
 }

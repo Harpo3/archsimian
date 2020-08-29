@@ -59,7 +59,10 @@ void syncPlaylistWithSyncthing(){
     std::ifstream linuxfilepath;
     linuxfilepath.open (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (linuxfilepath.is_open()) {linuxfilepath.close();}
-    else {std::cout << "syncPlaylistWithSyncthing: Error opening cleanedplaylist.txt file ." << std::endl;}
+    else {
+        std::cout << "syncPlaylistWithSyncthing: Error opening cleanedplaylist.txt file." << std::endl;
+        Logger ("syncPlaylistWithSyncthing: Error opening cleanedplaylist.txt file.");
+    }
     std::string playlist = appDataPathstr.toStdString()+"/cleanedplaylist.txt"; // now we can use it as input file
     std::ifstream readlist(playlist);
     std::ofstream ofs1; // Open the cleanedplaylist.m3u8 file for writing.
@@ -95,11 +98,15 @@ void getLastPlayedDates(QString s_androidpathname){
     std::fstream debuglog;
     debuglog.open (s_androidpathname.toStdString() + Constants::kAIMPLogPath);
     if (debuglog.is_open()) {debuglog.close();}
-    else {std::cout << "getLastPlayedDates: Error opening debuglog.txt file." << std::endl;}
+    else {
+        std::cout << "getLastPlayedDates: Error opening debug.log file." << std::endl;
+        Logger ("getLastPlayedDates: Error opening debug.log file.");
+    }
     std::string debuglogfile = s_androidpathname.toStdString() + Constants::kAIMPLogPath;
     std::ifstream debug(debuglogfile);
     if (!debug.is_open()) {
         std::cout << "getLastPlayedDates: Error opening debug.log." << std::endl;
+        Logger ("getLastPlayedDates: Error opening debug.log.");
         std::exit(EXIT_FAILURE);
     }
     std::ofstream dateslist(appDataPathstr.toStdString()+"lastplayeddates.txt");
@@ -311,12 +318,16 @@ void updateCleanLibDates(){
         std::ifstream cleanlib;  // First ensure cleanlib2.dsv is ready to open
         cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
         if (cleanlib.is_open()) {cleanlib.close();}
-        else {std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;}
+        else {
+            std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;
+            Logger ("updateCleanLibDates: Error opening cleanlib2.dsv file.");
+        }
         std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Use as input file
         std::ifstream SongsTable(cleanlibSongsTable);    // Open cleanlib2.dsv as ifstream
         if (!SongsTable.is_open())
         {
             std::cout << "updateCleanLibDates: Error opening SongsTable." << std::endl;
+            Logger ("updateCleanLibDates: Error opening SongsTable.");
             std::exit(EXIT_FAILURE); // Otherwise, quit
         }
         std::string str; // Create ostream file to update cleanLib
@@ -370,10 +381,12 @@ void updateCleanLibDates(){
         lastplayedvec.shrink_to_fit();
     }
     catch(const std::bad_alloc& exception) {
+        Logger ("updateCleanLibDates: There was a problem writing to cleanlib.dsv. Replace cleanlib.dsv with cleanlib2.dsv found in "
+                "/.local/share/archsimian/ then inspect file for errors.");
         std::cerr << "updateCleanLibDates: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
                      "/.local/share/archsimian/ and inspect file for errors." << exception.what();
         QMessageBox msgBox;
-        QString msgboxtxt = "updateCleanLibDates: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
+        QString msgboxtxt = "updateCleanLibDates: There was a problem writing to cleanlib.dsv. Replace cleanlib.dsv with cleanlib2.dsv found in "
                             "/.local/share/archsimian/ and inspect file for errors.";
         msgBox.setText(msgboxtxt);
         msgBox.exec();
@@ -413,12 +426,16 @@ void updateChangedTagRatings(){
     std::ifstream cleanlib;  // Ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
     if (cleanlib.is_open()) {cleanlib.close();}
-    else {std::cout << "updateCleanLibDates: Error opening cleanlib2.dsv file." << std::endl;}
+    else {
+        std::cout << "updateChangedTagRatings: Error opening cleanlib2.dsv file." << std::endl;
+        Logger ("updateChangedTagRatings: Error opening cleanlib2.dsv file.");
+    }
     std::string cleanlibSongsTable = appDataPathstr.toStdString()+"/cleanlib2.dsv";    // Use as input file
     std::ifstream SongsTable(cleanlibSongsTable); // Open cleanlib.dsv as ifstream
     if (!SongsTable.is_open())
     {
-        std::cout << "updateCleanLibDates: Error opening SongsTable." << std::endl;
+        std::cout << "updateChangedTagRatings: Error opening SongsTable." << std::endl;
+        Logger ("updateChangedTagRatings: Error opening SongsTable.");
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
     std::string str; // Create ostream file to update cleanLib
@@ -568,6 +585,8 @@ void updateChangedTagRatings(){
     ratingupdate.close();
     }
     catch(const std::bad_alloc& exception) {
+            Logger ("updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
+                    "Replace cleanlib.dsv with cleanlib2.dsv found in /.local/share/archsimian/ then inspect file for errors.");
             std::cerr << "updateChangedTagRatings: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
                          "/.local/share/archsimian/ and inspect file for errors." << exception.what();
             QMessageBox msgBox;
@@ -624,12 +643,16 @@ void syncAudaciousLog(){
     std::ifstream LPLlib;  // First ensure lastplayeddates2.txt is ready to open
     LPLlib.open (appDataPathstr.toStdString()+"/lastplayeddates2.txt");
     if (LPLlib.is_open()) {LPLlib.close();}
-    else {std::cout << "syncAudaciousLog: Error opening lastplayeddates2.txt file." << std::endl;}
+    else {
+        std::cout << "syncAudaciousLog: Error opening lastplayeddates2.txt file." << std::endl;
+        Logger ("syncAudaciousLog: Error opening lastplayeddates2.txt file.");
+    }
     std::string LPLlibSongsTable = appDataPathstr.toStdString()+"/lastplayeddates2.txt";    // Now we can use it as input file
     std::ifstream SongsTable3(LPLlibSongsTable);    // Open lastplayeddates2.txt as ifstream
     if (!SongsTable3.is_open())
     {
         std::cout << "syncAudaciousLog: Error opening SongsTable." << std::endl;
+        Logger ("syncAudaciousLog: Error opening SongsTable.");
         std::exit(EXIT_FAILURE); // Otherwise, quit
     }
     std::ofstream outf4(appDataPathstr.toStdString()+"/lastplayeddates.txt"); // Create ostream file to replace lastplayeddates.txt

@@ -36,12 +36,16 @@ void getExcludedArtists(const int &s_playlistSize)
     int s_playlistPosition;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "getExcludedArtists: Error opening ratedabbr.txt file ." << std::endl;}
+    else {
+        std::cout << "getExcludedArtists: Error opening ratedabbr.txt file." << std::endl;
+        Logger ("getExcludedArtists: Error opening ratedabbr.txt file.");
+    }
     std::string ratedlibrary = appDataPathstr.toStdString()+"/ratedabbr.txt";
     std::ifstream ratedSongsTable(ratedlibrary);
     if (!ratedSongsTable.is_open())
     {
         std::cout << "getExcludedArtists: Error opening ratedSongsTable." << std::endl;
+        Logger ("getExcludedArtists: Error opening ratedSongsTable.");
         std::exit(EXIT_FAILURE);
     }
     StringVector2D ratedabbrVec = readCSV(appDataPathstr.toStdString()+"/ratedabbr.txt");
@@ -64,12 +68,16 @@ void getExcludedArtists(const int &s_playlistSize)
     std::fstream playList; //open cleanedplaylist to read in position number of each track
     playList.open (appDataPathstr.toStdString()+"/cleanedplaylist.txt");
     if (playList.is_open()) {playList.close();}
-    else {std::cout << "getExcludedArtists: Error opening cleanedplaylist.txt file." << std::endl;}
+    else {
+        std::cout << "getExcludedArtists: Error opening cleanedplaylist.txt file." << std::endl;
+        Logger ("getExcludedArtists: Error opening cleanedplaylist.txt file.");
+    }
     std::string playlist = appDataPathstr.toStdString()+"/cleanedplaylist.txt";
     std::ifstream playlistTable(playlist);
     if (!playlistTable.is_open())
     {
         std::cout << "getExcludedArtists: Error opening playlistTable." << std::endl;
+        Logger ("getExcludedArtists: Error opening playlistTable.");
         std::exit(EXIT_FAILURE);
     }
     int playlistCount = 0;
@@ -151,12 +159,16 @@ void getExcludedArtistsRedux(const int &s_playlistSize, const int &s_histCount){
     std::fstream filestrinterval;
     filestrinterval.open (appDataPathstr.toStdString()+"/ratedabbr2.txt");
     if (filestrinterval.is_open()) {filestrinterval.close();}
-    else {std::cout << "getExcludedArtists: Error opening ratedabbr2.txt file ." << std::endl;}
+    else {
+        std::cout << "getExcludedArtists: Error opening ratedabbr2.txt file." << std::endl;
+        Logger ("getExcludedArtists: Error opening ratedabbr2.txt file.");
+    }
     std::string ratedlibrary2 = appDataPathstr.toStdString()+"/ratedabbr2.txt";
     std::ifstream ratedSongsTable2(ratedlibrary2);
     if (!ratedSongsTable2.is_open())
     {
         std::cout << "getExcludedArtists: Error opening ratedSongsTable." << std::endl;
+        Logger ("getExcludedArtists: Error opening ratedSongsTable.");
         std::exit(EXIT_FAILURE);
     }
     std::string selectedArtistToken2; // Artist variable from ratedabbrVec

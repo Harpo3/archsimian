@@ -34,6 +34,8 @@ void getPlaylist(QString &s_defaultPlaylist, const QString &s_musiclibrarydirnam
     if (!readFile.is_open()) {
         std::cout << "getPlaylist: The readFile did not open. Did you select a backup rather than an exported MediaMonkey "
                      "playlist, or otherwise did you manually set the playlist in archsimian.cof without the full and proper path?";
+        Logger ("getPlaylist: The readFile did not open. Did you select a backup rather than an exported MediaMonkey playlist, "
+                "or otherwise did you manually set the playlist in archsimian.cof without the full and proper path?");
         std::exit(EXIT_FAILURE);
     }
     std::string line;
@@ -76,6 +78,7 @@ void exportPlaylistToWindows(int &s_musicdirlength, QString &s_mmPlaylistDir, QS
     std::ofstream outf(internalplaylistpath);
     if (!readFile.is_open()) {
         std::cout << "exportPlaylistToWindows: The readFile did not open. Did you delete the active playlist?";
+        Logger ("exportPlaylistToWindows: The readFile did not open. Did you delete the active playlist?");
         std::exit(EXIT_FAILURE);
     }
     std::string line;
