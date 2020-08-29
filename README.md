@@ -241,14 +241,9 @@ The default name MM4 gives you is “New playlist.m3u,” but you can save it as
 6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". Write the following bash script and reference it under the plugin:
 
 #!/bin/bash
-#
-# Runs immediately on a song change
-# Start logging procedure 
 tracklength=$(audtool --current-song-length-seconds) # length of track in seconds
 secselapsed=$(audtool --current-song-output-length-seconds) # seconds of track elapsed
 secondsremaining=$(($tracklength-$secselapsed))
-# Loop to determine status of playback until the track is within the last 7 seconds of the end
-# Wait until the last 7 seconds of track
 while  [ $(($secondsremaining > 7)) == 1 ]
 do
     sleep 5    
