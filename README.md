@@ -1,6 +1,6 @@
 # ArchSimian
 You worked hard to build a large music library (2,000+ rated tracks), so make the most out of it with ArchSimian!
-<img src="http://i.imgur.com/mWmPTts.png..." data-canonical-src="http://i.imgur.com/mWmPTts.png" width="502" height="600" />
+<img src="http://i.imgur.com/cJThnUz.png..." data-canonical-src="http://i.imgur.com/cJThnUz.png" width="502" height="600" />
 <p>You may want this program if you have a large music library with ratings assigned, and want to build a more refined set of rules for automatically populating a playlist. Here, you can have a more controlled selection of tracks, with <i>better variety</i>. This program considers not only the rating and last time played, but also the <b>specific order of tracks on the playlist</b>. It also considers custom artist groupings, and lets you control how frequently new tracks are played.</p>
 
 Artist groupings let you control artist name variations. Let's say you have tracks for two "different" artists: "Tom Petty" and "Tom Petty & the Heartbreakers." Both are basically the same artist, so why not treat them as the same artist for considering when that artist should be repeated? You can store a common name (eg. using the custom grouping of "Petty") in MM4 (this is each tag's "Custom2" field), then, ArchSimian will treat either name as the same artist. With this in mind, you can create any custom artist groups you like (even if they are <b>not</b> similar). You could choose any group of artists and have them treated as if they were one artist. It is up to you.
@@ -128,7 +128,7 @@ Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If
 <b>The 3 directory locations and the Windows drive letter ALL must be identified during initial setup for the program to run.</b>  
 
 (windows drive letter location edit box is not shown in the photo) When complete press the button to "save the configuration and exit". </p>
-<img src="http://imgur.com/dwwhb1B.png/..." data-canonical-src="http://imgur.com/dwwhb1B.png" width="502" height="600" />
+<img src="http://imgur.com/PWjKn3e.png/..." data-canonical-src="http://imgur.com/PWjKn3e.png" width="502" height="600" />
 
 <b> Troubleshooting</b>
 
@@ -150,16 +150,22 @@ When you update MM4 (for tracks recently played, new tracks, changed ratings) an
 
 <b> Statistics</b>
 <p>The Statistics tab lists detailed information about the composition of your music library</p>
-<img src="http://imgur.com//XA1Ztz5.png/..." data-canonical-src="http://imgur.com//XA1Ztz5.png" width="502" height="600" />
+<img src="http://imgur.com//pHThdQg.png/..." data-canonical-src="http://imgur.com//pHThdQg.png" width="502" height="600" />
 
 <b> Frequency</b>
 <p>The Frequency tab has functions to set the frequency for repeating tracks based on ratings. Factors are applied in a hierarchical fashion.</p>
-<img src="http://imgur.com//duceyte.png/..." data-canonical-src="http://imgur.com//duceyte.png" width="502" height="600" />
+<img src="http://imgur.com//3eD6C72.png/..." data-canonical-src="http://imgur.com//3eD6C72.png" width="502" height="600" />
 
 <b> Albums</b>
 
 <p>The Albums tab appears when the user selects "Album-level variety" in the Settings tab. The user can then set criteria for when album-level variety will be applied.</p>
-<img src="http://imgur.com//EMswcA4.png/..." data-canonical-src="http://imgur.com//EMswcA4.png" width="502" height="600" />
+<img src="http://imgur.com//aKZxNV1.png/..." data-canonical-src="http://imgur.com//aKZxNV1.png" width="502" height="600" />
+
+<b> Sync</b>
+
+<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. The user can update lastplayed history from the Android AIMP music player, and from Audacious desktop player (if script is enabled). Rating changes to the mp3 tags can also be captured and updated to the database.</p>
+<img src="http://imgur.com//ByYFT2c.png/..." data-canonical-src="http://imgur.com//ByYFT2c.png" width="502" height="600" />
+
 
 <b>Creating a New Playlist</b>
 
