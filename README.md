@@ -87,7 +87,10 @@ Update Location of Files in Database: <html>http://solair.eunet.rs/~zvezdand/Upd
 
 <b>Dependencies:</b>
 
-SQLite3, qt5-base, git
+SQLite3, qt5-base, taglib, id3v2
+
+<b>Optional Dependencies (needed to enable sync support):</b>
+kdeconnect, dolphin, syncthing, audacious
 
 Linux applications you might like to use along with this program (See note 3)
 
