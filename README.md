@@ -238,7 +238,7 @@ The Playlist will be saved as xxxxx.m3u, which can then be opened by another med
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying.
 
-6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". 
+6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". See the songchangescript file for the bash script. Save as an .sh file and make it executable.
 
 
 
