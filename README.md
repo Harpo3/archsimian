@@ -142,7 +142,7 @@ There is a way to manage your library (including lastplayed data and rating chan
 
 Use Kid3 to manage your tags. 
 
-Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Note 1). They will appear in Kid3 as the "Work" field. Set all custom artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. If you do not have them complete, or want to do it later, a trick is to type a space for the name, so MM4 will create the field and it will be available to Kid3 if needed later.
+Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Notes 1 and 4). They will appear in Kid3 as the "Work" field. Set all custom artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. If you do not have them complete, or want to do it later, a trick is to type a space for the name, so MM4 will create the field and it will be available to Kid3 if needed later.
 
 <b> Troubleshooting</b>
 
