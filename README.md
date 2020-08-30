@@ -64,7 +64,7 @@ If you enable the 'include new tracks' feature, you will get artist repeats more
 
 <b>Hardware and Software Requirements:</b>
 
-A Linux OS (I have tested it in Arch and KDE as the Desktop Environment), a desktop environment, and 4GB of RAM. You may be able to make this work with other Linux distros and DEs, but your mileage may vary. ArchSimian is a Qt5 application, using C++14.
+A Linux OS (I have tested it in Arch and KDE as the Desktop Environment), a desktop environment, and 4GB of RAM. You may be able to make this work with other Linux distros and DEs, but your mileage may vary. ArchSimian is a Qt5 application, using C++17. Extended features are available for KDE users who use kdeconnect, Syncthing and Audacious.
 
 Windows 7 or higher
 
@@ -90,7 +90,8 @@ Update Location of Files in Database: <html>http://solair.eunet.rs/~zvezdand/Upd
 SQLite3, qt5-base, taglib, id3v2
 
 <b>Optional Dependencies (needed to enable sync support):</b>
-kdeconnect, dolphin, syncthing, audacious
+
+kdeconnect, dolphin (KDE), Syncthing, Audacious
 
 Linux applications you might like to use along with this program (See note 3)
 
