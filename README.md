@@ -127,21 +127,22 @@ Your music directory structure (directly under the drive, or under a top level f
 Tags - the fields for "Grouping" and "Custom2" are special for ArchSimian. <b>If you currently use them for some other purpose, it will cause issues unless they are either blank, or are used based on these instructions.</b> Custom2 is for custom artist designation, and Grouping is used if you wish to to directly place rating codes specific to ArchSimian (not required). If you do not directly use either of these two fields, ArchSimian will still work correctly, <b> but just make sure these two fields are blank for every track tag</b>.
 
 <b> Initial Setup Instructions</b>
-<p>When you start ArchSimian the first time, complete the Settings tab to set 3 directory locations for needed files, and identify the Windows folder for the music library. You may also set "include new tracks" and "enable album-level variety" initially. During setup, only this tab will appear. 
+<p>When you start ArchSimian the first time, complete the Settings tab to set 3 directory locations for needed files, and identify the Windows drive letter for the music library. During initial setup, only this tab will appear. You may also set "include new tracks" and "enable album-level variety" initially. 
 
 <b>The 3 directory locations and the Windows drive letter ALL must be identified during initial setup for the program to run.</b>  
 
 When complete press the button to "save the configuration and exit". </p>
 <img src="http://imgur.com/PWjKn3e.png/..." data-canonical-src="http://imgur.com/PWjKn3e.png" width="502" height="600" />
 
+After initial setup and restart, only the Frequency tab will appear. After you have set initial frequencies (percentage of playlist for each rating) and restart, access to all features will be enabled.
+
 <b> Ditching MediaMonkey Entirely</b>
 
-There is a way to manage your library (including lastplayed data and rating changes) and sync to your Android device without losing all of the data collected using MediaMonkey. You must have the following before enabling this feature: KDE (with both kdeconnect and dolphin), Syncthing and the AIMP Android app (if you wish to sync to your Android device), and if you wish to log lastplayed data from Linux, Audacious. 
+There is a way to manage your library (including lastplayed data and rating changes) and sync to your Android device without losing all of the data collected using MediaMonkey. You must have the following before enabling this feature: KDE (with both kdeconnect and dolphin), Syncthing and the AIMP Android app (for syncing to your Android device), and if you wish to log lastplayed data from Linux, Audacious. AIMP with logging enabled is required for logging from Android.
 
 Use Kid3 to manage your tags. 
 
-Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Note 1). They will appear in Kid3 as the "Work" field. Set all artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. 
-
+Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Note 1). They will appear in Kid3 as the "Work" field. Set all custom artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. If you do not have them complete, or want to do it later, a trick is to type a space for the name, so MM4 will create the field and it will be available to Kid3 if needed later.
 
 <b> Troubleshooting</b>
 
@@ -242,7 +243,8 @@ The Playlist will be saved as xxxxx.m3u, which can then be opened by another med
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying.
 
-6. Lastplayed history can be logged for use by ArchSimian using a bash script and added for use with the Audacious plugin "Song Change" as a "Command to run when starting a new song". See the songchangescript file for the bash script. Save as an .sh file and make it executable.
+6. Lastplayed history can be logged for use by ArchSimian by using a bash script and adding it to the Audacious plugin "Song Change." Add the path as a "Command to run when starting a new song". See the songchangescript file for the bash script. Save as .sh file and make it executable.</p>
+<img src="http://imgur.com//K7Vo2O4.png/..." data-canonical-src="http://imgur.com//K7Vo2O4.png" width="502" height="600" />
 
 
 
