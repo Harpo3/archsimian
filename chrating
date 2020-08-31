@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Part 1 - Update file tag to change POPM and (Archsimian) rating code
+#
+# Requires audtool (provided by Audacious), id3ted, and kid3-cli
+#
+case $1 in
+0 ) id3ted --TIT1 0 $(audtool --current-song-filename) # Set to exclude from ArchSimian
+     kid3-cli -c "set popm 0" $(audtool --current-song-filename)
+     ;;
+1)  # Do nothing
+      ;;
+3 )  id3ted --TIT1 3 $(audtool --current-song-filename) # 5 Stars
+       kid3-cli -c "set popm 255" $(audtool --current-song-filename)
+       ;;
+4 )  id3ted --TIT1 4 $(audtool --current-song-filename); # 4 Stars
+      kid3-cli -c "set popm 204" $(audtool --current-song-filename)
+      ;;
+5 )  id3ted --TIT1 5 $(audtool --current-song-filename) # 3 1/2 Stars
+      kid3-cli -c "set popm 179" $(audtool --current-song-filename)
+      ;;
+6 )  id3ted --TIT1 6 $(audtool --current-song-filename) # 3 Stars
+      kid3-cli -c "set popm 153" $(audtool --current-song-filename)
+      ;;
+7 )  id3ted --TIT1 7 $(audtool --current-song-filename) # 2 1/2 Stars
+      kid3-cli -c "set popm 118" $(audtool --current-song-filename)
+      ;;
+8 )  id3ted --TIT1 8 $(audtool --current-song-filename)  # 2 Stars
+      kid3-cli -c "set popm 102" $(audtool --current-song-filename)
+      ;;
+* ) 
+esac
+kid3-cli -c to23 $(audtool --current-song-filename)
