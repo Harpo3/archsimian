@@ -177,7 +177,7 @@ When you update MM4 (for tracks recently played, new tracks, changed ratings) an
 
 <b> Sync</b>
 
-<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without the MM app (or MediaMonkey). The user can also update lastplayed history from the Android AIMP music player (enable logging using the AIMP app), and from Audacious desktop player (See Note 6, a script is required). Rating changes to the mp3 tags can also be captured and updated without MM4.</p>
+<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without the MM app (or MediaMonkey). Lastplayed history is collected from the Android AIMP music player log (must enable logging from the AIMP app), and logging the Audacious desktop player using the Song Change add-on and bash script (See Note 6). Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can also be captured and updated without MM4 using a bash script (See Note 7).</p>
 <img src="http://imgur.com//ByYFT2c.png/..." data-canonical-src="http://imgur.com//ByYFT2c.png" width="502" height="600" />
 
 
@@ -249,6 +249,10 @@ The default name MM4 gives you is “New playlist.m3u,” but you can save it as
 
 Lastplayed history can be logged for use by ArchSimian by using a bash script and adding it to the Audacious plugin "Song Change." Add the path as a "Command to run when starting a new song". See the songchangescript file for the bash script. Save as .sh file and make it executable.</p>
 <img src="http://imgur.com//K7Vo2O4.png/..." data-canonical-src="http://imgur.com//K7Vo2O4.png" width="502" height="600" />
+
+7. <b>Changing ratings in Linux</b>
+
+Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can be updated without MM4 by using a bash script. The command line argument is the rating code. For example, ~/ratetracks/chrating.sh 3 changes the Archsimian rating code to 3 and its associted POPM value (star rating) to 255 (five stars). See chrating file for the bash script. Save as a .sh file and make executable.
 
 
 
