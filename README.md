@@ -58,7 +58,7 @@ For artists with many rated songs, the “availability” of that artist may be 
 
 You can also enable an 'album-variety' feature. If enabled, you will hear a track from a different album than the one last played of the artist. you can specify minimum number of albums, minimum number of tracks per album.  
 
-Replay intervals – you can adjust the 'global' time between repeats with different intervals for each track rating. By using ratios of repeat frequency with average listening time, the program can determine when or whether a given track should be added to the playlist. Variety takes precedence over repeat frequency. 
+Replay intervals, set on the Frequency tab. The best feature of the program. You can adjust the time between repeats for each track rating category by setting the 'percentage of playlist' for each rating category. You will see the average repeat interval for the percentage your set. Using your settings, the program can then determine when or whether a given track should be added to the playlist.  
 
 If you enable the 'include new tracks' feature, you will get artist repeats more frequently, but you can control the frequency. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. One useful feature of the program is that if there is more than one <i>new</i> artist, then the last new artist selected will be excluded from selection of the next new track. So, in this example, you could hear the same artist after 20 tracks when the repeat interval is 10 and you have more than one artist with new tracks.
 
