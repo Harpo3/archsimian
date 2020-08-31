@@ -58,9 +58,9 @@ For artists with many rated songs, the “availability” of that artist may be 
 
 You can also enable an 'album-variety' feature. If enabled, you will hear a track from a different album than the one last played of the artist. you can specify minimum number of albums, minimum number of tracks per album.  
 
-Replay intervals, set on the Frequency tab. The best feature of the program. You can adjust the time between repeats for each track rating category by setting the 'percentage of playlist' for each rating category. You will see the average repeat interval for the percentage your set. Using your settings, the program can then determine when or whether a given track should be added to the playlist.  
+Replay intervals are set on the Frequency tab, the best feature of the program. Adjust the time between repeats for each track rating category by setting the 'percentage of playlist' for each rating category. You will see the average repeat time interval for each percentage you set. Archsimian  determines when or whether a given track should be added to the playlist using these settings.  
 
-If you enable the 'include new tracks' feature, you will get artist repeats more frequently, but you can control the frequency. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. One useful feature of the program is that if there is more than one <i>new</i> artist, then the last new artist selected will be excluded from selection of the next new track. So, in this example, you could hear the same artist after 20 tracks when the repeat interval is 10 and you have more than one artist with new tracks.
+If you enable the 'include new tracks' feature, you will get artist repeats more frequently, but at least you can control the frequency. Let's say you have set the repeat interval for new tracks at 10. This means that for every ten tracks added, one new song will be added. Also, if there is more than one <i>new</i> artist, the last new artist selected will be excluded from selection for the next new track. So for this example, you could hear the same artist after 20 tracks if the repeat interval is 10 and you have more than one artist with new tracks.
 
 <b>Hardware and Software Requirements:</b>
 
