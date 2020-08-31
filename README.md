@@ -154,7 +154,7 @@ Ensure all tracks in MM4 you want included are rated prior to running ArchSimian
 
 Tracks with no rating are excluded from playlist computation in ArchSimian, so for any new tracks not yet rated, you need to rate them “1 star” in MM4. Tracks you want to exclude need to have their ratings removed (zero stars) in MM4. ArchSimian will treat 1 star tracks as new/not-yet-rated tracks. 
 
-<b>IMPORTANT</b> - if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to first change them (to zero if you want to exclude from playlist, or two stars to include).
+<b>IMPORTANT</b> - if you have existing tracks with 1 star (not because they are new, but because they were rated low) you will need to either change them (to zero if you want to exclude from playlist, or two stars to include), or use the alternate method (See Notes 1 and 4).
 
 ArchSimian uses the "star ratings" you have in MM4 and translates them into rating codes for its use. (See Notes 1 and 4)
 
