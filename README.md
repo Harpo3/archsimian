@@ -252,7 +252,7 @@ Lastplayed history can be logged for use by ArchSimian by using a bash script an
 
 7. <b>Changing ratings in Linux</b>
 
-Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can be updated without MM4 by using a bash script (requires installation of id3ted and kid3-cli). The command line argument is the rating code. For example, ~/ratetracks/chrating.sh 3 changes the Archsimian rating code to 3 and its associted POPM value (star rating) to 255 (five stars). See chrating file for the bash script. Save as a .sh file and make executable.
+Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can be updated for any track currently playing in Audacious  by using a bash script (requires installation of id3ted and kid3-cli). The command line argument is the rating code. For example, ~/ratetracks/chrating.sh 3 changes the Archsimian rating code to 3 and its associted POPM value (star rating) to 255 (five stars). See chrating file for the bash script. Save as a .sh file and make executable.
 
 
 
