@@ -85,7 +85,7 @@
        <number>2</number>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="playlistTab">
        <property name="enabled">
@@ -2676,9 +2676,9 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
         <property name="geometry">
          <rect>
           <x>200</x>
-          <y>10</y>
-          <width>291</width>
-          <height>31</height>
+          <y>0</y>
+          <width>301</width>
+          <height>51</height>
          </rect>
         </property>
         <property name="text">
@@ -2736,7 +2736,7 @@ new tracks (rating code 1) if 'Include new tracks' has been enabled.</string>
          </rect>
         </property>
         <property name="text">
-         <string>NOTE: This program may crash if you attempt to update ArchSimian without first ensuring KDEconnect is paired to the desktop, and the Android device 'primary' folder is open in Dolphin. If the AIMP lastplayed entries do not appear in the above panel after updating the database, try manually removing earlier history from the log, found at /primary/Android/data/com.aimp.player/cache, and update again.</string>
+         <string>NOTE: If the AIMP lastplayed entries do not appear in the above panel after updating the database, try manually removing earlier history from the log, found at /primary/Android/data/com.aimp.player/cache, and update again.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

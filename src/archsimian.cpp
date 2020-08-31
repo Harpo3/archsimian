@@ -8,6 +8,7 @@
 #include <QTimeLine>
 #include <QProgressDialog>
 #include <QFile>
+#include <QDir>
 #include <fstream>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -298,6 +299,7 @@ ArchSimian::ArchSimian(QWidget *parent) :
         ui->updateASDBprogressBar->setVisible(false);
         ui->addsongsprogressBar->setVisible(false);
         ui->androiddevicebuttonlabel->setText(tr("Select Android device (for syncing play history using AIMP - requires KDEconnect and AIMP with logging enabled.)"));
+        ui->updateASDBlabel->setText(tr("Read lastplayed dates from AIMP/Audacious and update the play history in the Archsiman database."));
         if (s_androidpathname != ""){ui->androiddevicebuttonlabel->setText(s_androidpathname);}
         ui->syncthinglabel->setText(tr("Select the shared folder Syncthing will use to sync playlist and music files to Android device.)"));
         if (s_syncthingpathname != ""){ui->syncthinglabel->setText(s_syncthingpathname);}
@@ -1652,7 +1654,7 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.07"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.08"
                                                  "\n\nThis program is free software: you can redistribute it and/or modify"
                                                  " it under the terms of the GNU General Public License as published by"
                                                  " the Free Software Foundation, either version 3 of the License, or"
@@ -1960,27 +1962,36 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
 void ArchSimian::on_updateASDBButton_clicked()
 {
     if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting getLastPlayedDates."<< std::endl;}
-    getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
-    ui->updateASDBButton->toggle();
-    if (s_audaciouslogenabled == true) { // If Audacious logging enabled, process its play history
-        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Audacious logging enabled, starting syncAudaciousLog."<< std::endl;}
-        syncAudaciousLog();
+    // Check existence of device directory to ensure it is paired
+    QDir dir;
+    if (dir.exists(s_androidpathname)) {
+        ui->updateASDBlabel->setText(tr("Read lastplayed dates from AIMP/Audacious and update the play history in the Archsiman database."));
+        getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
+        ui->updateASDBButton->toggle();
+        if (s_audaciouslogenabled == true) { // If Audacious logging enabled, process its play history
+            if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Audacious logging enabled, starting syncAudaciousLog."<< std::endl;}
+            syncAudaciousLog();
+        }
+        ui->updateASDBprogressBar->setValue(80);
+        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting updateCleanLibDates."<< std::endl;}
+        updateCleanLibDates(); // Update cleanlib.dsv wih new dates
+        // Need to reprocess functions associated with a cleanlib.dsv change.
+        std::string LastTableDate = getLastTableDate();
+        ui->updateASDBButton->setText("Update ArchSimian Database");
+        ui->updateASDBButton->setDisabled(false); // Reenable button after updating
+        ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
+        ui->statusBar->showMessage("Completed getting lastplayed dates and updating Archsimian.",8000);
+        QFile ratingupdate(appDataPathstr+"/syncdisplay.txt");
+        if(!ratingupdate.open(QIODevice::ReadOnly))
+            QMessageBox::information(nullptr,"info",ratingupdate.errorString());
+        QTextStream in(&ratingupdate);
+        ui->updateDBtextBrowser->setText(in.readAll());
+        ui->statusBar->showMessage("Finished updating play history to the database",8000);
     }
-    ui->updateASDBprogressBar->setValue(80);
-    if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting updateCleanLibDates."<< std::endl;}
-    updateCleanLibDates(); // Update cleanlib.dsv wih new dates
-    // Need to reprocess functions associated with a cleanlib.dsv change.
-    std::string LastTableDate = getLastTableDate();
-    ui->updateASDBButton->setText("Update ArchSimian Database");
-    ui->updateASDBButton->setDisabled(false); // Reenable button after updating
-    ui->updatestatusLabel->setText(tr("MM.DB date: Disabled, Library date: ")+ QString::fromStdString(LastTableDate));
-    ui->statusBar->showMessage("Completed getting lastplayed dates and updating Archsimian.",8000);
-    QFile ratingupdate(appDataPathstr+"/syncdisplay.txt");
-    if(!ratingupdate.open(QIODevice::ReadOnly))
-        QMessageBox::information(nullptr,"info",ratingupdate.errorString());
-    QTextStream in(&ratingupdate);
-    ui->updateDBtextBrowser->setText(in.readAll());
-    ui->statusBar->showMessage("Finished updating play history to the database",8000);
+    else{
+        // If the device is not paired, change label
+        ui->updateASDBlabel->setText(tr("Android device is not paired. Pair using kdeconnect, and open device primary folder in Dolphin, then try again.)"));
+    }
 }
 
 void ArchSimian::on_updateASDBprogressBar_valueChanged(int value)

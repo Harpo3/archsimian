@@ -313,6 +313,7 @@ void updateCleanLibDates(){
     std::string selectedLibTitleToken; // Title variable from cleanlib.dsv
     std::string selectedLibAlbumToken; // Title variable from cleanlib.dsv
     std::string selectedLibSQLDateToken; // SQL Date variable from cleanlib.dsv
+    std::string selectedPlayCountToken; // SQL Date variable from cleanlib.dsv
     try { // Operation replaces cleanlib.dsv; need to protect data in event of a fatal error
         // Open cleanlib2.dsv as read file
         std::ifstream cleanlib;  // First ensure cleanlib2.dsv is ready to open
@@ -347,6 +348,7 @@ void updateCleanLibDates(){
             selectedLibArtistToken = tokens[Constants::kColumn1];
             selectedLibAlbumToken = tokens[Constants::kColumn3];
             selectedLibTitleToken = tokens[Constants::kColumn7];
+            selectedPlayCountToken = tokens[Constants::kColumn16];
             selectedLibSQLDateToken = tokens[Constants::kColumn17];
             for(auto & i : lastplayedvec){ // Assign row elements from lastplayedvec to variables to compare with Lib tokens
                 selectedArtistToken = i[Constants::kColumn0];
@@ -356,6 +358,9 @@ void updateCleanLibDates(){
                 // Match Artist and title in cleanLib from lastplayedvec and change SQL date for each if log date is newer
                 if ((selectedArtistToken == selectedLibArtistToken) && (selectedAlbumToken == selectedLibAlbumToken)
                         && (selectedTitleToken == selectedLibTitleToken) && (std::stod(selectedSQLDateToken) > std::stod(selectedLibSQLDateToken))){
+                    // Increase the playcount for each new lastplayed date
+                    int temp1 = stoi(selectedPlayCountToken);
+                    selectedPlayCountToken = std::to_string(temp1 + 1);
                     // Convert SQL date to a readable date for lastplayedupdate
                     time_t x = time_t(std::stod(selectedSQLDateToken));
                     x = (x - 25569) * 86400;
@@ -365,6 +370,7 @@ void updateCleanLibDates(){
                              "%m/%d/%Y",
                              gmtime(&x));
                     std::string datestring(yourbuf);
+                    tokens.at(Constants::kColumn16) = selectedPlayCountToken;
                     tokens.at(Constants::kColumn17) = selectedSQLDateToken;
                     str = getChgdDSVStr(tokens,str); // Recompile str with changed token
                     // Print a readable date to panel
