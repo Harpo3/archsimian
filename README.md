@@ -142,7 +142,7 @@ There is a way to manage your library (including lastplayed data and rating chan
 
 Use Kid3 to manage your tags. 
 
-Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Note 1). They will appear in Kid3 as the "Work" field. Set all custom artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. If you do not have them complete, or want to do it later, a trick is to type a space for the name, so MM4 will create the field and it will be available to Kid3 if needed later.
+Before you switch over, make sure all tags have been converted to ID3v2.3. ID3v2.4 tags will not be recognized. Since Kid3 does not track ratings with "half stars" like MM4 does, you should also set all tags from MM4 using Archsimian rating codes (see Notes 1 and 4). They will appear in Kid3 as the "Work" field. Set all custom artist groupings in MM4, so they will appear as the "Songs-DB_Custom2" field. If you do not have them complete, or want to do it later, a trick is to type a space for the name, so MM4 will create the field and it will be available to Kid3 if needed later.
 
 <b> Troubleshooting</b>
 
@@ -188,7 +188,9 @@ Select new file using the toolbar or menu, and tracks can be added. ArchSimian u
 <b>Exporting and Importing between MediaMonkey and ArchSimian</b>
 To use ArchSimian, you have to export from MediaMonkey the MM4 playlist you will be modifying in ArchSimian. The easy way is to install the "Export/Create Playlist for Child Nodes" extension in MM4. Configure to export as "ANSI" and set directory for using in ArchSimian. Then, simply right click on the playlist and export. For best results, remember to sync first (if using mobile device) and remove any tracks already played before exporting. If you don't want to use the extension, this is also a base feature of MM4, but you will have to do it more manually (See note 5). After you revise the playlist in ArchSimian, it will place it in the folder where you placed the MM4 exported playlist. You can then import it back into MM4 using the ImportM3U plugin and update the playlist in MM4. You can also export a playlist compatible with your linux player.
 
-When you have added tracks from ArchSimian, you can simply save your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app.
+When you have added tracks from ArchSimian, you can simply save it by "exporting" your playlist to the Windows shared directory as a Windows-compatible playlist. You can then import it back into MM4 for use in Windows and your mobile device if you have the MM app. 
+
+If you export to Linux, you will still need to "Export to Windows" to save the playlist if you want changes saved.
 
 <b>NOTES</b>
 1. <b>Below shows the ArchSimian rating code assigned to each MM4 star rating:</b>
@@ -243,7 +245,9 @@ The Playlist will be saved as xxxxx.m3u, which can then be opened by another med
 
 The default name MM4 gives you is “New playlist.m3u,” but you can save it as the name of the playlist you are modifying.
 
-6. Lastplayed history can be logged for use by ArchSimian by using a bash script and adding it to the Audacious plugin "Song Change." Add the path as a "Command to run when starting a new song". See the songchangescript file for the bash script. Save as .sh file and make it executable.</p>
+6. <b>Logging Audacious play history in Linux</b>
+
+Lastplayed history can be logged for use by ArchSimian by using a bash script and adding it to the Audacious plugin "Song Change." Add the path as a "Command to run when starting a new song". See the songchangescript file for the bash script. Save as .sh file and make it executable.</p>
 <img src="http://imgur.com//K7Vo2O4.png/..." data-canonical-src="http://imgur.com//K7Vo2O4.png" width="502" height="600" />
 
 
