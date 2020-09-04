@@ -71,7 +71,7 @@ void getArtistTrackCount(){
     artistList.close();
 }
 
-// Function to claculate an adjusted track count for each artist using a weighting based on assigned rating for each track
+// Function to calculate an adjusted track count for each artist using a weighting based on assigned rating for each track
 void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const double *_syrsTillRepeatCode4factor,const double *_syrsTillRepeatCode5factor,
                             const double *_syrsTillRepeatCode6factor,const double *_syrsTillRepeatCode7factor,const double *_syrsTillRepeatCode8factor,
                             const int *_srCode3TotTrackQty,const int *_srCode4TotTrackQty,const int *_srCode5TotTrackQty,
@@ -186,7 +186,7 @@ void getArtistAdjustedCount(const double *_syrsTillRepeatCode3factor,const doubl
 
         if (interimAdjCount < currentArtistCount) {interimAdjCount = currentArtistCount;} // Adjusted count must be at least one if there is one track or more
         double currentArtistFactor = (interimAdjCount / s_totalAdjRatedQty); //percentage of total adjusted tracks
-        int availInterval = int(1 / currentArtistFactor);
+        int availInterval = int((1 / currentArtistFactor)*.95); // Apply a 95% factor to reduce the chance of too many excluded artists
         // Write artist, count, adjusted count, artist factor, and repeat interval to the output file if not the header row
         if (currentArtist != "Custom2") {
             outartists2 << currentArtist << "," << int(currentArtistCount) << "," << int(interimAdjCount) <<
