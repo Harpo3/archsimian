@@ -484,20 +484,20 @@ void updateChangedTagRatings(){
         ID3_Frame *frame;
         if ( (frame = activeTag.Find ( ID3FID_LEADARTIST )) )
         {
-            char band[ 2048 ];
-            frame->Field ( ID3FN_TEXT ).Get ( band, 2048 );
+            char band[ 1024 ];
+            frame->Field ( ID3FN_TEXT ).Get ( band, 1024 );
             bandToken = band;
         }
         if ( (frame = activeTag.Find ( ID3FID_TITLE )) )
         {
-            char title[ 2048 ];
-            frame->Field ( ID3FN_TEXT ).Get ( title, 2048 );
+            char title[ 1024 ];
+            frame->Field ( ID3FN_TEXT ).Get ( title, 1024 );
             titleToken = title;
         }
         if ( (frame = activeTag.Find ( ID3FID_ALBUM )) )
         {
-            char album[ 2048 ];
-            frame->Field ( ID3FN_TEXT ).Get ( album, 2048 );
+            char album[ 1024 ];
+            frame->Field ( ID3FN_TEXT ).Get ( album, 1024 );
             albumToken = album;
         }
         if ( (frame = activeTag.Find ( ID3FID_POPULARIMETER )) )
