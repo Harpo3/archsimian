@@ -177,7 +177,7 @@ When you update MM4 (for tracks recently played, new tracks, changed ratings) an
 
 <b> Sync</b>
 
-<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without the MM app (or MediaMonkey). Lastplayed history is collected from the Android AIMP music player log (must enable logging from the AIMP app), and logging the Audacious desktop player using the Song Change add-on and bash script (See Note 6). Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can also be captured and updated without MM4 using a bash script (See Note 7).</p>
+<p>The Sync tab appears when the user selects "Set Archsimian to sync and manage database" in the Settings tab. When configured with kdeconnect and Syncthing, the user can sync playlists and tracks to their android device without using the MM app (or MediaMonkey). Lastplayed history is collected from the Android AIMP music player log (must enable logging from the AIMP app), and it is also logged by the Audacious desktop player using the Song Change add-on and bash script (See Note 6). Archsimian rating code changes (and associated POPM star rating changes) to mp3 tags can also be captured and updated without MM4 using a bash script (See Note 7).</p>
 <img src="http://imgur.com//ByYFT2c.png/..." data-canonical-src="http://imgur.com//ByYFT2c.png" width="502" height="600" />
 
 
@@ -232,7 +232,7 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 Use the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
-First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” to code your selected five-star tracks, “4” for four-star tracks, etc., using the table above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.
+First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” in te Grouping field to code your selected five-star tracks, “4” for four-star tracks, etc., using the table in note 1 above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.
 
 5. <b>As stated in the MM4 manual:</b> 
 
@@ -252,7 +252,7 @@ Lastplayed history can be logged for use by ArchSimian by using a bash script an
 
 7. <b>Changing ratings in Linux</b>
 
-Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can be updated for any track currently playing in Audacious  by using a bash script (requires installation of id3ted and kid3-cli). The command line argument is the rating code. For example, ~/ratetracks/chrating.sh 3 changes the Archsimian rating code to 3 and its associted POPM value (star rating) to 255 (five stars). See chrating file for the bash script. Save as a .sh file and make executable.
+Archsimian rating code changes (and associated POPM star rating changes) to the mp3 tags can be updated for any track currently playing in Audacious  by using a bash script (requires installation of id3ted and kid3-cli). The command line argument is the rating code. For example, ~/ratetracks/chrating.sh 3 changes the Archsimian rating code to 3 and changes its associated POPM value (star rating) to 255 (five stars). See the chrating file for the bash script. Save as a .sh file and make executable.
 
 
 
