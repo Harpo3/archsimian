@@ -1189,41 +1189,41 @@ void ArchSimian::on_addsongsButton_released(){
             }
         }
         // Collect and collate 'track selected' info for (UI display of) final song selections
-        std::string shortselectedTrackPath;
-        shortselectedTrackPath = s_selectedTrackPath;
-        std::string key1 ("/");
-        std::string key2 ("_");
-        // Next, determine how many alphanumeric chars there are in the windowstopfolder name
-        char *array_point;
-        char c1;
-        unsigned long count=0, alp=0, digt=0, oth=0;
-        char string_array[100];
-        strcpy(string_array, s_musiclibrarydirname.toStdString().c_str());
-        for(array_point=string_array;*array_point!='\0';array_point++)
-        {
-            c1=*array_point;
-            count++;
-            if (isalpha(c1))
+            std::string shortselectedTrackPath;
+            shortselectedTrackPath = s_selectedTrackPath;
+            std::string key1 ("/");
+            std::string key2 ("_");
+            // Next, determine how many alphanumeric chars there are in the windowstopfolder name
+            char *array_point;
+            char c1;
+            unsigned long count=0, alp=0, digt=0, oth=0;
+            char string_array[100];
+            strcpy(string_array, s_musiclibrarydirname.toStdString().c_str());
+            for(array_point=string_array;*array_point!='\0';array_point++)
             {
-                alp++;
-            }
-            else
-                if (isdigit(c1))
+                c1=*array_point;
+                count++;
+                if (isalpha(c1))
                 {
-                    digt++;
+                    alp++;
                 }
                 else
-                {
-                    oth++;
-                }
-        }
-        shortselectedTrackPath.erase(0,count);
-        std::size_t found = shortselectedTrackPath.rfind(key1);
-        std::size_t found1 = shortselectedTrackPath.rfind(key2);
-        if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}
-        if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length(),"");}
-        s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
-        songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n'; // Adds the playlist position number and track to the text display file
+                    if (isdigit(c1))
+                    {
+                        digt++;
+                    }
+                    else
+                    {
+                        oth++;
+                    }
+            }
+            shortselectedTrackPath.erase(0,count);
+            std::size_t found = shortselectedTrackPath.rfind(key1);
+            std::size_t found1 = shortselectedTrackPath.rfind(key2);
+            if (found!=std::string::npos){shortselectedTrackPath.replace (found,key1.length(),", ");}
+            if (found1!=std::string::npos){shortselectedTrackPath.replace (found,key2.length(),"");}
+            s_playlistSize = cstyleStringCount(appDataPathstr.toStdString()+"/cleanedplaylist.txt");
+            songtext << s_playlistSize<<". "<< shortselectedTrackPath <<'\n'; // Adds the playlist position number and track to the text display file
         if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Track has now been added to the playlist. "
                                               "New playlist length is: " << s_playlistSize << " tracks." << std::endl;
         // Calculate excluded artists and get rating for next track selection (accounting for track just added)

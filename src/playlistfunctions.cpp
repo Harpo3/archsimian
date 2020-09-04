@@ -426,7 +426,7 @@ std::string selectTrack(int &s_ratingNextTrack, std::string *s_selectedTrackPath
     if (Constants::kVerbose) std::cout << "selectTrack function: Write/append s_selectedTrackPath to the cleanedplaylist.txt file." << std::endl;    
     std::ofstream playlist(appDataPathstr.toStdString()+"/cleanedplaylist.txt",std::ios::app); //Append new s_selectedTrackPath to cleanedplaylist.txt file.
     playlist << *s_selectedTrackPath << "\n";
-    playlist.close();    
+    playlist.close();
     std::string selectedTrackPathshort;
     if (Constants::kVerbose) std::cout << "selectTrack function: Track selected and added (non-code-1): " << *s_selectedTrackPath  << std::endl;
     finaltracksvect.shrink_to_fit();
