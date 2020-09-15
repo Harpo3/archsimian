@@ -1653,7 +1653,7 @@ void ArchSimian::on_actionSave_Settings_triggered()
 
 void ArchSimian::on_actionAbout_triggered()
 {
-    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.09"
+    QMessageBox::about(this,tr("ArchSimian") ,tr("\nArchSimian v.1.10"
                                                  "\n\nThis program is free software: you can redistribute it and/or modify"
                                                  " it under the terms of the GNU General Public License as published by"
                                                  " the Free Software Foundation, either version 3 of the License, or"
