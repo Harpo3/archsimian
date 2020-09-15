@@ -45,14 +45,17 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
             }
             ++ tokenCount;
         }
-        if ((ratingCode == "1") && (playlistPos != "0")){//rating code 1 track is in the playlist
+        // Get last artist added using code 1 track playlist positions
+        if ((ratingCode == "1") && (playlistPos != "0")){
             posint = std::stoi(playlistPos);
             if (*_slowestCode1Pos > posint){
                 *_slowestCode1Pos = posint;
                 *_sartistLastCode1 = selectedArtistToken;
             }
         }
-        if ((std::find(code1artistsvect.begin(), code1artistsvect.end(), selectedArtistToken) == code1artistsvect.end()) && (ratingCode == "1")) {
+        // Add artist vector count if unique and there is at least one track from that artist available to add
+        if ((std::find(code1artistsvect.begin(), code1artistsvect.end(), selectedArtistToken) == code1artistsvect.end())
+                && (ratingCode == "1") && (playlistPos == "0")) {
             code1artistsvect.push_back(selectedArtistToken);
             ++*_suniqueCode1ArtistCount;
         }
@@ -60,7 +63,7 @@ void code1stats(int *_suniqueCode1ArtistCount, int *_scode1PlaylistCount, int *_
 }
 
 // Function used to select a rating code 1 track
-void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path){
+void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Path, int &s_uniqueCode1ArtistCount){
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName();
     std::string returntrack;
     std::fstream filestrinterval;
@@ -97,13 +100,21 @@ void getNewTrack(std::string &s_artistLastCode1, std::string *s_selectedCode1Pat
             if (tokenCount == Constants::kColumn7)  {playlistPos = token;}
             ++ tokenCount;
         }
-        if ((ratingCode == "1") && (playlistPos == "0") &&(selectedArtistToken != s_artistLastCode1)) {
-            // If a code 1 track is not in the playlist and not the last artist selected,
-            // add to vector used to return track path to s_selectedCode1Path
+        // If there are two or more new artists available, a code 1 track is not in the playlist, and artist is not the last artist selected,
+        // add to vector used to return track path to s_selectedCode1Path
+        if ((ratingCode == "1") && (playlistPos == "0") && (selectedArtistToken != s_artistLastCode1) && (s_uniqueCode1ArtistCount > 1)) {
             std::string commatxt{","};
             std::string vectorstring;
             vectorstring.append(tokenLTP).append(commatxt).append(selectedArtistToken).append(commatxt).append(songPath).append(commatxt).append(playlistPos);
-            code1tracksvect.push_back(vectorstring);}
+            code1tracksvect.push_back(vectorstring);
+        }
+        // If there is only one new artist, and code 1 track is not in the playlist, add to vector used to return track path to s_selectedCode1Path
+        if ((ratingCode == "1") && (playlistPos == "0") && (s_uniqueCode1ArtistCount = 1)) {
+            std::string commatxt{","};
+            std::string vectorstring;
+            vectorstring.append(tokenLTP).append(commatxt).append(selectedArtistToken).append(commatxt).append(songPath).append(commatxt).append(playlistPos);
+            code1tracksvect.push_back(vectorstring);
+        }
     }
     std::sort (code1tracksvect.begin(), code1tracksvect.end());
     std::string fullstring = code1tracksvect.front();

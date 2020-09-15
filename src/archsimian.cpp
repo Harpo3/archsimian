@@ -1146,7 +1146,7 @@ void ArchSimian::on_addsongsButton_released(){
             code1stats(&s_uniqueCode1ArtistCount,&s_code1PlaylistCount, &s_lowestCode1Pos, &s_artistLastCode1); // Retrieve rating code 1 stats
             // Use stats to check that all code 1 tracks are not already in the playlist, and the repeat frequency is met
             if ((s_code1PlaylistCount < s_rCode1TotTrackQty) && ((s_lowestCode1Pos + 1) > s_repeatFreqForCode1)){
-                getNewTrack(s_artistLastCode1, &s_selectedCode1Path); // Get rating code 1 track selection if criteria is met
+                getNewTrack(s_artistLastCode1, &s_selectedCode1Path, s_uniqueCode1ArtistCount); // Get rating code 1 track selection if criteria is met
                 s_selectedTrackPath = s_selectedCode1Path; // Set the track selection to the code 1 selection
                 if (Constants::kVerbose) std::cout << "on_addsongsButton_released: Rating code 1 applies to current track selection: " << s_selectedTrackPath << std::endl <<
                                                       "Code 1 track added to playlist."<< std::endl;
