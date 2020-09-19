@@ -26,6 +26,16 @@ bool doesFileExist3 (const std::string& name) {
     return (stat (name.c_str(), &buffer) == 0);
 }
 
+void ShowKnownFrameInfo() {
+     ID3_FrameInfo myFrameInfo;
+    for (int cur = ID3FID_NOFRAME+1; cur < myFrameInfo.MaxFrameID(); cur ++)
+    {
+     std::cout << "Short ID: " << myFrameInfo.ShortName(ID3_FrameID(cur)) <<
+         " Long ID: " << myFrameInfo.LongName(ID3_FrameID(cur)) <<
+         " Desription: " << myFrameInfo.Description(ID3_FrameID(cur)) << std::endl;
+    }
+ }
+
 // Convert standard (format: "Jul 26, 2020 1:30:42 PM") date/time string variable and return SQL time
 double logdateconversion(std::string chkthis){
     const char *timestr = chkthis.c_str();
@@ -220,7 +230,7 @@ void getLastPlayedDates(QString s_androidpathname){
         }
     }
     if (matchinfile == false){ // Log has no entries with completed songs
-        if (Constants::kVerbose){std::cout << "getLastPlayedDates: Terminating function. No entries found."<< std::endl;}
+        if (Constants::kVerbose){std::cout << "getLastPlayedDates: Terminating this function because no entries were found in AIMP log."<< std::endl;}
         dateslist.close();
         debug.close();
         combinedvect.shrink_to_fit();
@@ -290,8 +300,44 @@ void getLastPlayedDates(QString s_androidpathname){
     return ;
 }
 
+// Update variables popmToken and ratingToken using tag values in selected tag
+void PrintInformation(ID3_Tag &myTag, std::string *popmToken, std::string *ratingToken)
+{
+    ID3_Tag::Iterator* iter = myTag.CreateIterator();
+    const ID3_Frame* frame = nullptr;
+    while (nullptr != (frame = iter->GetNext()))
+    {
+        const char* desc = frame->GetDescription();
+        if (!desc) desc = "";
+        ID3_FrameID eFrameID = frame->GetID();
+        switch (eFrameID)
+        {
+        case ID3FID_POPULARIMETER:
+        {
+            char *sEmail = ID3_GetString(frame, ID3FN_EMAIL);
+            size_t
+                    nRating = frame->GetField(ID3FN_RATING)->Get();
+            *popmToken = std::to_string(nRating);
+            delete [] sEmail;
+            break;
+        }
+        case ID3FID_CONTENTGROUP:
+        {
+            char *sText = ID3_GetString(frame, ID3FN_TEXT);
+            *ratingToken = std::string(sText);
+            delete [] sText;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+    }
+}
+
+// Populate lastplayeddates.txt with last played dates for songs played and logged using the Android AIMP app
 void updateCleanLibDates(){
-    // Uses lastplayeddates.txt to update last played dates in cleanlib.dsv for songs played and logged by AIMP
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
     QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib.dsv";
     QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib2.dsv";
@@ -300,7 +346,7 @@ void updateCleanLibDates(){
     std::ofstream ofs; // Open syncdisplay.txt for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
-    std::ofstream lastplayedupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // Output in append mode
+    std::ofstream lastplayedupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // Output now-empty file in append mode
     lastplayedupdate << "These last played entries were updated to ArchSimian database (Dates GMT): "<< '\n';
     // Create vector for new lastplayed dates
     StringVector2D lastplayedvec = readCSV(appDataPathstr.toStdString()+"lastplayeddates.txt"); // Open as 2D vector lastplayedvec
@@ -364,7 +410,6 @@ void updateCleanLibDates(){
                     // Convert SQL date to a readable date for lastplayedupdate
                     time_t x = time_t(std::stod(selectedSQLDateToken));
                     x = (x - 25569) * 86400;
-
                     char yourbuf[64];
                     strftime(yourbuf, sizeof(yourbuf),
                              "%m/%d/%Y",
@@ -404,7 +449,9 @@ void updateCleanLibDates(){
     ofs2.close();
 }
 
+// Scan all library tags using the Archsimian database and update for any rating changes
 void updateChangedTagRatings(){
+    if (Constants::kVerbose){std::cout << "updateChangedTagRatings: Started "<< std::endl;}
     QString appDataPathstr = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/";
     QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib.dsv";
     QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/cleanlib2.dsv";
@@ -416,22 +463,20 @@ void updateChangedTagRatings(){
     std::string selectedLibArtistToken{" "};
     std::string selectedLibTitleToken{" "};
     std::string selectedLibAlbumToken{" "};
-    std::string bandToken{" "};
-    std::string titleToken{" "};
-    std::string albumToken{" "};
-    std::string ratingCode{" "};
     std::string ratingToken{" "};
     std::string popmToken{" "};
     std::string longstring{" "};
     // Open log for reporting changes to UI
-    std::ofstream ofs; // Open the ratingupdate file for writing with the truncate option to delete the content.
+    std::ofstream ofs; // Open the ratingupdate file for writing with the truncate option to delete the previous changes.
     ofs.open(appDataPathstr.toStdString()+"/syncdisplay.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
     std::ofstream ratingupdate(appDataPathstr.toStdString()+"/syncdisplay.txt",std::ios::app); // Open in append mode
     // Open cleanlib.dsv as read file
     std::ifstream cleanlib;  // Ensure cleanlib.dsv is ready to open
     cleanlib.open (appDataPathstr.toStdString()+"/cleanlib2.dsv");
-    if (cleanlib.is_open()) {cleanlib.close();}
+    if (cleanlib.is_open()) {
+        if (Constants::kVerbose){std::cout << "updateChangedTagRatings: cleanlib.is_open"<< std::endl;}
+        cleanlib.close();}
     else {
         std::cout << "updateChangedTagRatings: Error opening cleanlib2.dsv file." << std::endl;
         Logger ("updateChangedTagRatings: Error opening cleanlib2.dsv file.");
@@ -451,157 +496,96 @@ void updateChangedTagRatings(){
     // Loop through cleanlib and check each tag for changed ratings
     //  Outer loop: iterate through rows of SongsTable
     try { // Operation replaces cleanlib.dsv; need to protect data in event of a fatal error
-    while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
-        // Declare variables applicable to all rows
-        std::istringstream iss(str);
-        // Create a vector to parse each line by carat and do processing
-        std::vector<std::string> tokens2; // Vector of string to save tokens
-        tokens2.reserve(50000);
-        std::stringstream check1(str);// Stringstream for parsing carat delimiter
-        std::string intermediate; // Intermediate value for parsing carat delimiter
-        // Open tokens vector to tokenize current string using carat '^' delimiter
-        while(getline(check1, intermediate, '^')) // Inner loop: iterate through tokens of string using tokens vector
-        {
-            tokens2.push_back(intermediate);
-        }
-        selectedLibArtistToken = tokens2[Constants::kColumn1];
-        selectedLibAlbumToken = tokens2[Constants::kColumn3];
-        selectedLibTitleToken = tokens2[Constants::kColumn7];
-        selectedLibsongPath = tokens2[Constants::kColumn8];
-        selectedLibpopmRating = tokens2[Constants::kColumn13];
-        selectedLibSQLDateToken = tokens2[Constants::kColumn17];
-        selectedLibratingCode = tokens2[Constants::kColumn29];
-        longstring = "^"+tokens2[Constants::kColumn18]+"^"+tokens2[Constants::kColumn19]+"^"
-                +tokens2[Constants::kColumn20]+"^"+tokens2[Constants::kColumn21]+"^"+tokens2[Constants::kColumn22]+"^"
-                +tokens2[Constants::kColumn23]+"^"+tokens2[Constants::kColumn24]+"^"+tokens2[Constants::kColumn25]+"^"
-                +tokens2[Constants::kColumn26]+"^"+tokens2[Constants::kColumn27]+"^"+tokens2[Constants::kColumn28];
-        if (selectedLibratingCode == "0"){
-            outf << str << "\n"; // The existing string is valid if unrated; if so, write unchanged string to cleanlib file
-            continue;
-        }
-        ID3_Tag activeTag; // Get tag info using id3/tag.h
-        activeTag.Link(selectedLibsongPath.c_str(),ID3TT_ID3V2 | ID3TT_APPENDED);
-        ID3_Frame *frame;
-        if ( (frame = activeTag.Find ( ID3FID_LEADARTIST )) )
-        {
-            char band[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( band, 1024 );
-            bandToken = band;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_TITLE )) )
-        {
-            char title[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( title, 1024 );
-            titleToken = title;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_ALBUM )) )
-        {
-            char album[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( album, 1024 );
-            albumToken = album;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_POPULARIMETER )) )
-        {
-            char *sEmail = ID3_GetString(frame, ID3FN_EMAIL);
-            size_t nRating = frame->GetField(ID3FN_RATING)->Get();
-            popmToken = std::to_string(nRating);
-            delete [] sEmail;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_COMMENT)) ) // Comment frame (needed to iterate to the next frame)
-        {
-            char  *sText = ID3_GetString(frame, ID3FN_TEXT);
-            char  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);
-            char *sLang = ID3_GetString(frame, ID3FN_LANGUAGE);
-            delete [] sText;
-            delete [] sDesc;
-            delete [] sLang;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_COMMENT)) ) // MusicMatch Frame (needed to iterate to the next frame)
-        {
-            char  *sText = ID3_GetString(frame, ID3FN_TEXT);
-            char  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);
-            char *sLang = ID3_GetString(frame, ID3FN_LANGUAGE);
-            delete [] sText;
-            delete [] sDesc;
-            delete [] sLang;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_COMMENT)) ) // ArchSimian artist grouping name
-        {
-            char  *sText = ID3_GetString(frame, ID3FN_TEXT);
-            char  *sDesc = ID3_GetString(frame, ID3FN_DESCRIPTION);
-            char *sLang = ID3_GetString(frame, ID3FN_LANGUAGE);
-            delete [] sText;
-            delete [] sDesc;
-            delete [] sLang;
-        }
-        if ( (frame = activeTag.Find ( ID3FID_CONTENTGROUP )) )
-        {
-            char ratingcode[ 1024 ];
-            frame->Field ( ID3FN_TEXT ).Get ( ratingcode, 1024 );
-            ratingToken = ratingcode;
-        }
-        // Fix tag discrepancies for selectedLibArtistToken, titleToken, albumToken
-        trim(bandToken);
-        trim(titleToken);
-        trim(albumToken);
-        bandToken.erase(std::remove_if(bandToken.begin(), bandToken.end(), &IsSpecialChar), bandToken.end());
-        titleToken.erase(std::remove_if(titleToken.begin(), titleToken.end(), &IsSpecialChar), titleToken.end());
-        albumToken.erase(std::remove_if(albumToken.begin(), albumToken.end(), &IsSpecialChar), albumToken.end());
+            while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
+                // Declare variables applicable to all rows
+                std::istringstream iss(str);
+                // Create a vector to parse each line by carat and do processing
+                std::vector<std::string> tokens2; // Vector of string to save tokens
+                tokens2.reserve(50000);
+                std::stringstream check1(str);// Stringstream for parsing carat delimiter
+                std::string intermediate; // Intermediate value for parsing carat delimiter
+                // Open tokens vector to tokenize current string using carat '^' delimiter
+                while(getline(check1, intermediate, '^')) // Inner loop: iterate through tokens of string using tokens vector
+                {
+                    tokens2.push_back(intermediate);
+                }
+                selectedLibArtistToken = tokens2[Constants::kColumn1];
+                selectedLibAlbumToken = tokens2[Constants::kColumn3];
+                selectedLibTitleToken = tokens2[Constants::kColumn7];
+                selectedLibsongPath = tokens2[Constants::kColumn8];
+                selectedLibpopmRating = tokens2[Constants::kColumn13];
+                selectedLibSQLDateToken = tokens2[Constants::kColumn17];
+                selectedLibratingCode = tokens2[Constants::kColumn29];
+                longstring = "^"+tokens2[Constants::kColumn18]+"^"+tokens2[Constants::kColumn19]+"^"
+                        +tokens2[Constants::kColumn20]+"^"+tokens2[Constants::kColumn21]+"^"+tokens2[Constants::kColumn22]+"^"
+                        +tokens2[Constants::kColumn23]+"^"+tokens2[Constants::kColumn24]+"^"+tokens2[Constants::kColumn25]+"^"
+                        +tokens2[Constants::kColumn26]+"^"+tokens2[Constants::kColumn27]+"^"+tokens2[Constants::kColumn28];
+                if (selectedLibratingCode == "0"){
+                    outf << str << "\n"; // The existing string is valid if unrated; if so, write unchanged string to cleanlib file
+                    continue;
+                }
+                ID3_Tag activeTag; // Get tag info using id3/tag.h
+                activeTag.Link(selectedLibsongPath.c_str(),ID3TT_ID3V2 | ID3TT_APPENDED);
+                PrintInformation(activeTag, &popmToken, &ratingToken);
+                // If tag rating does not match cleanlib entry, change cleanlib variables to match before writing string
+                if (selectedLibratingCode != ratingToken) {
+                    if (Constants::kVerbose) {
+                        std::cout << "Tag rating does not match cleanlib entry. "<< std::endl;
+                        std::cout << "selectedLibTitleToken: "<< selectedLibTitleToken << std::endl;
+                        std::cout << "selectedLibAlbumToken: "<< selectedLibAlbumToken << std::endl;
+                        std::cout << "selectedLibArtistToken: "<< selectedLibArtistToken << std::endl;
+                        std::cout << "selectedLibpopmRating: "<< selectedLibpopmRating << std::endl;
+                        std::cout << "selectedLibratingCode: "<< selectedLibratingCode << std::endl;
+                        std::cout << "POPM (from tag): "<< popmToken << std::endl;
+                        std::cout << "Rating Code (from tag): "<< ratingToken << std::endl;
+                    }
+                    std::string tempoldrating = selectedLibratingCode;
+                    std::string tempoldrating2 = selectedLibpopmRating;
+                    if (ratingToken!=""){selectedLibratingCode = ratingToken;} // Archsimian rating code has been set in the tag and does not match library
+                    ratingupdate << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
+                                    selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
+                    if (selectedLibratingCode == "3"){selectedLibpopmRating = "100";} // Set MM4 code (40, 50, 60, etc) based on code or popm change
+                    if (selectedLibratingCode == "4"){selectedLibpopmRating = "90";}
+                    if (selectedLibratingCode == "5"){selectedLibpopmRating = "70";}
+                    if (selectedLibratingCode == "6"){selectedLibpopmRating = "60";}
+                    if (selectedLibratingCode == "7"){selectedLibpopmRating = "50";}
+                    if (selectedLibratingCode == "8"){selectedLibpopmRating = "30";}
+                    if (Constants::kVerbose) std::cout << "Rating changed from "<<tempoldrating<<" to "<<ratingToken;
+                    if (Constants::kVerbose) std::cout << ", and MM Rating code changed from "<<tempoldrating2<<" to "<<selectedLibpopmRating << " for "<<
+                                 selectedLibArtistToken << " - " <<selectedLibTitleToken << std::endl;
+                    str=tokens2.at(Constants::kColumn0)+"^"+selectedLibArtistToken+"^"+tokens2.at(Constants::kColumn2)+"^"+selectedLibAlbumToken+"^"
+                            +tokens2.at(Constants::kColumn4)+"^"+tokens2.at(Constants::kColumn5)+"^"+tokens2.at(Constants::kColumn6)+"^"
+                            +selectedLibTitleToken+"^"+selectedLibsongPath+"^"+tokens2.at(Constants::kColumn9)+"^"+tokens2.at(Constants::kColumn10)
+                            +"^"+tokens2.at(Constants::kColumn11)+"^"+tokens2.at(Constants::kColumn12)+"^"+selectedLibpopmRating+"^"+
+                            tokens2.at(Constants::kColumn14)+"^"+tokens2.at(Constants::kColumn15)+"^"+tokens2.at(Constants::kColumn16)
+                            +"^"+selectedLibSQLDateToken+longstring+"^"+selectedLibratingCode;
+                    outf << str << "\n"; // The tag elements of artist, title, album match, and rating has been changed in cleanlib.
 
-        if ( (bandToken == selectedLibArtistToken) && (titleToken == selectedLibTitleToken) && (albumToken == selectedLibAlbumToken)) {
-            // If tag rating does not match cleanlib entry, change cleanlib variables to match before writing string
-            if (selectedLibratingCode != ratingToken) {
-                std::string tempoldrating = selectedLibratingCode;
-                if (ratingToken!=""){selectedLibratingCode = ratingToken;}
-                ratingupdate << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
-                                                                      selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
-                if (selectedLibArtistToken == "3"){selectedLibpopmRating = "100";} // Set MM4 code (40, 50, 60, etc) based on code or popm change
-                if (selectedLibArtistToken == "4"){selectedLibpopmRating = "90";}
-                if (selectedLibArtistToken == "5"){selectedLibpopmRating = "70";}
-                if (selectedLibArtistToken == "6"){selectedLibpopmRating = "60";}
-                if (selectedLibArtistToken == "7"){selectedLibpopmRating = "50";}
-                if (selectedLibArtistToken == "8"){selectedLibpopmRating = "30";}
-                str=tokens2.at(Constants::kColumn0)+"^"+selectedLibArtistToken+"^"+tokens2.at(Constants::kColumn2)+"^"+selectedLibAlbumToken+"^"
-                        +tokens2.at(Constants::kColumn4)+"^"+tokens2.at(Constants::kColumn5)+"^"+tokens2.at(Constants::kColumn6)+"^"
-                        +selectedLibTitleToken+"^"+selectedLibsongPath+"^"+tokens2.at(Constants::kColumn9)+"^"+tokens2.at(Constants::kColumn10)
-                        +"^"+tokens2.at(Constants::kColumn11)+"^"+tokens2.at(Constants::kColumn12)+"^"+selectedLibpopmRating+"^"+
-                        tokens2.at(Constants::kColumn14)+"^"+tokens2.at(Constants::kColumn15)+"^"+tokens2.at(Constants::kColumn16)
-                        +"^"+selectedLibSQLDateToken+longstring+"^"+selectedLibratingCode;
-                outf << str << "\n"; // The tag elements of artist, title, album match, and rating has been changed in cleanlib.
-                bandToken="";
-                titleToken="";
-                albumToken="";
-                ratingCode="";
+                    ratingToken="";
+                    popmToken="";
+                    continue;
+                }
+                outf << str << "\n"; // One or more tag elements (artist, title, album) do NOT match cleanlib entry, but rating might match.
                 ratingToken="";
                 popmToken="";
-                continue;
+                tokens2.shrink_to_fit();
             }
+            SongsTable.close();
+            outf.close();
+            ratingupdate.close();
         }
-        outf << str << "\n"; // One or more tag elements (artist, title, album) do NOT match cleanlib entry, but rating might match.
-        bandToken="";
-        titleToken="";
-        albumToken="";
-        ratingCode="";
-        ratingToken="";
-        popmToken="";
-        tokens2.shrink_to_fit();
-    }
-    SongsTable.close();
-    outf.close();
-    ratingupdate.close();
-    }
     catch(const std::bad_alloc& exception) {
-            Logger ("updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
-                    "Replace cleanlib.dsv with cleanlib2.dsv found in /.local/share/archsimian/ then inspect file for errors.");
-            std::cerr << "updateChangedTagRatings: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
-                         "/.local/share/archsimian/ and inspect file for errors." << exception.what();
-            QMessageBox msgBox;
-            QString msgboxtxt = "updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
-                                "Replace with cleanlib2.dsv found in /.local/share/archsimian/ and inspect file for errors.";
-            msgBox.setText(msgboxtxt);
-            msgBox.exec();
-            qApp->quit(); //Exit program
-        }
+        Logger ("updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
+                "Replace cleanlib.dsv with cleanlib2.dsv found in /.local/share/archsimian/ then inspect file for errors.");
+        std::cerr << "updateChangedTagRatings: error detected: There was a problem writing to cleanlib.dsv. Replace with cleanlib2.dsv found in "
+                     "/.local/share/archsimian/ and inspect file for errors." << exception.what();
+        QMessageBox msgBox;
+        QString msgboxtxt = "updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
+                            "Replace with cleanlib2.dsv found in /.local/share/archsimian/ and inspect file for errors.";
+        msgBox.setText(msgboxtxt);
+        msgBox.exec();
+        qApp->quit(); //Exit program
+    }
     removeAppData("cleanlib2.dsv"); // Remove cleanlib2.dsv
 }
 
@@ -621,13 +605,13 @@ void syncAudaciousLog(){
     newFile.open( QIODevice::WriteOnly|QIODevice::Append );
     if (newFile.pos() == 0) {
       // If the file is empty, use only the Audacious log to write lastplayeddates.txt
-        if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was empty."<< std::endl;}
+        if(Constants::kVerbose){std::cout << "syncAudaciousLog: Using only the Audacious log."<< std::endl;}
         QString tempFileStr1 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QFile::copy(tempFileStr1,tempFileStr2);
     } else {
       // If the file is not empty, combine the AIMP (lastplayeddates2.txt) and Audacious logs to write as lastplayeddates2.txt
-        if(Constants::kVerbose){std::cout << "syncAudaciousLog: AIMP log was not empty: "<<newFile.pos()<< std::endl;}
+        if(Constants::kVerbose){std::cout << "syncAudaciousLog: Using both AIMP and Audacious logs."<< std::endl;}
         QString tempFileStr1b = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/lastplayeddates2.txt";
         QString tempFileStr2 = QDir::homePath() + "/.local/share/" + QApplication::applicationName() + "/audacioushist.log";
         std::ifstream SongsTable1(tempFileStr1a.toStdString());    // Open lastplayeddates.txt as ifstream
@@ -660,79 +644,93 @@ void syncAudaciousLog(){
         std::cout << "syncAudaciousLog: Error opening SongsTable." << std::endl;
         Logger ("syncAudaciousLog: Error opening SongsTable.");
         std::exit(EXIT_FAILURE); // Otherwise, quit
-    }
-    std::ofstream outf4(appDataPathstr.toStdString()+"/lastplayeddates.txt"); // Create ostream file to replace lastplayeddates.txt
-    while (std::getline(SongsTable3, str)) { //  Iterate through rows of SongsTable3 (lastplayeddates2.txt)
-        // Clean up special charaters that came from Audacious tag entries
-        std::string specchars = "\?@&()#\"+*!;"; /// Identify special characters to remove
-        str.erase(remove_if(str.begin(), str.end(),
-                            [&specchars](const char& c) {
-            return specchars.find(c) != std::string::npos;
-        }),
-                  str.end());
-        combinedvect.push_back(str);
-    }
-    std::sort (combinedvect.begin(), combinedvect.end(), std::greater<>()); // Do a reverse sort to put newer dates first
-    std::map<std::string, std::string> map; // map used to remove duplicates
-    for(auto& el: combinedvect){
-        auto it = el.find_last_of(',');           // find last ","
-        auto key = el.substr(0, it);              // extract the key
-        auto value = std::string(el.substr(it+1));  // extract the last value
-        // if it does not exist already, or if it exists and has a value greater than the one inserted:
-        if(map.find(key) == map.end() || (map.find(key) != map.end() && map[key] < value))
-            map[key] = value; // change the value
-    }
-    for(auto& [k, combinedvect]: map){
-        finalvect.push_back(k+","+combinedvect+"\n"); // Push back unique entries to new vector finalvect
-    }
-    std::string selectedLPLArtistToken; // Artist variable from lastplayeddates.txt
-    std::string selectedLPLTitleToken; // Title variable from lastplayeddates.txt
-    std::string selectedLPLAlbumToken; // Title variable from lastplayeddates.txt
-    std::string selectedLPLSQLDateToken; // SQL Date variable from lastplayeddates.txt
+    }    
+    try{
+        std::ofstream outf4(appDataPathstr.toStdString()+"/lastplayeddates.txt"); // Create ostream file to replace lastplayeddates.txt
+        while (std::getline(SongsTable3, str)) { //  Iterate through rows of SongsTable3 (lastplayeddates2.txt)
+            // Clean up special charaters that came from Audacious tag entries
+            std::string specchars = "\?@&()#\"+*!;"; /// Identify special characters to remove
+            str.erase(remove_if(str.begin(), str.end(),
+                                [&specchars](const char& c) {
+                return specchars.find(c) != std::string::npos;
+            }),
+                      str.end());
+            combinedvect.push_back(str);
+        }
+        std::sort (combinedvect.begin(), combinedvect.end(), std::greater<>()); // Do a reverse sort to put newer dates first
+        std::map<std::string, std::string> map; // map used to remove duplicates
+        for(auto& el: combinedvect){
+            auto it = el.find_last_of(',');           // find last ","
+            auto key = el.substr(0, it);              // extract the key
+            auto value = std::string(el.substr(it+1));  // extract the last value
+            // if it does not exist already, or if it exists and has a value greater than the one inserted:
+            if(map.find(key) == map.end() || (map.find(key) != map.end() && map[key] < value))
+                map[key] = value; // change the value
+        }
+        for(auto& [k, combinedvect]: map){
+            finalvect.push_back(k+","+combinedvect+"\n"); // Push back unique entries to new vector finalvect
+        }
+        std::string selectedLPLArtistToken; // Artist variable from lastplayeddates.txt
+        std::string selectedLPLTitleToken; // Title variable from lastplayeddates.txt
+        std::string selectedLPLAlbumToken; // Title variable from lastplayeddates.txt
+        std::string selectedLPLSQLDateToken; // SQL Date variable from lastplayeddates.txt
 
-    for (auto & d : finalvect){ // Iterate through finalvect for each line d
-        std::stringstream s_streamd(d); //create string stream with line d
-        std::vector<std::string> resulttemp; // create temp vector resulttemp to store tokens
-        int tokenCount{0}; //token count is the number of delimiter characters within str
-        while(s_streamd.good()) { // Iterate the string and parse tokens
-            std::string token;
-            while (std::getline(s_streamd, token, ','))
-            {
-                if (tokenCount == 0) {selectedLPLArtistToken = token;}
-                if (tokenCount == 1) {selectedLPLAlbumToken = token;}
-                if (tokenCount == 2) {selectedLPLTitleToken = token;}
-                if (tokenCount == 3) {selectedLPLSQLDateToken = token;}
-                ++ tokenCount;
+        for (auto & d : finalvect){ // Iterate through finalvect for each line d
+            std::stringstream s_streamd(d); //create string stream with line d
+            std::vector<std::string> resulttemp; // create temp vector resulttemp to store tokens
+            int tokenCount{0}; //token count is the number of delimiter characters within str
+            while(s_streamd.good()) { // Iterate the string and parse tokens
+                std::string token;
+                while (std::getline(s_streamd, token, ','))
+                {
+                    if (tokenCount == 0) {selectedLPLArtistToken = token;}
+                    if (tokenCount == 1) {selectedLPLAlbumToken = token;}
+                    if (tokenCount == 2) {selectedLPLTitleToken = token;}
+                    if (tokenCount == 3) {selectedLPLSQLDateToken = token;}
+                    ++ tokenCount;
+                }
             }
+            //Send all tokens to the new output vector with the date token placed at the front
+            str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
+            outputvect.push_back(str4);
+            resulttemp.shrink_to_fit();
         }
-        //Send all tokens to the new output vector with the date token placed at the front
-        str4 = (selectedLPLSQLDateToken+","+selectedLPLArtistToken+","+selectedLPLAlbumToken+","+ selectedLPLTitleToken);
-        outputvect.push_back(str4);
-        resulttemp.shrink_to_fit();
+        std::sort (outputvect.begin(), outputvect.end()); // Now, sort the output vector by date
+        // Output order to move the date back to the last element when writing file
+        for (auto & j : outputvect) { // Iterate through the vector for each line j
+            std::stringstream s_stream(j); // Create string stream with line j
+            std::vector<std::string> result; // Create temp vector result
+            std::string datetemp;
+            std::string resttemp;
+            while(s_stream.good()) {
+                std::string substr;
+                getline(s_stream, substr, ','); // Get token (substr) delimited by comma
+                result.push_back(substr); // Populate result vector with tokens
+            }
+            for(unsigned long i = 0; i<result.size(); i++) {    // Reorder tokens from result with date in correct position
+                datetemp = result.at(0);
+                resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
+            }
+            outf4 << resttemp <<","<< datetemp; // Write reordered tokens to file
+            result.shrink_to_fit();
+        }
+        outf4.close();
+        combinedvect.shrink_to_fit();
+        finalvect.shrink_to_fit();
+        outputvect.shrink_to_fit();
     }
-    std::sort (outputvect.begin(), outputvect.end()); // Now, sort the output vector by date
-    // Output order to move the date back to the last element when writing file
-    for (auto & j : outputvect) { // Iterate through the vector for each line j
-        std::stringstream s_stream(j); // Create string stream with line j
-        std::vector<std::string> result; // Create temp vector result
-        std::string datetemp;
-        std::string resttemp;
-        while(s_stream.good()) {
-            std::string substr;
-            getline(s_stream, substr, ','); // Get token (substr) delimited by comma
-            result.push_back(substr); // Populate result vector with tokens
-        }
-        for(unsigned long i = 0; i<result.size(); i++) {    // Reorder tokens from result with date in correct position
-            datetemp = result.at(0);
-            resttemp = result.at(1)+","+result.at(2)+","+result.at(3);
-        }
-        outf4 << resttemp <<","<< datetemp; // Write reordered tokens to file
-        result.shrink_to_fit();
+    catch(const std::bad_alloc& exception) {
+        Logger ("syncAudaciousLog: Failed during attempt to process play history log. "
+                "Inspect file audacioushist.log found in /.local/share/archsimian/ directory for errors.");
+        std::cerr << "syncAudaciousLog: error detected: There was a problem writing log to the database. "
+                     "Inspect file audacioushist.log found in /.local/share/archsimian/ directory for errors." << exception.what();
+        QMessageBox msgBox;
+        QString msgboxtxt = "syncAudaciousLog: Failed during attempt to process changed ratings. There was a problem writing from audacioushist.log. "
+                            "Inspect file audacioushist.log found in /.local/share/archsimian/ directory for errors.";
+        msgBox.setText(msgboxtxt);
+        msgBox.exec();
+        qApp->quit(); //Exit program
     }
-    outf4.close();
-    combinedvect.shrink_to_fit();
-    finalvect.shrink_to_fit();
-    outputvect.shrink_to_fit();
     removeAppData("lastplayeddates2.txt");
     std::ofstream ofs; // Open audacioushist.log for writing with the truncate option to delete the content.
     ofs.open(appDataPathstr.toStdString()+"/audacioushist.log", std::ofstream::out | std::ofstream::trunc);

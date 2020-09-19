@@ -153,6 +153,7 @@ static bool diagsran(0);
 static bool s_audaciouslogenabled{0};
 static int s_initialpostsettingslaunch{0};
 
+
 // Create UI Widget ArchSimian - UI Set up
 ArchSimian::ArchSimian(QWidget *parent) :
     QMainWindow(parent),
@@ -1957,19 +1958,20 @@ void ArchSimian::on_selectAndroidDeviceButton_clicked()
 
 void ArchSimian::on_updateASDBButton_clicked()
 {
-    if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting getLastPlayedDates."<< std::endl;}
+    if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting."<< std::endl;}
     // Check existence of device directory to ensure it is paired
     QDir dir;
     if (dir.exists(s_androidpathname)) {
+        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Android directory found. Start getLastPlayedDates."<< std::endl;}
         ui->updateASDBlabel->setText(tr("Read lastplayed dates from AIMP/Audacious and update the play history in the Archsiman database."));
         getLastPlayedDates(s_androidpathname); // First, poll the AIMP log and get last played dates
         ui->updateASDBButton->toggle();
         if (s_audaciouslogenabled == true) { // If Audacious logging enabled, process its play history
-            if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Audacious logging enabled, starting syncAudaciousLog."<< std::endl;}
+            if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Audacious logging is enabled, Start syncAudaciousLog."<< std::endl;}
             syncAudaciousLog();
         }
         ui->updateASDBprogressBar->setValue(80);
-        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Starting updateCleanLibDates."<< std::endl;}
+        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: File lastplayeddates.txt created. Run updateCleanLibDates."<< std::endl;}
         updateCleanLibDates(); // Update cleanlib.dsv wih new dates
         /* Need to reprocess all functions associated with a cleanlib.dsv change.
         getDBStats(&s_rCode0TotTrackQty,&s_rCode0MsTotTime,&s_rCode1TotTrackQty,&s_rCode1MsTotTime,
@@ -1999,10 +2001,12 @@ void ArchSimian::on_updateASDBButton_clicked()
         QTextStream in(&ratingupdate);
         ui->updateDBtextBrowser->setText(in.readAll());
         ui->statusBar->showMessage("Finished updating play history to the database",8000);
+        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Finished updating play history to the database."<< std::endl;}
     }
     else{
         // If the device is not paired, change label
         ui->updateASDBlabel->setText(tr("Android device is not paired. Pair using kdeconnect, and open device primary folder in Dolphin, then try again.)"));
+        if (Constants::kVerbose){std::cout << "on_updateASDBButton_clicked: Android device is not paired."<< std::endl;}
     }
 }
 
