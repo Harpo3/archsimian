@@ -233,7 +233,7 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 Use the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
-First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” in te Grouping field to code your selected five-star tracks, “4” for four-star tracks, etc., using the table in note 1 above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.
+First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” in the Grouping field to code your selected five-star tracks, “4” for four-star tracks, etc. Use the table in note 1 above. Remember to code unrated tracks to Grouping “0” and code one star (new) tracks to Grouping “1”.
 
 5. <b>As stated in the MM4 manual:</b> 
 
