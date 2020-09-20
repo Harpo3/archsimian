@@ -193,16 +193,17 @@ When you have added tracks from ArchSimian, you can simply save it by "exporting
 If you export to Linux, you will still need to "Export to Windows" to save the playlist if you want changes saved.
 
 <b>NOTES</b>
-1. <b>Below shows the ArchSimian rating code assigned to each MM4 star rating:</b>
+1. <b>Below shows the ArchSimian rating code assigned to each MM4 star rating (includes popularimeter equivalents applicable):</b>
  
-<p>1 – new song not yet rated (one star)</p>
-<p>(2 is reserved)</p>
-<p>3 – five stars</p>
-<p>4 – four stars, and four and one half stars (ArchSimian treats them as a single rating)</p>
-<p>5 – three and one half stars</p>
-<p>6 – three stars</p>
-<p>7 – two and one half stars</p>
-<p>8 – two stars</p>
+<p>Rating code 0 (zero stars) (popularimeter 0)</p>
+<p>Rating code 1 (one star) (popularimeter 1-95, set to 47)</p>
+<p>Rating code 2 is reserved</p>
+<p>Rating code 3 (five stars) (popularimeter  230+, set to 255)</p>
+<p>Rating code 4 (four stars) (popularimeter 192-229, set to 204)</p>
+<p>Rating code 5 (3 ½ stars) (popularimeter 166-191, set to 179)</p>
+<p>Rating code 6 (three stars) (popularimeter 136-165, set to 153)</p>
+<p>Rating code 7 (2 ½ stars) (popularimeter 110-135, set to 118)</p>
+<p>Rating code 8 (two stars) (popularimeter 96-109, set to 102)</p>
 
 2. <b>Windows Configurations (dual boot vs. virtual machine):</b>
 
