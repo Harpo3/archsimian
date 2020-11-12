@@ -193,16 +193,17 @@ When you have added tracks from ArchSimian, you can simply save it by "exporting
 If you export to Linux, you will still need to "Export to Windows" to save the playlist if you want changes saved.
 
 <b>NOTES</b>
-1. <b>Below shows the ArchSimian rating code assigned to each MM4 star rating:</b>
+1. <b>Below shows the ArchSimian rating code assigned to each MM4 star rating (includes popularimeter equivalents applicable):</b>
  
-<p>1 – new song not yet rated (one star)</p>
-<p>(2 is reserved)</p>
-<p>3 – five stars</p>
-<p>4 – four stars, and four and one half stars (ArchSimian treats them as a single rating)</p>
-<p>5 – three and one half stars</p>
-<p>6 – three stars</p>
-<p>7 – two and one half stars</p>
-<p>8 – two stars</p>
+<p>Rating code 0 (zero stars) (popularimeter 0)</p>
+<p>Rating code 1 (one star) (popularimeter 1-95, set to 47)</p>
+<p>Rating code 2 is reserved</p>
+<p>Rating code 3 (five stars) (popularimeter  230+, set to 255)</p>
+<p>Rating code 4 (four stars) (popularimeter 192-229, set to 204)</p>
+<p>Rating code 5 (3 ½ stars) (popularimeter 166-191, set to 179)</p>
+<p>Rating code 6 (three stars) (popularimeter 136-165, set to 153)</p>
+<p>Rating code 7 (2 ½ stars) (popularimeter 110-135, set to 118)</p>
+<p>Rating code 8 (two stars) (popularimeter 96-109, set to 102)</p>
 
 2. <b>Windows Configurations (dual boot vs. virtual machine):</b>
 
@@ -210,7 +211,7 @@ While Linux can be installed on a separate partition of Windows using a dual boo
 
 If you are running KDE and the Windows VirtualMachine (VM) together, you will need 8GB of RAM to run smoothly (16GB is better!). Less might work with a lighter DE (but no guarantees). If you do not use a VM for Windows, then 4GB is enough.
 
-If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html> IMPORTANT: When you specify in VM settings the shared folder(s), deselect automount and specify the mount point with the drive letter of you choice.
+If you do use the VM, you need a CPU capable of running Windows 10 on an Oracle VirtualBox Virtual Machine (VM), meaning a 64-bit processor with hardware virtualization support enabled. See here for details: <html>https://forums.virtualbox.org/viewtopic.php?t=58072</html> IMPORTANT: When you specify in VM settings the shared folder(s), deselect automount, then specify the mount point with the drive letter of your choice.
 
 MM4 Installation in the VM – If you use a Windows VM using Oracle VirtualBox in Linux, install MM4 Gold and enter your license verification, then install .mmip scripts for Backup 6.0, Update Location of Files in Database, and ImportM3U. To use your original MM.DB and ini files in the VM, locate them, back them up and (with VM version of MM4 closed) copy it to the VM location replacing the one created at install, then open MM4 in the VM and modify the file location pointers. To do that, you can use the script “Update Location of Files in Database.” If you set up guest additions in the VM, you should have the new drive number. Select the old and new paths, then check “Update paths in database only for files that exist at new location.” Do not copy files.
 
@@ -232,7 +233,7 @@ Oracle VirtualBox VM (if you wish to run MM4 in Linux by running Windows 10 on a
 
 Use the “<b>Grouping</b>” tag field for all tracks in your library, according to the star ratings you have, but it is not required. ArchSimian uses the star ratings and assigns the codes to its database. It does not modify your tags. You can change the tags yourself, though. You may wish to do it this way if you do not want to change your star ratings in MM4. This lets you force Archsimian to read its codes directly while ignoring the star ratings you are using. 
 
-First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” in te Grouping field to code your selected five-star tracks, “4” for four-star tracks, etc., using the table in note 1 above. Remember to code unrated tracks to Grouping “0” and one star (new tracks) to Grouping “1”.
+First, sort all tracks by their star rating. Select all the tracks of a particular rating, then right-click to select properties. Under the “Details” tab of the tag window, enter “3” in the Grouping field to code your selected five-star tracks, “4” for four-star tracks, etc. Use the table in note 1 above. Remember to code unrated tracks to Grouping “0” and code one star (new) tracks to Grouping “1”.
 
 5. <b>As stated in the MM4 manual:</b> 
 
