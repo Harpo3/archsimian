@@ -1,4 +1,4 @@
-#include <QMessageBox>
+﻿#include <QMessageBox>
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -300,6 +300,42 @@ void getLastPlayedDates(QString s_androidpathname){
     return ;
 }
 
+// Assign Archsimian and MM4 rating codes using POPM number found in tag
+void translatePopm (int &popmint, std::string *selectedLibratingCode, std::string *selectedLibpopmRating) {
+    if (popmint == 0) {
+        *selectedLibratingCode = "0";
+        *selectedLibpopmRating = "0";
+    }
+    if (popmint > 0) {
+        *selectedLibratingCode = "1";
+        *selectedLibpopmRating = "20";
+    }
+    if (popmint > 95) {
+        *selectedLibratingCode = "8";
+        *selectedLibpopmRating = "30";
+    }
+    if (popmint > 109) {
+        *selectedLibratingCode = "7";
+        *selectedLibpopmRating = "50";
+    }
+    if (popmint > 135) {
+        *selectedLibratingCode = "6";
+        *selectedLibpopmRating = "60";
+    }
+    if (popmint > 165) {
+        *selectedLibratingCode = "5";
+        *selectedLibpopmRating = "70";
+    }
+    if (popmint > 191) {
+        *selectedLibratingCode = "4";
+        *selectedLibpopmRating = "90";
+    }
+    if (popmint > 229) {
+        *selectedLibratingCode = "3";
+        *selectedLibpopmRating = "100";
+    }
+}
+
 // Update variables popmToken and ratingToken using tag values in selected tag
 void PrintInformation(ID3_Tag &myTag, std::string *popmToken, std::string *ratingToken)
 {
@@ -314,11 +350,10 @@ void PrintInformation(ID3_Tag &myTag, std::string *popmToken, std::string *ratin
         {
         case ID3FID_POPULARIMETER:
         {
-            char *sEmail = ID3_GetString(frame, ID3FN_EMAIL);
-            size_t
-                    nRating = frame->GetField(ID3FN_RATING)->Get();
+            //char *sEmail = ID3_GetString(frame, ID3FN_EMAIL);
+            size_t nRating = frame->GetField(ID3FN_RATING)->Get();
             *popmToken = std::to_string(nRating);
-            delete [] sEmail;
+            //delete [] sEmail;
             break;
         }
         case ID3FID_CONTENTGROUP:
@@ -496,84 +531,174 @@ void updateChangedTagRatings(){
     // Loop through cleanlib and check each tag for changed ratings
     //  Outer loop: iterate through rows of SongsTable
     try { // Operation replaces cleanlib.dsv; need to protect data in event of a fatal error
-            while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
-                // Declare variables applicable to all rows
-                std::istringstream iss(str);
-                // Create a vector to parse each line by carat and do processing
-                std::vector<std::string> tokens2; // Vector of string to save tokens
-                tokens2.reserve(50000);
-                std::stringstream check1(str);// Stringstream for parsing carat delimiter
-                std::string intermediate; // Intermediate value for parsing carat delimiter
-                // Open tokens vector to tokenize current string using carat '^' delimiter
-                while(getline(check1, intermediate, '^')) // Inner loop: iterate through tokens of string using tokens vector
-                {
-                    tokens2.push_back(intermediate);
+        while (std::getline(SongsTable, str)) {   // Outer loop: iterate through rows of primary songs table
+            // Declare variables applicable to all rows
+            std::istringstream iss(str);
+            // Create a vector to parse each line by carat and do processing
+            std::vector<std::string> tokens2; // Vector of string to save tokens
+            tokens2.reserve(50000);
+            std::stringstream check1(str);// Stringstream for parsing carat delimiter
+            std::string intermediate; // Intermediate value for parsing carat delimiter
+            // Open tokens vector to tokenize current string using carat '^' delimiter
+            while(getline(check1, intermediate, '^')) // Inner loop: iterate through tokens of string using tokens vector
+            {
+                tokens2.push_back(intermediate);
+            }
+            selectedLibArtistToken = tokens2[Constants::kColumn1];
+            selectedLibAlbumToken = tokens2[Constants::kColumn3];
+            selectedLibTitleToken = tokens2[Constants::kColumn7];
+            selectedLibsongPath = tokens2[Constants::kColumn8];
+            selectedLibpopmRating = tokens2[Constants::kColumn13];
+            selectedLibSQLDateToken = tokens2[Constants::kColumn17];
+            selectedLibratingCode = tokens2[Constants::kColumn29];
+            longstring = "^"+tokens2[Constants::kColumn18]+"^"+tokens2[Constants::kColumn19]+"^"
+                    +tokens2[Constants::kColumn20]+"^"+tokens2[Constants::kColumn21]+"^"+tokens2[Constants::kColumn22]+"^"
+                    +tokens2[Constants::kColumn23]+"^"+tokens2[Constants::kColumn24]+"^"+tokens2[Constants::kColumn25]+"^"
+                    +tokens2[Constants::kColumn26]+"^"+tokens2[Constants::kColumn27]+"^"+tokens2[Constants::kColumn28];
+            if (selectedLibratingCode == "0"){
+                outf << str << "\n"; // The existing string is valid if unrated; if so, write unchanged string to cleanlib file
+                continue;
+            }
+            ID3_Tag activeTag; // Get tag info using id3/tag.h
+            activeTag.Link(selectedLibsongPath.c_str(),ID3TT_ID3V2 | ID3TT_APPENDED);
+            PrintInformation(activeTag, &popmToken, &ratingToken);  // Function to extract rating data from tag
+            // If tag rating does not match cleanlib entry, change cleanlib variables to match before writing string
+            if (selectedLibratingCode != ratingToken) {
+                if (Constants::kVerbose) {
+                    std::cout << "Tag rating does not match cleanlib entry. "<< std::endl;
+                    std::cout << "selectedLibTitleToken: "<< selectedLibTitleToken << std::endl;
+                    std::cout << "selectedLibAlbumToken: "<< selectedLibAlbumToken << std::endl;
+                    std::cout << "selectedLibArtistToken: "<< selectedLibArtistToken << std::endl;
+                    std::cout << "selectedLibpopmRating: "<< selectedLibpopmRating << std::endl;
+                    std::cout << "selectedLibratingCode: "<< selectedLibratingCode << std::endl;
+                    std::cout << "POPM (from tag): "<< popmToken << std::endl;
+                    std::cout << "Rating Code (from tag): "<< ratingToken << std::endl;
                 }
-                selectedLibArtistToken = tokens2[Constants::kColumn1];
-                selectedLibAlbumToken = tokens2[Constants::kColumn3];
-                selectedLibTitleToken = tokens2[Constants::kColumn7];
-                selectedLibsongPath = tokens2[Constants::kColumn8];
-                selectedLibpopmRating = tokens2[Constants::kColumn13];
-                selectedLibSQLDateToken = tokens2[Constants::kColumn17];
-                selectedLibratingCode = tokens2[Constants::kColumn29];
-                longstring = "^"+tokens2[Constants::kColumn18]+"^"+tokens2[Constants::kColumn19]+"^"
-                        +tokens2[Constants::kColumn20]+"^"+tokens2[Constants::kColumn21]+"^"+tokens2[Constants::kColumn22]+"^"
-                        +tokens2[Constants::kColumn23]+"^"+tokens2[Constants::kColumn24]+"^"+tokens2[Constants::kColumn25]+"^"
-                        +tokens2[Constants::kColumn26]+"^"+tokens2[Constants::kColumn27]+"^"+tokens2[Constants::kColumn28];
-                if (selectedLibratingCode == "0"){
-                    outf << str << "\n"; // The existing string is valid if unrated; if so, write unchanged string to cleanlib file
-                    continue;
-                }
-                ID3_Tag activeTag; // Get tag info using id3/tag.h
-                activeTag.Link(selectedLibsongPath.c_str(),ID3TT_ID3V2 | ID3TT_APPENDED);
-                PrintInformation(activeTag, &popmToken, &ratingToken);
-                // If tag rating does not match cleanlib entry, change cleanlib variables to match before writing string
-                if (selectedLibratingCode != ratingToken) {
-                    if (Constants::kVerbose) {
-                        std::cout << "Tag rating does not match cleanlib entry. "<< std::endl;
-                        std::cout << "selectedLibTitleToken: "<< selectedLibTitleToken << std::endl;
-                        std::cout << "selectedLibAlbumToken: "<< selectedLibAlbumToken << std::endl;
-                        std::cout << "selectedLibArtistToken: "<< selectedLibArtistToken << std::endl;
-                        std::cout << "selectedLibpopmRating: "<< selectedLibpopmRating << std::endl;
-                        std::cout << "selectedLibratingCode: "<< selectedLibratingCode << std::endl;
-                        std::cout << "POPM (from tag): "<< popmToken << std::endl;
-                        std::cout << "Rating Code (from tag): "<< ratingToken << std::endl;
+                std::string tempoldrating = selectedLibratingCode;
+                std::string tempoldrating2 = selectedLibpopmRating;
+                std::string oldstars ("");
+                std::string stars ("");
+                // Set stars value for old entry
+                if (tempoldrating == "0") {oldstars = "0 stars";}
+                if (tempoldrating == "1") {oldstars = "1 star";}
+                if (tempoldrating == "3") {oldstars = "5 stars";}
+                if (tempoldrating == "4") {oldstars = "4 stars";}
+                if (tempoldrating == "5") {oldstars = "3 1/2 stars";}
+                if (tempoldrating == "6") {oldstars = "3 stars";}
+                if (tempoldrating == "7") {oldstars = "2 1/2 stars";}
+                if (tempoldrating == "8") {oldstars = "2 stars";}
+                // If an Archsimian rating code was set in the tag, but it does not match db entry, set new db rating codes (MM and Archsimian)
+                if ((ratingToken== "0") || (ratingToken== "1") || (ratingToken== "3") || (ratingToken=="4") || (ratingToken=="5") || (ratingToken=="6")
+                        || (ratingToken=="7") || (ratingToken=="8")) {
+                    selectedLibratingCode = ratingToken; // Set new Archsiman rating code based on tag value
+                    if (selectedLibratingCode == "0") { // Set new MM4 rating code based on tag value
+                        selectedLibpopmRating = "0";
+                        stars = "0 stars";
                     }
-                    std::string tempoldrating = selectedLibratingCode;
-                    std::string tempoldrating2 = selectedLibpopmRating;
-                    if (ratingToken!=""){selectedLibratingCode = ratingToken;} // Archsimian rating code has been set in the tag and does not match library
-                    ratingupdate << "Rating changed from "<<tempoldrating<<" to "<<ratingToken << " for "<<
+                    if (selectedLibratingCode == "1"){
+                        selectedLibpopmRating = "20";
+                        stars = "1 star (new)";
+                    }
+                    if (selectedLibratingCode == "3"){
+                        selectedLibpopmRating = "100";
+                        stars = "5 stars";
+                    }
+                    if (selectedLibratingCode == "4"){
+                        selectedLibpopmRating = "90";
+                        stars = "4 stars";
+                    }
+                    if (selectedLibratingCode == "5"){
+                        selectedLibpopmRating = "70";
+                        stars = "3 1/2 stars";
+                    }
+                    if (selectedLibratingCode == "6"){
+                        selectedLibpopmRating = "60";
+                        stars = "3 stars";
+                    }
+                    if (selectedLibratingCode == "7"){
+                        selectedLibpopmRating = "50";
+                        stars = "2 1/2 stars";
+                    }
+                    if (selectedLibratingCode == "8"){
+                        selectedLibpopmRating = "30";
+                        stars = "2 stars";
+                    }
+                    ratingupdate << "Rating changed from "<<oldstars<<" to "<< stars << " for "<<
                                     selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
-                    if (selectedLibratingCode == "3"){selectedLibpopmRating = "100";} // Set MM4 code (40, 50, 60, etc) based on code or popm change
-                    if (selectedLibratingCode == "4"){selectedLibpopmRating = "90";}
-                    if (selectedLibratingCode == "5"){selectedLibpopmRating = "70";}
-                    if (selectedLibratingCode == "6"){selectedLibpopmRating = "60";}
-                    if (selectedLibratingCode == "7"){selectedLibpopmRating = "50";}
-                    if (selectedLibratingCode == "8"){selectedLibpopmRating = "30";}
                     if (Constants::kVerbose) std::cout << "Rating changed from "<<tempoldrating<<" to "<<ratingToken;
                     if (Constants::kVerbose) std::cout << ", and MM Rating code changed from "<<tempoldrating2<<" to "<<selectedLibpopmRating << " for "<<
-                                 selectedLibArtistToken << " - " <<selectedLibTitleToken << std::endl;
-                    str=tokens2.at(Constants::kColumn0)+"^"+selectedLibArtistToken+"^"+tokens2.at(Constants::kColumn2)+"^"+selectedLibAlbumToken+"^"
-                            +tokens2.at(Constants::kColumn4)+"^"+tokens2.at(Constants::kColumn5)+"^"+tokens2.at(Constants::kColumn6)+"^"
-                            +selectedLibTitleToken+"^"+selectedLibsongPath+"^"+tokens2.at(Constants::kColumn9)+"^"+tokens2.at(Constants::kColumn10)
-                            +"^"+tokens2.at(Constants::kColumn11)+"^"+tokens2.at(Constants::kColumn12)+"^"+selectedLibpopmRating+"^"+
-                            tokens2.at(Constants::kColumn14)+"^"+tokens2.at(Constants::kColumn15)+"^"+tokens2.at(Constants::kColumn16)
-                            +"^"+selectedLibSQLDateToken+longstring+"^"+selectedLibratingCode;
-                    outf << str << "\n"; // The tag elements of artist, title, album match, and rating has been changed in cleanlib.
-
-                    ratingToken="";
-                    popmToken="";
-                    continue;
+                                                          selectedLibArtistToken << " - " <<selectedLibTitleToken << std::endl;
                 }
-                outf << str << "\n"; // One or more tag elements (artist, title, album) do NOT match cleanlib entry, but rating might match.
+                // If Archsimian rating code was NOT set in the tag with above codes, but there is a code in the db, leave unchanged
+                if (((ratingToken== " ") || (ratingToken== "")) && ((selectedLibratingCode== "0") || (selectedLibratingCode== "1") || (selectedLibratingCode== "3")
+                                                                    || (selectedLibratingCode=="4") || (selectedLibratingCode=="5") || (selectedLibratingCode=="6")
+                                                                    || (selectedLibratingCode=="7") || (selectedLibratingCode=="8") ))
+                {
+                    ratingupdate << "Archsimian rating code not set in tag. Existing rating of "<<stars << " unchanged for "<<
+                                    selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
+                }
+                // If Archsimian rating code was NOT set in the tag, and no code is in db, use POPM value to update the Archsimian/MM rating codes in db
+                if (((ratingToken== " ") || (ratingToken== "")) && (selectedLibratingCode== ""))
+                {
+                    // Set popmtoken to integer value
+                    int popmintvalue = stoi(popmToken);
+                    // Evaluate to range assigned and set Archsimian/MM rating code using translatePopm function
+                    translatePopm (popmintvalue, &selectedLibratingCode, &selectedLibpopmRating);
+                    if (selectedLibratingCode == "0") { // Set new MM4 rating code based on tag value
+                        selectedLibpopmRating = "0";
+                        stars = "0 stars";
+                    }
+                    if (selectedLibratingCode == "1"){
+                        selectedLibpopmRating = "20";
+                        stars = "1 star (new)";
+                    }
+                    if (selectedLibratingCode == "3"){
+                        selectedLibpopmRating = "100";
+                        stars = "5 stars";
+                    }
+                    if (selectedLibratingCode == "4"){
+                        selectedLibpopmRating = "90";
+                        stars = "4 stars";
+                    }
+                    if (selectedLibratingCode == "5"){
+                        selectedLibpopmRating = "70";
+                        stars = "3 1/2 stars";
+                    }
+                    if (selectedLibratingCode == "6"){
+                        selectedLibpopmRating = "60";
+                        stars = "3 stars";
+                    }
+                    if (selectedLibratingCode == "7"){
+                        selectedLibpopmRating = "50";
+                        stars = "2 1/2 stars";
+                    }
+                    if (selectedLibratingCode == "8"){
+                        selectedLibpopmRating = "30";
+                        stars = "2 stars";
+                    }
+                    ratingupdate << "Rating set with POPM "<<popmToken<<" to "<<stars << " for "<<
+                                    selectedLibArtistToken <<" - "<<selectedLibTitleToken<< '\n';
+                }
+                str=tokens2.at(Constants::kColumn0)+"^"+selectedLibArtistToken+"^"+tokens2.at(Constants::kColumn2)+"^"+selectedLibAlbumToken+"^"
+                        +tokens2.at(Constants::kColumn4)+"^"+tokens2.at(Constants::kColumn5)+"^"+tokens2.at(Constants::kColumn6)+"^"
+                        +selectedLibTitleToken+"^"+selectedLibsongPath+"^"+tokens2.at(Constants::kColumn9)+"^"+tokens2.at(Constants::kColumn10)
+                        +"^"+tokens2.at(Constants::kColumn11)+"^"+tokens2.at(Constants::kColumn12)+"^"+selectedLibpopmRating+"^"+
+                        tokens2.at(Constants::kColumn14)+"^"+tokens2.at(Constants::kColumn15)+"^"+tokens2.at(Constants::kColumn16)
+                        +"^"+selectedLibSQLDateToken+longstring+"^"+selectedLibratingCode;
+                outf << str << "\n"; // The tag elements of artist, title, album match, and rating has been changed in cleanlib.
                 ratingToken="";
                 popmToken="";
-                tokens2.shrink_to_fit();
+                continue;
             }
-            SongsTable.close();
-            outf.close();
-            ratingupdate.close();
+            outf << str << "\n"; // One or more tag elements (artist, title, album) do NOT match cleanlib entry, but rating might match.
+            ratingToken="";
+            popmToken="";
+            tokens2.shrink_to_fit();
         }
+        SongsTable.close();
+        outf.close();
+        ratingupdate.close();
+    }
     catch(const std::bad_alloc& exception) {
         Logger ("updateChangedTagRatings: Failed during attempt to process changed ratings. There was a problem writing to cleanlib.dsv. "
                 "Replace cleanlib.dsv with cleanlib2.dsv found in /.local/share/archsimian/ then inspect file for errors.");

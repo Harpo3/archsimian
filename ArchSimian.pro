@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = archsimian
 TEMPLATE = app
-VERSION = 1.10
+VERSION = 1.11
 DEFINES += APP_VERSION=$$VERSION
 
 # The following define makes your compiler emit warnings if you use
